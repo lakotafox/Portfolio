@@ -1793,7 +1793,7 @@ function openCodeViewer(project) {
     console.log('Opening code viewer for:', project.name);
     
     // Navigate to the code viewer page
-    window.location.href = 'code-viewer.html?project=' + encodeURIComponent(project.name);
+    window.location.href = 'mincoins-area.html?project=' + encodeURIComponent(project.name);
 }
 
 // Update camera to follow player
