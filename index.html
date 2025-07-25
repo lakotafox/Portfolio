@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carcassonne Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-world">
+        <!-- Game Canvas -->
+        <canvas id="gameCanvas"></canvas>
+        
+        <!-- UI Elements -->
+        <div class="game-ui">
+            <div class="instructions">
+                <h3>Controls</h3>
+                <p>Arrow Keys / WASD - Move</p>
+                <p>Enter - View Project</p>
+            </div>
+            
+            <div class="city-info" id="cityInfo">
+                <h2 id="cityName"></h2>
+                <p id="cityDesc"></p>
+                <div class="enter-prompt">Press ENTER to view</div>
+            </div>
+        </div>
+        
+        <!-- Project Viewer -->
+        <div class="project-viewer" id="projectViewer">
+            <iframe id="projectFrame"></iframe>
+            <button class="close-btn" onclick="closeProject()">✕ Close (ESC)</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
