@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Marker Tool</title>
+    <link rel="icon" type="image/png" href="../../../favicon.png">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #2c3e50;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        #gameCanvas {
+            display: block;
+            background-color: #34495e;
+        }
+        
+        #info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            max-width: 300px;
+        }
+        
+        #markedList {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            max-width: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        #exportBtn {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        #exportBtn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="info">
+        <h3>Project Marker Tool</h3>
+        <p>Use arrow keys to move</p>
+        <p>Press ENTER to mark/unmark any tile</p>
+        <p>Press E to export marked locations</p>
+        <p>Current position: <span id="position">0, 0</span></p>
+        <p>Marked tiles: <span id="markedCount">0</span></p>
+    </div>
+    
+    <div id="markedList">
+        <h4>Marked Locations:</h4>
+        <div id="markedItems"></div>
+    </div>
+    
+    <button id="exportBtn" onclick="exportMarkedLocations()">Export Locations</button>
+    
+    <script src="project-marker-main.js"></script>
+</body>
+</html>

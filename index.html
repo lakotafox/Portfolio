@@ -1,39 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- character encoding - tells browser how to interpret text characters -->
     <meta charset="UTF-8">
+    
+    <!--  settings for  mobile devices -->
+    <!-- width=device-width: Sets view width to match device screen width -->
+   
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- page title shown in browser tab -->
     <title>Carcassonne Portfolio</title>
+    
+    <!-- favicon - Carcassonne tile -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <!-- link to CSS styling for page -->
     <link rel="stylesheet" href="styles.css">
+    
+    <!--fonts: Loads MedievalSharp font aesthetic -->
     <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- main container for  game world??????? -->
     <div class="game-world">
-        <!-- Game Canvas -->
+        
+        <!--game is drawn/rendered carc tiles, player sprite, and map -->
+
+        <!-- use javascript to draw 2D graphics -->
         <canvas id="gameCanvas"></canvas>
         
-        <!-- UI Elements -->
+        <!-- container for all UI elements that overlay the game -->
         <div class="game-ui">
+            
+            <!-- instructions panel (top-left corner) -->
+            <!-- shows player how to control the game -->
             <div class="instructions">
                 <h3>Controls</h3>
                 <p>Arrow Keys / WASD - Move</p>
                 <p>Enter - View Project</p>
             </div>
             
+            <!--  info panel (appears when near a flag) -->
+           
             <div class="city-info" id="cityInfo">
+                
                 <h2 id="cityName"></h2>
+              
                 <p id="cityDesc"></p>
+                <!--  tell user press Enter -->
                 <div class="enter-prompt">Press ENTER to view</div>
             </div>
         </div>
         
-        <!-- Project Viewer -->
+        
+        <!-- player presses Enter near a flag becomes visible -->
         <div class="project-viewer" id="projectViewer">
+            <!-- iframe loads the actual project content (like mincoins-area) -->
             <iframe id="projectFrame"></iframe>
+            <!-- close button to return to the main map -->
             <button class="close-btn" onclick="closeProject()">✕ Close (ESC)</button>
         </div>
     </div>
     
-    <script src="script.js"></script>
+  
+    
+    <!-- projects-global.js: Project/marker management -->
+    <script src="game-engine/projects/projects-global.js"></script>
+    
+    <!-- big-bang.js: Main game logic - world creation and game loop -->
+    <!-- Uses ES6 modules to import player-birth.js and camera.js -->
+    <script type="module" src="game-universe/big-bang.js"></script>
 </body>
 </html>

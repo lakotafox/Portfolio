@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carcassonne Map Editor</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="map-maker.css">
+</head>
+<body>
+    <div class="editor-container">
+        <div class="tile-palette">
+            <h2>Tile Palette</h2>
+            <div class="tile-grid" id="tileGrid">
+                <!-- Tiles will be added here -->
+            </div>
+        </div>
+        
+        <div class="map-area">
+            <canvas id="mapCanvas"></canvas>
+            <div class="preview-tile" id="previewTile" style="display: none;">
+                <img id="previewImg" width="80" height="80">
+            </div>
+        </div>
+        
+        <div class="controls" id="controlsPanel">
+            <div class="controls-header">
+                <h3>Map Editor Controls</h3>
+                <button class="collapse-btn" onclick="toggleControls()">−</button>
+            </div>
+            <div class="controls-content" id="controlsContent">
+            
+            <div class="control-group">
+                <label>Selected Tile: <span id="selectedTileName">None</span></label>
+                <div class="rotation-buttons">
+                    <button class="rotation-btn" onclick="rotateSelection(-90)">↺</button>
+                    <button class="rotation-btn" onclick="rotateSelection(90)">↻</button>
+                    <button class="rotation-btn" onclick="setRotation(0)">↑</button>
+                    <button class="rotation-btn" onclick="setRotation(90)">→</button>
+                    <button class="rotation-btn" onclick="setRotation(180)">↓</button>
+                    <button class="rotation-btn" onclick="setRotation(270)">←</button>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <button onclick="clearMap()" class="danger">Clear Map</button>
+                <button onclick="fillEmpty()">Fill Empty with Random Grass</button>
+            </div>
+            
+            <div class="control-group">
+                <button onclick="exportMap()">Export Map</button>
+            </div>
+            
+            <div class="export-area" id="exportArea" style="display: none;">
+                <label>Map Data (copy this):</label>
+                <textarea id="mapData" readonly></textarea>
+                <button onclick="copyToClipboard()">Copy to Clipboard</button>
+            </div>
+            </div>
+        </div>
+        
+        <div class="info">
+            <p>Click to place tile | Right-click to remove | Scroll to zoom</p>
+            <p style="margin-top: 5px; color: #ffd700;">Place city tiles where you want projects!</p>
+        </div>
+    </div>
+    
+    <!-- Load modules -->
+    <script src="tiles-data.js"></script>
+    <script src="sidebar.js"></script>
+    <script src="export-window.js"></script>
+    <script src="make-carc-w-gui.js"></script>
+</body>
+</html>

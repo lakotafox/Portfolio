@@ -1,0 +1,111 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #2a2a2a;
+    color: white;
+    overflow: hidden; /* Keep body from scrolling, only canvas area scrolls */
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.palette {
+    width: 200px;
+    background: #1a1a1a;
+    border-right: 2px solid #444;
+    padding: 20px;
+}
+
+.palette h2 {
+    color: #ffd700;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.sign-item {
+    background: #8b5a2b;
+    border: 2px solid #654321;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: move;
+    text-align: center;
+    color: white;
+    font-size: 12px;
+}
+
+.sign-item:hover {
+    background: #a0744f;
+}
+
+.canvas-area {
+    flex: 1;
+    position: relative;
+    background: #1e1e1e;
+    overflow: hidden; /* No scrolling - camera handles movement */
+}
+
+#builderCanvas {
+    display: block;
+    cursor: crosshair;
+    width: 100%;
+    height: 100%;
+}
+
+.controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 8px;
+    z-index: 100;
+}
+
+.controls button {
+    background: #444;
+    color: white;
+    border: 1px solid #666;
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.controls button:hover {
+    background: #555;
+}
+
+.back-link {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: #8b7355;
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    z-index: 100;
+    font-size: 14px;
+}
+
+.instructions {
+    background: #333;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 20px;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.instructions p {
+    margin-bottom: 5px;
+}

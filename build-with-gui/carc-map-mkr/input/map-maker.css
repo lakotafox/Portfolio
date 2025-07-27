@@ -1,0 +1,231 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #2a2a2a;
+    color: #fff;
+    overflow: hidden;
+}
+
+.editor-container {
+    display: flex;
+    height: 100vh;
+}
+
+.tile-palette {
+    width: 280px;
+    background: #1a1a1a;
+    padding: 15px;
+    overflow-y: auto;
+    border-right: 2px solid #444;
+    max-height: 100vh;
+}
+
+.tile-palette h2 {
+    margin-bottom: 20px;
+    color: #ffd700;
+}
+
+.tile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.tile-option {
+    width: 65px;
+    height: 65px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.tile-option:hover {
+    border-color: #ffd700;
+    transform: scale(1.05);
+}
+
+.tile-option.selected {
+    border-color: #00ff00;
+    box-shadow: 0 0 10px #00ff00;
+}
+
+.tile-option img {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.tile-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.9);
+    font-size: 8px;
+    text-align: center;
+    padding: 1px;
+    line-height: 1.2;
+}
+
+.map-area {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+    background: #1a1a1a;
+}
+
+#mapCanvas {
+    display: block;
+    cursor: crosshair;
+}
+
+.controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.9);
+    border-radius: 10px;
+    border: 2px solid #444;
+    transition: all 0.3s ease;
+    max-width: 300px;
+}
+
+.controls.collapsed {
+    width: auto;
+}
+
+.controls-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px 10px 20px;
+    margin: 0;
+}
+
+.controls-header h3 {
+    margin: 0;
+    color: #ffd700;
+}
+
+.collapse-btn {
+    background: #666;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.collapse-btn:hover {
+    background: #888;
+}
+
+.controls-content {
+    padding: 0 20px 20px 20px;
+    transition: all 0.3s ease;
+}
+
+.controls.collapsed .controls-content {
+    display: none;
+}
+
+/* Removed - now handled by .controls-header h3 */
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: #45a049;
+}
+
+button.danger {
+    background: #f44336;
+}
+
+button.danger:hover {
+    background: #da190b;
+}
+
+.rotation-buttons {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.rotation-btn {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.export-area {
+    margin-top: 20px;
+    padding: 10px;
+    background: #333;
+    border-radius: 5px;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    background: #222;
+    color: #fff;
+    border: 1px solid #555;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 12px;
+    border-radius: 5px;
+    resize: vertical;
+}
+
+.info {
+    position: fixed;
+    bottom: 20px;
+    left: 320px;
+    background: rgba(0,0,0,0.9);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.preview-tile {
+    position: fixed;
+    pointer-events: none;
+    opacity: 0.7;
+    z-index: 1000;
+}

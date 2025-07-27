@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Force Refresh MinCoins</title>
+</head>
+<body>
+    <h1>Force Refresh MinCoins Area</h1>
+    <p>This page will force a hard refresh of the MinCoins area to clear any cached JavaScript modules.</p>
+    
+    <button onclick="forceRefresh()">Click to Force Refresh MinCoins</button>
+    
+    <script>
+    function forceRefresh() {
+        // force reload all modules
+        const timestamp = new Date().getTime();
+        window.location.href = 'mincoins-area.html?refresh=' + timestamp;
+    }
+    </script>
+    
+    <p>After clicking, press Ctrl+F5 (or Cmd+Shift+R on Mac) in the MinCoins area to do a hard refresh.</p>
+</body>
+</html>
