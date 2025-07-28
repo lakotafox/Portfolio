@@ -1,68 +1,88 @@
-import { GRID_SIZE, PROJECTS } from '../config.js';
+// Map generation and grid management
+import { COMPACT_MAP, TILE_DEFS } from '../game-map.js';
+
+const GRID_SIZE = 15;
+const TILE_SIZE = 80;
 
 // Map grid storage
 export const mapGrid = [];
 
 // Initialize empty grid
-export function initializeGrid() {
-    for (let y = 0; y < GRID_SIZE; y++) {
-        mapGrid[y] = [];
-        for (let x = 0; x < GRID_SIZE; x++) {
-            mapGrid[y][x] = null;
-        }
+for (let y = 0; y < GRID_SIZE; y++) {
+    mapGrid[y] = [];
+    for (let x = 0; x < GRID_SIZE; x++) {
+        mapGrid[y][x] = null;
     }
 }
 
-// Generate map from map-maker data
-export function generateMap(mapData) {
-    initializeGrid();
-    
-    // Check if we have the expected format
-    if (!mapData || !mapData.grid) {
-        console.error('Invalid map data format');
-        return;
-    }
-    
-    // Load each tile from the map data
-    for (let y = 0; y < GRID_SIZE; y++) {
-        for (let x = 0; x < GRID_SIZE; x++) {
-            if (mapData.grid[y] && mapData.grid[y][x]) {
-                const cell = mapData.grid[y][x];
-                mapGrid[y][x] = {
-                    tile: cell.tile,
-                    file: cell.file,
-                    rotation: cell.rotation,
-                    project: null
+// Expand compact map to verbose format
+export function expandCompactMap(compactMap, tileDefs) {
+    return {
+        grid: compactMap.map(row => 
+            row.map(cell => {
+                const [tileId, rotation = 0] = Array.isArray(cell) ? cell : [cell, 0];
+                const tileDef = tileDefs[tileId];
+                
+                if (!tileDef) {
+                    console.error(`Unknown tile ID: ${tileId}`);
+                    return {
+                        tile: "Grass 1",
+                        file: "grass1.jpeg",
+                        rotation: 0
+                    };
+                }
+                
+                return {
+                    tile: tileDef.tile,
+                    file: tileDef.file,
+                    rotation: rotation
                 };
+            })
+        )
+    };
+}
+
+// Generate map with tiles
+export function generateMap() {
+    console.log('Generating map from compact data...');
+    const mapData = expandCompactMap(COMPACT_MAP, TILE_DEFS);
+    
+    if (mapData && mapData.grid) {
+        console.log('Map data found, loading tiles...');
+        // Load from map data
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                if (mapData.grid[y] && mapData.grid[y][x]) {
+                    const cellData = mapData.grid[y][x];
+                    mapGrid[y][x] = {
+                        type: { type: cellData.tile.toLowerCase().replace(/ /g, '_') },
+                        rotation: cellData.rotation || 0,
+                        image: cellData.file,
+                        project: null
+                    };
+                } else {
+                    // Empty cell - use green field
+                    mapGrid[y][x] = {
+                        type: { type: 'field' },
+                        rotation: 0,
+                        image: 'grass1.jpeg',
+                        project: null
+                    };
+                }
             }
         }
-    }
+        console.log('Map loaded, first tile:', mapGrid[0][0]);
+        console.log('Total tiles loaded:', GRID_SIZE * GRID_SIZE);
+    } else {
+        console.log('No map data found!');
+    } 
     
-    // Assign projects to their designated tiles
-    assignProjects();
-}
-
-// Assign projects from config to their map positions
-function assignProjects() {
-    PROJECTS.forEach(project => {
-        if (project.x >= 0 && project.x < GRID_SIZE && 
-            project.y >= 0 && project.y < GRID_SIZE &&
-            mapGrid[project.y][project.x]) {
+    // Place projects at their specific coordinates
+    ProjectManager.projects.forEach(project => {
+        if (mapGrid[project.y] && mapGrid[project.y][project.x]) {
             mapGrid[project.y][project.x].project = project;
         }
     });
 }
 
-// Get tile at specific coordinates
-export function getTileAt(x, y) {
-    if (x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE) {
-        return mapGrid[y][x];
-    }
-    return null;
-}
-
-// Check if a project exists at given tile coordinates
-export function getProjectAt(tileX, tileY) {
-    const tile = getTileAt(tileX, tileY);
-    return tile ? tile.project : null;
-}
+export { GRID_SIZE, TILE_SIZE };

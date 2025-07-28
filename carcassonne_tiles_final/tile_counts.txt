@@ -1,0 +1,29 @@
+Carcassonne Basic Game - Tile Counts
+====================================
+
+Tile A: 2x
+Tile B: 4x
+Tile C: 1x
+Tile D: 4x
+Tile E: 5x
+Tile F: 2x
+Tile G: 1x
+Tile H: 3x
+Tile I: 2x
+Tile J: 3x
+Tile K: 3x
+Tile M: 3x
+Tile N: 3x
+Tile O: 2x
+Tile P: 2x
+Tile Q: 3x
+Tile R: 1x
+Tile S: 3x
+Tile T: 2x
+Tile U: 1x
+Tile V: 8x
+Tile W: 9x
+Tile X: 4x
+Tile Y: 1x
+
+Total tiles: 72

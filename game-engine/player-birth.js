@@ -25,15 +25,17 @@ export const player = {
 
 //FUNC Load individual player sprites
 export function loadPlayerSprites() {
+    console.log('Loading player sprites...');
     const spritesToLoad = [
-        { direction: 'down', file: '../game-engine/player/sprites/player-down.png' },
-        { direction: 'up', file: '../game-engine/player/sprites/player-up.png' },
-        { direction: 'right', file: '../game-engine/player/sprites/player-right.png' }
+        { direction: 'down', file: 'game-engine/player/sprites/player-down.png' },
+        { direction: 'up', file: 'game-engine/player/sprites/player-up.png' },
+        { direction: 'right', file: 'game-engine/player/sprites/player-right.png' }
     ];
     
     spritesToLoad.forEach(({ direction, file }) => {
         const img = new Image();
         img.onload = () => {
+            console.log(`Loaded sprite: ${file}`);
             player.sprites[direction] = img;
             // Use the same image for left, but it will be flipped
             if (direction === 'right') {
@@ -42,7 +44,7 @@ export function loadPlayerSprites() {
             player.spritesLoaded++;
         };
         img.onerror = () => {
-            console.log(`Failed to load ${file}`);
+            console.error(`Failed to load sprite: ${file}`);
             player.spritesLoaded++;
         };
         img.src = file;
