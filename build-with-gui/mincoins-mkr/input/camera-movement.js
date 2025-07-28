@@ -1,4 +1,4 @@
-// Camera and movement system
+// camera and movement system
 
 const keys = {};
 

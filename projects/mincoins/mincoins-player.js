@@ -1,5 +1,5 @@
-// MinCoins Player Module
-// Handles player state, movement, and sprites
+// minCoins Player Module
+// handles player state, movement, and sprites
 
 import { MINCOINS_CONFIG } from './mincoins-config.js';
 
@@ -23,7 +23,7 @@ export class MinCoinsPlayer {
         this.initInput();
     }
     
-    //FUNC Initialize keyboard input
+    // initialize keyboard input
     initInput() {
         window.addEventListener('keydown', (e) => {
             this.keys[e.key.toLowerCase()] = true;
@@ -34,7 +34,7 @@ export class MinCoinsPlayer {
         });
     }
     
-    //FUNC Load player sprites
+    // load player sprites
     async loadSprites() {
         console.log('Starting to load player sprites...');
         const loadPromises = MINCOINS_CONFIG.SPRITE_FILES.map(({ direction, file }) => {
@@ -43,7 +43,7 @@ export class MinCoinsPlayer {
                 img.onload = () => {
                     console.log(`Successfully loaded sprite: ${file}`);
                     this.sprites[direction] = img;
-                    // Use the same image for left, but it will be flipped
+                    // use the same image for left, but it will be flipped
                     if (direction === 'right') {
                         this.sprites.left = img;
                     }
@@ -64,7 +64,7 @@ export class MinCoinsPlayer {
         console.log(`Sprites loaded: ${this.spritesLoaded}/3`);
     }
     
-    //FUNC Update player position based on input
+    // update player position based on input
     update() {
         let moved = false;
         
@@ -92,12 +92,12 @@ export class MinCoinsPlayer {
         return moved;
     }
     
-    //FUNC Draw the player
+    // draw the player
     draw(ctx) {
         if (this.spritesLoaded >= 3 && this.sprites[this.facing]) {
             ctx.save();
             
-            // Apply horizontal flip for left facing
+            // apply horizontal flip for left facing
             if (this.facing === 'left') {
                 ctx.translate(this.x, this.y);
                 ctx.scale(-1, 1);
@@ -119,7 +119,7 @@ export class MinCoinsPlayer {
             }
             ctx.restore();
         } else {
-            // Don't draw anything if sprites not loaded
+            // don't draw anything if sprites not loaded
             console.log('Player sprites not loaded yet');
         }
     }

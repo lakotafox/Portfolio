@@ -1,13 +1,13 @@
-// SIDEBAR UI functionality for tile selection
+// sIDEBAR UI functionality for tile selection
 
-// Create the tile palette interface
+// create the tile palette interface
 function createTilePalette() {
     const paletteDiv = document.getElementById('tilePalette');
     if (!paletteDiv) return;
     
     paletteDiv.innerHTML = '';
     
-    // Create category sections
+    // create category sections
     const categories = {
         'field': 'Fields',
         'monastery': 'Monasteries',
@@ -26,7 +26,7 @@ function createTilePalette() {
         const tilesDiv = document.createElement('div');
         tilesDiv.className = 'palette-tiles';
         
-        // Add tiles of this type
+        // add tiles of this type
         TILE_TYPES.filter(tile => tile.type === type).forEach((tile, index) => {
             const tileDiv = document.createElement('div');
             tileDiv.className = 'palette-tile';
@@ -39,7 +39,7 @@ function createTilePalette() {
             
             tileDiv.appendChild(img);
             
-            // Click to select
+            // click to select
             tileDiv.addEventListener('click', () => {
                 selectTile(tile, TILE_TYPES.indexOf(tile));
             });
@@ -52,11 +52,11 @@ function createTilePalette() {
     });
 }
 
-// Select a tile from the palette
+// select a tile from the palette
 function selectTile(tileType, index) {
     selectedTile = tileType;
     
-    // Update visual selection
+    // update visual selection
     document.querySelectorAll('.palette-tile').forEach(tile => {
         tile.classList.remove('selected');
     });
@@ -66,11 +66,11 @@ function selectTile(tileType, index) {
         selectedDiv.classList.add('selected');
     }
     
-    // Update selection display
+    // update selection display
     updateSelectionDisplay();
 }
 
-// Update the current selection display
+// update the current selection display
 function updateSelectionDisplay() {
     const display = document.getElementById('selectedTileDisplay');
     if (!display) return;
@@ -88,7 +88,7 @@ function updateSelectionDisplay() {
     }
 }
 
-// Rotation control functions
+// rotation control functions
 function rotateSelection(degrees) {
     selectedRotation = (selectedRotation + degrees + 360) % 360;
     updateSelectionDisplay();

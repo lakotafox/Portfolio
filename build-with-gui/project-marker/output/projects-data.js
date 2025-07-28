@@ -1,4 +1,4 @@
-// Projects data for Carcassonne Portfolio
+// projects data for Carcassonne Portfolio
 
 
 const PROJECTS_DATA = [
@@ -76,7 +76,7 @@ const PROJECTS_DATA = [
     }
 ];
 
-// Export for use in other files
+// export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = PROJECTS_DATA;
 }

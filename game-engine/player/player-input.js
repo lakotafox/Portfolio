@@ -1,5 +1,5 @@
-// Player Input Handler
-// Manages keyboard input for player movement
+// player Input Handler
+// manages keyboard input for player movement
 
 export class PlayerInput {
     constructor() {
@@ -7,7 +7,7 @@ export class PlayerInput {
         this.setupEventListeners();
     }
 
-    //FUNC Setup keyboard event listeners
+    // setup keyboard event listeners
     setupEventListeners() {
         document.addEventListener('keydown', (e) => {
             this.keys[e.key.toLowerCase()] = true;
@@ -18,12 +18,12 @@ export class PlayerInput {
         });
     }
 
-    //FUNC Check if a key is currently pressed
+    // check if a key is currently pressed
     isKeyPressed(key) {
         return this.keys[key.toLowerCase()] || false;
     }
 
-    //FUNC Get movement input state
+    // get movement input state
     getMovementInput() {
         return {
             up: this.isKeyPressed('w') || this.isKeyPressed('arrowup'),
@@ -37,7 +37,7 @@ export class PlayerInput {
         };
     }
 
-    //FUNC Clear all key states
+    // clear all key states
     clearKeys() {
         this.keys = {};
     }

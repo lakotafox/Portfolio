@@ -1,9 +1,9 @@
-// Project/City Management Module (Global version)
-// Handles project definitions, collision detection, and UI interactions
+// project/City Management Module (Global version)
+// handles project definitions, collision detection, and UI interactions
 
-// Create a global ProjectManager object
+// create a global ProjectManager object
 const ProjectManager = {
-    // Projects/Cities data - will be placed in predefined city locations
+    // projects/Cities data - will be placed in predefined city locations
     projects: [
         {
             id: 1,
@@ -11,80 +11,72 @@ const ProjectManager = {
             desc: "Java Coin Change Algorithm",
             url: "projects/mincoins/mincoins-area.html",
             type: "code",
-            x: 2,
-            y: 5
+            x: 11,
+            y: 1
         },
         {
             id: 2,
             name: "Pixel Keep",
             desc: "Retro Game Engine",
             url: "projects/pixel-keep/index.html",
-            x: 6,
-            y: 4
+            x: 12,
+            y: 7
         },
         {
             id: 3,
             name: "Quantum Monastery",
             desc: "Quantum Computing Simulator",
             url: "projects/quantum-monastery/index.html",
-            x: 13,
-            y: 7
+            x: 2,
+            y: 2
         },
         {
             id: 4,
             name: "Castle Algorithms",
             desc: "Data Structure Visualizer",
             url: "projects/castle-algorithms/index.html",
-            x: 11,
-            y: 11
+            x: 4,
+            y: 8
         },
         {
             id: 5,
             name: "Road Network",
             desc: "Graph Theory Explorer",
             url: "projects/road-network/index.html",
-            x: 1,
-            y: 10
+            x: 5,
+            y: 11
         },
         {
             id: 6,
             name: "Field of Dreams",
             desc: "ML Crop Predictor",
             url: "projects/field-of-dreams/index.html",
-            x: 10,
-            y: 2
+            x: 9,
+            y: 12
         },
         {
             id: 7,
             name: "Medieval Marketplace",
             desc: "E-commerce Platform",
             url: "projects/medieval-marketplace/index.html",
-            x: 4,
+            x: 1,
             y: 12
-        },
-        {
-            id: 8,
-            name: "Cyber Citadel",
-            desc: "Security Dashboard",
-            url: "projects/cyber-citadel/index.html",
-            x: 9,
-            y: 7
         }
     ],
 
-    // State management
+    // state management
     currentProject: null,
     markingMode: false,
     markedLocations: [],
 
-    // DOM elements (will be initialized later)
+    // dOM elements (will be initialized later)
     cityInfo: null,
     cityName: null,
     cityDesc: null,
     projectViewer: null,
     projectFrame: null,
 
-    // Initialize DOM elements
+    // initialize DOM elements
     initDOM: function() {
         this.cityInfo = document.getElementById('cityInfo');
         this.cityName = document.getElementById('cityName');
@@ -93,7 +85,7 @@ const ProjectManager = {
         this.projectFrame = document.getElementById('projectFrame');
     },
 
-    // Check if player is on a project tile
+    // check if player is on a project tile
     checkCollision: function(playerX, playerY, mapGrid, TILE_SIZE, GRID_SIZE) {
         const tileX = Math.floor(playerX / TILE_SIZE);
         const tileY = Math.floor(playerY / TILE_SIZE);
@@ -112,7 +104,7 @@ const ProjectManager = {
         }
     },
 
-    // Show city info UI
+    // show city info UI
     showCityInfo: function(project) {
         if (!this.cityInfo || !this.cityName || !this.cityDesc) return;
         this.cityName.textContent = project.name;
@@ -120,43 +112,43 @@ const ProjectManager = {
         this.cityInfo.classList.add('active');
     },
 
-    // Hide city info UI
+    // hide city info UI
     hideCityInfo: function() {
         if (!this.cityInfo) return;
         this.cityInfo.classList.remove('active');
     },
 
-    // Open project in viewer
+    // open project in viewer
     openProject: function(project) {
         if (!this.projectViewer || !this.projectFrame) return;
         console.log('Opening project:', project.name, 'Type:', project.type);
         
         if (project.type === 'code') {
-            // Open code viewer for code projects
+            // open code viewer for code projects
             this.openCodeViewer(project);
         } else {
-            // Open iframe for regular projects
+            // open iframe for regular projects
             this.projectFrame.src = project.url;
             this.projectViewer.classList.add('active');
         }
     },
 
-    // Close project viewer
+    // close project viewer
     closeProject: function() {
         if (!this.projectViewer || !this.projectFrame) return;
         this.projectViewer.classList.remove('active');
         this.projectFrame.src = '';
     },
 
-    // Code viewer functions
+    // code viewer functions
     openCodeViewer: function(project) {
         console.log('Opening code viewer for:', project.name);
         
-        // Navigate to the code viewer page
+        // navigate to the code viewer page
         window.location.href = 'projects/mincoins/mincoins-area.html?project=' + encodeURIComponent(project.name);
     },
 
-    // Marking mode functions for development
+    // marking mode functions for development
     toggleMarkingMode: function() {
         this.markingMode = !this.markingMode;
         console.log('Marking mode:', this.markingMode ? 'ON' : 'OFF');
@@ -204,7 +196,7 @@ const ProjectManager = {
         const tileX = Math.floor(playerX / TILE_SIZE);
         const tileY = Math.floor(playerY / TILE_SIZE);
         
-        // Check if already marked
+        // check if already marked
         const exists = this.markedLocations.find(loc => loc.x === tileX && loc.y === tileY);
         if (!exists) {
             this.markedLocations.push({ x: tileX, y: tileY });
@@ -215,7 +207,7 @@ const ProjectManager = {
     exportMarkedLocations: function() {
         console.log('Marked locations:', this.markedLocations);
         
-        // Create export window
+        // create export window
         const exportWindow = window.open('', 'Export Locations', 'width=600,height=400');
         exportWindow.document.write(`
             <h2>Marked Project Locations</h2>
@@ -228,7 +220,7 @@ const ProjectManager = {
     }
 };
 
-// Make closeProject available globally for the HTML onclick
+// make closeProject available globally for the HTML onclick
 window.closeProject = function() {
     ProjectManager.closeProject();
 };

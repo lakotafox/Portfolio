@@ -1,5 +1,5 @@
-// MinCoins Init Script
-// Simple initialization without complex class structure
+// minCoins Init Script
+// simple initialization without complex class structure
 
 import { MINCOINS_CONFIG } from './mincoins-config.js';
 import { MinCoinsPlayer } from './mincoins-player.js';
@@ -7,24 +7,24 @@ import { MinCoinsTerminal } from './mincoins-terminal.js';
 import { MinCoinsInteractions } from './mincoins-interactions.js';
 import { MinCoinsRenderer } from './mincoins-renderer.js';
 
-// Get canvas and context
+// get canvas and context
 const canvas = document.getElementById('codeCanvas');
 const ctx = canvas.getContext('2d');
 
-// Initialize camera
+// initialize camera
 const camera = {
     x: MINCOINS_CONFIG.CAMERA_START_X,
     y: MINCOINS_CONFIG.CAMERA_START_Y,
     zoom: 1
 };
 
-// Initialize modules
+// initialize modules
 const player = new MinCoinsPlayer();
 const terminal = new MinCoinsTerminal();
 const renderer = new MinCoinsRenderer(canvas, ctx);
 const interactions = new MinCoinsInteractions(player, terminal);
 
-// Canvas resizing
+// canvas resizing
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -32,7 +32,7 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Mouse wheel zoom
+// mouse wheel zoom
 window.addEventListener('wheel', (e) => {
     e.preventDefault();
     if (e.deltaY < 0) {
@@ -42,23 +42,23 @@ window.addEventListener('wheel', (e) => {
     }
 });
 
-// Game loop
+// game loop
 function gameLoop() {
-    // Update player
+    // update player
     player.update();
     
-    // Update camera to follow player
+    // update camera to follow player
     camera.x = player.x;
     camera.y = player.y;
     
-    // Render everything
+    // render everything
     renderer.render(camera, player, terminal);
     
-    // Continue loop
+    // continue loop
     requestAnimationFrame(gameLoop);
 }
 
-// Start the game
+// start the game
 async function start() {
     console.log('MinCoins Init - Starting game...');
     console.log('Loading sprites from:', MINCOINS_CONFIG.SPRITE_FILES);
@@ -71,14 +71,14 @@ async function start() {
     gameLoop();
 }
 
-// Initialize when DOM is ready
+// initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start);
 } else {
     start();
 }
 
-// Make exit function available globally
+// make exit function available globally
 window.exitCodeViewer = function() {
-    window.location.href = '/';  // Go to root
+    window.location.href = '/';  // go to root
 };

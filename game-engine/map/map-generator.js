@@ -1,13 +1,13 @@
-// Map generation and grid management
+// map generation and grid management
 import { COMPACT_MAP, TILE_DEFS } from '../game-map.js';
 
 const GRID_SIZE = 15;
 const TILE_SIZE = 80;
 
-// Map grid storage
+// map grid storage
 export const mapGrid = [];
 
-// Initialize empty grid
+// initialize empty grid
 for (let y = 0; y < GRID_SIZE; y++) {
     mapGrid[y] = [];
     for (let x = 0; x < GRID_SIZE; x++) {
@@ -15,7 +15,7 @@ for (let y = 0; y < GRID_SIZE; y++) {
     }
 }
 
-// Expand compact map to verbose format
+// expand compact map to verbose format
 export function expandCompactMap(compactMap, tileDefs) {
     return {
         grid: compactMap.map(row => 
@@ -27,7 +27,7 @@ export function expandCompactMap(compactMap, tileDefs) {
                     console.error(`Unknown tile ID: ${tileId}`);
                     return {
                         tile: "Grass 1",
-                        file: "grass1.jpeg",
+                        file: "grass1.png",
                         rotation: 0
                     };
                 }
@@ -35,6 +35,7 @@ export function expandCompactMap(compactMap, tileDefs) {
                 return {
                     tile: tileDef.tile,
                     file: tileDef.file,
+                    folder: tileDef.folder || '',
                     rotation: rotation
                 };
             })
@@ -42,14 +43,14 @@ export function expandCompactMap(compactMap, tileDefs) {
     };
 }
 
-// Generate map with tiles
+// generate map with tiles
 export function generateMap() {
     console.log('Generating map from compact data...');
     const mapData = expandCompactMap(COMPACT_MAP, TILE_DEFS);
     
     if (mapData && mapData.grid) {
         console.log('Map data found, loading tiles...');
-        // Load from map data
+        // load from map data
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
                 if (mapData.grid[y] && mapData.grid[y][x]) {
@@ -61,11 +62,11 @@ export function generateMap() {
                         project: null
                     };
                 } else {
-                    // Empty cell - use green field
+                    // empty cell - use green field
                     mapGrid[y][x] = {
                         type: { type: 'field' },
                         rotation: 0,
-                        image: 'grass1.jpeg',
+                        image: 'grass1.png',
                         project: null
                     };
                 }
@@ -77,7 +78,7 @@ export function generateMap() {
         console.log('No map data found!');
     } 
     
-    // Place projects at their specific coordinates
+    // place projects at their specific coordinates
     ProjectManager.projects.forEach(project => {
         if (mapGrid[project.y] && mapGrid[project.y][project.x]) {
             mapGrid[project.y][project.x].project = project;

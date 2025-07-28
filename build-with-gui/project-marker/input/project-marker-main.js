@@ -1,41 +1,41 @@
-// Project Marker Tool - Simple player movement version
+// project Marker Tool - Simple player movement version
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Set canvas size
+// set canvas size
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Game constants
+// game constants
 const TILE_SIZE = 80;
 const GRID_SIZE = 15;
 const PLAYER_SIZE = 20;
 
-// Player state
-let playerX = 7; // Start in center
+// player state
+let playerX = 7; // start in center
 let playerY = 7;
 
-// Camera state
+// camera state
 let cameraX = 0;
 let cameraY = 0;
 
-// Map data
+// map data
 let mapData = null;
 let tileImages = {};
 
-// Marked locations
+// marked locations
 let markedLocations = [];
 
-// Player sprite
+// player sprite
 let playerImage = null;
 const playerImg = new Image();
-playerImg.src = '../../carc-map-mkr/tiles/player-down.png';
+playerImg.src = '../../../game-engine/player/sprites/player-down.png';
 playerImg.onload = () => {
     playerImage = playerImg;
     render();
 };
 
-// Flag image for markers
+// flag image for markers
 let flagImage = null;
 const flagImg = new Image();
 flagImg.src = '../../carc-map-mkr/tiles/flag.png';
@@ -44,47 +44,61 @@ flagImg.onload = () => {
     render();
 };
 
-// Load tile images
+// load tile images
 const tilesToLoad = [
-    'grass1.jpeg', 'grass2.jpeg', 'grass3.jpeg',
-    'CastleCenter0.png', 'CastleEdge0.png', 'CastleEdge1.png', 'CastleEdge2.png', 'CastleEdge3.png',
-    'CastleWall0.png', 'CastleWall1.png', 'CastleWall2.png', 'CastleWall3.png',
-    'CastleSides0.png', 'CastleSides1.png', 'CastleTube0.png', 'CastleTube1.png',
-    'CastleEdgeRoad0.png', 'CastleEdgeRoad1.png', 'CastleEdgeRoad2.png', 'CastleEdgeRoad3.png',
-    'CastleSidesEdge0.png', 'CastleSidesEdge1.png', 'CastleSidesEdge2.png', 'CastleSidesEdge3.png',
-    'Monastery0.png', 'MonasteryRoad0.png', 'MonasteryRoad1.png', 'MonasteryRoad2.png', 'MonasteryRoad3.png',
-    'Road0.png', 'Road1.png', 'RoadCurve0.png', 'RoadCurve1.png', 'RoadCurve2.png', 'RoadCurve3.png',
-    'RoadJunctionSmall0.png', 'RoadJunctionSmall1.png', 'RoadJunctionSmall2.png', 'RoadJunctionSmall3.png',
-    'RoadJunctionLarge0.png'
+    // grass tiles
+    'grass1.png', 'grass2.png', 'grass3.png', 'grass4.png', 'grass5.png',
+    
+    // c3 tiles
+    'tile_A.png', 'tile_B.png', 'tile_C.png', 'tile_D.png', 'tile_E.png',
+    'tile_F.png', 'tile_G.png', 'tile_H.png', 'tile_I.png', 'tile_J.png',
+    'tile_K.png', 'tile_M.png', 'tile_N.png', 'tile_O.png', 'tile_P.png',
+    'tile_Q.png', 'tile_R.png', 'tile_S.png', 'tile_T.png', 'tile_U.png',
+    'tile_V.png', 'tile_W.png', 'tile_X.png', 'tile_Y.png',
+    
+    // water tiles
+    'watertile_A.png', 'watertile_B.png', 'watertile_C.png', 'watertile_D.png',
+    'watertile_E.png', 'watertile_F.png', 'watertile_G.png', 'watertile_H.png',
+    'watertile_I.png', 'watertile_J.png', 'watertile_K.png', 'watertile_M.png',
+    'watertile_N.png', 'watertile_O.png', 'watertile_P.png'
 ];
 
-// Load all tile images
+// load all tile images
 tilesToLoad.forEach(filename => {
     const img = new Image();
     img.onload = () => {
         tileImages[filename] = img;
+        console.log(`Loaded tile: ${filename}`);
         render();
+    };
+    img.onerror = () => {
+        console.error(`Failed to load tile: ${filename}`);
     };
     img.src = `../../carc-map-mkr/tiles/${filename}`;
 });
 
-// Load map data
-const script = document.createElement('script');
-script.src = '../../carc-map-mkr/output/exported-map-compact.js';
-script.onload = () => {
-    if (typeof COMPACT_MAP !== 'undefined' && typeof TILE_DEFS !== 'undefined') {
-        mapData = expandCompactMap(COMPACT_MAP, TILE_DEFS);
+// load map data from a script tag that we'll add to HTML
+// this avoids CORS issues with ES6 modules
+window.addEventListener('mapDataReady', () => {
+    console.log('Map data ready event fired');
+    console.log('COMPACT_MAP:', window.COMPACT_MAP);
+    console.log('TILE_DEFS:', window.TILE_DEFS);
+    
+    if (window.COMPACT_MAP && window.TILE_DEFS) {
+        mapData = expandCompactMap(window.COMPACT_MAP, window.TILE_DEFS);
+        console.log('Map data expanded:', mapData);
         
-        // Load existing project markers
+        // load existing project markers
         loadExistingProjects();
         
         updateCamera();
         render();
+    } else {
+        console.error('Map data not found!');
     }
-};
-document.head.appendChild(script);
+});
 
-// Expand compact map format
+// expand compact map format
 function expandCompactMap(compactMap, tileDefs) {
     return {
         grid: compactMap.map(row => 
@@ -110,9 +124,9 @@ function expandCompactMap(compactMap, tileDefs) {
     };
 }
 
-// Load existing project locations
+// load existing project locations
 function loadExistingProjects() {
-    // First try to load saved marked locations
+    // first try to load saved marked locations
     const markedScript = document.createElement('script');
     markedScript.src = '../output/marked-locations.js';
     markedScript.onload = () => {
@@ -122,24 +136,24 @@ function loadExistingProjects() {
             render();
             console.log('Loaded saved marked locations:', markedLocations.length);
         } else {
-            // If no saved marks, load from projects-global.js
+            // if no saved marks, load from projects-global.js
             loadFromProjectsGlobal();
         }
     };
     markedScript.onerror = () => {
-        // If file doesn't exist, load from projects-global.js
+        // if file doesn't exist, load from projects-global.js
         loadFromProjectsGlobal();
     };
     document.head.appendChild(markedScript);
 }
 
-// Load from projects-global.js as fallback
+// load from projects-global.js as fallback
 function loadFromProjectsGlobal() {
     const projectScript = document.createElement('script');
-    projectScript.src = '../../../../game-engine/projects/projects-global.js';
+    projectScript.src = '../../../game-engine/projects/projects-global.js';
     projectScript.onload = () => {
         if (typeof ProjectManager !== 'undefined' && ProjectManager.projects) {
-            // Extract just the x,y coordinates
+            // extract just the x,y coordinates
             markedLocations = ProjectManager.projects.map(p => ({
                 x: p.x,
                 y: p.y
@@ -155,13 +169,13 @@ function loadFromProjectsGlobal() {
     document.head.appendChild(projectScript);
 }
 
-// Update camera to follow player
+// update camera to follow player
 function updateCamera() {
     cameraX = playerX * TILE_SIZE + TILE_SIZE/2 - canvas.width/2;
     cameraY = playerY * TILE_SIZE + TILE_SIZE/2 - canvas.height/2;
 }
 
-// Keyboard controls
+// keyboard controls
 document.addEventListener('keydown', (e) => {
     let moved = false;
     
@@ -214,18 +228,18 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Toggle mark at current position
+// toggle mark at current position
 function toggleMark() {
     if (!mapData) return;
     
-    // Check if already marked
+    // check if already marked
     const index = markedLocations.findIndex(loc => loc.x === playerX && loc.y === playerY);
     
     if (index !== -1) {
-        // Remove mark
+        // remove mark
         markedLocations.splice(index, 1);
     } else {
-        // Add mark
+        // add mark
         markedLocations.push({ x: playerX, y: playerY });
     }
     
@@ -233,12 +247,12 @@ function toggleMark() {
     render();
 }
 
-// Update position display
+// update position display
 function updatePosition() {
     document.getElementById('position').textContent = `${playerX}, ${playerY}`;
 }
 
-// Update marked list display
+// update marked list display
 function updateMarkedList() {
     document.getElementById('markedCount').textContent = markedLocations.length;
     
@@ -252,17 +266,17 @@ function updateMarkedList() {
     }
 }
 
-// Render the game
+// render the game
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Save context
+    // save context
     ctx.save();
     
-    // Apply camera transform
+    // apply camera transform
     ctx.translate(-cameraX, -cameraY);
     
-    // Draw map
+    // draw map
     if (mapData && mapData.grid) {
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
@@ -282,7 +296,7 @@ function render() {
         }
     }
     
-    // Draw grid
+    // draw grid
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
     ctx.lineWidth = 1;
     for (let x = 0; x <= GRID_SIZE; x++) {
@@ -298,7 +312,7 @@ function render() {
         ctx.stroke();
     }
     
-    // Draw marked locations
+    // draw marked locations
     markedLocations.forEach(loc => {
         const x = loc.x * TILE_SIZE + TILE_SIZE/2;
         const y = loc.y * TILE_SIZE + TILE_SIZE/2;
@@ -306,14 +320,14 @@ function render() {
         if (flagImage) {
             ctx.drawImage(flagImage, x - 20, y - 30, 40, 40);
         } else {
-            // Fallback circle
+            // fallback circle
             ctx.fillStyle = '#e74c3c';
             ctx.beginPath();
             ctx.arc(x, y, 15, 0, Math.PI * 2);
             ctx.fill();
         }
         
-        // Draw X marker
+        // draw X marker
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -324,42 +338,42 @@ function render() {
         ctx.stroke();
     });
     
-    // Draw player
+    // draw player
     const px = playerX * TILE_SIZE + TILE_SIZE/2;
     const py = playerY * TILE_SIZE + TILE_SIZE/2;
     
     if (playerImage) {
         ctx.drawImage(playerImage, px - PLAYER_SIZE/2, py - PLAYER_SIZE/2, PLAYER_SIZE, PLAYER_SIZE);
     } else {
-        // Fallback square
+        // fallback square
         ctx.fillStyle = '#3498db';
         ctx.fillRect(px - PLAYER_SIZE/2, py - PLAYER_SIZE/2, PLAYER_SIZE, PLAYER_SIZE);
     }
     
-    // Restore context
+    // restore context
     ctx.restore();
 }
 
-// Export marked locations
+// export marked locations
 function exportMarkedLocations() {
     if (markedLocations.length === 0) {
         alert('No locations marked!');
         return;
     }
     
-    // Create file content
-    const fileContent = `// Marked tile locations
-// Generated by Project Marker Tool on ${new Date().toLocaleString()}
-// Total locations: ${markedLocations.length}
+    // create file content
+    const fileContent = `// marked tile locations
+// generated by Project Marker Tool on ${new Date().toLocaleString()}
+// total locations: ${markedLocations.length}
 
 const MARKED_LOCATIONS = ${JSON.stringify(markedLocations, null, 4)};
 
-// Export for use in other files
+// export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = MARKED_LOCATIONS;
 }`;
     
-    // Show in window only
+    // show in window only
     const exportWindow = window.open('', 'Export Locations', 'width=800,height=600');
     exportWindow.document.write(`
         <html>
@@ -389,9 +403,25 @@ if (typeof module !== 'undefined' && module.exports) {
     `);
 }
 
-// Make export function available globally
+// make export function available globally
 window.exportMarkedLocations = exportMarkedLocations;
 
-// Initialize position display
+// initialize position display
 updatePosition();
 updateMarkedList();
+
+// fallback initialization after 2 seconds if map data hasn't loaded
+setTimeout(() => {
+    if (!mapData) {
+        console.log('Fallback: Trying to load map data...');
+        if (window.COMPACT_MAP && window.TILE_DEFS) {
+            console.log('Found map data in fallback!');
+            mapData = expandCompactMap(window.COMPACT_MAP, window.TILE_DEFS);
+            loadExistingProjects();
+            updateCamera();
+            render();
+        } else {
+            console.error('No map data available even in fallback!');
+        }
+    }
+}, 2000);

@@ -1,5 +1,5 @@
-// Player Sprites
-// Handles loading and managing player sprite images
+// player Sprites
+// handles loading and managing player sprite images
 
 export class PlayerSprites {
     constructor() {
@@ -12,7 +12,7 @@ export class PlayerSprites {
         this.loaded = false;
     }
 
-    //FUNC Load all player sprites
+    // load all player sprites
     async loadSprites(basePath = '') {
         const spritesToLoad = [
             { direction: 'down', file: `${basePath}game-engine/player/sprites/player-down.png` },
@@ -25,7 +25,7 @@ export class PlayerSprites {
                 const img = new Image();
                 img.onload = () => {
                     this.sprites[direction] = img;
-                    // Use right sprite for left (will be flipped when drawn)
+                    // use right sprite for left (will be flipped when drawn)
                     if (direction === 'right') {
                         this.sprites.left = img;
                     }
@@ -44,12 +44,12 @@ export class PlayerSprites {
         console.log('Player sprites loaded!');
     }
 
-    //FUNC Get sprite for direction
+    // get sprite for direction
     getSprite(direction) {
         return this.sprites[direction];
     }
 
-    //FUNC Check if sprites are loaded
+    // check if sprites are loaded
     areSpritesLoaded() {
         return this.loaded;
     }

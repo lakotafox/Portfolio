@@ -2,24 +2,24 @@ const canvas = document.getElementById('builderCanvas');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
-    // Match viewport size like mincoins-area
+    // match viewport size like mincoins-area
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Camera system - matches mincoins-area exactly
+// camera system - matches mincoins-area exactly
 const camera = { x: 400, y: 300, zoom: 1 };
 
-// Player/hammer for navigation
+// player/hammer for navigation
 const hammer = { x: 400, y: 300, width: 32, height: 32 };
 let hammerImage = new Image();
 let hammerLoaded = false;
 hammerImage.onload = () => { hammerLoaded = true; };
 hammerImage.src = 'hammer.png';
 
-// Load NetBeans image
+// load NetBeans image
 const codeImage = new Image();
 let codeImageLoaded = false;
 codeImage.onload = () => { codeImageLoaded = true; };
@@ -28,14 +28,14 @@ codeImage.src = '../mincoins-netbeans.png';
 // signs array - start with existing signs from mincoins-area
 // this represents the current layout that can be edited
 // when you export, this data will be formatted as json
-let signs = [];  // Start with empty signs array
+let signs = [];  // start with empty signs array
 let selectedSign = null;
 let dragOffset = { x: 0, y: 0 };
 let isResizing = false;
 let isDragging = false;
-let nextId = 1;  // Start ID from 1 since we have no initial signs
+let nextId = 1;  // start ID from 1 since we have no initial signs
 
-// Input for camera movement
+// input for camera movement
 const keys = {};
 window.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
 window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
@@ -60,7 +60,7 @@ function updateCamera() {
     }
 }
 
-// Coordinate conversion - accounts for camera transform
+// coordinate conversion - accounts for camera transform
 function screenToWorld(screenX, screenY) {
     const rect = canvas.getBoundingClientRect();
     const canvasX = screenX - rect.left;
@@ -70,7 +70,7 @@ function screenToWorld(screenX, screenY) {
     return { x: worldX, y: worldY };
 }
 
-// Drag and drop
+// drag and drop
 document.querySelectorAll('.sign-item').forEach(item => {
     item.addEventListener('dragstart', (e) => {
         e.dataTransfer.setData('text/plain', e.target.dataset.type);
@@ -166,7 +166,7 @@ function addSign(type, x, y) {
     selectedSign = sign;
 }
 
-// Mouse interaction
+// mouse interaction
 let mouseDownTime = 0;
 let clickTimer = null;
 let hasDragged = false;
@@ -179,7 +179,7 @@ canvas.addEventListener('mousedown', (e) => {
     isResizing = false;
     isDragging = false;
     
-    // Check resize handle first
+    // check resize handle first
     for (let sign of signs) {
         if (world.x >= sign.x + sign.width - 10 && world.x <= sign.x + sign.width + 10 &&
             world.y >= sign.y + sign.height - 10 && world.y <= sign.y + sign.height + 10) {
@@ -190,7 +190,7 @@ canvas.addEventListener('mousedown', (e) => {
         }
     }
     
-    // Check sign selection
+    // check sign selection
     for (let i = signs.length - 1; i >= 0; i--) {
         const sign = signs[i];
         if (world.x >= sign.x && world.x <= sign.x + sign.width &&
@@ -199,7 +199,7 @@ canvas.addEventListener('mousedown', (e) => {
             dragOffset.x = world.x - sign.x;
             dragOffset.y = world.y - sign.y;
             
-            // Start timer for drag vs click
+            // start timer for drag vs click
             clickTimer = setTimeout(() => {
                 isDragging = true;
             }, 150); // 150ms hold to start dragging
@@ -227,7 +227,7 @@ canvas.addEventListener('mouseup', (e) => {
     clearTimeout(clickTimer);
     const clickDuration = Date.now() - mouseDownTime;
     
-    // If it was a quick click and no dragging, delete the sign
+    // if it was a quick click and no dragging, delete the sign
     if (selectedSign && clickDuration < 150 && !hasDragged && !isResizing) {
         signs = signs.filter(sign => sign !== selectedSign);
         selectedSign = null;
@@ -237,7 +237,7 @@ canvas.addEventListener('mouseup', (e) => {
     isResizing = false;
 });
 
-// Double-click to edit text
+// double-click to edit text
 canvas.addEventListener('dblclick', (e) => {
     const world = screenToWorld(e.clientX, e.clientY);
     
@@ -254,94 +254,94 @@ canvas.addEventListener('dblclick', (e) => {
     }
 });
 
-// Drawing
+// drawing
 function drawSign(sign) {
     if (sign.type === 'terminal') {
-        // Draw terminal background
+        // draw terminal background
         ctx.fillStyle = '#000000';
         ctx.fillRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Terminal border
+        // terminal border
         ctx.strokeStyle = '#00ff00';
         ctx.lineWidth = 2;
         ctx.strokeRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Terminal header
+        // terminal header
         ctx.fillStyle = '#00ff00';
         ctx.font = '12px monospace';
         ctx.textAlign = 'left';
         ctx.fillText('Terminal Output', sign.x + 5, sign.y + 15);
         
-        // Terminal lines (placeholder)
+        // terminal lines (placeholder)
         ctx.font = '10px monospace';
         ctx.fillText('> MinCoins Program Ready', sign.x + 5, sign.y + 35);
         ctx.fillText('> Walk to RUN button and press ENTER', sign.x + 5, sign.y + 50);
     } else if (sign.type === 'run-button') {
-        // Draw run button
+        // draw run button
         ctx.fillStyle = '#4CAF50';
         ctx.fillRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Button border
+        // button border
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
         ctx.strokeRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Button text
+        // button text
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'center';
         ctx.fillText('RUN', sign.x + sign.width/2, sign.y + sign.height/2 + 5);
     } else if (sign.type.startsWith('number-')) {
-        // Draw number key (old-school keyboard style)
+        // draw number key (old-school keyboard style)
         ctx.fillStyle = '#f0f0f0';
         ctx.fillRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Key border
+        // key border
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
         ctx.strokeRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Inner shadow effect
+        // inner shadow effect
         ctx.strokeStyle = '#999';
         ctx.lineWidth = 1;
         ctx.strokeRect(sign.x + 2, sign.y + 2, sign.width - 4, sign.height - 4);
         
-        // Number text
+        // number text
         ctx.fillStyle = '#000000';
         ctx.font = 'bold 18px Arial';
         ctx.textAlign = 'center';
         ctx.fillText(sign.text, sign.x + sign.width/2, sign.y + sign.height/2 + 6);
     } else if (sign.type === 'enter-key') {
-        // Draw enter key (old-school keyboard style)
+        // draw enter key (old-school keyboard style)
         ctx.fillStyle = '#f0f0f0';
         ctx.fillRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Key border
+        // key border
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
         ctx.strokeRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Inner shadow effect
+        // inner shadow effect
         ctx.strokeStyle = '#999';
         ctx.lineWidth = 1;
         ctx.strokeRect(sign.x + 2, sign.y + 2, sign.width - 4, sign.height - 4);
         
-        // Enter text
+        // enter text
         ctx.fillStyle = '#000000';
         ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'center';
         ctx.fillText('ENTER', sign.x + sign.width/2, sign.y + sign.height/2 + 5);
     } else {
-        // Wooden sign background
+        // wooden sign background
         ctx.fillStyle = '#8b5a2b';
         ctx.fillRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Frame
+        // frame
         ctx.strokeStyle = '#654321';
         ctx.lineWidth = 3;
         ctx.strokeRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Arrow
+        // arrow
         if (sign.arrow) {
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 24px Arial';
@@ -349,7 +349,7 @@ function drawSign(sign) {
             ctx.fillText(sign.arrow, sign.x + sign.width/2, sign.y + 30);
         }
         
-        // Text
+        // text
         ctx.fillStyle = '#ffffff';
         ctx.font = '12px Arial';
         ctx.textAlign = 'center';
@@ -361,21 +361,21 @@ function drawSign(sign) {
 }
 
 function render() {
-    // Clear
+    // clear
     ctx.fillStyle = '#1e1e1e';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Apply camera transform - EXACT same as mincoins-area
+    // apply camera transform - EXACT same as mincoins-area
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
     ctx.scale(camera.zoom, camera.zoom);
     ctx.translate(-camera.x, -camera.y);
     
-    // Draw NetBeans background - EXACT same as mincoins-area
+    // draw NetBeans background - EXACT same as mincoins-area
     if (codeImageLoaded && codeImage) {
-        const imageWidth = 800; // CODE_WIDTH from config
+        const imageWidth = 800; // cODE_WIDTH from config
         const imageHeight = (codeImage.height / codeImage.width) * imageWidth;
-        ctx.drawImage(codeImage, 50, 50, imageWidth, imageHeight); // CODE_START_X, CODE_START_Y
+        ctx.drawImage(codeImage, 50, 50, imageWidth, imageHeight); // cODE_START_X, CODE_START_Y
     } else {
         ctx.fillStyle = '#f0f0f0';
         ctx.fillRect(50, 50, 800, 600);
@@ -385,23 +385,23 @@ function render() {
         ctx.fillText('Loading...', 450, 350);
     }
     
-    // Draw signs
+    // draw signs
     signs.forEach(sign => {
         drawSign(sign);
         
-        // Selection highlight
+        // selection highlight
         if (sign === selectedSign) {
             ctx.strokeStyle = '#ffd700';
             ctx.lineWidth = 3;
             ctx.strokeRect(sign.x - 2, sign.y - 2, sign.width + 4, sign.height + 4);
             
-            // Resize handle
+            // resize handle
             ctx.fillStyle = '#ffd700';
             ctx.fillRect(sign.x + sign.width - 4, sign.y + sign.height - 4, 8, 8);
         }
     });
     
-    // Draw hammer (always on top)
+    // draw hammer (always on top)
     if (hammerLoaded && hammerImage) {
         ctx.drawImage(
             hammerImage,
@@ -411,7 +411,7 @@ function render() {
             hammer.height
         );
     } else {
-        // Draw placeholder hammer
+        // draw placeholder hammer
         ctx.fillStyle = '#ff0000';
         ctx.fillRect(
             hammer.x - hammer.width / 2,
@@ -463,7 +463,7 @@ function exportLayout() {
     popup.document.close();
 }
 
-// Delete key to remove selected sign
+// delete key to remove selected sign
 window.addEventListener('keydown', (e) => {
     if (e.key === 'Delete' && selectedSign) {
         signs = signs.filter(sign => sign !== selectedSign);
@@ -471,7 +471,7 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
-// Game loop
+// game loop
 function gameLoop() {
     updateCamera();
     render();
@@ -480,6 +480,6 @@ function gameLoop() {
 
 gameLoop();
 
-// Export functions to window for button clicks
+// export functions to window for button clicks
 window.clearAll = clearAll;
 window.exportLayout = exportLayout;

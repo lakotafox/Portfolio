@@ -1,5 +1,5 @@
-// MinCoins Renderer Module
-// Handles all drawing operations
+// minCoins Renderer Module
+// handles all drawing operations
 
 import { MINCOINS_CONFIG } from './mincoins-config.js';
 import { layoutItems } from './mincoins-layout.js';
@@ -11,7 +11,7 @@ export class MinCoinsRenderer {
         this.codeImage = new Image();
         this.codeImageLoaded = false;
         
-        // Load NetBeans screenshot
+        // load NetBeans screenshot
         this.codeImage.onload = () => {
             this.codeImageLoaded = true;
         };
@@ -21,39 +21,39 @@ export class MinCoinsRenderer {
         this.codeImage.src = MINCOINS_CONFIG.CODE_IMAGE_PATH;
     }
     
-    //FUNC Main render function
+    // main render function
     render(camera, player, terminal) {
-        // Clear canvas
+        // clear canvas
         this.ctx.fillStyle = '#1e1e1e';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // Save context for camera transform
+        // save context for camera transform
         this.ctx.save();
         
-        // Apply camera transform
+        // apply camera transform
         this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
         this.ctx.scale(camera.zoom, camera.zoom);
         this.ctx.translate(-camera.x, -camera.y);
         
-        // Draw NetBeans screenshot
+        // draw NetBeans screenshot
         this.drawCodeImage();
         
-        // Draw all layout items
+        // draw all layout items
         layoutItems.forEach(item => {
             this.drawLayoutItem(item, terminal);
         });
         
-        // Draw player last so it appears on top
+        // draw player last so it appears on top
         player.draw(this.ctx);
         
-        // Restore context
+        // restore context
         this.ctx.restore();
         
-        // Draw UI elements (zoom indicator)
+        // draw UI elements (zoom indicator)
         this.drawUI(camera);
     }
     
-    //FUNC Draw the NetBeans code image
+    // draw the NetBeans code image
     drawCodeImage() {
         if (this.codeImageLoaded && this.codeImage) {
             const imageWidth = MINCOINS_CONFIG.CODE_WIDTH;
@@ -67,7 +67,7 @@ export class MinCoinsRenderer {
                 imageHeight
             );
         } else {
-            // Fallback: Draw placeholder
+            // fallback: Draw placeholder
             this.ctx.fillStyle = '#f0f0f0';
             this.ctx.fillRect(
                 MINCOINS_CONFIG.CODE_START_X, 
@@ -99,7 +99,7 @@ export class MinCoinsRenderer {
         }
     }
     
-    //FUNC Draw a layout item
+    // draw a layout item
     drawLayoutItem(item, terminal) {
         this.ctx.save();
         
@@ -118,24 +118,24 @@ export class MinCoinsRenderer {
         this.ctx.restore();
     }
     
-    //FUNC Draw a sign
+    // draw a sign
     drawSign(item) {
-        // Draw wooden sign background
+        // draw wooden sign background
         this.ctx.fillStyle = '#8b5a2b';
         this.ctx.fillRect(item.x, item.y, item.width, item.height);
         
-        // Add wooden frame
+        // add wooden frame
         this.ctx.strokeStyle = '#654321';
         this.ctx.lineWidth = 3;
         this.ctx.strokeRect(item.x, item.y, item.width, item.height);
         
-        // Draw arrow
+        // draw arrow
         this.ctx.fillStyle = '#ffffff';
         this.ctx.font = 'bold 24px Arial';
         this.ctx.textAlign = 'center';
         this.ctx.fillText(item.arrow, item.x + item.width/2, item.y + 30);
         
-        // Draw text
+        // draw text
         this.ctx.fillStyle = '#ffffff';
         this.ctx.font = '12px Arial';
         this.ctx.textAlign = 'center';
@@ -145,18 +145,18 @@ export class MinCoinsRenderer {
         });
     }
     
-    //FUNC Draw the terminal
+    // draw the terminal
     drawTerminal(item, terminal) {
-        // Draw terminal background
+        // draw terminal background
         this.ctx.fillStyle = '#000000';
         this.ctx.fillRect(item.x, item.y, item.width, item.height);
         
-        // Terminal border
+        // terminal border
         this.ctx.strokeStyle = MINCOINS_CONFIG.TERMINAL_COLOR;
         this.ctx.lineWidth = 2;
         this.ctx.strokeRect(item.x, item.y, item.width, item.height);
         
-        // Draw terminal output
+        // draw terminal output
         this.ctx.fillStyle = MINCOINS_CONFIG.TERMINAL_COLOR;
         this.ctx.font = MINCOINS_CONFIG.TERMINAL_FONT;
         this.ctx.textAlign = 'left';
@@ -176,25 +176,25 @@ export class MinCoinsRenderer {
             }
         }
         
-        // Draw current input line with cursor
+        // draw current input line with cursor
         if (terminal.waitingForInput && terminal.isRunning) {
             const inputY = item.y + 15 + (Math.min(terminal.output.length, maxLines - 1) * lineHeight);
             this.ctx.fillText(terminal.input + '_', item.x + 5, inputY);
         }
     }
     
-    //FUNC Draw the run button
+    // draw the run button
     drawRunButton(item, terminal) {
-        // Draw run button
+        // draw run button
         this.ctx.fillStyle = terminal.isRunning ? '#ff6b6b' : '#4CAF50';
         this.ctx.fillRect(item.x, item.y, item.width, item.height);
         
-        // Button border
+        // button border
         this.ctx.strokeStyle = '#333';
         this.ctx.lineWidth = 2;
         this.ctx.strokeRect(item.x, item.y, item.width, item.height);
         
-        // Button text
+        // button text
         this.ctx.fillStyle = '#ffffff';
         this.ctx.font = 'bold 14px Arial';
         this.ctx.textAlign = 'center';
@@ -205,23 +205,23 @@ export class MinCoinsRenderer {
         );
     }
     
-    //FUNC Draw a number key
+    // draw a number key
     drawNumberKey(item) {
-        // Draw number key (old-school keyboard style)
+        // draw number key (old-school keyboard style)
         this.ctx.fillStyle = '#f0f0f0';
         this.ctx.fillRect(item.x, item.y, item.width, item.height);
         
-        // Key border
+        // key border
         this.ctx.strokeStyle = '#333';
         this.ctx.lineWidth = 2;
         this.ctx.strokeRect(item.x, item.y, item.width, item.height);
         
-        // Inner shadow effect
+        // inner shadow effect
         this.ctx.strokeStyle = '#999';
         this.ctx.lineWidth = 1;
         this.ctx.strokeRect(item.x + 2, item.y + 2, item.width - 4, item.height - 4);
         
-        // Number text
+        // number text
         this.ctx.fillStyle = '#000000';
         this.ctx.font = 'bold 18px Arial';
         this.ctx.textAlign = 'center';
@@ -232,32 +232,32 @@ export class MinCoinsRenderer {
         );
     }
     
-    //FUNC Draw the enter key
+    // draw the enter key
     drawEnterKey(item) {
-        // Draw enter key (old-school keyboard style)
+        // draw enter key (old-school keyboard style)
         this.ctx.fillStyle = '#f0f0f0';
         this.ctx.fillRect(item.x, item.y, item.width, item.height);
         
-        // Key border
+        // key border
         this.ctx.strokeStyle = '#333';
         this.ctx.lineWidth = 2;
         this.ctx.strokeRect(item.x, item.y, item.width, item.height);
         
-        // Inner shadow effect
+        // inner shadow effect
         this.ctx.strokeStyle = '#999';
         this.ctx.lineWidth = 1;
         this.ctx.strokeRect(item.x + 2, item.y + 2, item.width - 4, item.height - 4);
         
-        // Enter text
+        // enter text
         this.ctx.fillStyle = '#000000';
         this.ctx.font = 'bold 14px Arial';
         this.ctx.textAlign = 'center';
         this.ctx.fillText('ENTER', item.x + item.width/2, item.y + item.height/2 + 5);
     }
     
-    //FUNC Draw UI elements
+    // draw UI elements
     drawUI(camera) {
-        // Draw zoom indicator
+        // draw zoom indicator
         this.ctx.fillStyle = '#ffffff';
         this.ctx.font = '14px Arial';
         this.ctx.fillText(

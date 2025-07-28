@@ -1,5 +1,5 @@
-// MinCoins Interactions Module
-// Handles player interactions with world objects
+// minCoins Interactions Module
+// handles player interactions with world objects
 
 import { MINCOINS_CONFIG } from './mincoins-config.js';
 import { layoutItems } from './mincoins-layout.js';
@@ -9,7 +9,7 @@ export class MinCoinsInteractions {
         this.player = player;
         this.terminal = terminal;
         
-        // Initialize Enter key handling
+        // initialize Enter key handling
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 this.handleEnterPress();
@@ -17,9 +17,9 @@ export class MinCoinsInteractions {
         });
     }
     
-    //FUNC Handle Enter key press for interactions
+    // handle Enter key press for interactions
     handleEnterPress() {
-        // Check if player is near any interactive item
+        // check if player is near any interactive item
         layoutItems.forEach(item => {
             const distance = Math.sqrt(
                 Math.pow(this.player.x - (item.x + item.width/2), 2) + 
@@ -32,7 +32,7 @@ export class MinCoinsInteractions {
         });
     }
     
-    //FUNC Handle interaction with a specific item
+    // handle interaction with a specific item
     handleItemInteraction(item) {
         if (item.type === 'run-button') {
             this.terminal.start();

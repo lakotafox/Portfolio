@@ -1,92 +1,92 @@
-// Drawing and rendering functions
+// drawing and rendering functions
 
 function drawSign(ctx, sign) {
     if (sign.type === 'terminal') {
-        // Draw terminal background
+        // draw terminal background
         ctx.fillStyle = '#000000';
         ctx.fillRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Terminal border
+        // terminal border
         ctx.strokeStyle = '#00ff00';
         ctx.lineWidth = 2;
         ctx.strokeRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Terminal header
+        // terminal header
         ctx.fillStyle = '#00ff00';
         ctx.font = '12px monospace';
         ctx.textAlign = 'left';
         ctx.fillText('Terminal Output', sign.x + 5, sign.y + 15);
         
-        // Terminal lines (placeholder)
+        // terminal lines (placeholder)
         ctx.font = '10px monospace';
         ctx.fillText('> MinCoins Program Ready', sign.x + 5, sign.y + 35);
         ctx.fillText('> Walk to RUN button and press ENTER', sign.x + 5, sign.y + 50);
     } else if (sign.type === 'run-button') {
-        // Draw run button
+        // draw run button
         ctx.fillStyle = '#4CAF50';
         ctx.fillRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Button border
+        // button border
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
         ctx.strokeRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Button text
+        // button text
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'center';
         ctx.fillText('RUN', sign.x + sign.width/2, sign.y + sign.height/2 + 5);
     } else if (sign.type.startsWith('number-')) {
-        // Draw number key (old-school keyboard style)
+        // draw number key (old-school keyboard style)
         ctx.fillStyle = '#f0f0f0';
         ctx.fillRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Key border
+        // key border
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
         ctx.strokeRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Inner shadow effect
+        // inner shadow effect
         ctx.strokeStyle = '#999';
         ctx.lineWidth = 1;
         ctx.strokeRect(sign.x + 2, sign.y + 2, sign.width - 4, sign.height - 4);
         
-        // Number text
+        // number text
         ctx.fillStyle = '#000000';
         ctx.font = 'bold 18px Arial';
         ctx.textAlign = 'center';
         ctx.fillText(sign.text, sign.x + sign.width/2, sign.y + sign.height/2 + 6);
     } else if (sign.type === 'enter-key') {
-        // Draw enter key (old-school keyboard style)
+        // draw enter key (old-school keyboard style)
         ctx.fillStyle = '#f0f0f0';
         ctx.fillRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Key border
+        // key border
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
         ctx.strokeRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Inner shadow effect
+        // inner shadow effect
         ctx.strokeStyle = '#999';
         ctx.lineWidth = 1;
         ctx.strokeRect(sign.x + 2, sign.y + 2, sign.width - 4, sign.height - 4);
         
-        // Enter text
+        // enter text
         ctx.fillStyle = '#000000';
         ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'center';
         ctx.fillText('ENTER', sign.x + sign.width/2, sign.y + sign.height/2 + 5);
     } else {
-        // Wooden sign background
+        // wooden sign background
         ctx.fillStyle = '#8b5a2b';
         ctx.fillRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Frame
+        // frame
         ctx.strokeStyle = '#654321';
         ctx.lineWidth = 3;
         ctx.strokeRect(sign.x, sign.y, sign.width, sign.height);
         
-        // Arrow
+        // arrow
         if (sign.arrow) {
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 24px Arial';
@@ -94,7 +94,7 @@ function drawSign(ctx, sign) {
             ctx.fillText(sign.arrow, sign.x + sign.width/2, sign.y + 30);
         }
         
-        // Text
+        // text
         ctx.fillStyle = '#ffffff';
         ctx.font = '12px Arial';
         ctx.textAlign = 'center';
@@ -115,7 +115,7 @@ function drawHammer(ctx, hammer, hammerImage, hammerLoaded) {
             hammer.height
         );
     } else {
-        // Draw placeholder hammer
+        // draw placeholder hammer
         ctx.fillStyle = '#ff0000';
         ctx.fillRect(
             hammer.x - hammer.width / 2,

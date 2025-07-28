@@ -1,15 +1,15 @@
 
 
-// Export the current map to compact format
+// export the current map to compact format YAY
 function exportMap() {
-    // Convert to compact format
+    // convert to compact format
     const compactMap = mapGrid.map(row => 
         row.map(cell => {
-            if (!cell || !cell.tile) return 'g1'; // default to grass1
+            if (!cell || !cell.tile) return null; // empty cell
             
-            const tileId = TILE_ID_MAP[cell.tile.file] || 'g1';
+            const tileId = TILE_ID_MAP[cell.tile.file] || cell.tile.file;
             
-            // Only include rotation if it's not 0
+            // only include rotation if it's not 0
             if (cell.rotation && cell.rotation !== 0) {
                 return [tileId, cell.rotation];
             }
@@ -17,22 +17,22 @@ function exportMap() {
         })
     );
     
-    // NOTE: This JavaScript code generates JavaScript code as a string! HAHAHAHAHAHAHAH!
+    //this JavaScript code generates JavaScript code as a string! HAHAHAHAHAHAHAH!
    
-    // We're using template literals to build formatted JS arrays that will be
-    // shown to the user and can be copied into their game files HAHAHA
+    // we're using literals to build formatted JS arrays that will be can be copied into their game files HAHAHA
+    
 
 
-    const mapCode = `// Map data exported from Map Maker
+    const mapCode = `// map data exported from Map Maker
 const MAP = [
 ${compactMap.map((row, i) => 
-    `  // Row ${i}\n  [${row.map(cell => 
+    `  // row ${i}\n  [${row.map(cell =>
         Array.isArray(cell) ? `['${cell[0]}',${cell[1]}]` : `'${cell}'`
     ).join(', ')}]`
 ).join(',\n')}
 ];`;
     
-    // Open export window
+    // open export window
     const exportWindow = window.open('', 'Export Map', 'width=800,height=600');
     exportWindow.document.write(`
         <html>

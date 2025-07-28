@@ -1,15 +1,14 @@
-// Carcassonne Map Maker - Main Application
-// Refactored to use modular components
+// carcassonne Map Maker 
 
-// Canvas setup
+// canvas setup
 const canvas = document.getElementById('mapCanvas');
 const ctx = canvas.getContext('2d');
 
-// Constants
+// constants
 const TILE_SIZE = 80;
-const GRID_SIZE = 15;
+const GRID_SIZE = 15
 
-// State
+// state
 let selectedTile = null;
 let selectedRotation = 0;
 let mapGrid = [];
@@ -18,43 +17,83 @@ let mouseX = 0;
 let mouseY = 0;
 let zoom = 1;
 
-// Initialize map with random grass tiles
+// initialize empty map
 for (let y = 0; y < GRID_SIZE; y++) {
     mapGrid[y] = [];
     for (let x = 0; x < GRID_SIZE; x++) {
-        const grassTypes = [
-            { name: 'Grass 1', file: 'grass1.jpeg', type: 'field', id: 'g1' },
-            { name: 'Grass 2', file: 'grass2.jpeg', type: 'field', id: 'g2' },
-            { name: 'Grass 3', file: 'grass3.jpeg', type: 'field', id: 'g3' }
-        ];
-        const randomGrass = grassTypes[Math.floor(Math.random() * 3)];
-        
-        mapGrid[y][x] = {
-            tile: randomGrass,
-            rotation: 0
-        };
+        mapGrid[y][x] = null;
     }
 }
 
-// Canvas resize
+// initialize map with random grass tiles
+function initializeGrassTiles() {
+    // define the 5 grass tiles
+    const grassTiles = [
+        'grass1.png',
+        'grass2.png',
+        'grass3.png',
+        'grass4.png',
+        'grass5.png'
+    ];
+    
+    // get tiles
+    const c3Tiles = TILE_TYPES.filter(tile => tile.type === 'c3');
+    const availableGrassTiles = c3Tiles.filter(tile => grassTiles.includes(tile.file));
+    
+    if (availableGrassTiles.length === 0) {
+        console.log('No grass tiles found');
+        return;
+    }
+    
+    // fill grid with tiles 
+    for (let y = 0; y < GRID_SIZE; y++) {
+        for (let x = 0; x < GRID_SIZE; x++) {
+            const randomTile = availableGrassTiles[Math.floor(Math.random() * availableGrassTiles.length)];
+            const randomRotation = Math.floor(Math.random() * 4) * 90; // 0, 90, 180, or 270
+            
+            mapGrid[y][x] = {
+                tile: randomTile,
+                rotation: randomRotation
+            };
+        }
+    }
+}
+
+// canvas resize
 function resizeCanvas() {
     canvas.width = (GRID_SIZE * TILE_SIZE * zoom);
     canvas.height = (GRID_SIZE * TILE_SIZE * zoom);
     drawMap();
 }
 
-// Load tile images and create palette
+// create tile palette aka sidebar
 function loadTileImages() {
     const tileGrid = document.getElementById('tileGrid');
+    tileGrid.innerHTML = ''; // clear existing tiles
+    tileImages = {}; // reset tile images
+    
+    // get active tiles
+    TILE_TYPES = getActiveTiles();
+    
+    console.log('Loading tiles:', TILE_TYPES.length, 'tiles');
     
     TILE_TYPES.forEach((tileType, index) => {
-        // Create tile option in palette
+        // tile options in sidebar
         const tileOption = document.createElement('div');
         tileOption.className = 'tile-option';
         tileOption.onclick = () => selectTile(tileType, index);
         
         const img = document.createElement('img');
-        img.src = `../tiles/${tileType.file}`;
+        // use tiles folder
+        const tilePath = tileType.folder ? `${tileType.folder}${tileType.file}` : `../tiles/${tileType.file}`;
+        img.src = tilePath;
+        console.log('Loading tile image:', tilePath);
+        
+        // needed this bc it broke so add error handling
+        img.onerror = () => {
+            console.error('Failed to load tile:', tilePath);
+            img.style.backgroundColor = '#f00'; // red for failed tiles
+        };
         
         const label = document.createElement('div');
         label.className = 'tile-label';
@@ -64,45 +103,65 @@ function loadTileImages() {
         tileOption.appendChild(label);
         tileGrid.appendChild(tileOption);
         
-        // Load image for canvas
+        // load image for canvas
         const canvasImg = new Image();
         canvasImg.onload = () => {
-            tileImages[tileType.file] = canvasImg;
+            // store with a unique key that includes the folder path???????? why ???
+            const tileKey = tileType.folder ? `${tileType.folder}${tileType.file}` : tileType.file;
+            tileImages[tileKey] = canvasImg;
             if (Object.keys(tileImages).length === TILE_TYPES.length) {
+                initializeGrassTiles();
                 drawMap();
             }
         };
-        canvasImg.src = `../tiles/${tileType.file}`;
+        canvasImg.src = tilePath;
     });
 }
 
-// Select tile (override from palette-ui.js for compatibility)
+// toggle tile set this is dumb tbh 
+function toggleTileSet(setName) {
+    const checkbox = document.getElementById(`toggle${setName.charAt(0).toUpperCase() + setName.slice(1)}`);
+    
+    if (checkbox.checked) {
+        if (!activeTileSets.includes(setName)) {
+            activeTileSets.push(setName);
+        }
+    } else {
+        activeTileSets = activeTileSets.filter(s => s !== setName);
+    }
+    
+    // reload tiles with new set
+    loadTileImages();
+}
+
+// select tile 
 function selectTile(tileType, index) {
     selectedTile = tileType;
     
-    // Update UI
+    // update UI
     document.querySelectorAll('.tile-option').forEach((el, i) => {
         el.classList.toggle('selected', i === index);
     });
     
     document.getElementById('selectedTileName').textContent = tileType.name;
     
-    // Update preview
+    // preview
     const preview = document.getElementById('previewTile');
     const previewImg = document.getElementById('previewImg');
-    previewImg.src = `../tiles/${tileType.file}`;
+    const tilePath = tileType.folder ? `${tileType.folder}${tileType.file}` : `../tiles/${tileType.file}`;
+    previewImg.src = tilePath;
     preview.style.display = 'block';
 }
 
-// Draw map
+// draw map
 function drawMap() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Background
+    // background
     ctx.fillStyle = '#333';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Grid lines
+    // grid lines
     ctx.strokeStyle = '#555';
     ctx.lineWidth = 1;
     for (let i = 0; i <= GRID_SIZE; i++) {
@@ -117,29 +176,32 @@ function drawMap() {
         ctx.stroke();
     }
     
-    // Draw tiles
+    // draw tiles
     for (let y = 0; y < GRID_SIZE; y++) {
         for (let x = 0; x < GRID_SIZE; x++) {
             const cell = mapGrid[y][x];
-            if (cell && tileImages[cell.tile.file]) {
-                ctx.save();
-                ctx.translate(x * TILE_SIZE * zoom + TILE_SIZE * zoom / 2, 
-                             y * TILE_SIZE * zoom + TILE_SIZE * zoom / 2);
-                ctx.rotate(cell.rotation * Math.PI / 180);
-                ctx.drawImage(
-                    tileImages[cell.tile.file],
-                    -TILE_SIZE * zoom / 2,
-                    -TILE_SIZE * zoom / 2,
-                    TILE_SIZE * zoom,
-                    TILE_SIZE * zoom
-                );
-                ctx.restore();
+            if (cell && cell.tile) {
+                const tileKey = cell.tile.folder ? `${cell.tile.folder}${cell.tile.file}` : cell.tile.file;
+                if (tileImages[tileKey]) {
+                    ctx.save();
+                    ctx.translate(x * TILE_SIZE * zoom + TILE_SIZE * zoom / 2, 
+                                 y * TILE_SIZE * zoom + TILE_SIZE * zoom / 2);
+                    ctx.rotate(cell.rotation * Math.PI / 180);
+                    ctx.drawImage(
+                        tileImages[tileKey],
+                        -TILE_SIZE * zoom / 2,
+                        -TILE_SIZE * zoom / 2,
+                        TILE_SIZE * zoom,
+                        TILE_SIZE * zoom
+                    );
+                    ctx.restore();
+                }
             }
         }
     }
 }
 
-// Clear map
+// clear map
 function clearMap() {
     if (confirm('Clear the entire map?')) {
         for (let y = 0; y < GRID_SIZE; y++) {
@@ -151,20 +213,22 @@ function clearMap() {
     }
 }
 
-// Fill empty spaces with grass
+// fill empty spaces with grass tiles
 function fillEmpty() {
-    const grassTypes = [
-        TILE_TYPES.find(t => t.name === 'Grass 1'),
-        TILE_TYPES.find(t => t.name === 'Grass 2'),
-        TILE_TYPES.find(t => t.name === 'Grass 3')
-    ];
+    // get a random tile from current active tiles
+    const availableTiles = TILE_TYPES.filter(t => t.type !== 'c3' && t.type !== 'water');
+    
+    if (availableTiles.length === 0) {
+        alert('No tiles available for filling. Please enable at least one tile set.');
+        return;
+    }
     
     for (let y = 0; y < GRID_SIZE; y++) {
         for (let x = 0; x < GRID_SIZE; x++) {
             if (!mapGrid[y][x]) {
-                const randomGrass = grassTypes[Math.floor(Math.random() * 3)];
+                const randomTile = availableTiles[Math.floor(Math.random() * availableTiles.length)];
                 mapGrid[y][x] = {
-                    tile: randomGrass,
+                    tile: randomTile,
                     rotation: 0
                 };
             }
@@ -173,7 +237,7 @@ function fillEmpty() {
     drawMap();
 }
 
-// Toggle controls panel
+// toggle controls panel
 function toggleControls() {
     const panel = document.getElementById('controlsPanel');
     const btn = document.querySelector('.collapse-btn');
@@ -187,13 +251,13 @@ function toggleControls() {
     }
 }
 
-// Mouse events
+// mouse events
 canvas.addEventListener('mousemove', (e) => {
     const rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
     mouseY = e.clientY - rect.top;
     
-    // Update preview position
+    // update preview position
     const preview = document.getElementById('previewTile');
     if (selectedTile && preview.style.display === 'block') {
         preview.style.left = (e.clientX - 40) + 'px';
@@ -238,13 +302,14 @@ canvas.addEventListener('wheel', (e) => {
     resizeCanvas();
 });
 
-// Make functions available globally (for HTML onclick)
+// make functions available globally (for HTML onclick)
 window.clearMap = clearMap;
 window.fillEmpty = fillEmpty;
 window.toggleControls = toggleControls;
 window.rotateSelection = rotateSelection;
 window.setRotation = setRotation;
+window.toggleTileSet = toggleTileSet;
 
-// Initialize
+// initialize
 loadTileImages();
 resizeCanvas();

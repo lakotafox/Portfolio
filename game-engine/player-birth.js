@@ -23,7 +23,7 @@ export const player = {
     spritesLoaded: 0
 };
 
-//FUNC Load individual player sprites
+// load individual player sprites
 export function loadPlayerSprites() {
     console.log('Loading player sprites...');
     const spritesToLoad = [
@@ -37,7 +37,7 @@ export function loadPlayerSprites() {
         img.onload = () => {
             console.log(`Loaded sprite: ${file}`);
             player.sprites[direction] = img;
-            // Use the same image for left, but it will be flipped
+            // use the same image for left, but it will be flipped
             if (direction === 'right') {
                 player.sprites.left = img;
             }
@@ -51,9 +51,9 @@ export function loadPlayerSprites() {
     });
 }
 
-// Input handling will be in big-bang.js since that's where 'keys' is defined
+// input handling will be in big-bang.js since that's where 'keys' is defined
 
-//FUNC Update player movement
+// update player movement
 export function updatePlayer(keys, mapGrid) {
     let moved = false;
     let dx = 0;
@@ -86,7 +86,7 @@ export function updatePlayer(keys, mapGrid) {
     
    
     
-    // Check project collision
+    // check project collision
     if (moved) {
         ProjectManager.checkCollision(player.x, player.y, mapGrid, TILE_SIZE, GRID_SIZE);
     }
@@ -100,10 +100,10 @@ export function drawPlayer(ctx, camera) {
     const sprite = player.sprites[player.facing];
     
     if (sprite) {
-        // Draw sprite (scale up 2x for visibility)
+        // draw sprite (scale up 2x for visibility)
         ctx.save();
         
-        // Apply horizontal flip for left facing
+        // apply horizontal flip for left facing
         if (player.facing === 'left') {
             ctx.scale(-1, 1);
             ctx.drawImage(
@@ -121,7 +121,7 @@ export function drawPlayer(ctx, camera) {
         
         ctx.restore();
     } else {
-        // Fallback circle
+        // fallback circle
         ctx.fillStyle = player.color;
         ctx.beginPath();
         ctx.arc(x, y, PLAYER_SIZE/2, 0, Math.PI * 2);
@@ -133,5 +133,5 @@ export function drawPlayer(ctx, camera) {
     }
 }
 
-// Initialize sprite loading
+// initialize sprite loading
 loadPlayerSprites();

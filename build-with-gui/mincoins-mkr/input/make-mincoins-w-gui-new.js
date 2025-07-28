@@ -1,7 +1,7 @@
-// Main MinCoins Builder Script
-// This file coordinates all the modules for the MinCoins maker tool
+// main MinCoins Builder Script
+// this file coordinates all the modules for the MinCoins maker tool
 
-// Canvas setup
+// canvas setup
 const canvas = document.getElementById('builderCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -12,7 +12,7 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// State
+// state
 const camera = { x: 400, y: 300, zoom: 1 };
 const hammer = { x: 400, y: 300, width: 32, height: 32 };
 let hammerImage = new Image();
@@ -32,10 +32,10 @@ let isResizing = false;
 let isDragging = false;
 let nextId = 1;
 
-// Movement setup
+// movement setup
 setupMovementControls();
 
-// Drag and drop
+// drag and drop
 document.querySelectorAll('.sign-item').forEach(item => {
     item.addEventListener('dragstart', (e) => {
         e.dataTransfer.setData('text/plain', e.target.dataset.type);
@@ -53,7 +53,7 @@ canvas.addEventListener('drop', (e) => {
     selectedSign = newSign;
 });
 
-// Mouse interaction
+// mouse interaction
 let mouseDownTime = 0;
 let clickTimer = null;
 let hasDragged = false;
@@ -66,7 +66,7 @@ canvas.addEventListener('mousedown', (e) => {
     isResizing = false;
     isDragging = false;
     
-    // Check resize handle first
+    // check resize handle first
     for (let sign of signs) {
         if (world.x >= sign.x + sign.width - 10 && world.x <= sign.x + sign.width + 10 &&
             world.y >= sign.y + sign.height - 10 && world.y <= sign.y + sign.height + 10) {
@@ -77,7 +77,7 @@ canvas.addEventListener('mousedown', (e) => {
         }
     }
     
-    // Check sign selection
+    // check sign selection
     for (let i = signs.length - 1; i >= 0; i--) {
         const sign = signs[i];
         if (world.x >= sign.x && world.x <= sign.x + sign.width &&
@@ -145,7 +145,7 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
-// Render function
+// render function
 function render() {
     ctx.fillStyle = '#1e1e1e';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -155,7 +155,7 @@ function render() {
     ctx.scale(camera.zoom, camera.zoom);
     ctx.translate(-camera.x, -camera.y);
     
-    // Draw NetBeans background
+    // draw NetBeans background
     if (codeImageLoaded && codeImage) {
         const imageWidth = 800;
         const imageHeight = (codeImage.height / codeImage.width) * imageWidth;
@@ -169,11 +169,11 @@ function render() {
         ctx.fillText('Loading...', 450, 350);
     }
     
-    // Draw signs
+    // draw signs
     signs.forEach(sign => {
         drawSign(ctx, sign);
         
-        // Selection highlight
+        // selection highlight
         if (sign === selectedSign) {
             ctx.strokeStyle = '#ffd700';
             ctx.lineWidth = 3;
@@ -184,13 +184,13 @@ function render() {
         }
     });
     
-    // Draw hammer
+    // draw hammer
     drawHammer(ctx, hammer, hammerImage, hammerLoaded);
     
     ctx.restore();
 }
 
-// Export functions
+// export functions
 function clearAll() {
     if (confirm('Clear all signs?')) {
         signs = [];
@@ -226,7 +226,7 @@ function exportLayout() {
     popup.document.close();
 }
 
-// Game loop
+// game loop
 function gameLoop() {
     updateCamera(camera, hammer);
     render();
@@ -235,6 +235,6 @@ function gameLoop() {
 
 gameLoop();
 
-// Export to window
+// export to window
 window.clearAll = clearAll;
 window.exportLayout = exportLayout;

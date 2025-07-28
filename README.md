@@ -53,36 +53,29 @@ this did not work out but built some sort of foundation of an "Enviorment" I cou
 
 
 
-3. **Interaction Refinement**: DEEP REFINEING prompted different mouse actions:
+3. **Interaction Refinement**: DEEP REFINEING prompted for different mouse actions:
    - Single click for selection/deletion
-   - Click-and-hold for dragging
+   - Click to selcet tile and click to place in grid 
    - Double-click for editing
-   - sidebar with tiles thats scrollable 
+   - sidebar with tiles 
    - a tool to rotate tiles 
 
 
-
-4. **Visual Feedback**: This was unessacry but i wanted selection highlights, rotation indicators, and resize handles
-
-(did not end up using resize until the mincoins builder!) so lucky me
-
-5. **Data Export**: I made the map and then dug through inspect element and gave the wrong code like 15 times............. then prompted hey  create a button that opens a window with the exact code(JSON) I needed to add to my main portfolio for its map.functionality to generate clean data structures
+4. **Data Export**: I made the map and then dug through inspect element and gave the wrong code like 15 times............. then prompted hey  create a button that opens a window with the exact code(JSON) I needed to add to my main portfolio for its map.functionality to generate clean data structures
 GO LOOK AT game-map.js ..... IT IS GIANT... 
 
 
 
 
 **I KNOW OKAY**
- Yes I guarntee there is a better way with way less lines but hey....im not that guy so here is my fun and WORKING way to do it.
+this may seem dumb and extra or it may seem genius and inovative up to you 
 
 
-
-
-6. **Polish**: Added keyboard shortcuts, zoom controls, and camera movement
 
 #### Key Challenges Solved
 - **Map Maker**: Data collecting with GUI 
-( lame or cool? ). Getting tile rotation to work visually. 
+( lame or cool? ). getting rotation to work proper in carc map builder 
+see carcasonecentral.com for tile logic  
  
  HA JOKE Some tiles you say rotate left and it goes right lol its bugged it's in game-map.js
 

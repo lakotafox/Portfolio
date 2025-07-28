@@ -1,4 +1,4 @@
-// Sign type definitions and creation logic
+// sign type definitions and creation logic
 
 function addSign(type, x, y, nextId) {
     const arrows = {

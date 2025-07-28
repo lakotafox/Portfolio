@@ -1,5 +1,5 @@
-// Player Renderer
-// Handles drawing the player on the canvas
+// player Renderer
+// handles drawing the player on the canvas
 
 import { PLAYER_SIZE } from '../config.js';
 
@@ -9,7 +9,7 @@ export class PlayerRenderer {
         this.playerSprites = playerSprites;
     }
 
-    //FUNC Main render method
+    // main render method
     render(ctx) {
         const sprite = this.playerSprites.getSprite(this.playerState.facing);
         
@@ -20,7 +20,7 @@ export class PlayerRenderer {
         }
     }
 
-    //FUNC Draw the player on canvas with camera offset
+    // draw the player on canvas with camera offset
     draw(ctx, cameraX, cameraY) {
         const screenX = this.playerState.x - cameraX;
         const screenY = this.playerState.y - cameraY;
@@ -34,11 +34,11 @@ export class PlayerRenderer {
         }
     }
 
-    //FUNC Draw player sprite
+    // draw player sprite
     drawSprite(ctx, sprite, x, y, facing) {
         ctx.save();
         
-        // Flip horizontally for left facing
+        // flip horizontally for left facing
         if (facing === 'left') {
             ctx.scale(-1, 1);
             ctx.drawImage(sprite, -x - 16, y - 16, 32, 32);
@@ -49,24 +49,24 @@ export class PlayerRenderer {
         ctx.restore();
     }
 
-    //FUNC Draw fallback circle when sprites not loaded
+    // draw fallback circle when sprites not loaded
     drawFallbackCircle(ctx, x, y) {
-        // Colored circle
+        // colored circle
         ctx.fillStyle = this.playerState.color;
         ctx.beginPath();
         ctx.arc(x, y, this.playerState.size / 2, 0, Math.PI * 2);
         ctx.fill();
         
-        // White border
+        // white border
         ctx.strokeStyle = "#fff";
         ctx.lineWidth = 2;
         ctx.stroke();
         
-        // Direction indicator
+        // direction indicator
         this.drawDirectionIndicator(ctx, x, y, this.playerState.facing, this.playerState.size);
     }
 
-    //FUNC Draw direction indicator on fallback circle
+    // draw direction indicator on fallback circle
     drawDirectionIndicator(ctx, x, y, facing, size) {
         ctx.fillStyle = "#fff";
         ctx.beginPath();

@@ -11,6 +11,10 @@
     <div class="editor-container">
         <div class="tile-palette">
             <h2>Tile Palette</h2>
+            <div class="tile-set-toggles">
+                <label><input type="checkbox" id="toggleC3" checked onchange="toggleTileSet('c3')"> C3 Tiles</label>
+                <label><input type="checkbox" id="toggleWater" onchange="toggleTileSet('water')"> Water</label>
+            </div>
             <div class="tile-grid" id="tileGrid">
                 <!-- Tiles will be added here -->
             </div>
@@ -44,7 +48,7 @@
             
             <div class="control-group">
                 <button onclick="clearMap()" class="danger">Clear Map</button>
-                <button onclick="fillEmpty()">Fill Empty with Random Grass</button>
+                <button onclick="fillEmpty()">Fill Empty with Random Tiles</button>
             </div>
             
             <div class="control-group">

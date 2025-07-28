@@ -1,5 +1,5 @@
-// Player module exports
-// Organized player functionality into focused modules
+// player module exports
+// organized player functionality into focused modules
 
 export { PlayerState } from './player-state.js';
 export { PlayerSprites } from './player-sprites.js';

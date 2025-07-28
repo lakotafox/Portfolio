@@ -1,5 +1,5 @@
-// MinCoins Layout Module
-// Stores and manages layout items from the builder
+// minCoins Layout Module
+// stores and manages layout items from the builder
 
 export const layoutItems = [
     {
@@ -149,7 +149,7 @@ export const layoutItems = [
     }
 ];
 
-// DO NOT EDIT BY HAND! use ../build-with-gui/mincoins-builder-simple.html
+// dO NOT EDIT BY HAND! use ../build-with-gui/mincoins-builder-simple.html
 // to modify the layout, use the builder tool:
 // 1. open ../build-with-gui/mincoins-builder-simple.html
 // 2. drag and drop signs, terminals, buttons

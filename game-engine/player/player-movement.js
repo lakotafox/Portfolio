@@ -1,16 +1,16 @@
-// Player Movement
-// Handles player movement logic and boundaries
+// player Movement
+// handles player movement logic and boundaries
 
 import { TILE_SIZE, PLAYER_SIZE, GRID_SIZE } from '../config.js';
 
 export class PlayerMovement {
-    //FUNC Update player position based on input
+    // update player position based on input
     static updatePosition(playerState, input) {
         let dx = 0;
         let dy = 0;
         let moved = false;
         
-        // Calculate movement deltas
+        // calculate movement deltas
         if (input.up) {
             dy = -playerState.speed;
             playerState.setFacing('up');
@@ -32,17 +32,17 @@ export class PlayerMovement {
             moved = true;
         }
         
-        // Apply movement
+        // apply movement
         playerState.x += dx;
         playerState.y += dy;
         
-        // Keep player in bounds
+        // keep player in bounds
         this.enforceBoundaries(playerState);
         
         return moved;
     }
 
-    //FUNC Keep player within map boundaries
+    // keep player within map boundaries
     static enforceBoundaries(playerState) {
         const halfSize = PLAYER_SIZE / 2;
         const maxX = GRID_SIZE * TILE_SIZE - halfSize;
@@ -52,7 +52,7 @@ export class PlayerMovement {
         playerState.y = Math.max(halfSize, Math.min(maxY, playerState.y));
     }
 
-    //FUNC Calculate distance between two points
+    // calculate distance between two points
     static getDistance(x1, y1, x2, y2) {
         const dx = x2 - x1;
         const dy = y2 - y1;

@@ -44,13 +44,8 @@
     <!-- add exit functionality -->
     <script>
         document.getElementById('exitBtn').addEventListener('click', function() {
-            // check if we came from the portfolio game
-            if (document.referrer && document.referrer.includes('index.html')) {
-                // go back to the referrer????????
-                window.location.href = document.referrer;
-            } else {
-                window.location.href = '/';
-            }
+            // go back to main game
+            window.location.href = '../../index.html';
         });
     </script>
 </body>

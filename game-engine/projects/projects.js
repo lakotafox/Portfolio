@@ -1,7 +1,7 @@
-// Project/City Management Module
-// Handles project definitions, collision detection, and UI interactions
+// project/City Management Module
+// handles project definitions, collision detection, and UI interactions
 
-// Projects/Cities data - will be placed in predefined city locations
+// projects/Cities data - will be placed in predefined city locations
 const projects = [
     {
         id: 1,
@@ -70,19 +70,19 @@ const projects = [
     }
 ];
 
-// State management
+// state management
 let currentProject = null;
 let markingMode = false;
 let markedLocations = [];
 
-// Get DOM elements after page loads
+// get DOM elements after page loads
 let cityInfo = null;
 let cityName = null;
 let cityDesc = null;
 let projectViewer = null;
 let projectFrame = null;
 
-// Initialize DOM elements
+// initialize DOM elements
 function initProjectDOM() {
     cityInfo = document.getElementById('cityInfo');
     cityName = document.getElementById('cityName');
@@ -91,7 +91,7 @@ function initProjectDOM() {
     projectFrame = document.getElementById('projectFrame');
 }
 
-// Check if player is on a project tile
+// check if player is on a project tile
 function checkProjectCollision(playerX, playerY, mapGrid, TILE_SIZE, GRID_SIZE) {
     const tileX = Math.floor(playerX / TILE_SIZE);
     const tileY = Math.floor(playerY / TILE_SIZE);
@@ -110,7 +110,7 @@ function checkProjectCollision(playerX, playerY, mapGrid, TILE_SIZE, GRID_SIZE) 
     }
 }
 
-// Show city info UI
+// show city info UI
 function showCityInfo(project) {
     if (!cityInfo || !cityName || !cityDesc) return;
     cityName.textContent = project.name;
@@ -118,43 +118,43 @@ function showCityInfo(project) {
     cityInfo.classList.add('active');
 }
 
-// Hide city info UI
+// hide city info UI
 function hideCityInfo() {
     if (!cityInfo) return;
     cityInfo.classList.remove('active');
 }
 
-// Open project in viewer
+// open project in viewer
 function openProject(project) {
     if (!projectViewer || !projectFrame) return;
     console.log('Opening project:', project.name, 'Type:', project.type);
     
     if (project.type === 'code') {
-        // Open code viewer for code projects
+        // open code viewer for code projects
         openCodeViewer(project);
     } else {
-        // Open iframe for regular projects
+        // open iframe for regular projects
         projectFrame.src = project.url;
         projectViewer.classList.add('active');
     }
 }
 
-// Close project viewer
+// close project viewer
 function closeProject() {
     if (!projectViewer || !projectFrame) return;
     projectViewer.classList.remove('active');
     projectFrame.src = '';
 }
 
-// Code viewer functions
+// code viewer functions
 function openCodeViewer(project) {
     console.log('Opening code viewer for:', project.name);
     
-    // Navigate to the code viewer page
+    // navigate to the code viewer page
     window.location.href = 'mincoins/mincoins-area.html?project=' + encodeURIComponent(project.name);
 }
 
-// Marking mode functions for development
+// marking mode functions for development
 function toggleMarkingMode() {
     markingMode = !markingMode;
     console.log('Marking mode:', markingMode ? 'ON' : 'OFF');
@@ -202,7 +202,7 @@ function markProjectLocation(playerX, playerY, TILE_SIZE) {
     const tileX = Math.floor(playerX / TILE_SIZE);
     const tileY = Math.floor(playerY / TILE_SIZE);
     
-    // Check if already marked
+    // check if already marked
     const exists = markedLocations.find(loc => loc.x === tileX && loc.y === tileY);
     if (!exists) {
         markedLocations.push({ x: tileX, y: tileY });
@@ -213,7 +213,7 @@ function markProjectLocation(playerX, playerY, TILE_SIZE) {
 function exportMarkedLocations() {
     console.log('Marked locations:', markedLocations);
     
-    // Create export window
+    // create export window
     const exportWindow = window.open('', 'Export Locations', 'width=600,height=400');
     exportWindow.document.write(`
         <h2>Marked Project Locations</h2>
@@ -225,7 +225,7 @@ function exportMarkedLocations() {
     `);
 }
 
-// Export functions and data
+// export functions and data
 window.closeProject = closeProject;
 
 export {

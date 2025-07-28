@@ -1,5 +1,5 @@
-// MinCoins Terminal Module
-// Handles terminal state and MinCoins algorithm
+// minCoins Terminal Module
+// handles terminal state and MinCoins algorithm
 
 export class MinCoinsTerminal {
     constructor() {
@@ -9,7 +9,7 @@ export class MinCoinsTerminal {
         this.waitingForInput = false;
     }
     
-    //FUNC Start the MinCoins program
+    // start the MinCoins program
     start() {
         if (!this.isRunning) {
             this.isRunning = true;
@@ -23,7 +23,7 @@ export class MinCoinsTerminal {
         }
     }
     
-    //FUNC Add digit to input
+    // add digit to input
     addDigit(digit) {
         if (this.isRunning && this.waitingForInput) {
             this.input += digit.toString();
@@ -32,7 +32,7 @@ export class MinCoinsTerminal {
         }
     }
     
-    //FUNC Process the entered input
+    // process the entered input
     processInput() {
         if (!this.isRunning || !this.waitingForInput || !this.input) {
             return;
@@ -40,7 +40,7 @@ export class MinCoinsTerminal {
         
         const amount = parseInt(this.input);
         
-        // Show the input that was entered
+        // show the input that was entered
         this.output.push(this.input);
         
         if (amount === 0) {
@@ -59,7 +59,7 @@ export class MinCoinsTerminal {
             return;
         }
         
-        // Calculate coins using MinCoins algorithm
+        // calculate coins using MinCoins algorithm
         const result = this.calculateMinCoins(amount);
         this.output.push('');
         this.output.push(`Quarters:${result.quarters}`);
@@ -72,7 +72,7 @@ export class MinCoinsTerminal {
         this.input = '';
     }
     
-    //FUNC Calculate minimum coins needed for given amount
+    // calculate minimum coins needed for given amount
     calculateMinCoins(amount) {
         let remaining = amount;
         let quarters = 0;
@@ -80,25 +80,25 @@ export class MinCoinsTerminal {
         let nickels = 0;
         let pennies = 0;
         
-        // Calculate quarters (25 cents)
+        // calculate quarters (25 cents)
         while (remaining >= 25) {
             quarters++;
             remaining -= 25;
         }
         
-        // Calculate dimes (10 cents)
+        // calculate dimes (10 cents)
         while (remaining >= 10) {
             dimes++;
             remaining -= 10;
         }
         
-        // Calculate nickels (5 cents)
+        // calculate nickels (5 cents)
         if (remaining >= 5) {
             nickels++;
             remaining -= 5;
         }
         
-        // Remaining are pennies
+        // remaining are pennies
         pennies = remaining;
         
         return { quarters, dimes, nickels, pennies };
