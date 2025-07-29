@@ -1,5 +1,6 @@
 // minCoins Layout Module
 // stores and manages layout items from the builder
+// updated: 2025-07-29T01:53:53.966Z
 
 export const layoutItems = [
     {
@@ -9,7 +10,8 @@ export const layoutItems = [
         "width": 120,
         "height": 80,
         "text": "Walk Down",
-        "arrow": "↓"
+        "arrow": "↓",
+        "project": "mincoins"
     },
     {
         "type": "sign-left",
@@ -18,7 +20,8 @@ export const layoutItems = [
         "width": 123,
         "height": 117,
         "text": "Check out this Code!",
-        "arrow": "←"
+        "arrow": "←",
+        "project": "mincoins"
     },
     {
         "type": "run-button",
@@ -27,7 +30,8 @@ export const layoutItems = [
         "width": 80,
         "height": 40,
         "text": "RUN",
-        "arrow": null
+        "arrow": null,
+        "project": "mincoins"
     },
     {
         "type": "terminal",
@@ -36,7 +40,8 @@ export const layoutItems = [
         "width": 607,
         "height": 141,
         "text": "Terminal",
-        "arrow": null
+        "arrow": null,
+        "project": "mincoins"
     },
     {
         "type": "number-0",
@@ -46,7 +51,8 @@ export const layoutItems = [
         "height": 40,
         "text": "0",
         "arrow": null,
-        "number": 0
+        "number": 0,
+        "project": "mincoins"
     },
     {
         "type": "number-1",
@@ -56,7 +62,8 @@ export const layoutItems = [
         "height": 40,
         "text": "1",
         "arrow": null,
-        "number": 1
+        "number": 1,
+        "project": "mincoins"
     },
     {
         "type": "number-2",
@@ -66,7 +73,8 @@ export const layoutItems = [
         "height": 40,
         "text": "2",
         "arrow": null,
-        "number": 2
+        "number": 2,
+        "project": "mincoins"
     },
     {
         "type": "number-3",
@@ -76,7 +84,8 @@ export const layoutItems = [
         "height": 40,
         "text": "3",
         "arrow": null,
-        "number": 3
+        "number": 3,
+        "project": "mincoins"
     },
     {
         "type": "number-4",
@@ -86,7 +95,8 @@ export const layoutItems = [
         "height": 40,
         "text": "4",
         "arrow": null,
-        "number": 4
+        "number": 4,
+        "project": "mincoins"
     },
     {
         "type": "number-5",
@@ -96,7 +106,8 @@ export const layoutItems = [
         "height": 40,
         "text": "5",
         "arrow": null,
-        "number": 5
+        "number": 5,
+        "project": "mincoins"
     },
     {
         "type": "number-6",
@@ -106,7 +117,8 @@ export const layoutItems = [
         "height": 40,
         "text": "6",
         "arrow": null,
-        "number": 6
+        "number": 6,
+        "project": "mincoins"
     },
     {
         "type": "number-7",
@@ -116,7 +128,8 @@ export const layoutItems = [
         "height": 40,
         "text": "7",
         "arrow": null,
-        "number": 7
+        "number": 7,
+        "project": "mincoins"
     },
     {
         "type": "number-8",
@@ -126,7 +139,8 @@ export const layoutItems = [
         "height": 40,
         "text": "8",
         "arrow": null,
-        "number": 8
+        "number": 8,
+        "project": "mincoins"
     },
     {
         "type": "enter-key",
@@ -135,7 +149,8 @@ export const layoutItems = [
         "width": 80,
         "height": 40,
         "text": "ENTER",
-        "arrow": null
+        "arrow": null,
+        "project": "mincoins"
     },
     {
         "type": "number-9",
@@ -145,7 +160,189 @@ export const layoutItems = [
         "height": 40,
         "text": "9",
         "arrow": null,
+        "number": 9,
+        "project": "mincoins"
+    },
+    // gcd items
+    {
+        "type": "sign-down",
+        "x": -15,
+        "y": 1404,
+        "width": 120,
+        "height": 80,
+        "text": "GCD THIS WAY",
+        "arrow": "↓",
+        "project": "gcd"
+    },
+    {
+        "type": "gcd-code-img",
+        "x": 53,
+        "y": 1758,
+        "width": 778,
+        "height": 723,
+        "text": "GCD Code Image",
+        "arrow": null,
+        "project": "gcd"
+    },
+    {
+        "type": "gcd-img",
+        "x": 53,
+        "y": 2476,
+        "width": 774,
+        "height": 226,
+        "text": "GCD Image",
+        "arrow": null,
+        "project": "gcd"
+    },
+    {
+        "type": "terminal",
+        "x": 213,
+        "y": 2705,
+        "width": 483,
+        "height": 143,
+        "text": "Terminal",
+        "arrow": null,
+        "project": "gcd"
+    },
+    {
+        "type": "run-button",
+        "x": 55,
+        "y": 2704,
+        "width": 80,
+        "height": 40,
+        "text": "RUN",
+        "arrow": null,
+        "project": "gcd"
+    },
+    {
+        "type": "number-0",
+        "x": 168,
+        "y": 2855,
+        "width": 40,
+        "height": 40,
+        "text": "0",
+        "arrow": null,
+        "project": "gcd",
+        "number": 0
+    },
+    {
+        "type": "number-1",
+        "x": 222,
+        "y": 2855,
+        "width": 40,
+        "height": 40,
+        "text": "1",
+        "arrow": null,
+        "project": "gcd",
+        "number": 1
+    },
+    {
+        "type": "number-2",
+        "x": 277,
+        "y": 2854,
+        "width": 40,
+        "height": 40,
+        "text": "2",
+        "arrow": null,
+        "project": "gcd",
+        "number": 2
+    },
+    {
+        "type": "number-3",
+        "x": 338,
+        "y": 2854,
+        "width": 40,
+        "height": 40,
+        "text": "3",
+        "arrow": null,
+        "project": "gcd",
+        "number": 3
+    },
+    {
+        "type": "number-4",
+        "x": 396,
+        "y": 2854,
+        "width": 40,
+        "height": 40,
+        "text": "4",
+        "arrow": null,
+        "project": "gcd",
+        "number": 4
+    },
+    {
+        "type": "number-5",
+        "x": 456,
+        "y": 2856,
+        "width": 40,
+        "height": 40,
+        "text": "5",
+        "arrow": null,
+        "project": "gcd",
+        "number": 5
+    },
+    {
+        "type": "number-6",
+        "x": 514,
+        "y": 2856,
+        "width": 40,
+        "height": 40,
+        "text": "6",
+        "arrow": null,
+        "project": "gcd",
+        "number": 6
+    },
+    {
+        "type": "number-7",
+        "x": 580,
+        "y": 2856,
+        "width": 40,
+        "height": 40,
+        "text": "7",
+        "arrow": null,
+        "project": "gcd",
+        "number": 7
+    },
+    {
+        "type": "number-8",
+        "x": 644,
+        "y": 2856,
+        "width": 40,
+        "height": 40,
+        "text": "8",
+        "arrow": null,
+        "project": "gcd",
+        "number": 8
+    },
+    {
+        "type": "number-9",
+        "x": 708,
+        "y": 2857,
+        "width": 40,
+        "height": 40,
+        "text": "9",
+        "arrow": null,
+        "project": "gcd",
         "number": 9
+    },
+    {
+        "type": "enter-key",
+        "x": 409,
+        "y": 2918,
+        "width": 80,
+        "height": 40,
+        "text": "ENTER",
+        "arrow": null,
+        "project": "gcd"
+    },
+    {
+        "type": "sign-left",
+        "x": 703,
+        "y": 2102,
+        "width": 120,
+        "height": 122,
+        "text": "Check out this Code!",
+        "arrow": "←",
+        "project": "gcd"
     }
 ];
 

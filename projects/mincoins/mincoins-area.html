@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinCoins Area</title>
+    <title>NetBeans Area</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <!-- 
  
@@ -25,8 +25,13 @@
 <body>
     <canvas id="codeCanvas"></canvas>
     
+    <!-- background music for mincoins -->
+    <audio id="coinsMusic">
+        <source src="../../sound-effects/COINS.mp3" type="audio/mpeg">
+    </audio>
+    
     <div class="instructions">
-        <h3>MinCoins Area</h3>
+        <h3>NetBeans Area</h3>
         <p>↑↓←→ / WASD - Move</p>
         <p>Mouse - Look around</p>
         <p>Scroll - Zoom</p>
@@ -47,6 +52,28 @@
             // go back to main game
             window.location.href = '../../index.html';
         });
+        
+        // music control
+        const coinsMusic = document.getElementById('coinsMusic');
+        let playCount = 0;
+        if (coinsMusic) {
+            coinsMusic.volume = 0.3;
+            // play twice only
+            coinsMusic.addEventListener('ended', () => {
+                playCount++;
+                if (playCount < 2) {
+                    coinsMusic.play();
+                }
+            });
+            // start music on first interaction
+            ['click', 'keydown'].forEach(e => {
+                document.addEventListener(e, () => {
+                    if (playCount === 0) {
+                        coinsMusic.play().catch(err => console.log('Music error:', err));
+                    }
+                }, { once: true });
+            });
+        }
     </script>
 </body>
 </html>

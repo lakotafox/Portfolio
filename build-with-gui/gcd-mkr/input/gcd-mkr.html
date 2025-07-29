@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCD Builder - Simple</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <!-- 
+    =====================================================
+    GCD BUILDER TOOL
+    =====================================================
+    visual editor for creating gcd game layouts
+    
+    this tool generates the layout data for gcd-area.html
+    
+    how to use:
+    - drag signs from palette to canvas
+    - single click to delete
+    - click and hold to drag
+    - drag corner to resize
+    - double-click to edit text
+    - use wasd to move view
+    - export json when done
+    
+    the exported data should be copied into the
+    layoutItems array in gcd-area.html
+    
+    development note: creating this gui builder was an iterative
+    process that took several attempts with ai assistance.
+    the challenges included:
+    - getting drag-and-drop to work from palette to canvas
+    - distinguishing between click (delete) and drag (move)
+    - implementing resize handles that work intuitively
+    - making the camera system work with wasd keys
+    - properly exporting the layout data as json
+    
+    we had to work slowly, testing each feature step by step.
+    the final version is much more user-friendly than editing
+    json arrays by hand!
+    =====================================================
+    -->
+    <link rel="stylesheet" href="gcd-mkr.css">
+</head>
+<body>
+    <div class="container">
+        <div class="palette">
+            <h2 style="margin-top: 5px;">🪧 Signs</h2>
+            
+            <div class="sign-item" draggable="true" data-type="sign-down">
+                ↓<br>Down
+            </div>
+            
+            <div class="sign-item" draggable="true" data-type="sign-up">
+                ↑<br>Up
+            </div>
+            
+            <div class="sign-item" draggable="true" data-type="sign-left">
+                ←<br>Left
+            </div>
+            
+            <div class="sign-item" draggable="true" data-type="sign-right">
+                →<br>Right
+            </div>
+            
+            <h2 style="margin-top: 20px;">📟 Objects</h2>
+            
+            <div class="sign-item" draggable="true" data-type="terminal">
+                📟<br>Terminal
+            </div>
+            
+            <div class="sign-item" draggable="true" data-type="run-button">
+                ▶️<br>Run
+            </div>
+            
+            <h2 style="margin-top: 20px;">🔢 Number Keys</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-bottom: 5px;">
+                <div class="sign-item" draggable="true" data-type="number-0" style="margin: 0;">0</div>
+                <div class="sign-item" draggable="true" data-type="number-1" style="margin: 0;">1</div>
+                <div class="sign-item" draggable="true" data-type="number-2" style="margin: 0;">2</div>
+                <div class="sign-item" draggable="true" data-type="number-3" style="margin: 0;">3</div>
+                <div class="sign-item" draggable="true" data-type="number-4" style="margin: 0;">4</div>
+                <div class="sign-item" draggable="true" data-type="number-5" style="margin: 0;">5</div>
+                <div class="sign-item" draggable="true" data-type="number-6" style="margin: 0;">6</div>
+                <div class="sign-item" draggable="true" data-type="number-7" style="margin: 0;">7</div>
+                <div class="sign-item" draggable="true" data-type="number-8" style="margin: 0;">8</div>
+                <div class="sign-item" draggable="true" data-type="number-9" style="margin: 0;">9</div>
+            </div>
+            
+            <div class="sign-item" draggable="true" data-type="enter-key">
+                ⏎<br>Enter
+            </div>
+            
+            <h2>📚 GCD Images</h2>
+            
+            <div class="sign-item" draggable="true" data-type="gcd-code-img">
+                💻<br>GCD1.png
+            </div>
+            
+            <div class="sign-item" draggable="true" data-type="gcd-img">
+                📊<br>GCD2.png
+            </div>
+            
+            <div class="instructions">
+                <p><strong>Instructions:</strong></p>
+                <p>• Drag signs to canvas</p>
+                <p>• Single click to delete</p>
+                <p>• Click & hold to drag</p>
+                <p>• Drag corner to resize</p>
+                <p>• Double-click to edit text</p>
+                <p>• WASD to move view</p>
+            </div>
+        </div>
+
+        <div class="canvas-area">
+            <canvas id="builderCanvas"></canvas>
+        </div>
+    </div>
+
+
+    <div class="controls">
+        <button onclick="clearAll()">Clear All</button>
+        <button onclick="exportLayout()">Export JSON</button>
+    </div>
+
+    <!-- Load scripts in order -->
+    <script src="sign-types.js"></script>
+    <script src="drawing.js"></script>
+    <script src="camera-movement.js"></script>
+    <script src="make-mincoins-w-gui-new.js"></script>
+</body>
+</html>

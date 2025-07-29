@@ -7,14 +7,26 @@ export class MinCoinsTerminal {
         this.input = '';
         this.isRunning = false;
         this.waitingForInput = false;
+        this.mode = 'mincoins'; // 'mincoins' or 'gcd'
+        this.gcdStage = 0; // for gcd: 0 = first number, 1 = second number
+        this.gcdFirstNumber = null;
     }
     
     // start the MinCoins program
-    start() {
+    start(mode = 'mincoins') {
         if (!this.isRunning) {
             this.isRunning = true;
             this.waitingForInput = true;
-            this.output = ['run:', '', 'Please Enter Amount of Change (1-99) or ZERO TO Exit', ''];
+            this.mode = mode;
+            
+            if (mode === 'gcd') {
+                this.output = ['run:', 'Enter First Number or Zero to Exit:'];
+                this.gcdStage = 0;
+                this.gcdFirstNumber = null;
+            } else {
+                this.output = ['run:', '', 'Please Enter Amount of Change (1-99) or ZERO TO Exit', ''];
+            }
+            
             this.input = '';
             return true;
         } else {
@@ -38,6 +50,15 @@ export class MinCoinsTerminal {
             return;
         }
         
+        if (this.mode === 'gcd') {
+            this.processGcdInput();
+        } else {
+            this.processMinCoinsInput();
+        }
+    }
+    
+    // process mincoins input
+    processMinCoinsInput() {
         const amount = parseInt(this.input);
         
         // show the input that was entered
@@ -72,6 +93,46 @@ export class MinCoinsTerminal {
         this.input = '';
     }
     
+    // process gcd input
+    processGcdInput() {
+        const num = parseInt(this.input);
+        
+        // show the input that was entered
+        this.output.push(this.input);
+        
+        if (this.gcdStage === 0 && num === 0) {
+            // exit program
+            this.output.push('');
+            this.output.push('Program terminated.');
+            this.isRunning = false;
+            this.waitingForInput = false;
+            this.input = '';
+            return;
+        }
+        
+        if (isNaN(num) || num < 1) {
+            this.output.push('Please enter a positive number');
+            this.input = '';
+            return;
+        }
+        
+        if (this.gcdStage === 0) {
+            // first number entered
+            this.gcdFirstNumber = num;
+            this.output.push('Enter Second Number:');
+            this.gcdStage = 1;
+            this.input = '';
+        } else {
+            // second number entered, calculate gcd
+            const result = this.calculateGCD(this.gcdFirstNumber, num);
+            this.output.push(`the GCD IS: ${result}`);
+            this.output.push('');
+            this.output.push('Enter First Number or Zero to Exit:');
+            this.gcdStage = 0;
+            this.input = '';
+        }
+    }
+    
     // calculate minimum coins needed for given amount
     calculateMinCoins(amount) {
         let remaining = amount;
@@ -102,5 +163,17 @@ export class MinCoinsTerminal {
         pennies = remaining;
         
         return { quarters, dimes, nickels, pennies };
+    }
+    
+    // calculate gcd using subtraction method (matching java code)
+    calculateGCD(first, second) {
+        while (first !== second) {
+            if (first > second) {
+                first = first - second;
+            } else {
+                second = second - first;
+            }
+        }
+        return first;
     }
 }

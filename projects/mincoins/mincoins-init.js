@@ -20,9 +20,12 @@ const camera = {
 
 // initialize modules
 const player = new MinCoinsPlayer();
-const terminal = new MinCoinsTerminal();
+const mincoinsTerminal = new MinCoinsTerminal();
+const gcdTerminal = new MinCoinsTerminal();
+gcdTerminal.output = ['GCD Calculator Ready', 'Walk to RUN button and press ENTER to start'];
+const terminals = { mincoins: mincoinsTerminal, gcd: gcdTerminal };
 const renderer = new MinCoinsRenderer(canvas, ctx);
-const interactions = new MinCoinsInteractions(player, terminal);
+const interactions = new MinCoinsInteractions(player, terminals);
 
 // canvas resizing
 function resizeCanvas() {
@@ -52,7 +55,7 @@ function gameLoop() {
     camera.y = player.y;
     
     // render everything
-    renderer.render(camera, player, terminal);
+    renderer.render(camera, player, terminals);
     
     // continue loop
     requestAnimationFrame(gameLoop);
