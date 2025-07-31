@@ -2,7 +2,8 @@
 // loads all tile images and flag image
 
 export const tileImages = {};
-export let flagImage = null;
+export let flagPurpleImage = null; // purple flag for finished projects
+export let flagRedImage = null; // red flag for placeholder projects
 
 // define tile sets with their paths
 const tileSets = [
@@ -50,20 +51,35 @@ export function loadAllImages() {
         });
     });
     
-    // load flag image
-    const flagImg = new Image();
-    const flagPromise = new Promise((resolve) => {
-        flagImg.onload = () => {
-            flagImage = flagImg;
+    // load purple flag image (for finished projects)
+    const flagPurpleImg = new Image();
+    const flagPurplePromise = new Promise((resolve) => {
+        flagPurpleImg.onload = () => {
+            flagPurpleImage = flagPurpleImg;
             resolve();
         };
-        flagImg.onerror = () => {
-            console.error('Failed to load flag image');
+        flagPurpleImg.onerror = () => {
+            console.error('Failed to load purple flag image');
             resolve();
         };
     });
-    flagImg.src = 'build-with-gui/carc-map-mkr/tiles/flag.png';
-    imageLoadPromises.push(flagPromise);
+    flagPurpleImg.src = 'build-with-gui/carc-map-mkr/tiles/flag purple.png';
+    imageLoadPromises.push(flagPurplePromise);
+    
+    // load red flag image (for placeholder projects)
+    const flagRedImg = new Image();
+    const flagRedPromise = new Promise((resolve) => {
+        flagRedImg.onload = () => {
+            flagRedImage = flagRedImg;
+            resolve();
+        };
+        flagRedImg.onerror = () => {
+            console.error('Failed to load red flag image');
+            resolve();
+        };
+    });
+    flagRedImg.src = 'build-with-gui/carc-map-mkr/tiles/flag.png';
+    imageLoadPromises.push(flagRedPromise);
     
     return Promise.all(imageLoadPromises);
 }

@@ -64,6 +64,11 @@ export class MinCoinsTerminal {
         // show the input that was entered
         this.output.push(this.input);
         
+        // play coin sound 3 times for valid amounts
+        if (amount > 0 && amount <= 999999999) {
+            this.playCoinsSound();
+        }
+        
         if (amount === 0) {
             this.output.push('');
             this.output.push('BUILD SUCCESSFUL (total time: 2 minutes 21 seconds)');
@@ -73,8 +78,17 @@ export class MinCoinsTerminal {
             return;
         }
         
-        if (amount < 1 || amount > 99 || isNaN(amount)) {
+        if (amount < 1 || isNaN(amount)) {
             this.output.push('');
+            this.output.push('Please Enter Amount of Change (1-99) or ZERO TO Exit');
+            this.input = '';
+            return;
+        }
+        
+        // prevent crashes from huge numbers
+        if (amount > 999999999) {
+            this.output.push('');
+            this.output.push('Sorry, that will freeze or crash the game!');
             this.output.push('Please Enter Amount of Change (1-99) or ZERO TO Exit');
             this.input = '';
             return;
@@ -130,6 +144,9 @@ export class MinCoinsTerminal {
             this.output.push('Enter First Number or Zero to Exit:');
             this.gcdStage = 0;
             this.input = '';
+            
+            // play gcd sound
+            this.playGcdSound();
         }
     }
     
@@ -175,5 +192,23 @@ export class MinCoinsTerminal {
             }
         }
         return first;
+    }
+    
+    // play coin sound once
+    playCoinsSound() {
+        const coinSound = document.getElementById('coinSound');
+        if (coinSound) {
+            coinSound.currentTime = 0;
+            coinSound.play();
+        }
+    }
+    
+    // play gcd sound once
+    playGcdSound() {
+        const gcdSound = document.getElementById('gcdSound');
+        if (gcdSound) {
+            gcdSound.currentTime = 0;
+            gcdSound.play();
+        }
     }
 }

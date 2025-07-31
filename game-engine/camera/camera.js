@@ -4,15 +4,26 @@ export class Camera {
         this.x = startX;
         this.y = startY;
         this.smoothing = 0.1;
+        this.zoom = 1.3; // fixed 30% zoom
     }
     
     // update camera to follow player
     updateToFollowPlayer(player, canvas) {
-        const targetX = player.x - canvas.width / 2;
-        const targetY = player.y - canvas.height / 2;
+        const targetX = player.x - (canvas.width / 2) / this.zoom;
+        const targetY = player.y - (canvas.height / 2) / this.zoom;
         
         this.x += (targetX - this.x) * this.smoothing;
         this.y += (targetY - this.y) * this.smoothing;
+        
+        // boundary constraints - prevent camera from showing past map edges
+        const mapWidth = 15 * 80; // grid_size * tile_size
+        const mapHeight = 15 * 80;
+        const viewWidth = canvas.width / this.zoom;
+        const viewHeight = canvas.height / this.zoom;
+        
+        // clamp camera position to keep view within map bounds
+        this.x = Math.max(0, Math.min(this.x, mapWidth - viewWidth));
+        this.y = Math.max(0, Math.min(this.y, mapHeight - viewHeight));
     }
     
     // update camera to follow target

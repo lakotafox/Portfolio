@@ -35,8 +35,8 @@ const ProjectManager = {
             name: "Castle Algorithms",
             desc: "Data Structure Visualizer",
             url: "projects/castle-algorithms/index.html",
-            x: 4,
-            y: 8
+            x: 1,
+            y: 12
         },
         {
             id: 5,
@@ -56,11 +56,11 @@ const ProjectManager = {
         },
         {
             id: 7,
-            name: "Medieval Marketplace",
-            desc: "E-commerce Platform",
+            name: "FOXBUILTSTORE.COM",
+            desc: "Family Business Website",
             url: "projects/medieval-marketplace/index.html",
-            x: 1,
-            y: 12
+            x: 4,
+            y: 8
         }
     ],
 

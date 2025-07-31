@@ -52,6 +52,9 @@ document.addEventListener('keydown', (e) => {
             // view project
             if (ProjectManager.currentProject.url === 'projects/mincoins/mincoins-area.html') {
                 window.location.href = ProjectManager.currentProject.url;
+            } else if (ProjectManager.currentProject.name === 'FOXBUILTSTORE.COM') {
+                // special handling for foxbuilt - opens custom message page
+                window.open('projects/foxbuilt-message.html', '_blank', 'width=800,height=600');
             } else {
                 // for now, show alert for placeholder projects
                 alert(`Project: ${ProjectManager.currentProject.name}\n\n${ProjectManager.currentProject.desc}\n\n(This is a placeholder - actual project coming soon!)`);
@@ -96,11 +99,17 @@ function gameLoop() {
     ctx.fillStyle = '#1a1a1a'; // dark background
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
+    // apply camera zoom
+    ctx.save();
+    ctx.scale(camera.zoom, camera.zoom); // 30% zoom applied here
+    
     // draw all tiles
     drawAllTiles(ctx, mapGrid, camera);
     
     // draw player
     drawPlayer(ctx, camera);
+    
+    ctx.restore(); // reset zoom for ui elements
     
     // draw marking mode UI if active
     if (ProjectManager.markingMode) {

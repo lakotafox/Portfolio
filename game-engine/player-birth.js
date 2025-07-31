@@ -11,7 +11,7 @@ const PLAYER_SIZE = 20;
 export const player = {
     x: 7 * TILE_SIZE + TILE_SIZE / 2,
     y: 7 * TILE_SIZE + TILE_SIZE / 2,
-    speed: 4,
+    speed: 2, // reduced speed by 50%
     color: "#ff6b6b",
     facing: 'down',
     sprites: {

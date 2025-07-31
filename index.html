@@ -35,11 +35,18 @@
             
             <!-- instructions panel (top-left corner) -->
             <!-- shows player how to control the game -->
-            <div class="instructions">
-                <h3>Controls</h3>
-                <p>Arrow Keys / WASD - Move</p>
-                <p>Enter - View Project</p>
-                <p>M - Toggle Music</p>
+            <div class="instructions" id="instructions">
+                <h3 class="instructions-header" onclick="toggleInstructions()">How to play ▶</h3>
+                <div class="instructions-content" id="instructionsContent" style="display: none;">
+                    <button class="close-btn-small" onclick="toggleInstructions()">×</button>
+                    <h4>Controls</h4>
+                    <p>Arrow Keys / WASD - Move</p>
+                    <p>Enter - View Project</p>
+                    <p>M - Toggle Music</p>
+                    <hr>
+                    <p>🟣 Purple flag = Ready to view!</p>
+                    <p>🔴 Red flag = Unfinished project</p>
+                </div>
             </div>
             
             <!-- Background music -->
@@ -77,5 +84,20 @@
     <!-- big-bang.js: Main game logic - world creation and game loop -->
     <!-- Uses ES6 modules to import player-birth.js and camera.js -->
     <script type="module" src="game-engine/big-bang.js"></script>
+    
+    <script>
+        // toggle help panel open/closed
+        function toggleInstructions() {
+            const content = document.getElementById('instructionsContent');
+            const header = document.querySelector('.instructions-header');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                header.innerHTML = 'How to play ▼'; // down arrow when open
+            } else {
+                content.style.display = 'none';
+                header.innerHTML = 'How to play ▶'; // right arrow when closed
+            }
+        }
+    </script>
 </body>
 </html>

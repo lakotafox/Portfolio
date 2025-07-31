@@ -1,5 +1,5 @@
 // handles drawing tile to the canvas
-import { tileImages, flagImage } from './tiles/tile-loader.js';
+import { tileImages, flagPurpleImage, flagRedImage } from './tiles/tile-loader.js';
 import { TILE_SIZE } from './map/map-generator.js';
 
 // draw a carc tile
@@ -30,16 +30,24 @@ export function drawTile(ctx, tile, x, y, camera) {
         ctx.translate(TILE_SIZE/2, TILE_SIZE/2);
         ctx.rotate(-tile.rotation * Math.PI / 180);
         
-        // draw flag if loaded, otherwise fallback to circle
-        if (flagImage) {
+        // determine which flag to use based on project status
+        // finished projects: mincoins, foxbuiltstore.com
+        // placeholder projects: all others
+        const isFinishedProject = tile.project && (
+            tile.project.name === 'MinCoins Calculator' || 
+            tile.project.name === 'FOXBUILTSTORE.COM'
+        );
+        
+        const flagToUse = isFinishedProject ? flagPurpleImage : flagRedImage; // purple for done, red for wip
+        
+        // draw flag if loaded
+        if (flagToUse) {
             const flagWidth = 48;
             const flagHeight = 48;
             // where to draw flag
             const cornerX = -TILE_SIZE/1.5 + 1;  
             const cornerY = -TILE_SIZE/1.5 + 1;  
-            ctx.drawImage(flagImage, cornerX, cornerY, flagWidth, flagHeight);
-       
-           
+            ctx.drawImage(flagToUse, cornerX, cornerY, flagWidth, flagHeight);
         }
         
         ctx.restore();
