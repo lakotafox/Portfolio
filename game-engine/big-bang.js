@@ -56,8 +56,8 @@ document.addEventListener('keydown', (e) => {
                 // special handling for foxbuilt - opens custom message page
                 window.open('projects/foxbuilt-message.html', '_blank', 'width=800,height=600');
             } else {
-                // for now, show alert for placeholder projects
-                alert(`Project: ${ProjectManager.currentProject.name}\n\n${ProjectManager.currentProject.desc}\n\n(This is a placeholder - actual project coming soon!)`);
+                // open project in iframe viewer
+                ProjectManager.openProject(ProjectManager.currentProject);
             }
         }
     }

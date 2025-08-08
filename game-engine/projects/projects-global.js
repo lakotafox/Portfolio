@@ -40,8 +40,8 @@ const ProjectManager = {
         },
         {
             id: 5,
-            name: "Road Network",
-            desc: "Graph Theory Explorer",
+            name: "AI: A Scalpel Not A Hammer",
+            desc: "Precision AI Development Philosophy",
             url: "projects/road-network/index.html",
             x: 5,
             y: 11

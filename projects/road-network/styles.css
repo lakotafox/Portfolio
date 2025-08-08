@@ -1,0 +1,274 @@
+/* ========================================
+   BASE STYLES
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #fff;
+    padding: 2rem;
+}
+
+/* ========================================
+   TOGGLE SWITCH
+   ======================================== */
+.toggle-container {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.toggle-label {
+    color: #fff;
+    margin: 0 10px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background: #444;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.toggle-switch.active {
+    background: #00ff88;
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.toggle-switch.active .toggle-slider {
+    transform: translateX(30px);
+}
+
+/* ========================================
+   CONTENT CONTAINER
+   ======================================== */
+.content-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding-top: 140px;
+}
+
+.version-content {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.version-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ========================================
+   HUMAN VERSION STYLES
+   ======================================== */
+.human-paper {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 3rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.human-paper h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #00ff88;
+}
+
+.human-paper .author {
+    font-style: italic;
+    margin-bottom: 2rem;
+    color: #b8bdd8;
+}
+
+.human-paper p {
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    text-indent: 2rem;
+    color: #e0e0e0;
+}
+
+.human-paper .opening-quote {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-left: 3px solid #00ff88;
+    margin: 1.5rem 0;
+    font-style: italic;
+}
+
+/* ========================================
+   AI VERSION STYLES
+   ======================================== */
+.hero-section {
+    text-align: center;
+    padding: 3rem;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    background: linear-gradient(45deg, #00ff88, #00ccff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+}
+
+.hero-quote {
+    font-size: 1.5rem;
+    color: #ffd700;
+    font-style: italic;
+    margin: 2rem 0;
+}
+
+.section-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.section-card h2 {
+    color: #00ff88;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+/* ========================================
+   SHARED COMPONENTS
+   ======================================== */
+.tictactoe-buttons {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+    justify-content: center;
+}
+
+.demo-btn {
+    background: rgba(0, 204, 255, 0.2);
+    color: #00ccff;
+    border: 2px solid #00ccff;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s;
+}
+
+.demo-btn:hover {
+    background: rgba(0, 204, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 204, 255, 0.3);
+}
+
+/* ========================================
+   AI VERSION COMPONENTS
+   ======================================== */
+.principle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.principle-card {
+    background: rgba(0, 255, 136, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    transition: transform 0.3s;
+}
+
+.principle-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+}
+
+.principle-card h3 {
+    color: #00ccff;
+    margin-bottom: 0.5rem;
+}
+
+.visual-metaphor {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    margin: 2rem 0;
+}
+
+.metaphor-item {
+    text-align: center;
+}
+
+.metaphor-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 768px) {
+    .toggle-container {
+        top: 10px;
+        right: 10px;
+        padding: 8px 15px;
+    }
+    
+    .toggle-label {
+        font-size: 12px;
+    }
+    
+    .human-paper {
+        padding: 2rem;
+    }
+    
+    .principle-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .visual-metaphor {
+        flex-direction: column;
+        gap: 2rem;
+    }
+}
