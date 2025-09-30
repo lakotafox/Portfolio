@@ -15,14 +15,6 @@ const ProjectManager = {
             y: 1
         },
         {
-            id: 2,
-            name: "Pixel Keep",
-            desc: "Retro Game Engine",
-            url: "projects/pixel-keep/index.html",
-            x: 12,
-            y: 7
-        },
-        {
             id: 3,
             name: "Quantum Monastery",
             desc: "Quantum Computing Simulator",
@@ -61,6 +53,30 @@ const ProjectManager = {
             url: "projects/medieval-marketplace/index.html",
             x: 4,
             y: 8
+        },
+        {
+            id: 8,
+            name: "Puddl3",
+            desc: "Real-Time Payroll Platform - Developer",
+            url: "projects/puddle/index.html",
+            x: 8,
+            y: 5
+        },
+        {
+            id: 9,
+            name: "Sam Watts Fitness",
+            desc: "Fitness Coaching Website",
+            url: "https://thesamwatts.com",
+            x: 3,
+            y: 6
+        },
+        {
+            id: 10,
+            name: "Really Cool Hair",
+            desc: "Creative Hair Salon Website",
+            url: "https://reallycoolhair.com",
+            x: 12,
+            y: 7
         }
     ],
 
@@ -120,16 +136,16 @@ const ProjectManager = {
 
     // open project in viewer
     openProject: function(project) {
-        if (!this.projectViewer || !this.projectFrame) return;
         console.log('Opening project:', project.name, 'Type:', project.type);
-        
-        if (project.type === 'code') {
-            // open code viewer for code projects
-            this.openCodeViewer(project);
-        } else {
-            // open iframe for regular projects
+
+        // AI Scalpel project uses iframe to preserve music
+        if (project.name === 'AI: A Scalpel Not A Hammer') {
+            if (!this.projectViewer || !this.projectFrame) return;
             this.projectFrame.src = project.url;
             this.projectViewer.classList.add('active');
+        } else {
+            // All other projects open in new tab
+            window.open(project.url, '_blank');
         }
     },
 

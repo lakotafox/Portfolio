@@ -36,15 +36,42 @@
         <source src="../../sound-effects/GREAT.mp3" type="audio/mpeg">
     </audio>
     
-    <div class="instructions">
-        <h3>NetBeans Area</h3>
-        <p>↑↓←→ / WASD - Move</p>
-        <p>Mouse - Look around</p>
-        <p>Scroll - Zoom</p>
-        <p style="margin-top: 10px; color: #ffd700;">Terminal Controls:</p>
-        <p>Walk to Run button + ENTER - Start program</p>
-        <p>Walk to number keys + ENTER - Input digits</p>
-        <p>Walk to ENTER key - Submit input</p>
+    <!-- Initial popup modal -->
+    <div class="welcome-modal" id="welcomeModal">
+        <div class="modal-content">
+            <p style="color: #ff9999; font-weight: bold; font-size: 1.2rem; margin-bottom: 10px;">⚠️ NO KEYBOARD TYPING!</p>
+            <br>
+            <p style="color: #99ff99; font-weight: bold; margin-bottom: 20px;">✓ Walk to buttons & press ENTER</p>
+            <br>
+            <div style="text-align: left;">
+                <p>1. Walk with ↑↓←→ or WASD</p>
+                <br>
+                <p>2. Walk to green RUN button</p>
+                <br>
+                <p>3. Press ENTER to start</p>
+                <br>
+                <p>4. Walk to number buttons (0-9)</p>
+                <br>
+                <p>5. Press ENTER on each KEY</p>
+                <br>
+                <p>6. Walk to ENTER button to submit</p>
+            </div>
+            
+            <button class="modal-ok-btn" onclick="closeWelcomeModal()">OK, Got it!</button>
+        </div>
+    </div>
+    
+    <!-- Collapsible help in corner -->
+    <div class="instructions collapsed" id="helpPanel">
+        <div class="help-header" onclick="toggleHelp()">
+            <span id="helpIcon">❓</span> Help
+        </div>
+        <div class="help-content" id="helpContent">
+            <p style="color: #ff9999; font-weight: bold;">⚠️ NO KEYBOARD TYPING!</p>
+            <p style="color: #99ff99;">✓ Walk to buttons & press ENTER</p>
+            <p style="margin-top: 10px;">↑↓←→ / WASD - Move</p>
+            <p>Mouse - Look • Scroll - Zoom</p>
+        </div>
     </div>
     
     <button class="exit-btn" id="exitBtn">✕ Exit to Map</button>
@@ -52,8 +79,28 @@
     <!-- load the init script as a module with cache buster -->
     <script type="module" src="mincoins-init.js?v=2"></script>
     
-    <!-- add exit functionality -->
+    <!-- add modal and help functionality -->
     <script>
+        // Modal functions
+        function closeWelcomeModal() {
+            document.getElementById('welcomeModal').classList.add('hidden');
+        }
+        
+        // Help panel toggle
+        function toggleHelp() {
+            const helpPanel = document.getElementById('helpPanel');
+            const helpIcon = document.getElementById('helpIcon');
+            
+            if (helpPanel.classList.contains('collapsed')) {
+                helpPanel.classList.remove('collapsed');
+                helpIcon.textContent = '✖';
+            } else {
+                helpPanel.classList.add('collapsed');
+                helpIcon.textContent = '❓';
+            }
+        }
+        
+        // Exit button
         document.getElementById('exitBtn').addEventListener('click', function() {
             // go back to main game
             window.location.href = '../../index.html';

@@ -1,9 +1,7 @@
 <div class="human-paper">
-    <h1>AI: A Scalpel Not A Hammer</h1>
-    <p class="author">By Lakota</p>
-
     <div class="opening-quote">
-        "It's a scalpel not a hammer."
+        "It's a scalpel not a hammer."<br>
+        <span style="font-size: 0.9rem; opacity: 0.8;">- Rod Buhler</span>
     </div>
 
     <p>That's actually a quote from my good friend Rod Buhler. He's a professor at my college, teaches inside the prison, and stops in at Hill Air Force Base to help them stay sharp on cybersecurity. So yeah, total genius. He's the kind of ethical hacker we all strive to be as junior devs. He taught me something so simple, but it completely changed my life. It started with how I use tools, specifically the lightbulb hints in NetBeans. He made sure I understood why I shouldn't just spam them like a hammer, but to use them like a scalpel, carefully, intentionally, thoughtfully, with deep consideration. And before even going there, read the code.</p>
@@ -15,8 +13,15 @@
     <p>For example, I made a Tic Tac Toe game. It worked. Cool, great. But when I tried to improve it, I went full hammer mode. I asked for a bunch of features and I got them. It looked great and it worked. But also it was a complete mess. I couldn't read it, and neither could you. Maybe you could, I'm still learning. But to me it was some pure bot code. Totally unguided chaos. So many imports. So many weird logic pieces. The code became spaghettified. It worked, yeah, but I couldn't explain how it worked anymore. And if I can't explain it, what happens when I want to add more features later? I guess I just smash the hammer again. Or what if someone else reads it? Or get this, what if another AI tries to help and gets confused too? That's not some sci-fi joke. That's real. AI "reads" too. If your code is a tangled mess, even the bots get stuck in it. Bloated code kills projects and you can't smash the bloat back in with a hammer.</p>
 
     <div class="tictactoe-buttons">
-        <button class="demo-btn" onclick="openTicTacToe('messy')">View Messy TicTacToe 🔨</button>
-        <button class="demo-btn" onclick="openTicTacToe('clean')">View Clean TicTacToe 🔪</button>
+        <button class="demo-btn" onclick="openTicTacToe('human')">Human TicTacToe</button>
+        <button class="demo-btn" onclick="openTicTacToe('hammer')">AI Hammer TicTacToe</button>
+        <button class="demo-btn" onclick="openTicTacToe('scalpel')">AI Scalpel TicTacToe</button>
+    </div>
+    
+    <div class="tictactoe-buttons">
+        <button class="demo-btn code-btn" onclick="viewCode('human')">Human Code</button>
+        <button class="demo-btn code-btn" onclick="viewCode('hammer')">Hammer Code</button>
+        <button class="demo-btn code-btn" onclick="viewCode('scalpel')">Scalpel Code</button>
     </div>
 
     <p>We live in a time where "if it works, it works" isn't good enough anymore. Tools like Claude, GPT, GitHub Copilot, whatever, are getting more powerful every day. That's great but also dangerous. Because if you're not steering the ship, the ship will crash. And maybe even lead to mutiny. That's why I say scalpel not hammer. You're still the captain. You're still the developer. These tools don't think for you. They don't have taste. And the humans don't even match your taste either. They and the bots don't know what you want unless you do first. We have to be specific and come to the table prepared. Don't be afraid to step away for one hour, two hours, even forty hours so you can read up and get up to date with concepts or your own code. This is an excellent time to go back to pen and paper, maybe some flowcharting, take a walk, do what you have to do. Just don't smash a hammer on your house of cards.</p>

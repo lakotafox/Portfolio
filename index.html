@@ -44,8 +44,8 @@
                     <p>Enter - View Project</p>
                     <p>M - Toggle Music</p>
                     <hr>
-                    <p>🟣 Purple flag = Ready to view!</p>
-                    <p>🔴 Red flag = Unfinished project</p>
+                    <p>Purple flag = Ready to view!</p>
+                    <p>Red flag = Unfinished project</p>
                 </div>
             </div>
             
@@ -65,14 +65,24 @@
                 <div class="enter-prompt">Press ENTER to view</div>
             </div>
         </div>
-        
-        
+
+        <!-- Mobile Controls -->
+        <div class="mobile-controls" id="mobileControls">
+            <div class="dpad">
+                <button class="dpad-btn dpad-up" data-key="ArrowUp">▲</button>
+                <button class="dpad-btn dpad-left" data-key="ArrowLeft">◄</button>
+                <button class="dpad-btn dpad-center" data-key="Enter">ENTER</button>
+                <button class="dpad-btn dpad-right" data-key="ArrowRight">►</button>
+                <button class="dpad-btn dpad-down" data-key="ArrowDown">▼</button>
+            </div>
+        </div>
+
         <!-- player presses Enter near a flag becomes visible -->
         <div class="project-viewer" id="projectViewer">
             <!-- iframe loads the actual project content (like mincoins-area) -->
             <iframe id="projectFrame"></iframe>
             <!-- close button to return to the main map -->
-            <button class="close-btn" onclick="closeProject()">✕ Close (ESC)</button>
+            <button class="close-btn" onclick="closeProject()">X Close (ESC)</button>
         </div>
     </div>
     
@@ -98,6 +108,55 @@
                 header.innerHTML = 'How to play ▶'; // right arrow when closed
             }
         }
+
+        // Mobile controls handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileButtons = document.querySelectorAll('.dpad-btn');
+
+            mobileButtons.forEach(button => {
+                // Handle touch/click
+                button.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    const key = this.getAttribute('data-key');
+                    // Simulate keydown event
+                    const event = new KeyboardEvent('keydown', {
+                        key: key,
+                        bubbles: true
+                    });
+                    document.dispatchEvent(event);
+                });
+
+                button.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    const key = this.getAttribute('data-key');
+                    // Simulate keyup event
+                    const event = new KeyboardEvent('keyup', {
+                        key: key,
+                        bubbles: true
+                    });
+                    document.dispatchEvent(event);
+                });
+
+                // Also handle mouse clicks for testing
+                button.addEventListener('mousedown', function(e) {
+                    const key = this.getAttribute('data-key');
+                    const event = new KeyboardEvent('keydown', {
+                        key: key,
+                        bubbles: true
+                    });
+                    document.dispatchEvent(event);
+                });
+
+                button.addEventListener('mouseup', function(e) {
+                    const key = this.getAttribute('data-key');
+                    const event = new KeyboardEvent('keyup', {
+                        key: key,
+                        bubbles: true
+                    });
+                    document.dispatchEvent(event);
+                });
+            });
+        });
     </script>
 </body>
 </html>

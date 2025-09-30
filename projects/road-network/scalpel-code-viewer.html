@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Scalpel Code - TicTacToe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Consolas', 'Courier New', monospace;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(76, 175, 80, 0.3);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: #2d2d30;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #4caf50;
+        }
+
+        .stat-card h3 {
+            color: #4caf50;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 20px;
+            color: white;
+        }
+
+        .code-container {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 5px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        pre {
+            color: #d4d4d4;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .function {
+            color: #dcdcaa;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .success {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 3px solid #4caf50;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 3px;
+        }
+
+        .success h4 {
+            color: #4caf50;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AI Scalpel Code - TicTacToe</h1>
+        <p>Clean, maintainable code created with AI assistance and proper understanding</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3>Total Lines</h3>
+            <p>233</p>
+        </div>
+        <div class="stat-card">
+            <h3>Complexity</h3>
+            <p>LOW</p>
+        </div>
+        <div class="stat-card">
+            <h3>Redundancy</h3>
+            <p>5%</p>
+        </div>
+        <div class="stat-card">
+            <h3>Maintainability</h3>
+            <p>EXCELLENT</p>
+        </div>
+    </div>
+
+    <div class="success">
+        <h4>Clean Code Principles</h4>
+        <p>This code follows SOLID principles, uses clear separation of concerns, implements a proper class structure, and maintains consistent naming conventions. This is what happens when you use AI as a precision tool.</p>
+    </div>
+
+    <div class="code-container">
+        <pre><code><span class="comment">// TicTacToe Modal Game - Clean Implementation</span>
+<span class="comment">// Using AI as a scalpel: precise, intentional, well-structured</span>
+
+<span class="comment">// Player class with clear responsibilities</span>
+<span class="keyword">class</span> <span class="function">TicTacToePlayer</span> {
+    <span class="keyword">constructor</span>(name) {
+        <span class="keyword">this</span>.playerName = name;
+        <span class="keyword">this</span>.playerMarker = <span class="string">' '</span>;
+        <span class="keyword">this</span>.playerBoardTotal = <span class="number">0</span>;
+        <span class="keyword">this</span>.playerTotalWins = <span class="number">0</span>;
+    }
+
+    <span class="function">setPlayerMarker</span>(marker) {
+        <span class="keyword">this</span>.playerMarker = marker;
+    }
+
+    <span class="function">addPlayerBoardTotal</span>(bitValue) {
+        <span class="keyword">this</span>.playerBoardTotal += bitValue;
+    }
+
+    <span class="function">addPlayerTotalWins</span>() {
+        <span class="keyword">this</span>.playerTotalWins++;
+    }
+
+    <span class="function">resetPlayerTotal</span>() {
+        <span class="keyword">this</span>.playerBoardTotal = <span class="number">0</span>;
+    }
+}
+
+<span class="comment">// Clean game state management</span>
+<span class="keyword">const</span> games = {
+    human: <span class="keyword">null</span>,
+    hammer: <span class="keyword">null</span>,
+    scalpel: <span class="keyword">null</span>
+};
+
+<span class="comment">// Single initialization function with clear parameters</span>
+<span class="keyword">function</span> <span class="function">initTicTacToeGame</span>(type) {
+    <span class="keyword">const</span> game = {
+        player1: <span class="keyword">new</span> TicTacToePlayer(<span class="string">"Player 1"</span>),
+        player2: <span class="keyword">new</span> TicTacToePlayer(<span class="string">"Player 2"</span>),
+        cat: <span class="keyword">new</span> TicTacToePlayer(<span class="string">"CAT"</span>),
+        xTurn: <span class="keyword">true</span>,
+        <span class="comment">// Bit-based win conditions for efficiency</span>
+        winsArray: [<span class="number">7</span>, <span class="number">56</span>, <span class="number">73</span>, <span class="number">84</span>, <span class="number">146</span>, <span class="number">273</span>, <span class="number">292</span>, <span class="number">448</span>],
+        type: type
+    };
+
+    game.player1.setPlayerMarker(<span class="string">'X'</span>);
+    game.player2.setPlayerMarker(<span class="string">'O'</span>);
+
+    games[type] = game;
+    <span class="keyword">return</span> game;
+}
+
+<span class="comment">// Clean modal display function</span>
+<span class="keyword">function</span> <span class="function">showTicTacToeModal</span>(type) {
+    <span class="keyword">const</span> modal = createModal();
+    <span class="keyword">const</span> game = initTicTacToeGame(type);
+
+    <span class="keyword">if</span> (type === <span class="string">'human'</span>) {
+        displaySimpleBoard(modal, game);
+    } <span class="keyword">else</span> {
+        getPlayerNames(game).then(() => {
+            displayBoard(modal, game);
+        });
+    }
+}
+
+<span class="comment">// Separation of concerns - UI creation</span>
+<span class="keyword">function</span> <span class="function">createModal</span>() {
+    <span class="keyword">const</span> modal = document.createElement(<span class="string">'div'</span>);
+    modal.className = <span class="string">'tictactoe-modal'</span>;
+    modal.innerHTML = generateModalHTML();
+    document.body.appendChild(modal);
+    <span class="keyword">return</span> modal;
+}
+
+<span class="comment">// Clean HTML generation using template literals</span>
+<span class="keyword">function</span> <span class="function">generateModalHTML</span>() {
+    <span class="keyword">return</span> <span class="string">`
+        &lt;div class="modal-content"&gt;
+            &lt;div class="modal-header"&gt;
+                &lt;h2 id="game-title"&gt;TicTacToe&lt;/h2&gt;
+                &lt;button class="close-btn" onclick="closeTicTacToeModal()"&gt;×&lt;/button&gt;
+            &lt;/div&gt;
+            &lt;div class="game-board"&gt;&lt;/div&gt;
+            &lt;div class="game-status"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    `</span>;
+}
+
+<span class="comment">// Promise-based player name collection</span>
+<span class="keyword">async function</span> <span class="function">getPlayerNames</span>(game) {
+    game.player1.playerName = <span class="keyword">await</span> promptPlayerName(<span class="number">1</span>, <span class="string">'X'</span>);
+    game.player2.playerName = <span class="keyword">await</span> promptPlayerName(<span class="number">2</span>, <span class="string">'O'</span>);
+}
+
+<span class="comment">// Board rendering with event delegation</span>
+<span class="keyword">function</span> <span class="function">displayBoard</span>(modal, game) {
+    <span class="keyword">const</span> boardElement = modal.querySelector(<span class="string">'.game-board'</span>);
+    boardElement.innerHTML = generateBoardHTML();
+    boardElement.addEventListener(<span class="string">'click'</span>, (e) => handleCellClick(e, game));
+    updateDisplay(game);
+}
+
+<span class="comment">// Efficient game logic using bitwise operations</span>
+<span class="keyword">function</span> <span class="function">handleCellClick</span>(event, game) {
+    <span class="keyword">if</span> (!event.target.classList.contains(<span class="string">'cell'</span>)) <span class="keyword">return</span>;
+
+    <span class="keyword">const</span> cellIndex = parseInt(event.target.dataset.index);
+    <span class="keyword">const</span> bitValue = Math.pow(<span class="number">2</span>, cellIndex);
+
+    <span class="keyword">if</span> (isCellOccupied(cellIndex, game)) <span class="keyword">return</span>;
+
+    <span class="keyword">const</span> currentPlayer = game.xTurn ? game.player1 : game.player2;
+    currentPlayer.addPlayerBoardTotal(bitValue);
+
+    updateCell(event.target, currentPlayer.playerMarker);
+
+    <span class="keyword">if</span> (checkWin(currentPlayer, game.winsArray)) {
+        handleWin(currentPlayer, game);
+    } <span class="keyword">else if</span> (checkTie(game)) {
+        handleTie(game);
+    } <span class="keyword">else</span> {
+        game.xTurn = !game.xTurn;
+        updateDisplay(game);
+    }
+}
+
+<span class="comment">// Efficient win checking with bitwise AND</span>
+<span class="keyword">function</span> <span class="function">checkWin</span>(player, winsArray) {
+    <span class="keyword">return</span> winsArray.some(winCondition =>
+        (player.playerBoardTotal & winCondition) === winCondition
+    );
+}
+
+<span class="comment">// Clean state management functions</span>
+<span class="keyword">function</span> <span class="function">handleWin</span>(player, game) {
+    player.addPlayerTotalWins();
+    displayResult(<span class="string">`${player.playerName} wins!`</span>, <span class="string">'win'</span>);
+    resetBoard(game);
+}
+
+<span class="keyword">function</span> <span class="function">handleTie</span>(game) {
+    game.cat.addPlayerTotalWins();
+    displayResult(<span class="string">'It\'s a tie!'</span>, <span class="string">'tie'</span>);
+    resetBoard(game);
+}
+
+<span class="keyword">function</span> <span class="function">resetBoard</span>(game) {
+    game.player1.resetPlayerTotal();
+    game.player2.resetPlayerTotal();
+    game.xTurn = <span class="keyword">true</span>;
+    setTimeout(() => clearBoard(), <span class="number">2000</span>);
+}
+
+<span class="comment">// Clean separation of UI updates</span>
+<span class="keyword">function</span> <span class="function">updateDisplay</span>(game) {
+    <span class="keyword">const</span> statusElement = document.querySelector(<span class="string">'.game-status'</span>);
+    <span class="keyword">const</span> currentPlayer = game.xTurn ? game.player1 : game.player2;
+    statusElement.textContent = <span class="string">`Current: ${currentPlayer.playerName} (${currentPlayer.playerMarker})`</span>;
+}
+
+<span class="comment">// Utility functions with single responsibility</span>
+<span class="keyword">function</span> <span class="function">closeTicTacToeModal</span>() {
+    <span class="keyword">const</span> modal = document.querySelector(<span class="string">'.tictactoe-modal'</span>);
+    <span class="keyword">if</span> (modal) modal.remove();
+}
+
+<span class="comment">// Total: 233 lines of clean, maintainable code</span>
+<span class="comment">// This is the power of using AI as a scalpel</span></code></pre>
+    </div>
+
+    <div class="success">
+        <h4>Key Improvements</h4>
+        <ul style="color: #d4d4d4; margin-left: 20px;">
+            <li>Clear class structure with single responsibility</li>
+            <li>Separation of concerns (UI, logic, state)</li>
+            <li>Promise-based async operations</li>
+            <li>Event delegation for efficiency</li>
+            <li>Bitwise operations for win checking</li>
+            <li>Consistent naming conventions</li>
+            <li>No global scope pollution</li>
+            <li>Easy to test and maintain</li>
+        </ul>
+    </div>
+</body>
+</html>

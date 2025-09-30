@@ -31,12 +31,15 @@ export function drawTile(ctx, tile, x, y, camera) {
         ctx.rotate(-tile.rotation * Math.PI / 180);
         
         // determine which flag to use based on project status
-        // finished projects: mincoins, foxbuiltstore.com, AI Scalpel
+        // finished projects: mincoins, foxbuiltstore.com, AI Scalpel, Sam Watts, Puddl3, Really Cool Hair
         // placeholder projects: all others
         const isFinishedProject = tile.project && (
-            tile.project.name === 'MinCoins Calculator' || 
+            tile.project.name === 'MinCoins Calculator' ||
             tile.project.name === 'FOXBUILTSTORE.COM' ||
-            tile.project.name === 'AI: A Scalpel Not A Hammer'
+            tile.project.name === 'AI: A Scalpel Not A Hammer' ||
+            tile.project.name === 'Sam Watts Fitness' ||
+            tile.project.name === 'Puddl3' ||
+            tile.project.name === 'Really Cool Hair'
         );
         
         const flagToUse = isFinishedProject ? flagPurpleImage : flagRedImage; // purple for done, red for wip

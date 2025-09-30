@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hammer Code - TicTacToe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Consolas', 'Courier New', monospace;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff3333, #ff6666);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(255, 51, 51, 0.3);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: #2d2d30;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #ff6666;
+        }
+
+        .stat-card h3 {
+            color: #ff6666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 20px;
+            color: white;
+        }
+
+        .code-container {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 5px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        pre {
+            color: #d4d4d4;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .function {
+            color: #dcdcaa;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .warning {
+            background: rgba(255, 102, 102, 0.1);
+            border-left: 3px solid #ff6666;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 3px;
+        }
+
+        .warning h4 {
+            color: #ff6666;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AI Hammer Code - TicTacToe</h1>
+        <p>This is what happens when you use AI like a hammer - asking for features without understanding the code structure</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3>Total Lines</h3>
+            <p>275</p>
+        </div>
+        <div class="stat-card">
+            <h3>Complexity</h3>
+            <p>HIGH</p>
+        </div>
+        <div class="stat-card">
+            <h3>Redundancy</h3>
+            <p>65%</p>
+        </div>
+        <div class="stat-card">
+            <h3>Maintainability</h3>
+            <p>POOR</p>
+        </div>
+    </div>
+
+    <div class="warning">
+        <h4>Code Smell Alert</h4>
+        <p>This code has multiple issues: redundant functions, inconsistent naming, mixed paradigms, unnecessary complexity, and poor separation of concerns. This is what happens when you keep asking AI for "just one more feature" without refactoring.</p>
+    </div>
+
+    <div class="code-container">
+        <pre><code><span class="comment">// TicTacToe Hammer Version - Championship GUI</span>
+<span class="comment">// WARNING: This is an example of AI-generated bloat</span>
+<span class="comment">// 275 lines of over-engineered chaos</span>
+
+<span class="keyword">let</span> hammerGame = {
+    player1Name: <span class="string">'Player 1'</span>,
+    player2Name: <span class="string">'Player 2'</span>,
+    currentPlayer: <span class="string">'X'</span>,
+    board: [<span class="string">''</span>, <span class="string">''</span>, <span class="string">''</span>, <span class="string">''</span>, <span class="string">''</span>, <span class="string">''</span>, <span class="string">''</span>, <span class="string">''</span>, <span class="string">''</span>],
+    player1Score: <span class="number">0</span>,
+    player2Score: <span class="number">0</span>,
+    tiesScore: <span class="number">0</span>,
+    gameActive: <span class="keyword">true</span>,
+    winConditions: [
+        [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>],
+        [<span class="number">0</span>, <span class="number">3</span>, <span class="number">6</span>], [<span class="number">1</span>, <span class="number">4</span>, <span class="number">7</span>], [<span class="number">2</span>, <span class="number">5</span>, <span class="number">8</span>],
+        [<span class="number">0</span>, <span class="number">4</span>, <span class="number">8</span>], [<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>]
+    ]
+};
+
+<span class="comment">// Multiple dialog functions that could be one</span>
+<span class="keyword">function</span> <span class="function">showHammerGame</span>() {
+    showPlayerInputDialog(<span class="number">1</span>);
+}
+
+<span class="keyword">function</span> <span class="function">showPlayerInputDialog</span>(playerNum) {
+    <span class="comment">// 50+ lines of HTML string concatenation</span>
+    <span class="keyword">const</span> dialogHTML = <span class="string">`...`</span>; <span class="comment">// Truncated for brevity</span>
+
+    <span class="comment">// DOM manipulation mixed with game logic</span>
+    document.body.insertAdjacentHTML(<span class="string">'beforeend'</span>, dialogHTML);
+
+    <span class="comment">// Event listeners added inline</span>
+    setTimeout(() => {
+        document.getElementById(<span class="string">'player-name-input'</span>).focus();
+    }, <span class="number">100</span>);
+}
+
+<span class="comment">// Redundant confirm/cancel functions</span>
+<span class="keyword">function</span> <span class="function">confirmPlayerInput</span>(playerNum) {
+    <span class="comment">// Could be simplified to one function</span>
+    <span class="keyword">const</span> input = document.getElementById(<span class="string">'player-name-input'</span>);
+    <span class="keyword">const</span> name = input.value || <span class="string">`Player ${playerNum}`</span>;
+
+    <span class="keyword">if</span> (playerNum === <span class="number">1</span>) {
+        hammerGame.player1Name = name;
+        removePlayerInputDialog();
+        showPlayerInputDialog(<span class="number">2</span>);
+    } <span class="keyword">else</span> {
+        hammerGame.player2Name = name;
+        removePlayerInputDialog();
+        initializeHammerBoard();
+    }
+}
+
+<span class="comment">// Unnecessary wrapper functions</span>
+<span class="keyword">function</span> <span class="function">cancelPlayerInput</span>() {
+    removePlayerInputDialog();
+    closeHammerModal();
+}
+
+<span class="keyword">function</span> <span class="function">removePlayerInputDialog</span>() {
+    <span class="keyword">const</span> dialog = document.getElementById(<span class="string">'player-input-dialog'</span>);
+    <span class="keyword">if</span> (dialog) dialog.remove();
+}
+
+<span class="comment">// Board initialization with excessive DOM manipulation</span>
+<span class="keyword">function</span> <span class="function">initializeHammerBoard</span>() {
+    <span class="comment">// 100+ lines of HTML generation</span>
+    <span class="keyword">const</span> boardHTML = <span class="string">`
+        &lt;div class="hammer-container"&gt;
+            &lt;div class="hammer-header"&gt;
+                &lt;!-- Excessive inline styles and classes --&gt;
+            &lt;/div&gt;
+            &lt;!-- More HTML... --&gt;
+        &lt;/div&gt;
+    `</span>;
+
+    <span class="comment">// Multiple querySelector calls instead of storing references</span>
+    document.querySelector(<span class="string">'.modal-content'</span>).innerHTML = boardHTML;
+    updateHammerDisplay();
+    addHammerEventListeners();
+}
+
+<span class="comment">// Event listeners added after DOM creation (inefficient)</span>
+<span class="keyword">function</span> <span class="function">addHammerEventListeners</span>() {
+    document.querySelectorAll(<span class="string">'.hammer-cell'</span>).forEach(cell => {
+        cell.addEventListener(<span class="string">'click'</span>, handleHammerCellClick);
+    });
+}
+
+<span class="comment">// Game logic mixed with UI updates</span>
+<span class="keyword">function</span> <span class="function">handleHammerCellClick</span>(e) {
+    <span class="keyword">const</span> cellIndex = parseInt(e.target.dataset.index);
+
+    <span class="keyword">if</span> (hammerGame.board[cellIndex] || !hammerGame.gameActive) {
+        <span class="keyword">return</span>;
+    }
+
+    <span class="comment">// Direct DOM manipulation instead of state management</span>
+    hammerGame.board[cellIndex] = hammerGame.currentPlayer;
+    e.target.textContent = hammerGame.currentPlayer;
+    e.target.classList.add(hammerGame.currentPlayer === <span class="string">'X'</span> ? <span class="string">'x-mark'</span> : <span class="string">'o-mark'</span>);
+
+    checkHammerResult();
+}
+
+<span class="comment">// Overly complex win checking</span>
+<span class="keyword">function</span> <span class="function">checkHammerResult</span>() {
+    <span class="keyword">let</span> roundWon = <span class="keyword">false</span>;
+
+    <span class="comment">// Could use array methods instead of for loops</span>
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < hammerGame.winConditions.length; i++) {
+        <span class="keyword">const</span> [a, b, c] = hammerGame.winConditions[i];
+        <span class="keyword">if</span> (!hammerGame.board[a]) <span class="keyword">continue</span>;
+
+        <span class="keyword">if</span> (hammerGame.board[a] === hammerGame.board[b] &&
+            hammerGame.board[a] === hammerGame.board[c]) {
+            roundWon = <span class="keyword">true</span>;
+            highlightWinningCells([a, b, c]);
+            <span class="keyword">break</span>;
+        }
+    }
+
+    <span class="comment">// Nested if statements instead of early returns</span>
+    <span class="keyword">if</span> (roundWon) {
+        handleHammerWin();
+    } <span class="keyword">else if</span> (!hammerGame.board.includes(<span class="string">''</span>)) {
+        handleHammerTie();
+    } <span class="keyword">else</span> {
+        switchHammerPlayer();
+    }
+}
+
+<span class="comment">// Multiple similar functions that could be combined</span>
+<span class="keyword">function</span> <span class="function">handleHammerWin</span>() {
+    hammerGame.gameActive = <span class="keyword">false</span>;
+    <span class="keyword">const</span> winner = hammerGame.currentPlayer === <span class="string">'X'</span> ?
+        hammerGame.player1Name : hammerGame.player2Name;
+
+    <span class="comment">// Inline styles instead of CSS classes</span>
+    showHammerMessage(<span class="string">`🎉 ${winner} Wins!`</span>, <span class="string">'#4CAF50'</span>);
+
+    <span class="keyword">if</span> (hammerGame.currentPlayer === <span class="string">'X'</span>) {
+        hammerGame.player1Score++;
+    } <span class="keyword">else</span> {
+        hammerGame.player2Score++;
+    }
+
+    updateHammerScores();
+    disableHammerBoard();
+}
+
+<span class="comment">// More redundant functions...</span>
+<span class="keyword">function</span> <span class="function">handleHammerTie</span>() { <span class="comment">/* ... */</span> }
+<span class="keyword">function</span> <span class="function">switchHammerPlayer</span>() { <span class="comment">/* ... */</span> }
+<span class="keyword">function</span> <span class="function">updateHammerDisplay</span>() { <span class="comment">/* ... */</span> }
+<span class="keyword">function</span> <span class="function">updateHammerScores</span>() { <span class="comment">/* ... */</span> }
+<span class="keyword">function</span> <span class="function">showHammerMessage</span>() { <span class="comment">/* ... */</span> }
+<span class="keyword">function</span> <span class="function">disableHammerBoard</span>() { <span class="comment">/* ... */</span> }
+<span class="keyword">function</span> <span class="function">resetHammerGame</span>() { <span class="comment">/* ... */</span> }
+<span class="keyword">function</span> <span class="function">closeHammerModal</span>() { <span class="comment">/* ... */</span> }
+
+<span class="comment">// Total: 275 lines of spaghetti code</span>
+<span class="comment">// This is what happens when you use AI without understanding</span></code></pre>
+    </div>
+
+    <div class="warning">
+        <h4>Key Problems</h4>
+        <ul style="color: #d4d4d4; margin-left: 20px;">
+            <li>No separation of concerns - UI and logic mixed</li>
+            <li>Redundant functions doing similar tasks</li>
+            <li>Inline HTML generation instead of templates</li>
+            <li>Direct DOM manipulation everywhere</li>
+            <li>No state management pattern</li>
+            <li>Inconsistent naming conventions</li>
+            <li>Excessive global scope pollution</li>
+        </ul>
+    </div>
+</body>
+</html>

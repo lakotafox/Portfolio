@@ -1,28 +1,19 @@
 // TicTacToe demo button handlers
 function openTicTacToe(type) {
-    if (type === 'messy') {
-        // Show the hammer-mode version
-        alert(
-            'Messy TicTacToe (Hammer Mode)\n\n' +
-            'This version demonstrates what happens when you use AI carelessly:\n\n' +
-            '• Over 500 lines of tangled code\n' +
-            '• 15+ unnecessary imports\n' +
-            '• Complex state management for simple game\n' +
-            '• Multiple conflicting logic patterns\n' +
-            '• Hard to debug or extend\n\n' +
-            '[Demo implementation coming soon]'
-        );
-    } else if (type === 'clean') {
-        // Show the scalpel-mode version
-        alert(
-            'Clean TicTacToe (Scalpel Mode)\n\n' +
-            'This version shows thoughtful AI usage:\n\n' +
-            '• Under 100 lines of clean code\n' +
-            '• No external dependencies\n' +
-            '• Simple, clear game logic\n' +
-            '• Easy to understand and modify\n' +
-            '• Each function has one purpose\n\n' +
-            '[Demo implementation coming soon]'
-        );
+    // Show the modal overlay with the game
+    showTicTacToeModal(type);
+}
+
+// Code viewer handlers
+function viewCode(type) {
+    if (type === 'human') {
+        // Open NetBeans IDE viewer
+        window.open('netbeans-viewer.html', 'NetBeansIDE', 'width=1200,height=800');
+    } else if (type === 'hammer') {
+        // Open Hammer code viewer - bloated AI code
+        window.open('hammer-code-viewer.html', 'HammerCode', 'width=1200,height=800');
+    } else if (type === 'scalpel') {
+        // Open Scalpel code viewer - clean AI-assisted code
+        window.open('scalpel-code-viewer.html', 'ScalpelCode', 'width=1200,height=800');
     }
 }

@@ -17,7 +17,7 @@ export const MINCOINS_CONFIG = {
     ZOOM_SPEED: 0.1,
     
     // interaction settings
-    INTERACTION_DISTANCE: 50,
+    INTERACTION_DISTANCE: 25,
     
     // code display settings
     LINE_HEIGHT: 20,

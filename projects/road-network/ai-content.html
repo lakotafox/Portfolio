@@ -1,99 +1,110 @@
-<div class="hero-section">
-    <h1>AI: A Scalpel Not A Hammer</h1>
-    <p style="color: #b8bdd8; font-style: italic;">By Lakota</p>
-    <div class="hero-quote">
-        "It's a scalpel not a hammer."<br>
-        <span style="font-size: 1rem; color: #b8bdd8;">- Rod Buhler</span>
-    </div>
-</div>
+<div class="grid-bg"></div>
 
-<div class="section-card">
-    <h2>🎯 The Mentor</h2>
-    <p>Rod Buhler: Professor, prison educator, Hill Air Force Base cybersecurity consultant. The ethical hacker we aspire to be.</p>
-    <p>His lesson: Don't spam tools. Use them precisely, intentionally, thoughtfully.</p>
-</div>
-
-<div class="section-card">
-    <h2>⚠️ The Problem</h2>
-    <p>We treat AI like cheap power tools: point, click, FIRE! A simple project becomes 50,000 lines of code smell.</p>
+<div class="ai-container">
+    <header class="ai-header">
+        <h1 class="ai-title">AI: PRECISION PROTOCOL</h1>
+        <p class="ai-subtitle">Intelligence amplification through surgical implementation</p>
+    </header>
     
-    <div class="visual-metaphor">
-        <div class="metaphor-item">
-            <div class="metaphor-icon">🔨</div>
-            <h4 style="color: #ff6b6b;">Hammer Mode</h4>
-            <p>Smash until it works</p>
-        </div>
-        <div class="metaphor-item">
-            <div class="metaphor-icon">🔪</div>
-            <h4 style="color: #00ff88;">Scalpel Mode</h4>
-            <p>Precise, intentional cuts</p>
-        </div>
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('overview', this)">Overview</div>
+        <div class="tab" onclick="showTab('principles', this)">Principles</div>
+        <div class="tab" onclick="showTab('analysis', this)">Analysis</div>
+        <div class="tab" onclick="showTab('integration', this)">Integration</div>
     </div>
-</div>
-
-<div class="section-card">
-    <h2>💡 Core Principles</h2>
-    <div class="principle-grid">
-        <div class="principle-card">
-            <h3>Read First</h3>
-            <p>Understand your code before reaching for tools</p>
+    
+    <div id="overview" class="tab-content active">
+        <div class="ai-card warning-card" style="text-align: center;">
+            <h2 class="red">SYSTEM VULNERABILITY DETECTED</h2>
+            <p>Current AI deployment patterns exhibit hammer-mode characteristics: excessive automation leading to architectural degradation.</p>
         </div>
-        <div class="principle-card">
-            <h3>Think Deep</h3>
-            <p>3-hour prompts mean YOU'RE doing the work</p>
-        </div>
-        <div class="principle-card">
-            <h3>Be Specific</h3>
-            <p>Write comprehensive, logical prompts</p>
-        </div>
-        <div class="principle-card">
-            <h3>Stay Captain</h3>
-            <p>AI doesn't think or have taste - you do</p>
+        
+        <div class="comparison">
+            <div class="ai-card hammer-card" id="hammer-card" style="transform: translate(-1px, -52px);">
+                <h3 class="red">HAMMER PROTOCOL</h3>
+                <p>Brute force implementation</p>
+                <ul>
+                    <li>Uncontrolled code generation</li>
+                    <li>Dependency cascade failures</li>
+                    <li>Logic fragmentation errors</li>
+                    <li>System comprehension loss</li>
+                </ul>
+            </div>
+            
+            <div class="protocol-separator" id="ai-image" style="transform: translate(-9px, -53px);">
+                <img src="../../computerscreentrees.jpeg" alt="AI Visualization" class="protocol-image" />
+            </div>
+            
+            <div class="ai-card scalpel-card" id="scalpel-card" style="transform: translate(-18px, -51px);">
+                <h3 class="cyan">SCALPEL PROTOCOL</h3>
+                <p>Precision-guided deployment</p>
+                <ul>
+                    <li>Surgical code precision</li>
+                    <li>Maintainable architecture</li>
+                    <li>Transparent system logic</li>
+                    <li>Full operational awareness</li>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
-
-<div class="section-card">
-    <h2>🎮 The TicTacToe Disaster</h2>
-    <p>Made a game. Worked great. Then went full hammer mode - asked for features, got chaos:</p>
-    <ul style="line-height: 2; margin: 1rem 0;">
-        <li>Pure bot code - unguided chaos</li>
-        <li>Countless weird imports</li>
-        <li>Spaghettified logic</li>
-        <li>Can't explain how it works</li>
-        <li>Even AI gets confused by it</li>
-    </ul>
     
-    <div class="tictactoe-buttons">
-        <button class="demo-btn" onclick="openTicTacToe('messy')">🔨 See Messy Version</button>
-        <button class="demo-btn" onclick="openTicTacToe('clean')">🔪 See Clean Version</button>
+    <div id="principles" class="tab-content">
+        <div class="principles-grid">
+            <div class="ai-card principle-card">
+                <div class="icon cyan"><span class="icon-box">[4]</span></div>
+                <h3>Neural Preprocessing</h3>
+                <p>Analyze system architecture before AI integration</p>
+            </div>
+            <div class="ai-card principle-card">
+                <div class="icon purple"><span class="icon-box">[5]</span></div>
+                <h3>Cognitive Override</h3>
+                <p>Maintain human decision-making authority</p>
+            </div>
+            <div class="ai-card principle-card">
+                <div class="icon cyan"><span class="icon-box">[6]</span></div>
+                <h3>Precision Targeting</h3>
+                <p>Deploy AI with surgical accuracy</p>
+            </div>
+        </div>
     </div>
-</div>
-
-<div class="section-card">
-    <h2>📚 The Right Mix</h2>
-    <p>AI is just another tool in the toolbox:</p>
-    <ul style="line-height: 2; margin: 1rem 0;">
-        <li>Claude for coding assistance</li>
-        <li>Stack Overflow for community wisdom</li>
-        <li>Google for error messages</li>
-        <li>Books for deep understanding</li>
-        <li>Reddit for obscure issues</li>
-    </ul>
-    <p style="margin-top: 1rem; font-style: italic;">If AI thinks for you, you stop growing.</p>
-</div>
-
-<div class="section-card" style="text-align: center; background: rgba(255, 215, 0, 0.1);">
-    <h2>🚀 The Path Forward</h2>
-    <p style="font-size: 1.2rem; margin-bottom: 2rem;">"If it works" isn't enough anymore.</p>
     
-    <p>Step away. Read. Think. Use pen and paper. Flowchart. Walk.</p>
-    <p style="margin-top: 1rem;">Just don't smash a hammer on your house of cards.</p>
+    <div id="analysis" class="tab-content">
+        <div class="ai-card" style="text-align: center;">
+            <h2 class="purple">SYSTEM DEGRADATION</h2>
+            <p>TicTacToe application: Initial deployment successful. Subsequent hammer-mode feature requests resulted in critical system degradation.</p>
+            
+            <div class="tictactoe-buttons" style="margin-top: 2rem;">
+                <button class="demo-btn" onclick="openTicTacToe('human')">Human TicTacToe</button>
+                <button class="demo-btn" onclick="openTicTacToe('hammer')">AI Hammer Mode</button>
+                <button class="demo-btn" onclick="openTicTacToe('scalpel')">AI Scalpel Mode</button>
+            </div>
+            
+            <div class="tictactoe-buttons code-buttons" style="margin-top: 1rem;">
+                <button class="demo-btn code-btn" onclick="viewCode('human')">Human Code</button>
+                <button class="demo-btn code-btn" onclick="viewCode('hammer')">Hammer Code</button>
+                <button class="demo-btn code-btn" onclick="viewCode('scalpel')">Scalpel Code</button>
+            </div>
+        </div>
+    </div>
     
-    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.2);">
-        <p style="font-size: 1.3rem; color: #00ff88;">
-            AI is not a crutch. Not a magic wand.<br>
-            <strong style="font-size: 1.5rem;">It's a scalpel.</strong>
-        </p>
+    <div id="integration" class="tab-content">
+        <div class="ai-card">
+            <h2 class="cyan"><span class="icon-box">[15]</span> INTEGRATION MATRIX</h2>
+            
+            <div class="integration-item">
+                <h3 class="purple">Human/AI Code Synthesis</h3>
+                <p>A collaborative system where human creativity and AI precision merge to produce clean, scalable, and innovative code faster than either could alone.</p>
+            </div>
+            
+            <div class="integration-item">
+                <h3 class="cyan">Stack Network — Collective Boosted Intelligence</h3>
+                <p>A distributed network linking multiple human minds and AI agents, pooling knowledge and processing power to solve problems at an accelerated pace.</p>
+            </div>
+            
+            <div class="integration-item">
+                <h3 class="purple">Deep Learning Protocols for Humans</h3>
+                <p>Novel training systems and interactive feedback loops that help human users adopt AI-driven reasoning patterns, increasing their capacity to learn, adapt, and innovate.</p>
+            </div>
+        </div>
     </div>
 </div>
