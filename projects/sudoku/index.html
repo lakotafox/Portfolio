@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grandma's Sudoku Robot - Lakota Fox</title>
+    <link rel="icon" type="image/png" href="/carc-map-favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a href="../../index.html" class="back-button">← Back to Portfolio</a>
+
+    <div id="intro-modal" class="modal">
+        <div class="modal-content">
+            <h1>Grandma's Sudoku Robot</h1>
+            <div class="problem-solution">
+                <div class="section">
+                    <h2>The Problem</h2>
+                    <p>My grandma loved doing Sudoku puzzles online, but her favorite website started running intrusive ads. As she got older, navigating these ads and the website became frustrating and difficult.</p>
+                </div>
+                <div class="section">
+                    <h2>The Solution</h2>
+                    <p>I built her a simple desktop application - a .exe file on her desktop that generates personalized Sudoku puzzles as PDFs and automatically sends them to her printer. Each puzzle includes:</p>
+                    <ul>
+                        <li>Messages from family members</li>
+                        <li>Inspirational quotes</li>
+                    </ul>
+                    <p>It's a simple PDF generator with a printer runner. Now she just clicks the icon, and a fresh puzzle prints out automatically. Simple, personal, and made with love.</p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button onclick="closeModal()" class="btn-primary">Explore Project</button>
+                <a href="https://github.com/lakotafox/smith_sudoku_robot" target="_blank" class="btn-secondary">View on GitHub</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content" class="main-content hidden">
+        <div class="container">
+            <h1 class="page-title">The Interface</h1>
+
+            <div class="content-section">
+                <p class="intro-text">It's a simple executable sitting right in the center of her desktop for easy finding. Now she's always just two clicks away from a fresh puzzle!</p>
+            </div>
+
+            <div class="desktop-mockup">
+                <div class="desktop-header">
+                    <div class="desktop-title">Grandma's Desktop</div>
+                </div>
+                <div class="gui-window">
+                    <div class="window-header">
+                        <div class="window-title">Sudoku Robot</div>
+                        <div class="window-controls">
+                            <span>─</span>
+                            <span>□</span>
+                            <span>×</span>
+                        </div>
+                    </div>
+                    <div class="window-content">
+                        <h2 class="gui-title">Choose Your Difficulty</h2>
+                        <div class="gui-buttons">
+                            <button class="gui-btn easy">EASY</button>
+                            <button class="gui-btn medium">MEDIUM</button>
+                            <button class="gui-btn hard">HARD</button>
+                        </div>
+                        <p class="gui-message">Click a button to generate and print your puzzle!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>Technical Implementation</h2>
+                <p>Python GUI application using tkinter for interface design. Implements backtracking algorithm for Sudoku generation with configurable difficulty parameters. ReportLab handles PDF rendering with custom formatting for family messages and quote injection. System print queue integration enables automatic output to default printer. Packaged as standalone Windows executable via PyInstaller with embedded Python runtime.</p>
+            </div>
+
+            <div class="cta-section">
+                <a href="https://github.com/lakotafox/smith_sudoku_robot" target="_blank" class="btn-primary">View Source Code on GitHub</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -7,28 +7,36 @@ const ProjectManager = {
     projects: [
         {
             id: 1,
+            name: "FoxBuilt Office Furniture",
+            desc: "Next.js 15 Lead Generation Platform",
+            url: "https://foxbuiltstore.com",
+            x: 4,
+            y: 8
+        },
+        {
+            id: 2,
+            name: "Sam Watts Fitness",
+            desc: "Fitness Coaching Website",
+            url: "https://thesamwatts.com",
+            x: 3,
+            y: 6
+        },
+        {
+            id: 3,
+            name: "Really Cool Hair",
+            desc: "Creative Hair Salon Website",
+            url: "https://reallycoolhair.com",
+            x: 12,
+            y: 7
+        },
+        {
+            id: 4,
             name: "MinCoins Calculator",
             desc: "Java Coin Change Algorithm",
             url: "projects/mincoins/mincoins-area.html",
             type: "code",
             x: 11,
             y: 1
-        },
-        {
-            id: 3,
-            name: "Quantum Monastery",
-            desc: "Quantum Computing Simulator",
-            url: "projects/quantum-monastery/index.html",
-            x: 2,
-            y: 2
-        },
-        {
-            id: 4,
-            name: "Castle Algorithms",
-            desc: "Data Structure Visualizer",
-            url: "projects/castle-algorithms/index.html",
-            x: 1,
-            y: 12
         },
         {
             id: 5,
@@ -40,43 +48,19 @@ const ProjectManager = {
         },
         {
             id: 6,
-            name: "Field of Dreams",
-            desc: "ML Crop Predictor",
-            url: "projects/field-of-dreams/index.html",
-            x: 9,
-            y: 12
-        },
-        {
-            id: 7,
-            name: "FOXBUILTSTORE.COM",
-            desc: "Family Business Website",
-            url: "projects/medieval-marketplace/index.html",
-            x: 4,
-            y: 8
-        },
-        {
-            id: 8,
             name: "Puddl3",
-            desc: "Real-Time Payroll Platform - Developer",
-            url: "projects/puddle/index.html",
+            desc: "Real-Time Payroll Platform",
+            url: "https://puddl3.com",
             x: 8,
             y: 5
         },
         {
-            id: 9,
-            name: "Sam Watts Fitness",
-            desc: "Fitness Coaching Website",
-            url: "https://thesamwatts.com",
-            x: 3,
-            y: 6
-        },
-        {
-            id: 10,
-            name: "Really Cool Hair",
-            desc: "Creative Hair Salon Website",
-            url: "https://reallycoolhair.com",
-            x: 12,
-            y: 7
+            id: 7,
+            name: "Grandma's Sudoku Robot",
+            desc: "Python Sudoku Generator Gift",
+            url: "https://github.com/lakotafox/smith_sudoku_robot",
+            x: 2,
+            y: 2
         }
     ],
 

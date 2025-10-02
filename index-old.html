@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lakota Fox - Portfolio</title>
+    <link rel="icon" type="image/png" href="carc-map-favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Lakota Fox
+            </a>
+
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <svg class="sun-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="2"/>
+                    <path d="M10 2V4M10 16V18M18 10H16M4 10H2M15.657 15.657L14.243 14.243M5.757 5.757L4.343 4.343M15.657 4.343L14.243 5.757M5.757 14.243L4.343 15.657" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg class="moon-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">Lakota Fox</h1>
+            <p class="hero-subtitle">I am a Full Stack Developer who is currently based in Pleasant Grove, Utah.</p>
+        </div>
+    </section>
+
+    <!-- Skills/Highlights Section -->
+    <section class="highlights">
+        <div class="container">
+            <div class="highlights-grid">
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 18L22 12L16 6M8 6L2 12L8 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Full Stack Developer</h3>
+                    <p>3 years building modern web applications. Specializing in Next.js, React, JavaScript, TypeScript, and Node.js.</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <path d="M8 21H16M12 17V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3>Education & Certifications</h3>
+                    <p>Salt Lake Community College (Associates 2026). AWS Cloud Practitioner in progress. Boot.dev certificates in Linux, OOP, and more.</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Mission Focused</h3>
+                    <p>Efficiency is doing things right; effectiveness is doing the right things. Building solutions that matter.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Grid -->
+    <main class="main" id="work">
+        <div class="container">
+            <h2 class="section-title">Selected Work</h2>
+            <div class="projects-grid">
+
+                <!-- FoxBuilt Store -->
+                <div class="project-card">
+                    <div class="project-image">
+                        <div class="project-placeholder">FB</div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">FoxBuilt Office Furniture</h3>
+                        <p class="project-desc">Hot lead generating platform built with Next.js 15 and TypeScript. Custom CMS with password-protected admin panel. Migrated from Shopify - now generates inbound calls for free.</p>
+                        <span class="project-tag">Full Stack</span>
+                    </div>
+                </div>
+
+                <!-- Sam Watts Fitness -->
+                <a href="https://thesamwatts.com" class="project-card" target="_blank">
+                    <div class="project-image">
+                        <div class="project-placeholder">SW</div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Sam Watts Fitness</h3>
+                        <p class="project-desc">Professional fitness coaching website with booking and program information.</p>
+                        <span class="project-tag">Client Work</span>
+                    </div>
+                </a>
+
+                <!-- Really Cool Hair -->
+                <a href="https://reallycoolhair.com" class="project-card" target="_blank">
+                    <div class="project-image">
+                        <div class="project-placeholder">RCH</div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Really Cool Hair</h3>
+                        <p class="project-desc">Creative hair salon website with appointment booking and gallery showcase.</p>
+                        <span class="project-tag">Client Work</span>
+                    </div>
+                </a>
+
+                <!-- Carcassonne Portfolio (Special Interactive) -->
+                <a href="carcassonne.html" class="project-card featured">
+                    <div class="project-image">
+                        <img src="carc-map-favicon.png" alt="Carcassonne Interactive Portfolio">
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Carcassonne Portfolio</h3>
+                        <p class="project-desc">The fun, more artistic version of my portfolio. Same content as this page but in a fun way - explore projects by walking through a medieval Carcassonne-style world.</p>
+                        <span class="project-tag">Interactive</span>
+                    </div>
+                </a>
+
+                <!-- MinCoins Calculator -->
+                <a href="projects/mincoins/mincoins-area.html" class="project-card" target="_blank">
+                    <div class="project-image">
+                        <div class="project-placeholder">MC</div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">MinCoins Calculator</h3>
+                        <p class="project-desc">Java coin change algorithm with interactive visualization and code walkthrough.</p>
+                        <span class="project-tag">Algorithm</span>
+                    </div>
+                </a>
+
+                <!-- AI Scalpel -->
+                <a href="projects/road-network/index.html" class="project-card" target="_blank">
+                    <div class="project-image">
+                        <div class="project-placeholder">AI</div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">AI: A Scalpel Not A Hammer</h3>
+                        <p class="project-desc">Philosophy paper on precision AI development, prompt engineering, and thoughtful tool usage. Includes interactive code comparison demos.</p>
+                        <span class="project-tag">Writing</span>
+                    </div>
+                </a>
+
+                <!-- Puddl3 -->
+                <div class="project-card">
+                    <div class="project-image">
+                        <div class="project-placeholder">P3</div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Puddl3 (Puddle2Pool)</h3>
+                        <p class="project-desc">Real-time payroll platform providing instant wage access. Co-founded with two friends. Built with React, Node.js, PostgreSQL, and AWS infrastructure.</p>
+                        <span class="project-tag">Startup</span>
+                    </div>
+                </div>
+
+                <!-- Grandma's Sudoku Robot -->
+                <a href="https://github.com/lakotafox/smith_sudoku_robot" class="project-card" target="_blank">
+                    <div class="project-image">
+                        <div class="project-placeholder">SR</div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Grandma's Sudoku Robot</h3>
+                        <p class="project-desc">A gift for my grandma. When her favorite sudoku website started running ads, I built her a Python app that generates personalized puzzles with family quotes and prints them automatically.</p>
+                        <span class="project-tag">Personal</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Lakota Fox</p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

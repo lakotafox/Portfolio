@@ -105,6 +105,61 @@
             // go back to main game
             window.location.href = '../../index.html';
         });
+
+        // Detect keyboard number typing attempts
+        let typingWarningShown = false;
+        document.addEventListener('keydown', function(e) {
+            // Check if user is trying to type numbers (0-9 on main keyboard or numpad)
+            const isNumber = (e.key >= '0' && e.key <= '9') ||
+                           (e.code >= 'Digit0' && e.code <= 'Digit9') ||
+                           (e.code >= 'Numpad0' && e.code <= 'Numpad9');
+
+            if (isNumber && !typingWarningShown) {
+                typingWarningShown = true;
+                showTypingWarning();
+                // Reset after 5 seconds so they can see it again if they forget
+                setTimeout(() => {
+                    typingWarningShown = false;
+                }, 5000);
+            }
+        });
+
+        function showTypingWarning() {
+            // Create temporary warning popup
+            const warning = document.createElement('div');
+            warning.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.95);
+                color: #ff9999;
+                padding: 30px 40px;
+                border: 3px solid #ff6666;
+                border-radius: 15px;
+                font-family: 'MedievalSharp', cursive;
+                font-size: 1.5rem;
+                text-align: center;
+                z-index: 10000;
+                box-shadow: 0 0 30px rgba(255, 102, 102, 0.5);
+                animation: shake 0.5s;
+            `;
+            warning.innerHTML = `
+                <div style="font-size: 3rem; margin-bottom: 10px;">⚠️</div>
+                <div style="font-weight: bold; margin-bottom: 15px;">NO KEYBOARD TYPING!</div>
+                <div style="color: #99ff99; font-size: 1.2rem;">Walk to number buttons</div>
+                <div style="color: #99ff99; font-size: 1.2rem;">Press ENTER to select</div>
+            `;
+
+            document.body.appendChild(warning);
+
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                warning.style.opacity = '0';
+                warning.style.transition = 'opacity 0.5s';
+                setTimeout(() => warning.remove(), 500);
+            }, 2500);
+        }
         
         // music control
         const coinsMusic = document.getElementById('coinsMusic');
