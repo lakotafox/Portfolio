@@ -29,7 +29,7 @@ const projectsData = [
     description: 'The fun, more artistic version of my portfolio. Same content as this page but in a fun way - explore projects by walking through a medieval Carcassonne-style world.',
     tag: 'Interactive',
     link: 'carcassonne.html',
-    image: 'carc-map-favicon.png',
+    image: '/carc-map-favicon.png',
     featured: true
   },
   {
