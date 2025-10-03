@@ -77,7 +77,7 @@ const Highlights = () => {
               </svg>
             </div>
             <h3>Education & Certifications</h3>
-            <p>Salt Lake Community College (Associates 2026). AWS Cloud Practitioner in progress. Boot.dev certificates in Linux, OOP, and more.</p>
+            <p>Salt Lake Community College (Est. graduation 2026). AWS Cloud Practitioner in progress. Boot.dev certificates in Linux, OOP, and more.</p>
           </div>
 
           <div className="highlight-card">

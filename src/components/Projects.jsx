@@ -8,12 +8,12 @@ const projectsData = [
     image: '/project-images/foxbuilt.jpg'
   },
   {
-    id: 'samwatts',
-    title: 'Sam Watts Fitness',
-    description: 'Professional fitness coaching website with booking and program information.',
-    tag: 'Client Work',
-    link: 'https://thesamwatts.com',
-    image: '/project-images/samwatts.jpg'
+    id: 'puddl3',
+    title: 'Puddl3',
+    description: 'Real-time payroll platform providing instant wage access. Co-founded with two friends. Built with React, Node.js, PostgreSQL, and AWS infrastructure.',
+    tag: 'Startup',
+    link: 'https://puddle2pool.com/',
+    image: '/project-images/PUDDLE.png'
   },
   {
     id: 'reallycoolhair',
@@ -29,7 +29,7 @@ const projectsData = [
     description: 'The fun, more artistic version of my portfolio. Same content as this page but in a fun way - explore projects by walking through a medieval Carcassonne-style world.',
     tag: 'Interactive',
     link: 'carcassonne.html',
-    image: '/carc-map-favicon.png',
+    image: '/project-images/carc.png',
     featured: true
   },
   {
@@ -49,12 +49,12 @@ const projectsData = [
     image: '/project-images/AI2.png'
   },
   {
-    id: 'puddl3',
-    title: 'Puddl3 (Puddle2Pool)',
-    description: 'Real-time payroll platform providing instant wage access. Co-founded with two friends. Built with React, Node.js, PostgreSQL, and AWS infrastructure.',
-    tag: 'Startup',
-    link: 'https://puddle2pool.com/',
-    image: '/project-images/PUDDLE.png'
+    id: 'samwatts',
+    title: 'Sam Watts Fitness',
+    description: 'Professional fitness coaching website with booking and program information.',
+    tag: 'Client Work',
+    link: 'https://thesamwatts.com',
+    image: '/project-images/samwatts.jpg'
   },
   {
     id: 'sudoku',
