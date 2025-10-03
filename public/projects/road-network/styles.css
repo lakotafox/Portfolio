@@ -1,0 +1,334 @@
+/* ========================================
+   BASE STYLES
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    min-height: 100vh;
+    color: #fff;
+    padding: 2rem;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: grid-move 20s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes grid-move {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
+}
+
+/* ========================================
+   CYBER TOGGLE - CLEAN & COOL
+   ======================================== */
+.toggle-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(34, 211, 238, 0.2);
+    border-radius: 50px;
+    backdrop-filter: blur(10px);
+}
+
+.toggle-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748b;
+    transition: color 0.3s;
+}
+
+.toggle-label:first-of-type { color: #fff; }
+.toggle-switch.active ~ .toggle-label:first-of-type { color: #64748b; }
+.toggle-switch.active ~ .toggle-label:last-of-type { color: #22d3ee; }
+
+.toggle-switch {
+    width: 60px;
+    height: 30px;
+    background: #1e293b;
+    border-radius: 30px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.toggle-switch.active {
+    background: rgba(34, 211, 238, 0.1);
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.toggle-switch.active .toggle-slider {
+    transform: translateX(30px);
+    background: #22d3ee;
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+}
+
+/* ========================================
+   CONTENT CONTAINER
+   ======================================== */
+.content-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding-top: 140px;
+}
+
+.version-content {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.version-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ========================================
+   HUMAN VERSION STYLES
+   ======================================== */
+.human-paper {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 3rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.human-paper h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #00ff88;
+}
+
+.human-paper .author {
+    font-style: italic;
+    margin-bottom: 2rem;
+    color: #b8bdd8;
+}
+
+.human-paper p {
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    text-indent: 2rem;
+    color: #e0e0e0;
+}
+
+.human-paper .opening-quote {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-left: 3px solid #00ff88;
+    margin: 1.5rem 0;
+    font-style: italic;
+}
+
+/* ========================================
+   AI VERSION STYLES
+   ======================================== */
+.hero-section {
+    text-align: center;
+    padding: 3rem;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    background: linear-gradient(45deg, #00ff88, #00ccff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+}
+
+.hero-quote {
+    font-size: 1.5rem;
+    color: #ffd700;
+    font-style: italic;
+    margin: 2rem 0;
+}
+
+.section-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.section-card h2 {
+    color: #00ff88;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+/* ========================================
+   SHARED COMPONENTS
+   ======================================== */
+.tictactoe-buttons {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+    justify-content: center;
+}
+
+.demo-btn {
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s;
+    border-width: 2px;
+    border-style: solid;
+}
+
+.demo-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Human buttons - Yellow */
+.demo-btn[onclick*="'human'"] {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    border-color: #fbbf24;
+}
+
+.demo-btn[onclick*="'human'"]:hover {
+    background: rgba(251, 191, 36, 0.4);
+    box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
+}
+
+/* Hammer buttons - Red */
+.demo-btn[onclick*="'hammer'"] {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+.demo-btn[onclick*="'hammer'"]:hover {
+    background: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+}
+
+/* Scalpel buttons - Green */
+.demo-btn[onclick*="'scalpel'"] {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+    border-color: #22c55e;
+}
+
+.demo-btn[onclick*="'scalpel'"]:hover {
+    background: rgba(34, 197, 94, 0.4);
+    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
+}
+
+/* ========================================
+   AI VERSION COMPONENTS
+   ======================================== */
+.principle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.principle-card {
+    background: rgba(0, 255, 136, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    transition: transform 0.3s;
+}
+
+.principle-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+}
+
+.principle-card h3 {
+    color: #00ccff;
+    margin-bottom: 0.5rem;
+}
+
+.visual-metaphor {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    margin: 2rem 0;
+}
+
+.metaphor-item {
+    text-align: center;
+}
+
+.metaphor-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 768px) {
+    .toggle-container {
+        top: 10px;
+        right: 10px;
+        padding: 8px 15px;
+    }
+    
+    .toggle-label {
+        font-size: 12px;
+    }
+    
+    .human-paper {
+        padding: 2rem;
+    }
+    
+    .principle-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .visual-metaphor {
+        flex-direction: column;
+        gap: 2rem;
+    }
+}

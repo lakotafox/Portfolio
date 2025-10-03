@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicTacToeHuman - Apache NetBeans IDE 26</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            background: white;
+            overflow: hidden;
+        }
+        
+        .ide-window {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+        
+        .title-bar {
+            background: linear-gradient(to bottom, #e8e8e8, #d3d3d3);
+            height: 28px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 13px;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        .window-controls {
+            display: flex;
+            gap: 8px;
+            margin-right: 10px;
+        }
+        
+        .window-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+        }
+        
+        .close { background: #ff5f57; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #28ca42; }
+        
+        .toolbar {
+            background: #f0f0f0;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            border-bottom: 1px solid #ccc;
+            background-image: url('netbeans-toolbar.png');
+            background-size: cover;
+            background-position: left center;
+            background-repeat: no-repeat;
+        }
+        
+        .toolbar button {
+            background: transparent;
+            border: none;
+            padding: 5px;
+            margin: 0 2px;
+            cursor: pointer;
+            font-size: 16px;
+            visibility: hidden;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 150px;
+            background: #e8e8e8;
+            border-right: 1px solid #ccc;
+            padding: 10px;
+        }
+        
+        .sidebar-item {
+            color: #333;
+            font-size: 12px;
+            padding: 4px;
+            margin: 2px 0;
+        }
+        
+        .sidebar-item.selected {
+            background: #3875d7;
+            color: white;
+            border-radius: 3px;
+        }
+        
+        .tab-bar {
+            background: #e8e8e8;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        .tab {
+            background: #d4d4d4;
+            color: #333;
+            padding: 5px 15px;
+            border-right: 1px solid #ccc;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            border-top: 2px solid transparent;
+        }
+        
+        .tab.active {
+            background: white;
+            border-top: 2px solid #3875d7;
+        }
+        
+        .tab:not(.active):hover {
+            background: #e0e0e0;
+        }
+        
+        .tab .close-tab {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+        
+        .code-editor {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .line-numbers {
+            background: #f5f5f5;
+            color: #999;
+            padding: 4px 8px;
+            text-align: right;
+            font-size: 12px;
+            line-height: 18px;
+            user-select: none;
+            border-right: 1px solid #ddd;
+            overflow-y: hidden;
+            width: 50px;
+            white-space: pre-line;
+        }
+        
+        .code-content {
+            flex: 1;
+            padding: 4px 12px;
+            overflow-y: auto;
+            font-size: 12px;
+            line-height: 18px;
+            color: #000;
+            white-space: pre;
+            background: white;
+        }
+        
+        .code-content::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        .code-content::-webkit-scrollbar-track {
+            background: #f5f5f5;
+        }
+        
+        .code-content::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 6px;
+        }
+        
+        /* Syntax highlighting - NetBeans theme */
+        .keyword { color: #0000ff; font-weight: bold; }
+        .class { color: #000000; }
+        .string { color: #009900; }
+        .comment { color: #ff00ff; }
+        .number { color: #000000; }
+        .annotation { color: #808080; }
+        .method { color: #000000; }
+        .variable { color: #c41e8a; }
+        
+        .status-bar {
+            height: 25px;
+            background: #f0f0f0;
+            border-top: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .status-bar-right {
+            margin-left: auto;
+            display: flex;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ide-window">
+        <div class="title-bar">
+            <div class="window-controls">
+                <button class="window-btn close" onclick="window.close()"></button>
+                <button class="window-btn minimize"></button>
+                <button class="window-btn maximize"></button>
+            </div>
+            <span>TicTacToeHuman - Apache NetBeans IDE 26</span>
+        </div>
+        
+        <div class="toolbar">
+            <!-- Toolbar image will be displayed as background -->
+        </div>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div style="font-size: 11px;">
+                    <div style="margin-bottom: 5px; font-weight: bold; color: #666;">Source</div>
+                    <img src="javaproject.png" alt="Tictactoe.java" style="width: 100%; margin-top: 5px;">
+                </div>
+            </div>
+            
+            <div class="editor-area">
+                <div class="tab-bar">
+                    <div class="tab active" onclick="showTab('tictactoe')">
+                        Tictactoe.java <span class="close-tab">×</span>
+                    </div>
+                    <div class="tab" onclick="showTab('player')">
+                        Player.java <span class="close-tab">×</span>
+                    </div>
+                </div>
+                
+                <div class="code-editor">
+                    <div class="line-numbers" id="lineNumbers"></div>
+                    <div class="code-content" id="codeContent"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <span>TicTacToeHuman (run)</span>
+            <div class="status-bar-right">
+                <span>running...</span>
+                <span>1:1</span>
+                <span>INS</span>
+                <span>Unix (LF)</span>
+            </div>
+        </div>
+    </div>
+    
+    <script src="netbeans-viewer.js"></script>
+</body>
+</html>

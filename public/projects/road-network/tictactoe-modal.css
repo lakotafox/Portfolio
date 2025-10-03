@@ -1,0 +1,157 @@
+/* TicTacToe Modal Overlay */
+.tictactoe-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.tictactoe-overlay.hidden {
+    display: none;
+}
+
+.tictactoe-window {
+    width: 600px;
+    height: 500px;
+    background: #f6f6f6;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    overflow: hidden;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.tictactoe-title-bar {
+    background: linear-gradient(to bottom, #e8e8e8, #d3d3d3);
+    color: #333;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    position: relative;
+    text-align: center;
+    border-bottom: 1px solid #b8b8b8;
+}
+
+.tictactoe-title-bar span {
+    flex: 1;
+    text-align: center;
+}
+
+.tictactoe-window-controls {
+    position: absolute;
+    left: 12px;
+    display: flex;
+    gap: 8px;
+}
+
+.tictactoe-window-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}
+
+.tictactoe-close-btn { background: #ff5f57; }
+.tictactoe-minimize-btn { background: #ffbd2e; }
+.tictactoe-maximize-btn { background: #28ca42; }
+
+.tictactoe-close-btn:hover { background: #ff3030; }
+
+.tictactoe-game-container {
+    padding: 20px;
+    height: calc(100% - 45px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tictactoe-game-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 12px;
+    height: 300px;
+}
+
+.tictactoe-game-btn {
+    background: #ffffff;
+    border: 2px solid #d1d1d1;
+    border-radius: 12px;
+    font-size: 54px;
+    font-weight: 200;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    color: #000;
+    letter-spacing: 2px;
+}
+
+.tictactoe-game-btn:hover:not(:disabled) {
+    background: #f8f8f8;
+}
+
+.tictactoe-game-btn:focus {
+    outline: none;
+}
+
+.tictactoe-game-btn.last-move {
+    border-color: #007AFF;
+    border-width: 3px;
+    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.15);
+}
+
+.tictactoe-game-btn:active {
+    transform: scale(0.97);
+    background: #f0f0f0;
+}
+
+.tictactoe-scoreboard {
+    display: grid;
+    grid-template-columns: 120px 180px 60px;
+    gap: 12px 0;
+    font-size: 19px;
+    margin-top: 15px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.tictactoe-score-label {
+    padding: 6px;
+    text-align: left;
+    color: #666;
+    font-weight: 400;
+}
+
+.tictactoe-player-name {
+    padding: 6px;
+    text-align: left;
+    color: #333;
+    font-weight: 400;
+}
+
+.tictactoe-score-value {
+    padding: 6px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 500;
+    color: #000;
+}

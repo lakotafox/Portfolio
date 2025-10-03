@@ -1,0 +1,356 @@
+/* TicTacToe Hammer Version - Championship Style */
+
+/* Input Dialog Styles */
+.input-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.input-dialog-overlay.hidden {
+    display: none;
+}
+
+.input-dialog {
+    width: 400px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.input-dialog-header {
+    background: linear-gradient(to bottom, #e8e8e8, #d3d3d3);
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.dialog-controls {
+    display: flex;
+    gap: 8px;
+    margin-right: 10px;
+}
+
+.dialog-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+}
+
+.dialog-close { background: #ff5f57; }
+.dialog-minimize { background: #ffbd2e; }
+.dialog-maximize { background: #28ca42; }
+
+.dialog-title {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.dialog-content {
+    padding: 30px;
+    display: flex;
+    gap: 20px;
+    background: white;
+}
+
+.dialog-icon {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+}
+
+.dialog-form {
+    flex: 1;
+}
+
+.dialog-label {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+    display: block;
+    text-align: left;
+}
+
+.dialog-input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 2px solid #007AFF;
+    border-radius: 4px;
+    outline: none;
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px;
+    background: #f0f0f0;
+    border-top: 1px solid #ccc;
+}
+
+.btn-cancel {
+    padding: 8px 30px;
+    background: white;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-ok {
+    padding: 8px 40px;
+    background: #007AFF;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Championship Game Window */
+.championship-window {
+    width: 600px;
+    height: 680px;
+    background: #f5f5f5;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.championship-header {
+    background: linear-gradient(to bottom, #5a9fd4, #3875d7);
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.championship-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.turn-indicator {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.game-area {
+    flex: 1;
+    display: flex;
+    padding: 25px 30px;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.game-board-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.championship-board {
+    width: 300px;
+    height: 300px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 5px;
+    background: #475569;
+    padding: 6px;
+    border-radius: 8px;
+}
+
+.championship-cell {
+    background: #334155;
+    border: 2px solid #64748b;
+    border-radius: 6px;
+    font-size: 48px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.championship-cell:hover:not(:disabled) {
+    background: #475569;
+    transform: scale(1.02);
+}
+
+.championship-cell.x {
+    color: #4ade80;
+}
+
+.championship-cell.o {
+    color: #f87171;
+}
+
+.championship-cell.winner {
+    border-color: #fbbf24 !important;
+    border-width: 3px !important;
+    background: #475569 !important;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.scoreboard-container {
+    width: 180px;
+}
+
+.scoreboard-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #1e293b;
+}
+
+.score-card {
+    padding: 15px 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    text-align: center;
+    color: white;
+}
+
+.score-card.player1 {
+    background: #4ade80;
+}
+
+.score-card.player2 {
+    background: #f87171;
+}
+
+.score-card.ties {
+    background: #fbbf24;
+}
+
+.score-label {
+    font-size: 14px;
+    margin-bottom: 3px;
+}
+
+.score-value {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 12px 20px;
+    background: white;
+    border-top: 1px solid #ddd;
+    flex-shrink: 0;
+}
+
+.control-btn {
+    padding: 10px 25px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.reset-btn {
+    background: #3498db;
+    color: white;
+}
+
+.new-players-btn {
+    background: #34495e;
+    color: white;
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.winner-message {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4ade80;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Wins Display Section */
+.wins-display {
+    background: #2c3e50;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    font-size: 14px;
+    border-top: 1px solid #34495e;
+    flex-shrink: 0;
+}
+
+.wins-text {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.wins-scores {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.wins-separator {
+    color: #7f8c8d;
+}

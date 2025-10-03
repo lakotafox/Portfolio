@@ -28,7 +28,7 @@ const projectsData = [
     title: 'Carcassonne Portfolio',
     description: 'The fun, more artistic version of my portfolio. Same content as this page but in a fun way - explore projects by walking through a medieval Carcassonne-style world.',
     tag: 'Interactive',
-    link: 'carcassonne.html',
+    link: '/carcassonne.html',
     image: '/project-images/carc.png',
     featured: true
   },
@@ -37,7 +37,7 @@ const projectsData = [
     title: 'MinCoins Calculator',
     description: 'Java coin change algorithm with interactive visualization and code walkthrough. For the Java lovers out there.',
     tag: 'Algorithm',
-    link: 'projects/mincoins/mincoins-area.html',
+    link: '/projects/mincoins/mincoins-area.html',
     image: '/project-images/mincoins.jpg'
   },
   {
@@ -45,7 +45,7 @@ const projectsData = [
     title: 'AI: A Scalpel Not A Hammer',
     description: 'Philosophy paper on precision AI development, prompt engineering, and thoughtful tool usage. Includes interactive code comparison demos.',
     tag: 'Writing',
-    link: 'projects/road-network/index.html',
+    link: '/projects/road-network/index.html',
     image: '/project-images/AI2.png'
   },
   {
@@ -61,7 +61,7 @@ const projectsData = [
     title: "Grandma's Sudoku Robot",
     description: "A gift for my grandma. When her favorite sudoku website started running ads, I built her a Python app that generates personalized puzzles with family quotes and prints them automatically.",
     tag: 'Personal',
-    link: 'projects/sudoku/index.html',
+    link: '/projects/sudoku/index.html',
     image: '/project-images/sudoku.jpg'
   }
 ];
