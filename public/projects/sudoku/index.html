@@ -44,38 +44,77 @@
                 <p class="intro-text">It's a simple executable sitting right in the center of her desktop for easy finding. Now she's always just two clicks away from a fresh puzzle!</p>
             </div>
 
-            <div class="desktop-mockup">
-                <div class="desktop-header">
-                    <div class="desktop-title">Grandma's Desktop</div>
-                </div>
-                <div class="gui-window">
-                    <div class="window-header">
-                        <div class="window-title">Sudoku Robot</div>
-                        <div class="window-controls">
-                            <span>─</span>
-                            <span>□</span>
-                            <span>×</span>
-                        </div>
-                    </div>
-                    <div class="window-content">
-                        <h2 class="gui-title">Choose Your Difficulty</h2>
-                        <div class="gui-buttons">
-                            <button class="gui-btn easy">EASY</button>
-                            <button class="gui-btn medium">MEDIUM</button>
-                            <button class="gui-btn hard">HARD</button>
-                        </div>
-                        <p class="gui-message">Click a button to generate and print your puzzle!</p>
-                    </div>
-                </div>
-            </div>
-
             <div class="content-section">
                 <h2>Technical Implementation</h2>
                 <p>Python GUI application using tkinter for interface design. Implements backtracking algorithm for Sudoku generation with configurable difficulty parameters. ReportLab handles PDF rendering with custom formatting for family messages and quote injection. System print queue integration enables automatic output to default printer. Packaged as standalone Windows executable via PyInstaller with embedded Python runtime.</p>
             </div>
 
             <div class="cta-section">
-                <a href="https://github.com/lakotafox/smith_sudoku_robot" target="_blank" class="btn-primary">View Source Code on GitHub</a>
+                <button onclick="startDemo()" class="btn-primary">Try It</button>
+                <a href="https://github.com/lakotafox/smith_sudoku_robot" target="_blank" class="btn-secondary">View Source Code on GitHub</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop Demo -->
+    <div id="desktop-demo" class="desktop-demo hidden">
+        <div id="python-icon" class="python-icon" onclick="openSudokuApp()">
+            <svg viewBox="0 0 24 24" width="80" height="80">
+                <path fill="#3776ab" d="M12,0.5C5.9,0.5,5.9,3.3,5.9,3.3V6.2h6.2v0.9H3.8C3.8,7.1,0.5,6.7,0.5,12.5s3.3,5.8,3.3,5.8h2v-2.8c0,0-0.1-3.3,3.2-3.3h6.1c0,0,3.1,0.1,3.1-3V3.8C18.2,3.8,18.6,0.5,12,0.5z M8.7,2.9c0.6,0,1,0.5,1,1.1c0,0.6-0.5,1.1-1,1.1c-0.6,0-1-0.5-1-1.1C7.7,3.4,8.2,2.9,8.7,2.9z"/>
+                <path fill="#ffd43b" d="M12,23.5c6.1,0,6.1-2.8,6.1-2.8v-2.9h-6.2v-0.9h8.4c0,0,3.3,0.4,3.3-5.4s-3.3-5.8-3.3-5.8h-2v2.8c0,0,0.1,3.3-3.2,3.3H8.9c0,0-3.1-0.1-3.1,3v6.4C5.8,20.2,5.4,23.5,12,23.5z M15.3,21.1c-0.6,0-1-0.5-1-1.1c0-0.6,0.5-1.1,1-1.1c0.6,0,1,0.5,1,1.1C16.3,20.6,15.8,21.1,15.3,21.1z"/>
+            </svg>
+            <div class="icon-label">Sudoku Robot</div>
+        </div>
+    </div>
+
+    <!-- Sudoku App Window -->
+    <div id="sudoku-app" class="sudoku-app hidden">
+        <div class="gui-window">
+            <div class="window-header">
+                <div class="window-title">Sudoku Robot</div>
+                <div class="window-controls">
+                    <span>─</span>
+                    <span>□</span>
+                    <span onclick="closeSudokuApp()">×</span>
+                </div>
+            </div>
+            <div class="window-content">
+                <h2 class="gui-title">Choose Your Difficulty</h2>
+                <div class="gui-buttons">
+                    <button class="gui-btn easy" onclick="generatePuzzle('easy')">EASY</button>
+                    <button class="gui-btn medium" onclick="generatePuzzle('medium')">MEDIUM</button>
+                    <button class="gui-btn hard" onclick="generatePuzzle('hard')">HARD</button>
+                </div>
+                <p class="gui-message">Click a button to generate and print your puzzle!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Preview -->
+    <div id="pdf-preview" class="pdf-preview hidden">
+        <div class="pdf-container">
+            <div class="pdf-header">
+                <p class="printer-message">This is what is sent to grandma's printer and printed automatically</p>
+                <button onclick="closePdfPreview()" class="close-pdf-btn">×</button>
+            </div>
+            <div class="pdf-content">
+                <div class="pdf-page">
+                    <h1 class="pdf-title">Sudoku Puzzle</h1>
+                    <p class="pdf-quote">"The only way to do great work is to love what you do." - Steve Jobs</p>
+                    <div class="sudoku-grid">
+                        <div class="sudoku-cell">5</div><div class="sudoku-cell"></div><div class="sudoku-cell">3</div><div class="sudoku-cell"></div><div class="sudoku-cell">7</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div>
+                        <div class="sudoku-cell">6</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">1</div><div class="sudoku-cell">9</div><div class="sudoku-cell">5</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div>
+                        <div class="sudoku-cell"></div><div class="sudoku-cell">9</div><div class="sudoku-cell">8</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">6</div><div class="sudoku-cell"></div>
+                        <div class="sudoku-cell">8</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">6</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">3</div>
+                        <div class="sudoku-cell">4</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">8</div><div class="sudoku-cell"></div><div class="sudoku-cell">3</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">1</div>
+                        <div class="sudoku-cell">7</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">2</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">6</div>
+                        <div class="sudoku-cell"></div><div class="sudoku-cell">6</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">2</div><div class="sudoku-cell">8</div><div class="sudoku-cell"></div>
+                        <div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">4</div><div class="sudoku-cell">1</div><div class="sudoku-cell">9</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">5</div>
+                        <div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">8</div><div class="sudoku-cell"></div><div class="sudoku-cell"></div><div class="sudoku-cell">7</div><div class="sudoku-cell">9</div>
+                    </div>
+                    <p class="pdf-family-message">Love you Grandma! - The Family ❤️</p>
+                    <p class="pdf-date">Generated: <span id="pdf-date"></span></p>
+                </div>
             </div>
         </div>
     </div>
