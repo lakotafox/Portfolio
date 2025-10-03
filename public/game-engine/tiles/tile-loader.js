@@ -46,7 +46,7 @@ export function loadAllImages() {
                     resolve();
                 };
             });
-            img.src = `build-with-gui/carc-map-mkr/tiles/${fileName}`;
+            img.src = `/tiles/${fileName}`;
             imageLoadPromises.push(promise);
         });
     });
@@ -63,9 +63,9 @@ export function loadAllImages() {
             resolve();
         };
     });
-    flagPurpleImg.src = 'build-with-gui/carc-map-mkr/tiles/flag purple.png';
+    flagPurpleImg.src = '/tiles/flag purple.png';
     imageLoadPromises.push(flagPurplePromise);
-    
+
     // load red flag image (for placeholder projects)
     const flagRedImg = new Image();
     const flagRedPromise = new Promise((resolve) => {
@@ -78,7 +78,7 @@ export function loadAllImages() {
             resolve();
         };
     });
-    flagRedImg.src = 'build-with-gui/carc-map-mkr/tiles/flag.png';
+    flagRedImg.src = '/tiles/flag.png';
     imageLoadPromises.push(flagRedPromise);
     
     return Promise.all(imageLoadPromises);

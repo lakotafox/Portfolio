@@ -135,3 +135,85 @@ body {
     background: #a0845c;
     transform: scale(1.05);
 }
+
+/* Mobile Controls */
+.mobile-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    display: none;
+}
+
+@media (max-width: 768px), (hover: none) {
+    .mobile-controls {
+        display: block;
+    }
+}
+
+.dpad {
+    position: relative;
+    width: 180px;
+    height: 180px;
+}
+
+.dpad-btn {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: rgba(139, 115, 85, 0.9);
+    border: 2px solid #ffd700;
+    color: #f4e4c1;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s;
+    user-select: none;
+    -webkit-user-select: none;
+    font-family: 'MedievalSharp', cursive;
+}
+
+.dpad-btn:active {
+    background: rgba(160, 132, 92, 0.95);
+    transform: scale(0.95);
+}
+
+.dpad-up {
+    top: 0;
+    left: 60px;
+    border-radius: 8px 8px 4px 4px;
+}
+
+.dpad-down {
+    bottom: 0;
+    left: 60px;
+    border-radius: 4px 4px 8px 8px;
+}
+
+.dpad-left {
+    top: 60px;
+    left: 0;
+    border-radius: 8px 4px 4px 8px;
+}
+
+.dpad-right {
+    top: 60px;
+    right: 0;
+    border-radius: 4px 8px 8px 4px;
+}
+
+.dpad-center {
+    top: 60px;
+    left: 60px;
+    border-radius: 8px;
+    background: rgba(76, 175, 80, 0.9);
+    font-size: 11px;
+    padding: 5px;
+}
+
+.dpad-center:active {
+    background: rgba(69, 160, 73, 0.95);
+}

@@ -75,7 +75,18 @@
     </div>
     
     <button class="exit-btn" id="exitBtn">✕ Exit to Map</button>
-    
+
+    <!-- Mobile Controls -->
+    <div class="mobile-controls" id="mobileControls">
+        <div class="dpad">
+            <button class="dpad-btn dpad-up" data-key="ArrowUp">▲</button>
+            <button class="dpad-btn dpad-left" data-key="ArrowLeft">◄</button>
+            <button class="dpad-btn dpad-center" data-key="Enter">ENTER</button>
+            <button class="dpad-btn dpad-right" data-key="ArrowRight">►</button>
+            <button class="dpad-btn dpad-down" data-key="ArrowDown">▼</button>
+        </div>
+    </div>
+
     <!-- load the init script as a module with cache buster -->
     <script type="module" src="mincoins-init.js?v=2"></script>
     
@@ -173,14 +184,14 @@
                         hasPlayed = true;
                         // play 3 times in rapid succession
                         coinsMusic.play().catch(err => console.log('Music error:', err));
-                        
+
                         // clone and play after some time
                         setTimeout(() => {
                             const sound2 = coinsMusic.cloneNode(true);
                             sound2.volume = 0.3;
                             sound2.play();
                         }, 100);
-                        
+
                         // clone and play after some time
                         setTimeout(() => {
                             const sound3 = coinsMusic.cloneNode(true);
@@ -191,6 +202,55 @@
                 }, { once: true });
             });
         }
+
+        // Mobile controls handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileButtons = document.querySelectorAll('.dpad-btn');
+
+            mobileButtons.forEach(button => {
+                // Handle touch/click
+                button.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    const key = this.getAttribute('data-key');
+                    // Simulate keydown event
+                    const event = new KeyboardEvent('keydown', {
+                        key: key,
+                        bubbles: true
+                    });
+                    document.dispatchEvent(event);
+                });
+
+                button.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    const key = this.getAttribute('data-key');
+                    // Simulate keyup event
+                    const event = new KeyboardEvent('keyup', {
+                        key: key,
+                        bubbles: true
+                    });
+                    document.dispatchEvent(event);
+                });
+
+                // Also handle mouse clicks for testing
+                button.addEventListener('mousedown', function(e) {
+                    const key = this.getAttribute('data-key');
+                    const event = new KeyboardEvent('keydown', {
+                        key: key,
+                        bubbles: true
+                    });
+                    document.dispatchEvent(event);
+                });
+
+                button.addEventListener('mouseup', function(e) {
+                    const key = this.getAttribute('data-key');
+                    const event = new KeyboardEvent('keyup', {
+                        key: key,
+                        bubbles: true
+                    });
+                    document.dispatchEvent(event);
+                });
+            });
+        });
     </script>
 </body>
 </html>
