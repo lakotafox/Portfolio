@@ -14,7 +14,7 @@ const Highlights = () => {
               </svg>
             </div>
             <h3>Full Stack Developer</h3>
-            <p>2 years experience. My biggest strength and my biggest weakness. With AI, it's like driving a spaceship. I can do things that used to need 100 devs. Looking to settle down, find a stack, and grow with a company. Or let's double down and make the next big thing.</p>
+            <p>I like building things that shouldn't exist yet. for the last two years, I've learned how to take ideas from cocept to product fast. Now I'm looking for a team that wants to build bold, useful tech</p>
             <button className="skills-toggle" onClick={() => setShowSkills(!showSkills)}>
               {showSkills ? 'Hide' : 'Full List of Skills'} {showSkills ? '▲' : '▼'}
             </button>
