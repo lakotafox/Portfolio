@@ -1,0 +1,184 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0a0a0a;
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+}
+
+/* CRT Monitor Container */
+.crt-monitor {
+  position: relative;
+  padding: 10px;
+  background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+  border-radius: 20px;
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.1),
+    inset 0 0 60px rgba(0, 0, 0, 0.5);
+  width: 98vw;
+  max-width: 1400px;
+  height: 95vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Terminal Screen */
+.terminal {
+  position: relative;
+  background: #000;
+  border: 3px solid #222;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 100px rgba(0, 255, 255, 0.05),
+    0 0 20px rgba(0, 255, 255, 0.2);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Scanline effect */
+.terminal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Screen flicker */
+.terminal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 255, 255, 0.02);
+  pointer-events: none;
+  z-index: 11;
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.27861; }
+  5% { opacity: 0.34769; }
+  10% { opacity: 0.23604; }
+  15% { opacity: 0.90626; }
+  20% { opacity: 0.18128; }
+  25% { opacity: 0.83891; }
+  30% { opacity: 0.65583; }
+  35% { opacity: 0.67807; }
+  40% { opacity: 0.26559; }
+  45% { opacity: 0.84693; }
+  50% { opacity: 0.96019; }
+  55% { opacity: 0.08594; }
+  60% { opacity: 0.20313; }
+  65% { opacity: 0.71988; }
+  70% { opacity: 0.53455; }
+  75% { opacity: 0.37288; }
+  80% { opacity: 0.71428; }
+  85% { opacity: 0.70419; }
+  90% { opacity: 0.7003; }
+  95% { opacity: 0.36108; }
+  100% { opacity: 0.24387; }
+}
+
+/* Game screen content */
+#game-screen {
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: clamp(12px, 1.8vw, 20px);
+  line-height: 1.1;
+  white-space: pre;
+  padding: 10px;
+  color: #0ff;
+  text-shadow: 0 0 5px currentColor;
+}
+
+/* Color classes */
+.cyan { color: #0ff; }
+.red { color: #f44; }
+.green { color: #0f0; }
+.yellow { color: #ff0; }
+.magenta { color: #f0f; }
+.blue { color: #44f; }
+.white { color: #fff; }
+.dim { color: #555; }
+
+/* Title styling */
+.title {
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+}
+
+/* Glow effect for important text */
+.glow {
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+  to { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor; }
+}
+
+/* Boot sequence styling */
+.boot-text {
+  color: #0f0;
+}
+
+/* Instructions */
+.instructions {
+  position: fixed;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #555;
+  font-size: 12px;
+}
+
+/* Back button */
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: #0ff;
+  text-decoration: none;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  padding: 8px 16px;
+  border: 1px solid #0ff;
+  border-radius: 4px;
+  transition: all 0.2s;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.back-btn:hover {
+  background: #0ff;
+  color: #000;
+}

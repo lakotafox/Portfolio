@@ -77,6 +77,14 @@ const projectsData = [
     tag: 'Personal',
     link: '/projects/sudoku/index.html',
     image: '/project-images/sudoku.jpg'
+  },
+  {
+    id: 'lightbike',
+    title: 'Neon Cycle Arena',
+    description: 'TRON-style light bike game in a retro terminal. Built with vanilla JavaScript and ASCII graphics.',
+    tag: 'Game',
+    link: '/projects/lightbike/index.html',
+    image: '/project-images/lightbike.png'
   }
 ];
 
