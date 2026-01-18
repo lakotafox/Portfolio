@@ -336,7 +336,7 @@ body:not(.dark-theme) .moon-icon {
 /* Projects Grid */
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
 }
 
@@ -358,7 +358,7 @@ body:not(.dark-theme) .moon-icon {
 }
 
 .project-card.featured {
-    grid-column: span 2;
+    /* Same size as other cards */
 }
 
 .project-image {
@@ -412,6 +412,138 @@ body:not(.dark-theme) .moon-icon {
     font-weight: 500;
 }
 
+/* Project Modal */
+.project-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 2rem;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.project-modal {
+    background: var(--card-bg);
+    border-radius: 16px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: auto;
+    position: relative;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background 0.2s;
+}
+
+.modal-close:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.modal-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+}
+
+.modal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modal-content {
+    padding: 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.modal-description {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 1rem 0 1.5rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.modal-btn {
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.modal-btn-primary {
+    background: var(--accent);
+    color: white;
+}
+
+.modal-btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+.modal-btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.modal-btn-secondary:hover {
+    background: var(--card-hover);
+    border-color: var(--accent);
+}
+
 /* Footer */
 .footer {
     border-top: 1px solid var(--border-color);
@@ -422,6 +554,12 @@ body:not(.dark-theme) .moon-icon {
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .hero {
         padding: 4rem 0 3rem;
@@ -438,10 +576,6 @@ body:not(.dark-theme) .moon-icon {
     .projects-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
-    }
-
-    .project-card.featured {
-        grid-column: span 1;
     }
 
     .nav-container {

@@ -1,4 +1,18 @@
+import { useState } from 'react';
+
 const projectsData = [
+  {
+    id: 'adventurecrafter',
+    title: 'AdventureCrafter',
+    description: 'Custom-built 2D game engine with real-time multiplayer collaboration.',
+    tag: 'Game Engine',
+    link: 'https://adventurecrafter.netlify.app',
+    image: '/project-images/adventurecrafter.png',
+    hasModal: true,
+    fullDescription: 'A custom 2D game engine built from the ground up, inspired by tools like Godot. Features real-time collaborative world building with live synchronization, allowing multiple creators to design and play together simultaneously. Create maps, place objects, define game logic, and playtest with friends in real-time.',
+    downloadFile: 'https://drive.google.com/file/d/16tRLHdodHBWC5xyDxRDtzhV247W4trnw/view?usp=drive_link',
+    downloadName: 'Demo Save File'
+  },
   {
     id: 'foxbuilt',
     title: 'FoxBuilt Office Furniture',
@@ -67,6 +81,19 @@ const projectsData = [
 ];
 
 const Projects = () => {
+  const [modalProject, setModalProject] = useState(null);
+
+  const handleCardClick = (e, project) => {
+    if (project.hasModal) {
+      e.preventDefault();
+      setModalProject(project);
+    }
+  };
+
+  const closeModal = () => {
+    setModalProject(null);
+  };
+
   return (
     <main className="main" id="work">
       <div className="container">
@@ -79,6 +106,7 @@ const Projects = () => {
               className={`project-card ${project.featured ? 'featured' : ''}`}
               target={project.link.startsWith('http') ? '_blank' : '_self'}
               rel={project.link.startsWith('http') ? 'noopener noreferrer' : undefined}
+              onClick={(e) => handleCardClick(e, project)}
             >
               <div className="project-image">
                 {project.image ? (
@@ -96,6 +124,43 @@ const Projects = () => {
           ))}
         </div>
       </div>
+
+      {/* Project Modal */}
+      {modalProject && (
+        <div className="project-modal-overlay" onClick={closeModal}>
+          <div className="project-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeModal}>&times;</button>
+            <div className="modal-image">
+              <img src={modalProject.image} alt={modalProject.title} />
+            </div>
+            <div className="modal-content">
+              <h2 className="modal-title">{modalProject.title}</h2>
+              <span className="project-tag">{modalProject.tag}</span>
+              <p className="modal-description">{modalProject.fullDescription}</p>
+              <div className="modal-actions">
+                {modalProject.downloadFile && (
+                  <a
+                    href={modalProject.downloadFile}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="modal-btn modal-btn-secondary"
+                  >
+                    Download {modalProject.downloadName}
+                  </a>
+                )}
+                <a
+                  href={modalProject.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="modal-btn modal-btn-primary"
+                >
+                  Launch Project
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };
