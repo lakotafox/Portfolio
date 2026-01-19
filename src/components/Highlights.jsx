@@ -7,16 +7,26 @@ const Highlights = () => {
   const [showArchmageInfo, setShowArchmageInfo] = useState(false);
 
   const googleAICerts = [
-    { name: 'Full Specialization Certificate', file: '/certs/google-ai-essentials-full.pdf', verify: 'https://coursera.org/share/b8a0932852fd8d9da42a7583c17279c0' },
-    { name: 'Introduction to AI', file: '/certs/intro-to-ai.pdf' },
-    { name: 'Maximize Productivity With AI Tools', file: '/certs/maximize-productivity.pdf' },
-    { name: 'Discover the Art of Prompting', file: '/certs/art-of-prompting.pdf' },
-    { name: 'Use AI Responsibly', file: '/certs/use-ai-responsibly.pdf' },
-    { name: 'Stay Ahead of the AI Curve', file: '/certs/stay-ahead-ai-curve.pdf' },
+    { name: 'Google AI Essentials Certification', file: '/certs/google-ai-essentials-full.pdf', verify: 'https://coursera.org/share/b8a0932852fd8d9da42a7583c17279c0' },
+    { name: 'Introduction to AI', file: '/certs/intro-to-ai.pdf', verify: 'https://coursera.org/share/1675bab0dd5f9b315e478d73331f3224' },
+    { name: 'Maximize Productivity With AI Tools', file: '/certs/maximize-productivity.pdf', verify: 'https://coursera.org/share/9b6bcf078f3b7e4be5eff2372e0a46c7', gold: true },
+    { name: 'Discover the Art of Prompting', file: '/certs/art-of-prompting.pdf', verify: 'https://coursera.org/share/81df8a707a4af6613f753e06db8f7816', gold: true },
+    { name: 'Use AI Responsibly', file: '/certs/use-ai-responsibly.pdf', verify: 'https://coursera.org/share/7df438eca9ef2fbf86efaa13d8cbd6be', gold: true },
+    { name: 'Stay Ahead of the AI Curve', file: '/certs/stay-ahead-ai-curve.pdf', verify: 'https://coursera.org/share/12c43e0e8fb4ffc5b3184f5fa5d6b938', gold: true },
   ];
 
   const ibmCerts = [
-    { name: 'Introduction to Software Engineering', file: '/certs/intro-software-engineering.pdf' },
+    { name: 'IBM AI Developer Professional Certificate', file: '/certs/ibm-ai-developer-professional.pdf', verify: 'https://coursera.org/share/09c71b2eac8a066a1bf1f31f41c173d9', purple: true },
+    { name: 'Intro to Software Engineering', file: '/certs/intro-software-engineering.pdf', verify: 'https://coursera.org/share/3b65b0274e6343d57b56d08a28c46fe4' },
+    { name: 'Intro to AI', file: '/certs/intro-ai-ibm.pdf', verify: 'https://coursera.org/share/9dfe9dc5e789725984036c3390cd0682', gold: true },
+    { name: 'Generative AI Applications', file: '/certs/generative-ai-intro.pdf', verify: 'https://coursera.org/share/2578cc2200dfe3eccbe2ba03ed2dc22c', gold: true },
+    { name: 'Prompt Engineering', file: '/certs/prompt-engineering-basics.pdf', verify: 'https://coursera.org/share/25f159eed73e25de874aa19dcbdec067', purple: true },
+    { name: 'Intro to HTML, CSS & JavaScript', file: '/certs/html-css-js.pdf', verify: 'https://coursera.org/share/c23375100e05963c739c4faa7630de12' },
+    { name: 'Python for AI & Data Science', file: '/certs/python-data-science-ai.pdf', verify: 'https://coursera.org/share/ccdbdf4ea65402283e5d9d5f664cd888', gold: true },
+    { name: 'AI Apps with Python & Flask', file: '/certs/python-flask-ai.pdf', verify: 'https://coursera.org/share/643983b6c6faa543da21c1bf0a82b87b', gold: true },
+    { name: 'GenAI Apps with Python', file: '/certs/genai-python.pdf', verify: 'https://coursera.org/share/df3c551128d26d66983a07346756d065', purple: true },
+    { name: 'GenAI for Software Development', file: '/certs/genai-software-dev.pdf', verify: 'https://coursera.org/share/02e2274eb681a245d951a1e5ea4f721d', gold: true },
+    { name: 'Software Dev Career & Interview Prep', file: '/certs/software-dev-career.pdf', verify: 'https://coursera.org/share/667e8711ca923bad07867309ccb15e55' },
   ];
 
   return (
@@ -72,7 +82,7 @@ const Highlights = () => {
               </svg>
             </div>
             <h3>Education & Certifications</h3>
-            <p>Proficient in Python, JavaScript, HTML/CSS, and Linux. Google AI Essentials certified. Experienced with prompt engineering, LLM integration, AI agents, and multi-agent swarms. Claude Code power user.</p>
+            <p>AI certified by IBM and Google. Proficient in Python, JavaScript, HTML/CSS, and Linux. Experienced with prompt engineering, LLM integration, AI agents, and multi-agent swarms. Claude Code power user.</p>
             <button className="skills-toggle" onClick={() => setShowCerts(!showCerts)}>
               {showCerts ? 'Hide' : 'View All Certifications'} {showCerts ? '▲' : '▼'}
             </button>
@@ -84,12 +94,14 @@ const Highlights = () => {
                     {googleAICerts.map((cert, index) => (
                       <li key={index}>
                         <button
-                          className="cert-button"
+                          className={`cert-button ${cert.gold ? 'cert-gold' : ''} ${cert.purple ? 'cert-purple' : ''}`}
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedCert(cert);
                           }}
                         >
+                          {cert.purple && <span className="purple-star">✦</span>}
+                          {cert.gold && !cert.purple && <span className="gold-star">★</span>}
                           {cert.name}
                         </button>
                       </li>
@@ -102,12 +114,14 @@ const Highlights = () => {
                     {ibmCerts.map((cert, index) => (
                       <li key={index}>
                         <button
-                          className="cert-button"
+                          className={`cert-button ${cert.gold ? 'cert-gold' : ''} ${cert.purple ? 'cert-purple' : ''}`}
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedCert(cert);
                           }}
                         >
+                          {cert.purple && <span className="purple-star">✦</span>}
+                          {cert.gold && !cert.purple && <span className="gold-star">★</span>}
                           {cert.name}
                         </button>
                       </li>
@@ -157,6 +171,17 @@ const Highlights = () => {
             </div>
             <h3>Diverse Project Experience</h3>
             <p>Full-stack platforms, startup MVPs, client websites, and automation tools. I've built with Java, Python, TypeScript, React, Next.js, and AWS. Whether it's for fun, for business, to generate leads, or a simple Python app for my great grandma, I enjoy building across the stack.</p>
+            <button
+              className="see-projects-btn"
+              onClick={() => {
+                const projectsSection = document.getElementById('projects');
+                if (projectsSection) {
+                  projectsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }}
+            >
+              See Projects ↓
+            </button>
           </div>
         </div>
       </div>

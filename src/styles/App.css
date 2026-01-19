@@ -371,6 +371,75 @@ body:not(.dark-theme) .moon-icon {
     transform: translateX(4px);
 }
 
+/* Gold certified certs */
+.cert-gold {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.cert-gold::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpath d='M14 2v6h6'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3Cpath d='M10 9H8'/%3E%3C/svg%3E");
+}
+
+.cert-gold:hover {
+    color: #d97706;
+}
+
+.gold-star {
+    color: #f59e0b;
+    font-size: 1rem;
+    margin-right: 0.25rem;
+}
+
+/* See Projects button */
+.see-projects-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.see-projects-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+/* Purple prestigious certs */
+.cert-purple {
+    color: #a855f7;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+    animation: purpleShimmer 2s ease-in-out infinite;
+}
+
+.cert-purple::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a855f7' stroke-width='2'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpath d='M14 2v6h6'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3Cpath d='M10 9H8'/%3E%3C/svg%3E");
+}
+
+.cert-purple:hover {
+    color: #c084fc;
+    text-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
+}
+
+.purple-star {
+    color: #a855f7;
+    font-size: 1.1rem;
+    margin-right: 0.25rem;
+    animation: purpleShimmer 2s ease-in-out infinite;
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+}
+
+@keyframes purpleShimmer {
+    0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
+    50% { opacity: 0.9; text-shadow: 0 0 20px rgba(168, 85, 247, 0.9), 0 0 30px rgba(168, 85, 247, 0.4); }
+}
+
 /* Archmage info button */
 .archmage-item {
     display: flex;
@@ -811,4 +880,225 @@ body:not(.dark-theme) .moon-icon {
     .section-title {
         font-size: 1.5rem;
     }
+}
+
+/* Nav Left */
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Home Icon */
+.home-icon {
+    color: var(--text-primary);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.home-icon:hover {
+    color: var(--accent);
+    background: var(--card-hover);
+    transform: scale(1.05);
+}
+
+/* Nav Links */
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    padding: 0.5rem 0;
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* Recommendations Section */
+.recommendations {
+    padding: 4rem 0;
+}
+
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.recommendation-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    border-color: var(--accent);
+}
+
+.recommendation-quote {
+    font-size: 4rem;
+    color: var(--accent);
+    opacity: 0.3;
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    line-height: 1;
+    font-family: Georgia, serif;
+}
+
+.recommendation-text {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+}
+
+.recommendation-author {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.recommendation-author strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.recommendation-author span {
+    color: var(--accent);
+    font-size: 0.85rem;
+}
+
+.recommendation-form-container {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.recommendation-form-container h3 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+.recommendation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.recommendation-form input,
+.recommendation-form textarea {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.recommendation-form input:focus,
+.recommendation-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.recommendation-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.submit-btn {
+    padding: 0.75rem 1.5rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.submit-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+/* Popup */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.2s ease;
+}
+
+.popup {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    max-width: 400px;
+    animation: slideUp 0.3s ease;
+}
+
+.popup p {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.popup button {
+    padding: 0.5rem 1.5rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.popup button:hover {
+    background: var(--accent-hover);
 }
