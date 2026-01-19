@@ -391,25 +391,6 @@ body:not(.dark-theme) .moon-icon {
     margin-right: 0.25rem;
 }
 
-/* See Projects button */
-.see-projects-btn {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.see-projects-btn:hover {
-    background: var(--accent-hover);
-    transform: translateY(-2px);
-}
-
 /* Purple prestigious certs */
 .cert-purple {
     color: #a855f7;

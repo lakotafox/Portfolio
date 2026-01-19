@@ -172,11 +172,13 @@ const Highlights = () => {
             <h3>Diverse Project Experience</h3>
             <p>Full-stack platforms, startup MVPs, client websites, and automation tools. I've built with Java, Python, TypeScript, React, Next.js, and AWS. Whether it's for fun, for business, to generate leads, or a simple Python app for my great grandma, I enjoy building across the stack.</p>
             <button
-              className="see-projects-btn"
+              className="skills-toggle"
               onClick={() => {
                 const projectsSection = document.getElementById('projects');
                 if (projectsSection) {
-                  projectsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  const rect = projectsSection.getBoundingClientRect();
+                  const scrollTop = window.pageYOffset + rect.top - (window.innerHeight / 2) + (rect.height / 2);
+                  window.scrollTo({ top: scrollTop, behavior: 'smooth' });
                 }
               }}
             >
