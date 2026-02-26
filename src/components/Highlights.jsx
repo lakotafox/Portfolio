@@ -29,6 +29,10 @@ const Highlights = () => {
     { name: 'Software Dev Career & Interview Prep', file: '/certs/software-dev-career.pdf', verify: 'https://coursera.org/share/667e8711ca923bad07867309ccb15e55' },
   ];
 
+  const bootdevCerts = [
+    { name: 'Introduction to Python', file: '/certs/bootdev-intro-python.png', verify: 'https://www.boot.dev/certificates/f60a79a1-729f-4834-816c-a4ac55332b96', isImage: true },
+  ];
+
   return (
     <section className="highlights">
       <div className="container">
@@ -130,7 +134,20 @@ const Highlights = () => {
                 </div>
                 <div className="skills-category">
                   <h4>Boot.dev</h4>
-                  <ul>
+                  <ul className="cert-list">
+                    {bootdevCerts.map((cert, index) => (
+                      <li key={index}>
+                        <button
+                          className="cert-button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedCert(cert);
+                          }}
+                        >
+                          {cert.name}
+                        </button>
+                      </li>
+                    ))}
                     <li className="archmage-item">
                       Going for the Arch Mage coin
                       <button
@@ -196,11 +213,20 @@ const Highlights = () => {
               &times;
             </button>
             <h3 className="cert-modal-title">{selectedCert.name}</h3>
-            <iframe
-              src={selectedCert.file}
-              className="cert-modal-pdf"
-              title={selectedCert.name}
-            />
+            {selectedCert.isImage ? (
+              <img
+                src={selectedCert.file}
+                className="cert-modal-pdf"
+                alt={selectedCert.name}
+                style={{ maxWidth: '100%', height: 'auto', objectFit: 'contain' }}
+              />
+            ) : (
+              <iframe
+                src={selectedCert.file}
+                className="cert-modal-pdf"
+                title={selectedCert.name}
+              />
+            )}
             <div className="cert-modal-actions">
               <a
                 href={selectedCert.file}
@@ -217,7 +243,7 @@ const Highlights = () => {
                   rel="noopener noreferrer"
                   className="cert-modal-btn cert-modal-btn-secondary"
                 >
-                  Verify on Coursera
+                  {selectedCert.verify.includes('boot.dev') ? 'Verify on Boot.dev' : 'Verify on Coursera'}
                 </a>
               )}
             </div>
