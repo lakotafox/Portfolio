@@ -3,7 +3,7 @@ const Hero = () => {
     <section className="hero">
       <div className="container">
         <h1 className="hero-title">Lakota Fox</h1>
-        <p className="hero-subtitle">I am a Developer with a passion for creating, asking questions, and learning. Currently based in Portland, Oregon.</p>
+        <p className="hero-subtitle">Software Developer building full-stack platforms, AI-powered tools, and security software. Currently based in Portland, Oregon.</p>
       </div>
     </section>
   );

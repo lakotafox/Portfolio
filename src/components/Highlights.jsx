@@ -43,8 +43,8 @@ const Highlights = () => {
                 <path d="M16 18L22 12L16 6M8 6L2 12L8 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <h3>Student Developer</h3>
-            <p>I'm a student developer with strong debugging and problem-solving skills. I build web apps and I'm experienced in systematic debugging and troubleshooting, using dev tools and logging to identify and fix issues for all of my websites.</p>
+            <h3>Software Developer</h3>
+            <p>I build full-stack web apps, security tools, and AI-powered systems. Strong debugging and problem-solving skills with systematic troubleshooting across the entire stack — from dev tools and logging to production infrastructure.</p>
             <button className="skills-toggle" onClick={() => setShowSkills(!showSkills)}>
               {showSkills ? 'Hide' : 'Full List of Skills'} {showSkills ? '▲' : '▼'}
             </button>
@@ -53,25 +53,32 @@ const Highlights = () => {
                 <div className="skills-category">
                   <h4>Core Strengths</h4>
                   <ul>
-                    <li>AI-assisted development & prompt engineering</li>
-                    <li>React.js, CSS3 (with AI assistance)</li>
-                    <li>Netlify, GitHub Actions, Cloudinary</li>
-                    <li>Debugging, problem-solving, Git workflow</li>
+                    <li>JavaScript, TypeScript, Python, Java</li>
+                    <li>React.js, Next.js 15, Tailwind CSS, Flask</li>
+                    <li>Node.js, REST APIs, PostgreSQL</li>
+                    <li>AWS (EC2, S3, Lambda), Netlify, Cloudinary</li>
+                    <li>Debugging, systematic troubleshooting, Git</li>
+                  </ul>
+                </div>
+                <div className="skills-category ai-proficiency">
+                  <h4>AI Proficiency</h4>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>5B+ tokens processed in under a year. Advanced AI-augmented workflow.</p>
+                  <ul>
+                    <li>AI coding agents: Claude Code, Cursor, Windsurf</li>
+                    <li>Prompt engineering & context management</li>
+                    <li>RAG (Retrieval-Augmented Generation) pipelines</li>
+                    <li>AI agent orchestration & multi-agent systems</li>
+                    <li>Guardrails, safety layers & responsible AI</li>
+                    <li>LLM integration (API, SDK, MCP servers)</li>
+                    <li>Building AI-powered tools & automation</li>
                   </ul>
                 </div>
                 <div className="skills-category">
-                  <h4>Actively Learning</h4>
+                  <h4>Infrastructure & Tools</h4>
                   <ul>
-                    <li>Languages: JavaScript, Python, Java, HTML5</li>
-                    <li>Frameworks: Next.js 15, Tailwind CSS, jQuery</li>
-                    <li>Tools: REST APIs, Sonic Pi, Godot 4</li>
-                  </ul>
-                </div>
-                <div className="skills-category">
-                  <h4>Working Knowledge</h4>
-                  <ul>
-                    <li>TypeScript, Node.js, Flask</li>
-                    <li>PostgreSQL, AWS (EC2, S3, Lambda)</li>
+                    <li>GitHub Actions, CI/CD pipelines</li>
+                    <li>Linux, SSH, server administration</li>
+                    <li>Security scanning & penetration testing</li>
                   </ul>
                 </div>
               </div>
@@ -86,7 +93,7 @@ const Highlights = () => {
               </svg>
             </div>
             <h3>Education & Certifications</h3>
-            <p>AI certified by IBM and Google. Proficient in Python, JavaScript, HTML/CSS, and Linux. Experienced with prompt engineering, LLM integration, AI agents, and multi-agent swarms. Claude Code power user.</p>
+            <p>IBM & Google AI certified. I architect AI-augmented development workflows — from RAG pipelines and agent orchestration to guardrails and LLM integration. 5 billion+ tokens processed building real software with AI coding agents.</p>
             <button className="skills-toggle" onClick={() => setShowCerts(!showCerts)}>
               {showCerts ? 'Hide' : 'View All Certifications'} {showCerts ? '▲' : '▼'}
             </button>
@@ -187,7 +194,7 @@ const Highlights = () => {
               </svg>
             </div>
             <h3>Diverse Project Experience</h3>
-            <p>Full-stack platforms, startup MVPs, client websites, and automation tools. I've built with Java, Python, TypeScript, React, Next.js, and AWS. Whether it's for fun, for business, to generate leads, or a simple Python app for my great grandma, I enjoy building across the stack.</p>
+            <p>Full-stack platforms, security tools, startup MVPs, AI-powered applications, and client websites. I've shipped production software with Java, Python, TypeScript, React, Next.js, and AWS. I build systems that solve real problems — from automated security scanners to AI agent pipelines.</p>
             <button
               className="skills-toggle"
               onClick={() => {
