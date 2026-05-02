@@ -85,6 +85,14 @@ const projectsData = [
     tag: 'Game',
     link: '/projects/lightbike/index.html',
     image: '/project-images/lightbike.png'
+  },
+  {
+    id: 'csis-portfolio',
+    title: 'CSIS 1430 School Portfolio',
+    description: 'My CSIS 1430 web dev class portfolio - 11 projects from week 1 to final, including a working Tic Tac Toe game with sound, Mad Libs, a Bootstrap pizza site, and a playable Mario embed.',
+    tag: 'School',
+    link: 'https://wcj.fyv.temporary.site',
+    image: '/project-images/csis-portfolio.png'
   }
 ];
 
