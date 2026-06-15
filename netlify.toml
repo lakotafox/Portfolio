@@ -10,6 +10,20 @@
   status = 200
   force = true
 
+# Livestream guest pages: clean URLs -> their static .html files.
+# These must come BEFORE the SPA catch-all or it swallows them.
+[[redirects]]
+  from = "/fred"
+  to = "/fred.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/games"
+  to = "/games.html"
+  status = 200
+  force = true
+
 # Portfolio (React SPA) is served at /portfolio and all other app routes.
 [[redirects]]
   from = "/*"
