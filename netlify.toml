@@ -2,6 +2,15 @@
   command = "npm run build"
   publish = "dist"
 
+# Livestream demo page loads first at the root. force=true overrides the
+# default static index.html so "/" serves the demo, not the portfolio.
+[[redirects]]
+  from = "/"
+  to = "/demo.html"
+  status = 200
+  force = true
+
+# Portfolio (React SPA) is served at /portfolio and all other app routes.
 [[redirects]]
   from = "/*"
   to = "/index.html"

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FOX — Free Custom Websites, Built Live</title>
+<meta name="description" content="Hop in the live, tell me what you do, and walk away with a real custom website — free, built in front of you by Lakota Fox." />
+<meta property="og:title" content="FOX — Free Custom Websites, Built Live" />
+<meta property="og:description" content="Real custom sites, built live on stream. Not templates. Free." />
+<meta property="og:type" content="website" />
+<link rel="icon" type="image/png" href="/carc-map-favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#08070f;--panel:#11101d;--accent:#7c5cff;--accent2:#ff5c93;
+    --text:#f5f5fb;--muted:#9b9cba;--line:rgba(255,255,255,.08)
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+  a{color:inherit}
+
+  /* nav / tabs */
+  nav{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;background:rgba(8,7,15,.72);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .brand{font-family:Space Grotesk;font-weight:700;letter-spacing:-.01em;font-size:18px}
+  .brand span{background:linear-gradient(120deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .tabs{display:flex;gap:6px}
+  .tabs a{font-family:Space Grotesk;font-size:14px;font-weight:500;text-decoration:none;
+    padding:9px 16px;border-radius:10px;color:var(--muted);transition:.15s}
+  .tabs a.active{color:var(--text);background:rgba(255,255,255,.06)}
+  .tabs a:hover{color:var(--text)}
+
+  /* hero */
+  .wrap{position:relative;min-height:calc(100vh - 65px);display:grid;place-items:center;padding:48px 24px;overflow:hidden}
+  .glow{position:absolute;border-radius:50%;filter:blur(130px);opacity:.45;z-index:0}
+  .g1{width:460px;height:460px;background:var(--accent);top:-140px;left:-90px;animation:float 9s ease-in-out infinite}
+  .g2{width:400px;height:400px;background:var(--accent2);bottom:-140px;right:-70px;animation:float 12s ease-in-out infinite reverse}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(44px)}}
+  .hero{position:relative;z-index:1;text-align:center;max-width:720px}
+  .badge{display:inline-flex;align-items:center;gap:8px;font-family:Space Grotesk;font-size:13px;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);
+    border:1px solid rgba(255,92,147,.3);padding:8px 16px;border-radius:999px;margin-bottom:28px}
+  .dot{width:8px;height:8px;background:#ff3b3b;border-radius:50%;animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+  h1{font-family:Space Grotesk;font-size:clamp(46px,9vw,88px);line-height:.97;letter-spacing:-.03em;font-weight:700}
+  h1 .grad{background:linear-gradient(120deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  p.sub{margin:24px auto 0;max-width:560px;font-size:clamp(16px,2.4vw,20px);color:var(--muted);line-height:1.6}
+  .cta{margin-top:38px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn{font-family:Space Grotesk;font-weight:500;padding:16px 30px;border-radius:14px;text-decoration:none;transition:.15s}
+  .btn.primary{background:linear-gradient(120deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 10px 40px rgba(124,92,255,.4)}
+  .btn.primary:hover{transform:translateY(-3px);box-shadow:0 16px 50px rgba(124,92,255,.55)}
+  .btn.ghost{border:1px solid var(--line);color:var(--text)}
+  .btn.ghost:hover{transform:translateY(-3px);background:rgba(255,255,255,.05)}
+
+  /* how it works */
+  .how{max-width:980px;margin:0 auto;padding:80px 24px}
+  .how h2{font-family:Space Grotesk;font-size:clamp(28px,5vw,40px);text-align:center;letter-spacing:-.02em}
+  .steps{margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:720px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:28px}
+  .step .n{font-family:Space Grotesk;font-size:14px;font-weight:700;color:var(--accent2)}
+  .step h3{font-family:Space Grotesk;margin-top:10px;font-size:20px}
+  .step p{margin-top:8px;color:var(--muted);line-height:1.6;font-size:15px}
+
+  footer{text-align:center;padding:48px 24px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+  <nav>
+    <div class="brand">FOX<span>BUILT</span></div>
+    <div class="tabs">
+      <a class="active" href="/">Free Sites</a>
+      <a href="/portfolio">Portfolio</a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="hero">
+      <span class="badge"><span class="dot"></span> Built live on stream</span>
+      <h1>Free websites<br><span class="grad">from FOX.</span></h1>
+      <p class="sub">Hop in the live, tell me what you do, and walk away with a real custom website — not a template. Designed and built in front of you, in minutes.</p>
+      <div class="cta">
+        <a class="btn primary" href="#how">How it works</a>
+        <a class="btn ghost" href="/portfolio">See my work</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="how" id="how">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="n">01</div>
+        <h3>Jump in the live</h3>
+        <p>Drop a comment telling me what you do — your craft, your brand, your vibe.</p>
+      </div>
+      <div class="step">
+        <div class="n">02</div>
+        <h3>I build it live</h3>
+        <p>A custom site designed for you specifically — real layout, your colors, your content. No templates.</p>
+      </div>
+      <div class="step">
+        <div class="n">03</div>
+        <h3>Walk away with it</h3>
+        <p>It goes live on the spot. Free. Want your own domain later? We can wire that up too.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Built live by Lakota Fox · <a href="/portfolio" style="color:var(--accent2)">View the portfolio →</a></footer>
+</body>
+</html>
