@@ -3,185 +3,288 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Fred's Dog Walking — Happy Dogs, Happy You</title>
-<meta name="description" content="Friendly, reliable dog walking by Fred. Daily walks, drop-in visits, and lots of tail wags. Book a walk today!" />
-<meta property="og:title" content="Fred's Dog Walking" />
-<meta property="og:description" content="Friendly, reliable dog walking. Happy dogs, happy you." />
+<title>Fred — Dog Walking</title>
+<meta name="description" content="Reliable, friendly dog walking by Fred. Daily walks, group adventures, and drop-in visits." />
+<meta property="og:title" content="Fred — Dog Walking" />
+<meta property="og:description" content="Reliable, friendly dog walking by Fred." />
 <meta property="og:type" content="website" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="icon" type="image/png" href="/carc-map-favicon.png" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --bg:#fbf7f0;--cream:#fff;--ink:#2b2620;--muted:#6e655a;
-    --green:#4a8c5d;--green-d:#3a6f49;--sun:#f4a939;--sky:#bfe3e0;
-    --line:rgba(43,38,32,.1)
+    --bg-primary:#0a0a0a;--bg-secondary:#111111;--text-primary:#ffffff;
+    --text-secondary:#a1a1aa;--border-color:#27272a;--card-bg:#18181b;
+    --card-bg-rgb:24,24,27;--card-hover:#1f1f23;--accent:#3b82f6;--accent-hover:#2563eb;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{font-family:Nunito,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
-  a{color:inherit;text-decoration:none}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
-  h1,h2,h3{font-family:Fraunces,serif;letter-spacing:-.01em;line-height:1.05}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg-primary);color:var(--text-primary);line-height:1.6;padding-top:80px}
+  a{text-decoration:none;color:inherit}
+
+  /* animated threads background */
+  .threads-container{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+  .threads-container canvas{width:100%;height:100%;display:block}
+
+  .container{max-width:1200px;margin:0 auto;padding:0 2rem}
 
   /* nav */
-  nav{position:sticky;top:0;z-index:10;background:rgba(251,247,240,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1040px;margin:0 auto}
-  .logo{font-family:Fraunces;font-weight:700;font-size:20px;display:flex;align-items:center;gap:8px}
-  .logo .paw{width:30px;height:30px;background:var(--green);border-radius:50%;display:grid;place-items:center;color:#fff;font-size:15px}
-  .nav-cta{background:var(--green);color:#fff;padding:10px 20px;border-radius:999px;font-weight:700;font-size:15px;transition:.15s}
-  .nav-cta:hover{background:var(--green-d);transform:translateY(-1px)}
+  .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.5rem 2rem;backdrop-filter:blur(8px);background:rgba(10,10,10,.55)}
+  .nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:2rem}
+  .logo{display:flex;align-items:center;gap:.5rem;font-size:1.1rem;font-weight:600;color:var(--text-primary)}
+  .logo svg{color:var(--accent)}
+  .nav-links{display:flex;gap:2rem;align-items:center}
+  .nav-link{color:var(--text-secondary);font-size:.95rem;font-weight:500;transition:all .2s;padding:.5rem 0}
+  .nav-link:hover{color:var(--text-primary);text-decoration:underline}
+  .nav-cta{color:#fff;background:var(--accent);padding:.5rem 1.1rem;border-radius:8px;font-size:.9rem;font-weight:500;transition:all .2s}
+  .nav-cta:hover{background:var(--accent-hover);transform:translateY(-1px)}
 
   /* hero */
-  .hero{position:relative;padding:72px 0 64px;overflow:hidden}
-  .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
-  @media(max-width:780px){.hero-grid{grid-template-columns:1fr;text-align:center}}
-  .pill{display:inline-block;background:var(--sky);color:var(--green-d);font-weight:700;font-size:14px;padding:7px 16px;border-radius:999px;margin-bottom:20px}
-  .hero h1{font-size:clamp(40px,7vw,68px);font-weight:700}
-  .hero h1 em{font-style:normal;color:var(--green)}
-  .hero p{margin-top:20px;font-size:clamp(17px,2.3vw,20px);color:var(--muted);max-width:480px}
-  @media(max-width:780px){.hero p{margin-left:auto;margin-right:auto}}
-  .hero-cta{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap}
-  @media(max-width:780px){.hero-cta{justify-content:center}}
-  .btn{font-weight:700;padding:15px 28px;border-radius:999px;font-size:16px;transition:.15s}
-  .btn.primary{background:var(--green);color:#fff;box-shadow:0 8px 24px rgba(74,140,93,.3)}
-  .btn.primary:hover{background:var(--green-d);transform:translateY(-2px)}
-  .btn.ghost{border:2px solid var(--green);color:var(--green-d)}
-  .btn.ghost:hover{background:rgba(74,140,93,.08)}
-  .hero-art{aspect-ratio:1;background:linear-gradient(160deg,var(--sky),var(--green));border-radius:32px;display:grid;place-items:center;font-size:clamp(90px,18vw,150px);box-shadow:0 24px 60px rgba(74,140,93,.25)}
+  .hero{padding:8rem 0 5rem}
+  .hero-eyebrow{display:inline-flex;align-items:center;gap:.5rem;color:var(--accent);font-weight:600;font-size:.95rem;margin-bottom:1.25rem}
+  .hero-title{font-size:4rem;font-weight:700;letter-spacing:-.02em;margin-bottom:1rem}
+  .hero-subtitle{font-size:1.5rem;color:var(--text-secondary);font-weight:400;max-width:640px}
+  .hero-cta{margin-top:2.25rem;display:flex;gap:1rem;flex-wrap:wrap}
+  .btn{padding:.85rem 1.6rem;border-radius:8px;font-weight:500;font-size:1rem;transition:all .2s;display:inline-block}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:var(--accent-hover);transform:translateY(-2px)}
+  .btn-secondary{background:var(--card-bg);color:var(--text-primary);border:1px solid var(--border-color)}
+  .btn-secondary:hover{background:var(--card-hover);border-color:var(--accent)}
 
-  /* trust strip */
-  .trust{background:var(--ink);color:#fff;padding:22px 0}
-  .trust-in{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;font-weight:600}
-  .trust-in span{display:flex;align-items:center;gap:9px}
-  .trust-in .ic{color:var(--sun)}
+  /* sections */
+  section{padding:4rem 0}
+  .section-title{font-size:2rem;font-weight:600;margin-bottom:.5rem}
+  .section-sub{color:var(--text-secondary);margin-bottom:2.5rem;font-size:1.05rem}
 
-  /* services */
-  section{padding:72px 0}
-  .sec-head{text-align:center;max-width:560px;margin:0 auto 48px}
-  .sec-head h2{font-size:clamp(30px,5vw,44px);font-weight:700}
-  .sec-head p{margin-top:12px;color:var(--muted);font-size:18px}
-  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-  @media(max-width:780px){.cards{grid-template-columns:1fr}}
-  .card{background:var(--cream);border:1px solid var(--line);border-radius:22px;padding:30px;transition:.15s}
-  .card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(43,38,32,.08)}
-  .card .emoji{font-size:38px}
-  .card h3{margin-top:14px;font-size:22px;font-weight:600}
-  .card p{margin-top:8px;color:var(--muted)}
-  .card .price{margin-top:16px;font-family:Fraunces;font-weight:700;font-size:24px;color:var(--green)}
-  .card .price small{font-family:Nunito;font-weight:600;font-size:14px;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem}
+  .card{background:rgba(var(--card-bg-rgb),.3);backdrop-filter:blur(10px);border:1px solid var(--border-color);
+    border-radius:12px;padding:2rem;transition:all .3s ease;position:relative}
+  .card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,0,0,.15);border-color:var(--accent);background:rgba(var(--card-bg-rgb),.5)}
+  .card-icon{color:var(--accent);margin-bottom:1rem}
+  .card h3{font-size:1.25rem;font-weight:600;margin-bottom:.6rem}
+  .card p{color:var(--text-secondary);font-size:.95rem}
+  .card .price{margin-top:1.1rem;font-size:1.4rem;font-weight:700;color:var(--text-primary)}
+  .card .price span{font-size:.9rem;font-weight:500;color:var(--text-secondary)}
 
-  /* why fred */
-  .why{background:var(--sky)}
-  .why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;margin-top:8px}
-  @media(max-width:780px){.why-grid{grid-template-columns:1fr}}
-  .why-item{display:flex;gap:16px;align-items:flex-start}
-  .why-item .dot{flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:20px}
-  .why-item h3{font-size:19px;font-weight:600}
-  .why-item p{color:var(--green-d);opacity:.85}
+  /* book */
+  .book-card{background:rgba(var(--card-bg-rgb),.4);backdrop-filter:blur(10px);border:1px solid var(--border-color);
+    border-radius:16px;padding:3.5rem 2rem;text-align:center;max-width:760px;margin:0 auto}
+  .book-card h2{font-size:2rem;font-weight:700;margin-bottom:.75rem}
+  .book-card p{color:var(--text-secondary);font-size:1.1rem;margin-bottom:1.75rem}
+  .book-contact{margin-top:1.5rem;color:var(--text-secondary);font-weight:500}
+  .book-contact b{color:var(--text-primary)}
 
-  /* cta */
-  .book{text-align:center}
-  .book-box{background:var(--green);color:#fff;border-radius:32px;padding:60px 32px;max-width:760px;margin:0 auto}
-  .book-box h2{font-size:clamp(30px,5vw,44px);font-weight:700}
-  .book-box p{margin-top:14px;font-size:18px;opacity:.92}
-  .book-box .btn{margin-top:28px;background:#fff;color:var(--green-d)}
-  .book-box .btn:hover{transform:translateY(-2px);background:#f3f3f3}
-  .book-box .contact{margin-top:20px;font-weight:700;font-size:18px}
+  .footer{border-top:1px solid var(--border-color);padding:3rem 0;text-align:center;color:var(--text-secondary);font-size:.9rem}
+  .footer a{color:var(--accent)}
 
-  footer{text-align:center;padding:36px 24px;color:var(--muted);font-size:15px}
-  footer a{color:var(--green-d);font-weight:700}
+  @media(max-width:768px){
+    .hero{padding:4rem 0 3rem}
+    .hero-title{font-size:2.5rem}
+    .hero-subtitle{font-size:1.15rem}
+    .nav-links .nav-link{display:none}
+    .container{padding:0 1.5rem}
+  }
 </style>
 </head>
-<body>
-  <nav>
-    <div class="nav-in">
-      <div class="logo"><span class="paw">🐾</span> Fred's Dog Walking</div>
-      <a class="nav-cta" href="#book">Book a Walk</a>
+<body class="dark-theme">
+  <div class="threads-container" id="threads"></div>
+
+  <nav class="nav">
+    <div class="nav-container">
+      <a class="logo" href="#top">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="11" r="2"/><circle cx="9.5" cy="6.5" r="2"/><circle cx="14.5" cy="6.5" r="2"/><circle cx="18.5" cy="11" r="2"/><path d="M12 12c-2.5 0-4.5 2-5 4-.4 1.6.8 3 2.4 3 .9 0 1.7-.4 2.6-.4s1.7.4 2.6.4c1.6 0 2.8-1.4 2.4-3-.5-2-2.5-4-5-4z"/></svg>
+        Fred &middot; Dog Walking
+      </a>
+      <div class="nav-links">
+        <a class="nav-link" href="#services">Services</a>
+        <a class="nav-link" href="#why">Why Fred</a>
+        <a class="nav-cta" href="#book">Book a Walk</a>
+      </div>
     </div>
   </nav>
 
-  <header class="hero">
-    <div class="wrap hero-grid">
-      <div>
-        <span class="pill">🦴 Now taking new pups!</span>
-        <h1>Happy dogs.<br><em>Happy you.</em></h1>
-        <p>Hi, I'm Fred — your friendly neighborhood dog walker. Reliable daily walks, lots of love, and a tired, happy pup at the end of the day.</p>
-        <div class="hero-cta">
-          <a class="btn primary" href="#book">Book a Walk</a>
-          <a class="btn ghost" href="#services">See Services</a>
-        </div>
+  <header class="hero" id="top">
+    <div class="container">
+      <span class="hero-eyebrow">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="11" r="2"/><circle cx="9.5" cy="6.5" r="2"/><circle cx="14.5" cy="6.5" r="2"/><circle cx="18.5" cy="11" r="2"/><path d="M12 12c-2.5 0-4.5 2-5 4-.4 1.6.8 3 2.4 3 .9 0 1.7-.4 2.6-.4s1.7.4 2.6.4c1.6 0 2.8-1.4 2.4-3-.5-2-2.5-4-5-4z"/></svg>
+        Now taking new pups
+      </span>
+      <h1 class="hero-title">Dog walking by Fred</h1>
+      <p class="hero-subtitle">Reliable daily walks, plenty of love, and a happy, tired pup at the end of every day. Trusted by dogs and their humans.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#book">Book a Walk</a>
+        <a class="btn btn-secondary" href="#services">View Services</a>
       </div>
-      <div class="hero-art">🐕</div>
     </div>
   </header>
 
-  <div class="trust">
-    <div class="trust-in wrap">
-      <span><span class="ic">★</span> Trusted &amp; reliable</span>
-      <span><span class="ic">★</span> Insured walks</span>
-      <span><span class="ic">★</span> Daily photo updates</span>
-      <span><span class="ic">★</span> Dogs of all sizes</span>
-    </div>
-  </div>
-
   <section id="services">
-    <div class="wrap">
-      <div class="sec-head">
-        <h2>Walks &amp; visits</h2>
-        <p>Flexible options to keep your best friend happy and active.</p>
-      </div>
-      <div class="cards">
+    <div class="container">
+      <h2 class="section-title">Services</h2>
+      <p class="section-sub">Flexible options to keep your best friend active and happy.</p>
+      <div class="grid">
         <div class="card">
-          <div class="emoji">🚶</div>
+          <div class="card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4v6h6"/><path d="M4 20l5-5"/><circle cx="6" cy="18" r="2"/></svg></div>
           <h3>Solo Walk</h3>
-          <p>A dedicated 30-minute walk, just for your dog. Perfect for high-energy pups.</p>
-          <div class="price">$20 <small>/ walk</small></div>
+          <p>A dedicated 30-minute walk, just for your dog. Perfect for high-energy pups who need focused time.</p>
+          <div class="price">$20 <span>/ walk</span></div>
         </div>
         <div class="card">
-          <div class="emoji">🐾</div>
+          <div class="card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><path d="M16 20c0-2 1.5-3.5 3.5-3.5"/></svg></div>
           <h3>Group Adventure</h3>
-          <p>A 60-minute social walk with a small, well-matched pack of furry friends.</p>
-          <div class="price">$28 <small>/ walk</small></div>
+          <p>A 60-minute social walk with a small, well-matched pack of friendly dogs. Great exercise and play.</p>
+          <div class="price">$28 <span>/ walk</span></div>
         </div>
         <div class="card">
-          <div class="emoji">🏡</div>
+          <div class="card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg></div>
           <h3>Drop-In Visit</h3>
-          <p>A 20-minute check-in: feeding, fresh water, potty break, and belly rubs.</p>
-          <div class="price">$15 <small>/ visit</small></div>
+          <p>A 20-minute check-in: feeding, fresh water, a potty break, and some quality attention while you're out.</p>
+          <div class="price">$15 <span>/ visit</span></div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="why">
-    <div class="wrap">
-      <div class="sec-head">
-        <h2>Why dogs love Fred</h2>
-        <p>And why their humans keep coming back.</p>
-      </div>
-      <div class="why-grid">
-        <div class="why-item"><div class="dot">📸</div><div><h3>Photo updates every walk</h3><p>You'll get pics and a quick note so you always know your pup had a great time.</p></div></div>
-        <div class="why-item"><div class="dot">⏰</div><div><h3>On time, every time</h3><p>Dependable scheduling you can count on, rain or shine.</p></div></div>
-        <div class="why-item"><div class="dot">❤️</div><div><h3>Genuine dog person</h3><p>Patient, calm, and great with shy, senior, and high-energy dogs alike.</p></div></div>
-        <div class="why-item"><div class="dot">🔑</div><div><h3>Safe &amp; trusted</h3><p>Careful with keys, locks, and your home. Your pup and place are in good hands.</p></div></div>
+  <section id="why">
+    <div class="container">
+      <h2 class="section-title">Why Fred</h2>
+      <p class="section-sub">Why dogs love him — and why their humans keep coming back.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg></div>
+          <h3>Photo updates every walk</h3>
+          <p>You'll get pictures and a quick note, so you always know your pup had a great time.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <h3>On time, every time</h3>
+          <p>Dependable scheduling you can count on, rain or shine.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></div>
+          <h3>A genuine dog person</h3>
+          <p>Patient and calm — great with shy, senior, and high-energy dogs alike.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3>Safe &amp; trusted</h3>
+          <p>Careful with keys, locks, and your home. Your pup and your place are in good hands.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="book" id="book">
-    <div class="wrap">
-      <div class="book-box">
+  <section id="book">
+    <div class="container">
+      <div class="book-card">
         <h2>Ready for a happy, tired pup?</h2>
         <p>Book Fred for a walk and give your dog the day they deserve.</p>
-        <a class="btn" href="tel:0000000000">Call or Text to Book</a>
-        <div class="contact">📞 (your number) &nbsp;·&nbsp; 📍 (your area)</div>
+        <a class="btn btn-primary" href="tel:0000000000">Call or Text to Book</a>
+        <div class="book-contact"><b>(your number)</b> &nbsp;&middot;&nbsp; <b>(your area)</b></div>
       </div>
     </div>
   </section>
 
-  <footer>
-    🐾 Fred's Dog Walking — made live on stream by <a href="/portfolio">FOX</a>
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Fred's Dog Walking &middot; built live by <a href="/portfolio">FOX</a></p>
+    </div>
   </footer>
+
+  <script type="module">
+    import { Renderer, Program, Mesh, Triangle, Color } from 'https://esm.sh/ogl@1.0.8';
+
+    const vertex = `
+      attribute vec2 position; attribute vec2 uv; varying vec2 vUv;
+      void main(){ vUv = uv; gl_Position = vec4(position, 0.0, 1.0); }`;
+
+    const fragment = `
+    precision highp float;
+    uniform float iTime; uniform vec3 iResolution; uniform vec3 uColor;
+    uniform float uAmplitude; uniform float uDistance; uniform vec2 uMouse;
+    #define PI 3.1415926538
+    const int u_line_count = 40; const float u_line_width = 7.0; const float u_line_blur = 10.0;
+    float Perlin2D(vec2 P){
+      vec2 Pi = floor(P); vec4 Pf_Pfmin1 = P.xyxy - vec4(Pi, Pi + 1.0);
+      vec4 Pt = vec4(Pi.xy, Pi.xy + 1.0); Pt = Pt - floor(Pt * (1.0/71.0)) * 71.0;
+      Pt += vec2(26.0,161.0).xyxy; Pt *= Pt; Pt = Pt.xzxz * Pt.yyww;
+      vec4 hash_x = fract(Pt * (1.0/951.135664)); vec4 hash_y = fract(Pt * (1.0/642.949883));
+      vec4 grad_x = hash_x - 0.49999; vec4 grad_y = hash_y - 0.49999;
+      vec4 grad_results = inversesqrt(grad_x*grad_x + grad_y*grad_y) * (grad_x * Pf_Pfmin1.xzxz + grad_y * Pf_Pfmin1.yyww);
+      grad_results *= 1.4142135623730950;
+      vec2 blend = Pf_Pfmin1.xy * Pf_Pfmin1.xy * Pf_Pfmin1.xy * (Pf_Pfmin1.xy * (Pf_Pfmin1.xy * 6.0 - 15.0) + 10.0);
+      vec4 blend2 = vec4(blend, vec2(1.0 - blend)); return dot(grad_results, blend2.zxzx * blend2.wwyy);
+    }
+    float pixel(float count, vec2 resolution){ return (1.0 / max(resolution.x, resolution.y)) * count; }
+    float lineFn(vec2 st, float width, float perc, float offset, vec2 mouse, float time, float amplitude, float distance){
+      float split_offset = (perc * 0.4); float split_point = 0.1 + split_offset;
+      float amplitude_normal = smoothstep(split_point, 0.7, st.x); float amplitude_strength = 0.5;
+      float finalAmplitude = amplitude_normal * amplitude_strength * amplitude * (1.0 + (mouse.y - 0.5) * 0.2);
+      float time_scaled = time / 10.0 + (mouse.x - 0.5) * 1.0;
+      float blur = smoothstep(split_point, split_point + 0.05, st.x) * perc;
+      float xnoise = mix(Perlin2D(vec2(time_scaled, st.x + perc) * 2.5), Perlin2D(vec2(time_scaled, st.x + time_scaled) * 3.5) / 1.5, st.x * 0.3);
+      float y = 0.5 + (perc - 0.5) * distance + xnoise / 2.0 * finalAmplitude;
+      float line_start = smoothstep(y + (width/2.0) + (u_line_blur * pixel(1.0, iResolution.xy) * blur), y, st.y);
+      float line_end = smoothstep(y, y - (width/2.0) - (u_line_blur * pixel(1.0, iResolution.xy) * blur), st.y);
+      return clamp((line_start - line_end) * (1.0 - smoothstep(0.0, 1.0, pow(perc, 0.3))), 0.0, 1.0);
+    }
+    void mainImage(out vec4 fragColor, in vec2 fragCoord){
+      vec2 uv = fragCoord / iResolution.xy; float line_strength = 1.0;
+      for(int i = 0; i < u_line_count; i++){
+        float p = float(i) / float(u_line_count);
+        line_strength *= (1.0 - lineFn(uv, u_line_width * pixel(1.0, iResolution.xy) * (1.0 - p), p, (PI * 1.0) * p, uMouse, iTime, uAmplitude, uDistance));
+      }
+      float colorVal = 1.0 - line_strength; fragColor = vec4(uColor * colorVal, colorVal);
+    }
+    void main(){ mainImage(gl_FragColor, gl_FragCoord.xy); }`;
+
+    const container = document.getElementById('threads');
+    const renderer = new Renderer({ alpha: true });
+    const gl = renderer.gl;
+    gl.clearColor(0, 0, 0, 0);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    container.appendChild(gl.canvas);
+
+    const geometry = new Triangle(gl);
+    const program = new Program(gl, {
+      vertex, fragment,
+      uniforms: {
+        iTime: { value: 0 },
+        iResolution: { value: new Color(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height) },
+        uColor: { value: new Color(0.231, 0.510, 0.965) }, // #3b82f6
+        uAmplitude: { value: 1 },
+        uDistance: { value: 0 },
+        uMouse: { value: new Float32Array([0.5, 0.5]) }
+      }
+    });
+    const mesh = new Mesh(gl, { geometry, program });
+
+    function resize(){
+      const { clientWidth, clientHeight } = container;
+      renderer.setSize(clientWidth, clientHeight);
+      program.uniforms.iResolution.value.r = clientWidth;
+      program.uniforms.iResolution.value.g = clientHeight;
+      program.uniforms.iResolution.value.b = clientWidth / clientHeight;
+    }
+    window.addEventListener('resize', resize); resize();
+
+    let current = [0.5, 0.5], target = [0.5, 0.5];
+    container.style.pointerEvents = 'none';
+    window.addEventListener('mousemove', (e) => {
+      target = [e.clientX / window.innerWidth, 1.0 - e.clientY / window.innerHeight];
+    });
+
+    function update(t){
+      current[0] += 0.05 * (target[0] - current[0]);
+      current[1] += 0.05 * (target[1] - current[1]);
+      program.uniforms.uMouse.value[0] = current[0];
+      program.uniforms.uMouse.value[1] = current[1];
+      program.uniforms.iTime.value = t * 0.001;
+      renderer.render({ scene: mesh });
+      requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  </script>
 </body>
 </html>
