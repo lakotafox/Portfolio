@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🦈 Aquarium Battle Royale — Last Fish Swimming</title>
+<meta name="description" content="Add viewers as fish and watch them battle. Bigger fish eat smaller fish — last fish swimming wins!" />
+<link rel="icon" type="image/png" href="/carc-map-favicon.png" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;font-family:'Fredoka',system-ui,sans-serif;color:#eafaff}
+  body{background:#021018}
+  #tank{position:fixed;inset:0;display:block;
+    background:linear-gradient(180deg,#0a4a6b 0%,#073a55 35%,#052a3e 70%,#031c2b 100%)}
+
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;
+    align-items:flex-start;padding:16px 20px;pointer-events:none;gap:16px}
+  .title h1{font-size:clamp(20px,3.4vw,34px);font-weight:700;text-shadow:0 2px 16px rgba(0,0,0,.6)}
+  .title p{font-weight:500;opacity:.9;font-size:clamp(12px,1.8vw,15px)}
+
+  .board{pointer-events:none;background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.16);
+    border-radius:14px;padding:10px 14px;min-width:190px;backdrop-filter:blur(7px)}
+  .board h3{font-size:13px;letter-spacing:.04em;text-transform:uppercase;opacity:.8;margin-bottom:6px;display:flex;justify-content:space-between}
+  .board ol{list-style:none}
+  .board li{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:2px 0;font-weight:500}
+  .board li .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+  .board li .sz{opacity:.8;font-variant-numeric:tabular-nums}
+  .board li.lead .nm{color:#ffe27f;font-weight:700}
+
+  .feed{position:fixed;left:16px;bottom:90px;z-index:5;pointer-events:none;display:flex;flex-direction:column;gap:4px}
+  .feed div{background:rgba(0,0,0,.32);border-radius:8px;padding:4px 10px;font-size:13px;font-weight:500;
+    align-self:flex-start;animation:fadein .3s ease}
+  @keyframes fadein{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+
+  .controls{position:fixed;bottom:0;left:0;right:0;z-index:6;display:flex;gap:10px;justify-content:center;
+    align-items:center;flex-wrap:wrap;padding:14px 16px;background:linear-gradient(180deg,transparent,rgba(2,12,20,.55))}
+  .controls input{font-family:inherit;font-size:16px;font-weight:500;padding:12px 16px;border-radius:999px;
+    border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff;outline:none;min-width:200px}
+  .controls input::placeholder{color:rgba(234,250,255,.6)}
+  .btn{cursor:pointer;border:none;font-family:inherit;font-weight:600;font-size:16px;color:#06303f;
+    background:#7fe7ff;padding:12px 20px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.3);transition:transform .12s,filter .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.go{background:#6bf0a3}
+  .btn.alt{background:#ffe27f;color:#3f3406}
+  .btn.ghost{background:rgba(255,255,255,.14);color:#eafaff;border:1px solid rgba(255,255,255,.25)}
+  .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+  .winner{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;
+    background:radial-gradient(circle at center,rgba(4,20,30,.6),rgba(2,8,14,.92));text-align:center;flex-direction:column}
+  .winner.show{display:flex;animation:fadein .4s ease}
+  .winner .crown{font-size:84px;animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+  .winner h2{font-size:clamp(34px,8vw,72px);font-weight:700;text-shadow:0 4px 30px rgba(255,210,80,.5)}
+  .winner .label{font-size:20px;opacity:.85;font-weight:500;margin-top:4px}
+  .winner .btn{margin-top:26px}
+  .credit{position:fixed;bottom:64px;right:14px;z-index:4;font-size:12px;opacity:.5}
+  .credit a{color:#cfeffd}
+  @media(max-width:640px){ .board{display:none} }
+</style>
+</head>
+<body>
+  <canvas id="tank"></canvas>
+
+  <div class="topbar">
+    <div class="title">
+      <h1>🦈 Aquarium Battle Royale</h1>
+      <p>Add viewers as fish — bigger eats smaller — last fish swimming wins!</p>
+    </div>
+    <div class="board">
+      <h3><span>Leaderboard</span><span id="aliveCount">0 alive</span></h3>
+      <ol id="leaderboard"></ol>
+    </div>
+  </div>
+
+  <div class="feed" id="feed"></div>
+  <div class="credit">built live by <a href="/portfolio">FOX</a></div>
+
+  <div class="controls">
+    <input id="nameInput" placeholder="Viewer name… (comma for many)" autocomplete="off" maxlength="60" />
+    <button class="btn" id="addBtn">+ Add Fish 🐠</button>
+    <button class="btn go" id="startBtn">Start Battle ▶</button>
+    <button class="btn alt" id="testBtn">Add 8 Test Fish</button>
+    <button class="btn ghost" id="resetBtn">Reset ↺</button>
+  </div>
+
+  <div class="winner" id="winner">
+    <div class="crown">👑</div>
+    <h2 id="winnerName">—</h2>
+    <div class="label">is the last fish swimming!</div>
+    <button class="btn alt" id="playAgain">New Battle ↺</button>
+  </div>
+
+<script>
+(() => {
+  const canvas=document.getElementById('tank'), ctx=canvas.getContext('2d');
+  let W,H; const resize=()=>{W=canvas.width=innerWidth;H=canvas.height=innerHeight}; addEventListener('resize',resize); resize();
+  const rand=(a,b)=>a+Math.random()*(b-a);
+  const PAL=['#ff7b6b','#ffd166','#7fe7ff','#9b8cff','#6bf0a3','#ff9ad5','#ffa94d','#5ad1ff','#c3ff6b','#ff6bd6'];
+  const TEST=['Nemo','Bubbles','Shark Bait','Finley','Goldie','Splash','Captain','Sushi','Gill','Moby','Dory','Pufferton'];
+
+  let fish=[], started=false, paused=false, colorI=0;
+  const fb=document.getElementById('feed'), lb=document.getElementById('leaderboard'), aliveEl=document.getElementById('aliveCount');
+  const winnerBox=document.getElementById('winner'), winnerName=document.getElementById('winnerName');
+  const startBtn=document.getElementById('startBtn');
+
+  function sizeToR(s){ return 10+Math.sqrt(s)*3.2; }
+  function addFish(name){
+    name=(name||'').trim(); if(!name) return;
+    fish.push({ name, x:rand(80,W-80), y:rand(90,H-130), size:rand(8,16),
+      color:PAL[colorI++%PAL.length], heading:rand(0,Math.PI*2), speed:rand(0.6,1.2),
+      wob:rand(0,9), alive:true, flash:0 });
+  }
+  function feed(msg){ const d=document.createElement('div'); d.innerHTML=msg; fb.prepend(d);
+    while(fb.children.length>6) fb.lastChild.remove(); setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .6s';},3200); }
+
+  // plants + bubbles for ambience
+  const plants=[]; for(let i=0;i<12;i++) plants.push({x:rand(0,1),h:rand(60,150),w:rand(8,16),hue:rand(120,165),ph:rand(0,9),bl:(rand(2,4))|0});
+  const bubbles=[];
+
+  function drawFish(f){
+    const r=sizeToR(f.size);
+    ctx.save(); ctx.translate(f.x,f.y);
+    // name
+    ctx.save(); ctx.font=`600 ${Math.max(12,Math.min(r*0.9,26))}px Fredoka, sans-serif`; ctx.textAlign='center';
+    ctx.lineWidth=4; ctx.strokeStyle='rgba(0,0,0,.55)'; ctx.strokeText(f.name,0,-r-8);
+    ctx.fillStyle='#fff'; ctx.fillText(f.name,0,-r-8); ctx.restore();
+    ctx.rotate(f.heading); const flip=Math.cos(f.heading)<0?-1:1; ctx.scale(1,flip);
+    const tail=Math.sin(Date.now()/90+f.x)*0.35;
+    ctx.beginPath(); ctx.moveTo(-r*0.8,0); ctx.lineTo(-r*1.5,-r*0.5+tail*r); ctx.lineTo(-r*1.5,r*0.5+tail*r); ctx.closePath();
+    ctx.fillStyle=f.color; ctx.globalAlpha=.9; ctx.fill(); ctx.globalAlpha=1;
+    ctx.beginPath(); ctx.ellipse(0,0,r,r*0.62,0,0,Math.PI*2); ctx.fillStyle=f.color; ctx.fill();
+    if(f.flash>0){ ctx.globalAlpha=f.flash; ctx.fillStyle='#fff'; ctx.fill(); ctx.globalAlpha=1; f.flash-=0.06; }
+    ctx.beginPath(); ctx.ellipse(r*0.1,r*0.2,r*0.7,r*0.3,0,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,.18)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(r*0.5,-r*0.15,r*0.16,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
+    ctx.beginPath(); ctx.arc(r*0.54,-r*0.15,r*0.08,0,Math.PI*2); ctx.fillStyle='#04222f'; ctx.fill();
+    ctx.restore();
+  }
+
+  function step(){
+    ctx.clearRect(0,0,W,H);
+    const t=Date.now()/1000;
+    // plants
+    plants.forEach(p=>{ const bx=p.x*W; for(let b=0;b<p.bl;b++){ const off=(b-(p.bl-1)/2)*p.w;
+      ctx.beginPath(); ctx.moveTo(bx+off,H); const sw=Math.sin(t*1.2+p.ph+b)*16;
+      ctx.quadraticCurveTo(bx+off+sw*0.5,H-p.h*0.5,bx+off+sw,H-p.h); ctx.lineWidth=p.w*0.7; ctx.lineCap='round';
+      ctx.strokeStyle=`hsla(${p.hue},60%,${36+b*4}%,0.8)`; ctx.stroke(); } });
+    // bubbles
+    if(Math.random()<0.2) bubbles.push({x:rand(0,W),y:H,r:rand(2,5),v:rand(.6,1.4)});
+    for(let i=bubbles.length-1;i>=0;i--){ const b=bubbles[i]; b.y-=b.v; b.x+=Math.sin(b.y/30)*0.3;
+      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.strokeStyle='rgba(200,240,255,.3)'; ctx.lineWidth=1; ctx.stroke();
+      if(b.y<-10) bubbles.splice(i,1); }
+
+    const alive=fish.filter(f=>f.alive);
+    for(const f of alive){
+      let prey=null,pd=1e9, pred=null,rd=1e9;
+      if(started&&!paused){
+        for(const o of alive){ if(o===f||!o.alive) continue;
+          const d=(o.x-f.x)**2+(o.y-f.y)**2;
+          if(o.size<f.size*0.95){ if(d<pd){pd=d;prey=o;} }
+          else if(o.size>f.size*1.05){ if(d<rd){rd=d;pred=o;} } }
+      }
+      let desired=null;
+      if(pred && rd<260**2){ desired=Math.atan2(f.y-pred.y,f.x-pred.x); f.speed=2.4; }    // flee
+      else if(prey){ desired=Math.atan2(prey.y-f.y,prey.x-f.x); f.speed=2.0; }            // hunt
+      if(desired!=null){ let diff=((desired-f.heading+Math.PI*3)%(Math.PI*2))-Math.PI; f.heading+=diff*0.1; }
+      else { f.wob+=0.02; f.heading+=Math.sin(f.wob)*0.03; f.speed+=(0.9-f.speed)*0.03; }
+      f.x+=Math.cos(f.heading)*f.speed; f.y+=Math.sin(f.heading)*f.speed;
+      const r=sizeToR(f.size);
+      if(f.x<r){f.x=r;f.heading=Math.PI-f.heading;} if(f.x>W-r){f.x=W-r;f.heading=Math.PI-f.heading;}
+      if(f.y<70+r){f.y=70+r;f.heading=-f.heading;} if(f.y>H-80-r){f.y=H-80-r;f.heading=-f.heading;}
+    }
+    // eating resolution
+    if(started&&!paused){
+      for(const f of alive){ if(!f.alive) continue;
+        for(const o of alive){ if(o===f||!o.alive) continue;
+          if(f.size>o.size*1.05){
+            const rr=sizeToR(f.size); const d2=(o.x-f.x)**2+(o.y-f.y)**2;
+            if(d2 < rr*rr){ o.alive=false; f.size+=o.size*0.6+3; f.flash=1;
+              feed(`<b style="color:${f.color}">${esc(f.name)}</b> ate <b style="color:${o.color}">${esc(o.name)}</b> 🦷`); }
+          } } }
+    }
+    for(const f of fish) if(f.alive) drawFish(f);
+
+    updateBoard(alive);
+    checkWinner(alive);
+    requestAnimationFrame(step);
+  }
+  const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+  function updateBoard(alive){
+    aliveEl.textContent=alive.length+' alive';
+    const top=[...alive].sort((a,b)=>b.size-a.size).slice(0,10);
+    lb.innerHTML=top.map((f,i)=>`<li class="${i===0?'lead':''}"><span class="nm">${i+1}. ${esc(f.name)}</span><span class="sz">${Math.round(f.size)}</span></li>`).join('');
+  }
+
+  let ended=false;
+  function checkWinner(alive){
+    if(started && !ended && alive.length===1 && fish.length>=2){
+      ended=true; const w=alive[0];
+      winnerName.textContent=w.name; winnerName.style.color=w.color;
+      winnerBox.classList.add('show');
+    }
+  }
+
+  // controls
+  const input=document.getElementById('nameInput');
+  function addFromInput(){ input.value.split(',').forEach(n=>addFish(n)); input.value=''; input.focus(); }
+  document.getElementById('addBtn').onclick=addFromInput;
+  input.addEventListener('keydown',e=>{ if(e.key==='Enter') addFromInput(); });
+  document.getElementById('testBtn').onclick=()=>{ for(let i=0;i<8;i++) addFish(TEST[(Math.random()*TEST.length)|0]+' '+((Math.random()*90+10)|0)); };
+  startBtn.onclick=()=>{
+    if(fish.length<2){ feed('Add at least 2 fish first! 🐟'); return; }
+    paused=!started?false:!paused;
+    if(!started){ started=true; ended=false; startBtn.textContent='Pause ⏸'; startBtn.classList.remove('go'); }
+    else { startBtn.textContent=paused?'Resume ▶':'Pause ⏸'; }
+  };
+  function reset(){ fish=[]; started=false; paused=false; ended=false; colorI=0;
+    startBtn.textContent='Start Battle ▶'; startBtn.classList.add('go'); winnerBox.classList.remove('show'); fb.innerHTML=''; }
+  document.getElementById('resetBtn').onclick=reset;
+  document.getElementById('playAgain').onclick=reset;
+
+  step();
+})();
+</script>
+</body>
+</html>
