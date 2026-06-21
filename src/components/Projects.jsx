@@ -2,6 +2,15 @@ import { useState } from 'react';
 
 const projectsData = [
   {
+    id: 'myart',
+    title: 'My Art',
+    description: 'A control room of generative-art instruments — dozens of live, code-driven pieces rendered in real time. Click any tile to enter the viewer; arrow keys move between works.',
+    tag: 'Generative Art',
+    link: '/art/',
+    image: '/project-images/myart.png',
+    featured: true
+  },
+  {
     id: 'adventurecrafter',
     title: 'AdventureCrafter',
     description: 'Custom-built 2D game engine with real-time multiplayer collaboration.',
