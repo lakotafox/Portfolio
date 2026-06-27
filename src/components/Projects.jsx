@@ -2,6 +2,15 @@ import { useState } from 'react';
 
 const projectsData = [
   {
+    id: 'wattstruck',
+    title: 'Watts Automotive — Custom Truck Builder',
+    description: 'Real-time Build-Your-Own-Truck configurator for a lifted-truck dealership — pick from 26 trucks, any paint color, dial in lift up to 16 inches, bolt on fitment-filtered aftermarket wheels, and tap to rotate. Rendered live via the RideStyler API.',
+    tag: 'Client Work',
+    link: '/watts/build-ridestyler/',
+    image: '/project-images/watts.jpg',
+    featured: true
+  },
+  {
     id: 'myart',
     title: 'My Art',
     description: 'A control room of generative-art instruments — dozens of live, code-driven pieces rendered in real time. Click any tile to enter the viewer; arrow keys move between works.',

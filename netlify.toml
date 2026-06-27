@@ -36,6 +36,12 @@
   status = 200
   force = true
 
+[[redirects]]
+  from = "/watts"
+  to = "/watts/build-ridestyler/"
+  status = 302
+  force = true
+
 # Portfolio (React SPA) is served at /portfolio and all other app routes.
 [[redirects]]
   from = "/*"
