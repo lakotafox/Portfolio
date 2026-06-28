@@ -38,7 +38,7 @@
 
 [[redirects]]
   from = "/watts"
-  to = "/watts/build-ridestyler/"
+  to = "/watts/"
   status = 302
   force = true
 

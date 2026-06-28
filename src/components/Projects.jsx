@@ -2,6 +2,15 @@ import { useState } from 'react';
 
 const projectsData = [
   {
+    id: 'wattssite',
+    title: 'Watts Automotive — Dealership Site',
+    description: 'A modern, premium redesign of a lifted-truck dealership landing page — cinematic hero, slick category grid, and brand-grade polish, rebuilt from a dated dealer template. Next.js + Tailwind, mobile-first.',
+    tag: 'Client Work',
+    link: '/watts/',
+    image: '/project-images/watts-site.jpg',
+    featured: true
+  },
+  {
     id: 'wattstruck',
     title: 'Watts Automotive — Custom Truck Builder',
     description: 'Real-time Build-Your-Own-Truck configurator for a lifted-truck dealership — pick from 26 trucks, any paint color, dial in lift up to 16 inches, bolt on fitment-filtered aftermarket wheels, and tap to rotate. Rendered live via the RideStyler API.',
