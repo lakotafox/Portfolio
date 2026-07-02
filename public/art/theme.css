@@ -114,7 +114,8 @@
 
 @media (width <= 560px) {
   .xa-header { gap: 12px; }
-  .xa-header-count { display: none; }
+  .xa-header-count,
+  .xa-live-dot { display: none; }
 }
 
 /* --------------------------------------------------------------------------
@@ -333,13 +334,104 @@
 .pub-controls button:active { scale: 0.94; }
 
 /* --------------------------------------------------------------------------
-   7. Reduced motion
+   7. Phosphor display treatment — makes the pieces themselves read richer.
+   The sims render into raw canvases; this stack grades and frames them like
+   art on a tuned CRT monitor. saturate/contrast/brightness are single cheap
+   GPU color-matrix ops, safe on a grid of live canvases (drop-shadow is
+   deliberately avoided on canvas elements).
+   -------------------------------------------------------------------------- */
+.pub-card canvas,
+.pub-thumb canvas,
+.pub-stage-canvas canvas {
+  filter: saturate(1.16) contrast(1.05) brightness(1.03);
+}
+
+/* Tile glass: a soft diagonal reflection off the top-left of the "tube" and
+   a corner vignette for depth. Lives on the card's canvas-wrapper div so the
+   title scrim (card ::after) stays independent. */
+.pub-card > div::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, rgba(185, 255, 214, 0.055) 0%, transparent 24%),
+    radial-gradient(130% 100% at 50% 40%, transparent 62%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+/* Viewer stage: spotlight backdrop behind the piece, and the same glass +
+   vignette treatment scaled up. The overlay is pointer-events:none so the
+   interactive pieces (drag/tap) are unaffected. */
+.pub-stage {
+  background: radial-gradient(90% 85% at 50% 45%, #081209 0%, var(--bg) 72%);
+}
+.pub-stage-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, rgba(185, 255, 214, 0.04) 0%, transparent 20%),
+    radial-gradient(120% 105% at 50% 45%, transparent 64%, rgba(0, 0, 0, 0.36) 100%);
+}
+
+/* Refined CRT overlay (overrides the bundle's coarse 3px scanlines): finer
+   scanlines plus a faint RGB aperture grille, still multiply-blended. */
+#root::after {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 0, 0, 0.14) 3px),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 90, 90, 0.012) 0 1px,
+      rgba(90, 255, 150, 0.012) 1px 2px,
+      rgba(90, 150, 255, 0.012) 2px 3px
+    );
+}
+
+/* Whole-page tube vignette — sits just under the scanline overlay. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: radial-gradient(
+    125% 105% at 50% 42%,
+    transparent 58%,
+    rgba(0, 0, 0, 0.34) 100%
+  );
+}
+
+/* Breathing "live" indicator next to the header count (enhance.js). */
+.xa-live-dot {
+  width: 6px;
+  height: 6px;
+  align-self: center;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 8px var(--amber);
+  animation: xa-pulse 2.4s ease-in-out infinite;
+}
+@keyframes xa-pulse {
+  50% { opacity: 0.35; }
+}
+
+/* Viewer count: fixed width + centered so it doesn't crowd the buttons. */
+.pub-count {
+  min-width: 52px;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   8. Reduced motion
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .pub-card,
   .xa-header,
   .pub-stage-canvas.xa-swap,
-  .xa-plate.xa-swap {
+  .xa-plate.xa-swap,
+  .xa-live-dot {
     animation: none;
   }
   .pub-card,

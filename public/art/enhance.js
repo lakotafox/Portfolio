@@ -35,12 +35,17 @@
     brand.className = 'xa-brand';
     brand.textContent = '◇ Control Room';
 
+    var dot = document.createElement('span');
+    dot.className = 'xa-live-dot';
+    dot.setAttribute('aria-hidden', 'true');
+
     var tally = document.createElement('span');
     tally.className = 'xa-header-count';
     tally.textContent = count + ' live pieces';
 
     header.appendChild(back);
     header.appendChild(brand);
+    header.appendChild(dot);
     header.appendChild(tally);
     return header;
   }
