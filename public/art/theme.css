@@ -1,0 +1,355 @@
+/* ==========================================================================
+   CONTROL ROOM — enhancement theme layer
+   --------------------------------------------------------------------------
+   OWNED BY THE PORTFOLIO REPO, NOT THE ART-APP BUILD.
+   public/art/assets/* is the compiled output of a separate app whose source
+   lives outside this repo. This file (plus enhance.js) is the hand-written
+   design layer on top of it. If the art app is ever rebuilt and recommitted:
+     1. keep theme.css and enhance.js,
+     2. re-apply the <head> edits documented in public/art/index.html
+        (font links, meta tags, and the theme.css/enhance.js includes),
+     3. port these styles upstream into the art app's source when available.
+
+   It must load AFTER assets/index-*.css — overrides here rely on source
+   order winning at equal specificity. All classes introduced by this layer
+   are prefixed `xa-` (verified unused by the bundle).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. Typography
+   The bundle declares "IBM Plex Mono" first in --mono but never loads it,
+   so the intended face silently fell back to Menlo/Consolas. Self-hosted
+   (latin subset, ~15KB per weight) — same-origin, no third-party request.
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/ibm-plex-mono-latin-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/ibm-plex-mono-latin-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/ibm-plex-mono-latin-600.woff2") format("woff2");
+}
+
+/* --------------------------------------------------------------------------
+   1. Tokens
+   `--text-dim` is overridden for contrast: the bundle's #4a6a5c is ~3.4:1 on
+   #05070a; #5f8a72 is ~5.2:1 and still reads as "dim" next to #7cffb2.
+   -------------------------------------------------------------------------- */
+:root {
+  --text-dim: #5f8a72;
+  --xa-edge: #16352a;
+  --xa-panel: rgba(4, 8, 11, 0.84);
+  --xa-glow: rgba(124, 255, 178, 0.22);
+  --xa-scrim: linear-gradient(180deg, transparent, rgba(2, 6, 4, 0.92) 62%);
+  --xa-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::selection {
+  background: var(--green);
+  color: var(--bg);
+}
+
+:where(.pub-card, .pub-thumb, .pub-controls button, .xa-back):focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   2. Injected header (enhance.js prepends it into .pub-grid)
+   A full-width grid row that scrolls away with the content, keeping the
+   canvases the hero.
+   -------------------------------------------------------------------------- */
+.xa-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  min-height: 44px;
+  padding: 8px 2px 14px;
+  border-bottom: 1px solid var(--grid-line);
+}
+
+.xa-back {
+  font: 500 11px/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.xa-back:hover {
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.xa-brand {
+  margin-inline: auto;
+  font: 600 13px/1 var(--mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+  text-shadow: 0 0 14px var(--xa-glow);
+}
+
+.xa-header-count {
+  font: 400 10px/1 var(--mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+@media (width <= 560px) {
+  .xa-header { gap: 12px; }
+  .xa-header-count { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   3. Grid rhythm + themed scrollbar (mirrors the rail's existing styling)
+   Desktop only — the bundle's coarse-pointer ≤1024px block keeps its own
+   tighter values.
+   -------------------------------------------------------------------------- */
+.pub-grid {
+  /* Bug fix: the bundle's implicit (auto) rows collapse to ~81px in Chromium
+     because the aspect-ratio cards' transferred height never reaches row
+     sizing — cards overlapped the next row as clipped strips. max-content
+     rows size to the cards' real 16/11 height. */
+  grid-auto-rows: max-content;
+  gap: 18px;
+  padding: 18px 20px 48px;
+  scroll-padding-top: 18px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--green-dim) transparent;
+}
+.pub-grid::-webkit-scrollbar { width: 10px; }
+.pub-grid::-webkit-scrollbar-track { background: #7cffb20a; }
+.pub-grid::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--green-dim), var(--green));
+  border: 2px solid #04080b;
+  border-radius: 6px;
+}
+.pub-grid::-webkit-scrollbar-thumb:hover { background: var(--green); }
+
+@media (pointer: coarse) and (width <= 1024px) {
+  .pub-grid { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+}
+
+/* --------------------------------------------------------------------------
+   4. Cards
+   Titles exist only in aria-label; attr() surfaces them with zero bundle
+   changes (aria-label wins accessible-name computation, so screen readers
+   never hear them twice). The amber corner index is a CSS counter.
+   -------------------------------------------------------------------------- */
+.pub-grid { counter-reset: xa-piece; }
+.pub-card { counter-increment: xa-piece; }
+
+.pub-card {
+  border-color: var(--xa-edge);
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s var(--xa-ease-out);
+}
+.pub-card:hover,
+.pub-card:focus-visible {
+  transform: translateY(-3px) scale(1.012);
+  border-color: var(--green);
+  box-shadow:
+    0 0 0 1px var(--green-dim),
+    0 10px 32px rgba(0, 0, 0, 0.55),
+    0 0 34px var(--xa-glow);
+  z-index: 2;
+}
+.pub-card:active {
+  transform: translateY(-1px) scale(0.997);
+  transition-duration: 0.08s;
+}
+
+.pub-card::before {
+  content: counter(xa-piece, decimal-leading-zero);
+  position: absolute;
+  top: 7px;
+  left: 9px;
+  z-index: 2;
+  font: 500 9px/1 var(--mono);
+  letter-spacing: 0.12em;
+  color: var(--amber);
+  opacity: 0.6;
+  pointer-events: none;
+  text-shadow: 0 0 6px #000;
+}
+
+.pub-card::after {
+  content: attr(aria-label);
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  padding: 26px 12px 10px;
+  text-align: left;
+  background: var(--xa-scrim);
+  font: 500 11px/1.35 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+  opacity: 0;
+  translate: 0 6px;
+  pointer-events: none;
+  transition: opacity 0.22s ease, translate 0.25s var(--xa-ease-out);
+}
+.pub-card:hover::after,
+.pub-card:focus-visible::after {
+  opacity: 1;
+  translate: 0 0;
+}
+@media (hover: none) {
+  /* Touch devices can't hover — keep the title plates on. */
+  .pub-card::after { opacity: 1; translate: 0 0; }
+}
+
+/* --------------------------------------------------------------------------
+   5. Staggered entry
+   Cap-then-carve: a capped base delay, carved down in batches of 4 so 35
+   cards need 6 rules and everything settles within ~420ms. nth-of-type, not
+   nth-child — .pub-hint is the grid's first child; the cards are its only
+   <button> children. Replays when React remounts the grid after the viewer.
+   -------------------------------------------------------------------------- */
+@keyframes xa-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+}
+.pub-card {
+  animation: xa-rise 0.55s var(--xa-ease-out) both;
+  animation-delay: 0.42s;
+}
+.pub-card:nth-of-type(-n + 20) { animation-delay: 0.34s; }
+.pub-card:nth-of-type(-n + 16) { animation-delay: 0.27s; }
+.pub-card:nth-of-type(-n + 12) { animation-delay: 0.2s; }
+.pub-card:nth-of-type(-n + 8) { animation-delay: 0.13s; }
+.pub-card:nth-of-type(-n + 4) { animation-delay: 0.06s; }
+.xa-header { animation: xa-rise 0.4s var(--xa-ease-out) both; }
+
+/* --------------------------------------------------------------------------
+   6. Viewer
+   -------------------------------------------------------------------------- */
+.pub-stage-canvas {
+  border-color: var(--xa-edge);
+  box-shadow:
+    inset 0 0 0 1px rgba(124, 255, 178, 0.05),
+    0 0 80px rgba(124, 255, 178, 0.1),
+    0 24px 60px rgba(0, 0, 0, 0.5);
+}
+@media (pointer: coarse) and (width <= 1024px) {
+  /* The bundle strips the stage frame on touch — don't reintroduce it. */
+  .pub-stage-canvas { box-shadow: none; border: none; }
+}
+
+/* Phosphor "retrace" flash when the piece changes (class from enhance.js). */
+@keyframes xa-fade {
+  from {
+    opacity: 0.15;
+    filter: brightness(1.7);
+  }
+}
+.pub-stage-canvas.xa-swap { animation: xa-fade 0.38s ease-out; }
+
+/* Injected title plate (enhance.js appends it to .pub-stage). */
+.xa-plate {
+  position: absolute;
+  left: 20px;
+  bottom: 18px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 9px 16px 10px;
+  background: var(--xa-panel);
+  border: 1px solid var(--grid-line);
+  border-left: 2px solid var(--green);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+.xa-plate.xa-swap { animation: xa-rise 0.38s var(--xa-ease-out) both; }
+
+.xa-plate-index {
+  font: 400 10px/1 var(--mono);
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+}
+.xa-plate-title {
+  margin: 0;
+  font: 600 15px/1.25 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+}
+
+@media (pointer: coarse) and (width <= 1024px) {
+  .xa-plate {
+    left: calc(10px + env(safe-area-inset-left));
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    max-width: 78vw;
+    padding: 7px 12px 8px;
+  }
+  .xa-plate-title { font-size: 13px; }
+}
+
+/* Rail: idle thumbs recede so the active piece pops from the strip. */
+.pub-thumb {
+  opacity: 0.5;
+  transition: opacity 0.2s ease, border-color 0.15s, box-shadow 0.15s;
+}
+.pub-thumb:hover,
+.pub-thumb.active {
+  opacity: 1;
+}
+.pub-rail { scroll-padding: 12px; }
+
+/* Controls: phosphor glow on hover, tactile press. */
+.pub-controls button {
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s,
+    scale 0.1s ease;
+}
+.pub-controls button:hover { box-shadow: 0 0 18px var(--xa-glow); }
+.pub-controls button:active { scale: 0.94; }
+
+/* --------------------------------------------------------------------------
+   7. Reduced motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .pub-card,
+  .xa-header,
+  .pub-stage-canvas.xa-swap,
+  .xa-plate.xa-swap {
+    animation: none;
+  }
+  .pub-card,
+  .pub-card::after,
+  .pub-thumb,
+  .pub-controls button {
+    transition-duration: 0.01ms;
+  }
+  .pub-card:hover,
+  .pub-card:focus-visible {
+    transform: none;
+  }
+}
