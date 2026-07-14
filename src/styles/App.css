@@ -818,6 +818,118 @@ body:not(.dark-theme) .moon-icon {
     border-color: var(--accent);
 }
 
+/* Save the Redwoods Section */
+.redwoods {
+    padding: 4rem 0 6rem;
+}
+
+.redwoods-card {
+    background: linear-gradient(135deg, rgba(22, 101, 52, 0.12), rgba(21, 128, 61, 0.06)),
+                rgba(var(--card-bg-rgb), 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.redwoods-card:hover {
+    border-color: #22c55e;
+    box-shadow: 0 12px 32px rgba(34, 197, 94, 0.15);
+}
+
+.redwoods-icon {
+    color: #22c55e;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.redwoods-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.redwoods-subtitle {
+    color: #22c55e;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.5rem;
+}
+
+.redwoods-text {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 620px;
+    margin: 0 auto 2rem;
+}
+
+.redwoods-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.redwoods-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.redwoods-figure {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #22c55e;
+}
+
+.redwoods-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.redwoods-donate-btn {
+    display: inline-block;
+    padding: 0.9rem 2rem;
+    background: #16a34a;
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.redwoods-donate-btn:hover {
+    background: #15803d;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+}
+
+.redwoods-disclaimer {
+    margin-top: 1.25rem;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .redwoods-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .redwoods-title {
+        font-size: 1.5rem;
+    }
+}
+
 /* Footer */
 .footer {
     border-top: 1px solid var(--border-color);

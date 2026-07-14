@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import Highlights from './components/Highlights';
 import Projects from './components/Projects';
 import Recommendations from './components/Recommendations';
+import SaveTheRedwoods from './components/SaveTheRedwoods';
 import './styles/App.css';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
       <Highlights />
       <Projects />
       <Recommendations />
+      <SaveTheRedwoods />
 
       <footer className="footer">
         <div className="container">
