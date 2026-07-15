@@ -95,6 +95,59 @@ a { color: var(--canopy); }
   border-bottom: 1px solid var(--line);
 }
 
+.chip-groups {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.chip-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.chip-group-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.sliders { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+
+.slider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.slider input[type='range'] {
+  width: 130px;
+  accent-color: var(--canopy);
+}
+
+.slider-value {
+  min-width: 4.5em;
+  color: var(--ink);
+  font-weight: 600;
+}
+
 .chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
 .chip {
@@ -120,20 +173,22 @@ a { color: var(--canopy); }
   flex-shrink: 0;
 }
 
-.chip-sequoiadendron .chip-dot { background: var(--bark); }
-.chip-sequoia .chip-dot { background: var(--canopy); }
-.chip-metasequoia .chip-dot { background: var(--moss); }
-
-.chip[aria-pressed='true'].chip-sequoiadendron { border-color: var(--bark); }
-.chip[aria-pressed='true'].chip-sequoia { border-color: var(--canopy); }
-.chip[aria-pressed='true'].chip-metasequoia { border-color: var(--moss); }
+.chip[aria-pressed='true'] { border-color: var(--ink-soft); }
 
 .chip[aria-pressed='false'] {
   opacity: 0.45;
   background: transparent;
 }
 
-.chip[aria-pressed='false'] .chip-dot { background: var(--ink-soft); }
+.chip.loading {
+  animation: chipPulse 1s ease-in-out infinite;
+  cursor: wait;
+}
+
+@keyframes chipPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
 
 .control-buttons { display: flex; gap: 0.5rem; }
 
@@ -194,9 +249,7 @@ summary:focus-visible {
   box-shadow: 0 1px 4px rgba(38, 48, 43, 0.35);
 }
 
-.cluster-sequoiadendron { background: var(--bark); }
-.cluster-sequoia { background: var(--canopy); }
-.cluster-metasequoia { background: var(--moss-deep); }
+.popup .age-badge { background: var(--moss-deep); }
 
 /* Popup */
 .leaflet-popup-content-wrapper {
@@ -368,6 +421,8 @@ summary:focus-visible {
   .masthead h1 { font-size: 1.35rem; display: block; }
   .tagline { display: block; }
   .controls { padding: 0.5rem 0.9rem; }
+  .chip-groups { gap: 0.5rem; flex-direction: column; align-items: flex-start; }
+  .slider input[type='range'] { width: 110px; }
   .map-wrap { min-height: 0; }
   .walk-card { bottom: 0.6rem; }
 }

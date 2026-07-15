@@ -18,7 +18,7 @@
   <header class="site-header">
     <div class="masthead">
       <h1>PDX Redwoods</h1>
-      <p class="tagline">Every giant sequoia, coast redwood &amp; dawn redwood in Portland, Oregon</p>
+      <p class="tagline">Every redwood in Portland, Oregon — plus the city's other giants</p>
     </div>
     <div class="stats-strip" id="stats-strip" aria-live="polite">
       <span class="stat loading">loading inventory…</span>
@@ -26,20 +26,33 @@
   </header>
 
   <div class="controls">
-    <div class="chips" role="group" aria-label="Filter by species">
-      <button class="chip chip-sequoiadendron" data-taxon="sequoiadendron" aria-pressed="true">
-        <span class="chip-dot"></span>Giant sequoia
-      </button>
-      <button class="chip chip-sequoia" data-taxon="sequoia" aria-pressed="true">
-        <span class="chip-dot"></span>Coast redwood
-      </button>
-      <button class="chip chip-metasequoia" data-taxon="metasequoia" aria-pressed="true">
-        <span class="chip-dot"></span>Dawn redwood
-      </button>
+    <div class="chip-groups">
+      <div class="chip-group" role="group" aria-label="Redwood species">
+        <span class="chip-group-label">Redwoods</span>
+        <div class="chips" id="chips-redwood"></div>
+      </div>
+      <div class="chip-group" role="group" aria-label="Native species">
+        <span class="chip-group-label">Native giants</span>
+        <div class="chips" id="chips-native"></div>
+      </div>
     </div>
-    <div class="control-buttons">
-      <button class="btn" id="near-me-btn">Near me</button>
-      <button class="btn" id="walk-btn">The Laurelhurst walk</button>
+    <div class="control-row">
+      <div class="sliders">
+        <label class="slider">
+          <span class="slider-name">min trunk</span>
+          <input type="range" id="min-dbh" min="0" max="90" step="6" value="0" />
+          <span class="slider-value" id="min-dbh-label">any</span>
+        </label>
+        <label class="slider">
+          <span class="slider-name">min age</span>
+          <input type="range" id="min-age" min="0" max="300" step="25" value="0" />
+          <span class="slider-value" id="min-age-label">any</span>
+        </label>
+      </div>
+      <div class="control-buttons">
+        <button class="btn" id="near-me-btn">Near me</button>
+        <button class="btn" id="walk-btn">The Laurelhurst walk</button>
+      </div>
     </div>
   </div>
 
@@ -73,9 +86,14 @@
         registry, the
         <a href="https://gis-pdx.opendata.arcgis.com/datasets/PDX::street-tree-inventory-active-records" rel="noopener">Street Tree Inventory</a>,
         and the
-        <a href="https://gis-pdx.opendata.arcgis.com/datasets/parks-tree-inventory" rel="noopener">Parks Tree Inventory</a>,
-        filtered to the three living species of the redwood subfamily and
-        merged into a single snapshot.</p>
+        <a href="https://gis-pdx.opendata.arcgis.com/datasets/parks-tree-inventory" rel="noopener">Parks Tree Inventory</a>.
+        The three living species of the redwood subfamily load first;
+        five native giants — Douglas-fir, western redcedar, Oregon white oak,
+        bigleaf maple, and ponderosa pine — load when toggled on.</p>
+        <p><strong>"Likely predates 1845":</strong> Portland's founding year.
+        Trees whose estimated (or documented) age reaches back that far were
+        here before the city — mostly slow-growing Oregon white oaks. The
+        badge is an inference from trunk size, not a measurement.</p>
         <p><strong>Caveat:</strong> much of the street inventory was collected
         by volunteers between 2010 and 2019. Trees grow, and some are gone —
         treat the map as a very good guide, not gospel. Ages marked "est." are

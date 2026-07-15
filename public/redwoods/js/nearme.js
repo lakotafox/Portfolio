@@ -17,7 +17,7 @@ function haversineM(lat1, lon1, lat2, lon2) {
 const fmtDist = (m) =>
   m < 1000 ? `${Math.round(m)} m` : `${(m / 1609.34).toFixed(1)} mi`;
 
-export function initNearMe(map, data, filters, openTree) {
+export function initNearMe(map, filters, openTree) {
   const btn = document.getElementById('near-me-btn');
   const panel = document.getElementById('nearby-panel');
   const list = document.getElementById('nearby-list');
@@ -51,8 +51,8 @@ export function initNearMe(map, data, filters, openTree) {
           .addTo(map)
           .bindTooltip('You are here');
 
-        const nearest = data.features
-          .filter((f) => filters.isActive(f.properties.taxon))
+        const nearest = filters
+          .visibleFeatures()
           .map((f) => ({
             f,
             d: haversineM(lat, lon, f.geometry.coordinates[1], f.geometry.coordinates[0]),

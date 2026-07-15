@@ -211,6 +211,11 @@ MinCoins builder tool allows you to create interactive programming environments 
 Live at [lakotafox.com/redwoods](https://lakotafox.com/redwoods/) — an
 interactive map of every giant sequoia, coast redwood, and dawn redwood in
 Portland, Oregon, built from City of Portland Urban Forestry open data.
+Five native species (Douglas-fir, western redcedar, Oregon white oak,
+bigleaf maple, ponderosa pine — ~19,700 more trees) lazy-load per species
+when toggled, each as its own `data/native/<taxon>.geojson`, so the boot
+payload stays small. Size/age sliders filter everything; trees whose
+estimated age reaches back past 1845 get a "likely predates" badge.
 
 ## How it works
 

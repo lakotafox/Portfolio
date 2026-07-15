@@ -8,7 +8,21 @@ const YEARS_PER_INCH = {
   sequoiadendron: 1.0,
   sequoia: 1.2,
   metasequoia: 1.5,
+  pseudotsuga: 2.0,
+  thuja: 2.5,
+  quercus: 4.0, // white oak grows slowly — a 45" trunk is ~180 years
+  acer: 1.5,
+  pinus: 2.5,
 };
+
+// Portland was founded in 1845; trees at least this old were here first.
+export const PRE_SETTLEMENT_YEAR = 1845;
+
+export function predatesSettlement(info) {
+  if (!info) return false;
+  if (info.documented) return info.planted < PRE_SETTLEMENT_YEAR;
+  return info.years >= new Date().getFullYear() - PRE_SETTLEMENT_YEAR;
+}
 
 export function ageInfo(p) {
   if (p.planted) {

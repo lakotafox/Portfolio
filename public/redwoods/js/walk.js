@@ -1,6 +1,7 @@
 // Featured walk: fit the map to the actual Laurelhurst Park cluster —
 // the one spot with all three redwood species along a single stroll.
 import { goTo } from './map.js';
+import { REDWOOD_KEYS } from './taxa.js';
 
 const L = window.L;
 
@@ -8,7 +9,7 @@ const L = window.L;
 const PARK = { south: 45.5185, north: 45.5235, west: -122.629, east: -122.6215 };
 const FALLBACK_CENTER = [45.5209, -122.6255];
 
-export function initWalk(map, data) {
+export function initWalk(map, store) {
   const btn = document.getElementById('walk-btn');
   const card = document.getElementById('walk-card');
 
@@ -16,7 +17,7 @@ export function initWalk(map, data) {
     card.hidden = true;
   });
 
-  const parkTrees = data.features.filter((f) => {
+  const parkTrees = REDWOOD_KEYS.flatMap((k) => store.byTaxon[k]).filter((f) => {
     const [lon, lat] = f.geometry.coordinates;
     return lat >= PARK.south && lat <= PARK.north && lon >= PARK.west && lon <= PARK.east;
   });

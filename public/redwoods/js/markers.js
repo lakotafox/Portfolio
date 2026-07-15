@@ -1,14 +1,9 @@
 // Marker factory + popup HTML. Heritage trees get a bigger, ringed marker.
 import { trunkFigure } from './trunk.js';
-import { ageInfo } from './age.js';
+import { ageInfo, predatesSettlement, PRE_SETTLEMENT_YEAR } from './age.js';
+import { TAXA } from './taxa.js';
 
 const L = window.L;
-
-const COLORS = {
-  sequoiadendron: '#9c4a26',
-  sequoia: '#1e5c46',
-  metasequoia: '#5f6428',
-};
 
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -28,6 +23,7 @@ function popupHtml(p) {
     <div class="popup">
       ${p.heritage_number ? `<span class="heritage-badge">Heritage tree #${p.heritage_number}</span>` : ''}
       ${p.heritage_status === 'Merit' ? '<span class="heritage-badge">Tree of merit</span>' : ''}
+      ${predatesSettlement(age) ? `<span class="heritage-badge age-badge">Likely predates ${PRE_SETTLEMENT_YEAR}</span>` : ''}
       <h3>${esc(p.common)}</h3>
       <p class="sci">${esc(p.scientific)}</p>
       <div class="data-rows">
@@ -46,9 +42,9 @@ export function makeMarker(feature) {
   const heritage = p.source === 'heritage';
   const marker = L.circleMarker([lat, lon], {
     radius: heritage ? 9 : 6,
-    color: heritage ? '#26302b' : COLORS[p.taxon],
+    color: heritage ? '#26302b' : TAXA[p.taxon].color,
     weight: heritage ? 2.5 : 1.5,
-    fillColor: COLORS[p.taxon],
+    fillColor: TAXA[p.taxon].color,
     fillOpacity: 0.85,
     className: heritage ? 'heritage-ring' : 'tree-marker',
   });

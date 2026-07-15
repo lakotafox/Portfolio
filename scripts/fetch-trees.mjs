@@ -17,7 +17,7 @@
 // data-archive/<date>/ (committed to git), so the map stays rebuildable even
 // if the city retires its endpoints. Field semantics in docs/schemas.md.
 
-import { writeFileSync, mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -75,17 +75,22 @@ async function queryAll(layerId, where) {
   }
 }
 
+// group 'redwood' ships in the boot-loaded trees.geojson; group 'native'
+// each get their own lazily-fetched file under data/native/.
 const TAXA = {
-  sequoiadendron: { common: 'Giant sequoia', scientific: 'Sequoiadendron giganteum' },
-  sequoia: { common: 'Coast redwood', scientific: 'Sequoia sempervirens' },
-  metasequoia: { common: 'Dawn redwood', scientific: 'Metasequoia glyptostroboides' },
+  sequoiadendron: { common: 'Giant sequoia', scientific: 'Sequoiadendron giganteum', group: 'redwood', match: /sequoiadendron|giant sequoia/ },
+  sequoia: { common: 'Coast redwood', scientific: 'Sequoia sempervirens', group: 'redwood', match: /sempervirens|coast redwood/ },
+  metasequoia: { common: 'Dawn redwood', scientific: 'Metasequoia glyptostroboides', group: 'redwood', match: /metasequoia|dawn redwood/ },
+  pseudotsuga: { common: 'Douglas-fir', scientific: 'Pseudotsuga menziesii', group: 'native', match: /pseudotsuga|douglas[- ]?fir/ },
+  thuja: { common: 'Western redcedar', scientific: 'Thuja plicata', group: 'native', match: /thuja plicata|western red\s?cedar/ },
+  quercus: { common: 'Oregon white oak', scientific: 'Quercus garryana', group: 'native', match: /quercus garryana|oregon white oak|garry oak/ },
+  acer: { common: 'Bigleaf maple', scientific: 'Acer macrophyllum', group: 'native', match: /acer macrophyllum|big\s?leaf maple/ },
+  pinus: { common: 'Ponderosa pine', scientific: 'Pinus ponderosa', group: 'native', match: /pinus ponderosa|ponderosa pine/ },
 };
 
 function classifyTaxon(scientific, common) {
   const s = `${scientific ?? ''} ${common ?? ''}`.toLowerCase();
-  if (/sequoiadendron|giant sequoia/.test(s)) return 'sequoiadendron';
-  if (/metasequoia|dawn redwood/.test(s)) return 'metasequoia';
-  if (/sempervirens|coast redwood/.test(s)) return 'sequoia';
+  for (const [key, t] of Object.entries(TAXA)) if (t.match.test(s)) return key;
   if (/\bsequoia\b/.test(s)) {
     console.log(`  ambiguous bare "sequoia", treating as coast redwood: "${scientific}" / "${common}"`);
     return 'sequoia';
@@ -216,11 +221,22 @@ function toFeature(geometry, props) {
   };
 }
 
-const wide = "UPPER({F}) LIKE '%SEQUOIA%' OR UPPER({F}) LIKE '%REDWOOD%'";
+// Wide net per field: the redwood catch-alls plus each native's scientific
+// name. classifyTaxon() is the precise post-filter.
+function buildWhere(fields) {
+  const terms = [];
+  for (const f of fields) {
+    terms.push(`UPPER(${f}) LIKE '%SEQUOIA%'`, `UPPER(${f}) LIKE '%REDWOOD%'`);
+    for (const t of Object.values(TAXA)) {
+      if (t.group === 'native') terms.push(`UPPER(${f}) LIKE '%${t.scientific.toUpperCase()}%'`);
+    }
+  }
+  return terms.join(' OR ');
+}
 const WHERES = {
-  heritage: `(${wide.replaceAll('{F}', 'SCIENTIFIC')} OR ${wide.replaceAll('{F}', 'COMMON')}) AND STATUS <> 'Removed'`,
-  street: wide.replaceAll('{F}', 'SPECIES'),
-  parks: `${wide.replaceAll('{F}', 'Genus_species')} OR ${wide.replaceAll('{F}', 'Common_name')}`,
+  heritage: `(${buildWhere(['SCIENTIFIC', 'COMMON'])}) AND STATUS <> 'Removed'`,
+  street: buildWhere(['SPECIES']),
+  parks: buildWhere(['Genus_species', 'Common_name']),
 };
 
 async function fetchLive() {
@@ -364,17 +380,33 @@ async function main() {
   }
   console.log(`  TOTAL: ${all.length} (merged away ${street.length + parks.length - others.length})`);
 
-  mkdirSync(dirname(OUT), { recursive: true });
-  writeFileSync(
-    OUT,
+  const fc = (features) =>
     JSON.stringify({
       type: 'FeatureCollection',
       generated: dataDate,
       attribution: 'City of Portland Urban Forestry open data',
-      features: all,
-    })
-  );
-  console.log(`\nWrote ${OUT}`);
+      features,
+    });
+  const kb = (path) => `${Math.round(statSync(path).size / 1024)} KB`;
+
+  // Redwoods ship in the boot-loaded file; each native species gets its own
+  // lazily-fetched file so visitors only download what they toggle on.
+  const NATIVE_DIR = join(dirname(OUT), 'native');
+  mkdirSync(NATIVE_DIR, { recursive: true });
+  const redwoodFeats = all.filter((f) => TAXA[f.properties.taxon].group === 'redwood');
+  writeFileSync(OUT, fc(redwoodFeats));
+  console.log(`\nWrote ${OUT} (${redwoodFeats.length} trees, ${kb(OUT)})`);
+  for (const [key, t] of Object.entries(TAXA)) {
+    if (t.group !== 'native') continue;
+    const feats = all.filter((f) => f.properties.taxon === key);
+    if (!feats.length) {
+      console.log(`  warning: no ${t.common} records${OFFLINE ? ' in this archive snapshot' : ''} — native/${key}.geojson not written`);
+      continue;
+    }
+    const path = join(NATIVE_DIR, `${key}.geojson`);
+    writeFileSync(path, fc(feats));
+    console.log(`Wrote ${path} (${feats.length} trees, ${kb(path)})`);
+  }
 }
 
 main().catch((e) => {

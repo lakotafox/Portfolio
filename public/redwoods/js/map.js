@@ -1,5 +1,9 @@
 // Leaflet map + tile layer + one cluster group per taxon (so species
 // filtering is a cheap addLayer/removeLayer, no marker re-render).
+// Canvas renderer: with all species on, the map holds ~20k circle
+// markers — SVG DOM nodes would crawl, canvas stays smooth.
+import { TAXA } from './taxa.js';
+
 const L = window.L;
 
 export const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -11,6 +15,7 @@ export function createMap() {
     center: PORTLAND,
     zoom: 12,
     zoomControl: true,
+    renderer: L.canvas(),
   });
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -25,15 +30,16 @@ export function createMap() {
 
 export function createClusterGroups() {
   const groups = {};
-  for (const taxon of ['sequoiadendron', 'sequoia', 'metasequoia']) {
+  for (const [taxon, t] of Object.entries(TAXA)) {
     groups[taxon] = L.markerClusterGroup({
       maxClusterRadius: 44,
       showCoverageOnHover: false,
+      chunkedLoading: true,
       iconCreateFunction(cluster) {
         const n = cluster.getChildCount();
         const size = n < 10 ? 30 : n < 100 ? 36 : 42;
         return L.divIcon({
-          html: `<div class="cluster-icon cluster-${taxon}" style="width:${size}px;height:${size}px">${n}</div>`,
+          html: `<div class="cluster-icon" style="width:${size}px;height:${size}px;background:${t.color}">${n}</div>`,
           className: '',
           iconSize: [size, size],
         });

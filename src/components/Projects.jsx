@@ -4,7 +4,7 @@ const projectsData = [
   {
     id: 'redwoods-map',
     title: 'PDX Redwoods Map',
-    description: 'Interactive map of every giant sequoia, coast redwood, and dawn redwood in Portland — built from City of Portland open data. Filter by species, find trees near you, see trunk sizes to scale.',
+    description: 'Interactive map of every redwood in Portland plus 19,000+ native giants — Douglas-firs, white oaks, redcedars — from City of Portland open data. Filter by species, size, and age; find trees that predate the city itself.',
     tag: 'Open Data',
     link: '/redwoods/',
     image: '/project-images/redwoods-map.png',

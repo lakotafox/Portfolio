@@ -10,31 +10,33 @@ const map = createMap();
 const groups = createClusterGroups();
 
 try {
-  const data = await loadTrees();
+  const store = await loadTrees();
 
+  // Markers are built once per feature, on demand (natives may hold ~11k
+  // features — only pay for what gets shown).
   const markerByFeature = new Map();
-  for (const [taxon, features] of Object.entries(data.byTaxon)) {
-    for (const feature of features) {
-      const marker = makeMarker(feature);
+  const markerFor = (feature) => {
+    let marker = markerByFeature.get(feature);
+    if (!marker) {
+      marker = makeMarker(feature);
       markerByFeature.set(feature, marker);
-      groups[taxon].addLayer(marker);
     }
-    map.addLayer(groups[taxon]);
-  }
+    return marker;
+  };
 
-  const filters = initFilters(map, groups, data);
+  const filters = initFilters(map, groups, store, markerFor);
 
   const openTree = (feature) => {
     const [lon, lat] = feature.geometry.coordinates;
     goTo(map, [lat, lon], 18);
-    const marker = markerByFeature.get(feature);
+    const marker = markerFor(feature);
     const group = groups[feature.properties.taxon];
     // Marker may be inside a cluster; zoomToShowLayer expands it first.
     group.zoomToShowLayer(marker, () => marker.openPopup());
   };
 
-  initNearMe(map, data, filters, openTree);
-  initWalk(map, data);
+  initNearMe(map, filters, openTree);
+  initWalk(map, store);
 } catch (err) {
   document.getElementById('stats-strip').innerHTML =
     '<span class="stat">Could not load tree data — try a refresh.</span>';

@@ -55,3 +55,19 @@ Distinct values matching the wide LIKE net: only the three target taxa (verified
 | Sequoiadendron giganteum | giant sequoia | `sequoiadendron` |
 | Sequoia sempervirens | coast redwood | `sequoia` |
 | Metasequoia glyptostroboides | dawn redwood | `metasequoia` |
+
+## Native species expansion (v2)
+
+Same layers, same query pattern. WHERE nets add `UPPER(field) LIKE
+'%<SCIENTIFIC>%'` per species; `classifyTaxon()` post-filters via regex.
+
+| Scientific | Common | Key | ~Records (2026-07) |
+|---|---|---|---|
+| Pseudotsuga menziesii | Douglas-fir | `pseudotsuga` | 11,187 |
+| Thuja plicata | Western redcedar | `thuja` | 2,875 |
+| Quercus garryana | Oregon white oak | `quercus` | 1,618 |
+| Acer macrophyllum | Bigleaf maple | `acer` | 3,374 |
+| Pinus ponderosa | Ponderosa pine | `pinus` | 604 |
+
+Redwoods ship in `trees.geojson` (boot load); natives split into
+`data/native/<key>.geojson` and lazy-load on first toggle.
