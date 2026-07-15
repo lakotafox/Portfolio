@@ -8,17 +8,30 @@
 // public/redwoods/data/trees.geojson (committed — re-run manually for fresh
 // data; the inventories change on a scale of years).
 //
-// Usage: node scripts/fetch-trees.mjs
-// Field semantics documented in docs/schemas.md.
+// Usage:
+//   node scripts/fetch-trees.mjs                     # fetch live, archive raw data, build
+//   node scripts/fetch-trees.mjs --offline           # rebuild from the latest raw archive
+//   node scripts/fetch-trees.mjs --offline 2026-07-15  # rebuild from a specific snapshot
+//
+// Every online run saves the complete, unfiltered API responses under
+// data-archive/<date>/ (committed to git), so the map stays rebuildable even
+// if the city retires its endpoints. Field semantics in docs/schemas.md.
 
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const BASE = 'https://www.portlandmaps.com/od/rest/services/COP_OpenData_Environment/MapServer';
 const LAYERS = { heritage: 26, street: 1415, parks: 220 };
 const PAGE = 1000;
-const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'redwoods', 'data', 'trees.geojson');
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const OUT = join(ROOT, 'public', 'redwoods', 'data', 'trees.geojson');
+const ARCHIVE_ROOT = join(ROOT, 'data-archive');
+
+const argv = process.argv.slice(2);
+const offlineIdx = argv.indexOf('--offline');
+const OFFLINE = offlineIdx !== -1;
+const OFFLINE_DATE = OFFLINE ? argv[offlineIdx + 1] ?? null : null;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -196,23 +209,92 @@ function toFeature(geometry, props) {
   };
 }
 
+const wide = "UPPER({F}) LIKE '%SEQUOIA%' OR UPPER({F}) LIKE '%REDWOOD%'";
+const WHERES = {
+  heritage: `(${wide.replaceAll('{F}', 'SCIENTIFIC')} OR ${wide.replaceAll('{F}', 'COMMON')}) AND STATUS <> 'Removed'`,
+  street: wide.replaceAll('{F}', 'SPECIES'),
+  parks: `${wide.replaceAll('{F}', 'Genus_species')} OR ${wide.replaceAll('{F}', 'Common_name')}`,
+};
+
+async function fetchLive() {
+  const raw = {};
+  for (const layer of Object.keys(LAYERS)) {
+    console.log(`Fetching ${layer} trees (layer ${LAYERS[layer]})...`);
+    raw[layer] = await queryAll(LAYERS[layer], WHERES[layer]);
+    console.log(`  ${raw[layer].length} raw`);
+  }
+  return raw;
+}
+
+// Full-fidelity snapshot of what the city returned, plus the layer schemas,
+// so the pipeline stays re-runnable after the source endpoints are gone.
+async function writeArchive(date, raw) {
+  const dir = join(ARCHIVE_ROOT, date);
+  mkdirSync(dir, { recursive: true });
+  for (const layer of Object.keys(LAYERS)) {
+    writeFileSync(
+      join(dir, `${layer}.raw.geojson`),
+      JSON.stringify({ type: 'FeatureCollection', features: raw[layer] })
+    );
+  }
+  const metadata = {};
+  for (const [layer, id] of Object.entries(LAYERS)) {
+    try {
+      metadata[layer] = await fetchJsonWithRetry(`${BASE}/${id}?f=json`, id);
+    } catch (e) {
+      console.log(`  layer metadata fetch failed for ${layer} (${e.message}), skipping`);
+    }
+  }
+  writeFileSync(join(dir, 'layer-metadata.json'), JSON.stringify(metadata, null, 2));
+  writeFileSync(
+    join(dir, 'manifest.json'),
+    JSON.stringify(
+      {
+        date,
+        base: BASE,
+        layers: LAYERS,
+        where: WHERES,
+        counts: Object.fromEntries(Object.keys(LAYERS).map((l) => [l, raw[l].length])),
+      },
+      null,
+      2
+    )
+  );
+  console.log(`Archived raw data to data-archive/${date}/`);
+}
+
+function loadArchive(date) {
+  const resolved =
+    date ??
+    readdirSync(ARCHIVE_ROOT)
+      .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))
+      .sort()
+      .at(-1);
+  if (!resolved || !existsSync(join(ARCHIVE_ROOT, resolved, 'manifest.json'))) {
+    throw new Error(`No usable archive found under data-archive/${date ?? ''}`);
+  }
+  console.log(`Rebuilding offline from data-archive/${resolved}/`);
+  const raw = {};
+  for (const layer of Object.keys(LAYERS)) {
+    raw[layer] = JSON.parse(
+      readFileSync(join(ARCHIVE_ROOT, resolved, `${layer}.raw.geojson`), 'utf8')
+    ).features;
+    console.log(`  ${layer}: ${raw[layer].length} raw`);
+  }
+  return { raw, date: resolved };
+}
+
 async function main() {
-  const wide = "UPPER({F}) LIKE '%SEQUOIA%' OR UPPER({F}) LIKE '%REDWOOD%'";
-  console.log('Fetching heritage trees (layer 26)...');
-  const rawHeritage = await queryAll(
-    LAYERS.heritage,
-    `(${wide.replaceAll('{F}', 'SCIENTIFIC')} OR ${wide.replaceAll('{F}', 'COMMON')}) AND STATUS <> 'Removed'`
-  );
-  console.log(`  ${rawHeritage.length} raw`);
-  console.log('Fetching street trees (layer 1415)...');
-  const rawStreet = await queryAll(LAYERS.street, wide.replaceAll('{F}', 'SPECIES'));
-  console.log(`  ${rawStreet.length} raw`);
-  console.log('Fetching parks trees (layer 220)...');
-  const rawParks = await queryAll(
-    LAYERS.parks,
-    `${wide.replaceAll('{F}', 'Genus_species')} OR ${wide.replaceAll('{F}', 'Common_name')}`
-  );
-  console.log(`  ${rawParks.length} raw`);
+  let raw;
+  let dataDate;
+  if (OFFLINE) {
+    ({ raw, date: dataDate } = loadArchive(OFFLINE_DATE));
+  } else {
+    raw = await fetchLive();
+    dataDate = new Date().toISOString().slice(0, 10);
+    await writeArchive(dataDate, raw);
+  }
+  const { heritage: rawHeritage, street: rawStreet, parks: rawParks } = raw;
 
   const lift = (raw, normalize) =>
     raw
@@ -231,8 +313,11 @@ async function main() {
   // each link at build time and drop the dead ones so the UI never dead-ends.
   // Their site 403s non-browser user agents, so a 403 means "couldn't check",
   // not "dead" — only 404/5xx drop the link.
-  console.log('Validating Portland Wild links...');
-  for (const h of heritage) {
+  const toValidate = OFFLINE ? [] : heritage;
+  console.log(
+    OFFLINE ? 'Offline: skipping Portland Wild link validation.' : 'Validating Portland Wild links...'
+  );
+  for (const h of toValidate) {
     const url = h.properties.portlandwild_url;
     if (!url) continue;
     try {
@@ -277,7 +362,7 @@ async function main() {
     OUT,
     JSON.stringify({
       type: 'FeatureCollection',
-      generated: new Date().toISOString().slice(0, 10),
+      generated: dataDate,
       attribution: 'City of Portland Urban Forestry open data',
       features: all,
     })

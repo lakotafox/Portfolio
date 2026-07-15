@@ -1,0 +1,2956 @@
+{
+  "heritage": {
+    "currentVersion": 11.5,
+    "cimVersion": "3.5.0",
+    "id": 26,
+    "name": "Heritage Trees",
+    "type": "Feature Layer",
+    "description": "Points representing trunk locations of Heritage Trees of Portland.\n\n--  Additional Information:\nCategory:  Environmental\nPurpose:  The Heritage Tree ordinance calls for the City Forester to annually                  prepare a list of trees that - because of their age, size, type, historical                  association or horticultural value - are of special importance to the City\nUpdate Frequency:  Annually\n\n--  Metadata Link:\nhttps://www.portlandmaps.com/metadata/index.cfm?&action=DisplayLayer&LayerID=52455",
+    "geometryType": "esriGeometryPoint",
+    "sourceSpatialReference": {
+      "wkid": 102100,
+      "latestWkid": 3857,
+      "xyTolerance": 0.001,
+      "zTolerance": 0.001,
+      "mTolerance": 0.001,
+      "falseX": -20037700,
+      "falseY": -30241100,
+      "xyUnits": 10000,
+      "falseZ": -100000,
+      "zUnits": 10000,
+      "falseM": -100000,
+      "mUnits": 10000
+    },
+    "spatialReference": {
+      "wkid": 102100,
+      "latestWkid": 3857,
+      "xyTolerance": 0.001,
+      "zTolerance": 0.001,
+      "mTolerance": 0.001,
+      "falseX": -20037700,
+      "falseY": -30241100,
+      "xyUnits": 10000,
+      "falseZ": -100000,
+      "zUnits": 10000,
+      "falseM": -100000,
+      "mUnits": 10000
+    },
+    "copyrightText": "Bureau of Parks and Recreation",
+    "parentLayer": {
+      "id": 24,
+      "name": "Environment"
+    },
+    "subLayers": [],
+    "minScale": 0,
+    "maxScale": 0,
+    "referenceScale": 0,
+    "drawingInfo": {
+      "renderer": {
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [
+            18,
+            0,
+            135,
+            255
+          ],
+          "size": 4,
+          "angle": 0,
+          "xoffset": 0,
+          "yoffset": 0,
+          "outline": {
+            "color": [
+              0,
+              0,
+              0,
+              255
+            ],
+            "width": 1
+          }
+        }
+      },
+      "scaleSymbols": true,
+      "transparency": 0,
+      "labelingInfo": null
+    },
+    "defaultVisibility": true,
+    "extent": {
+      "xmin": -13665872.8235,
+      "ymin": 5690297.4733000025,
+      "xmax": -13636572.4098,
+      "ymax": 5718456.449000001,
+      "spatialReference": {
+        "wkid": 102100,
+        "latestWkid": 3857,
+        "xyTolerance": 0.001,
+        "zTolerance": 0.001,
+        "mTolerance": 0.001,
+        "falseX": -20037700,
+        "falseY": -30241100,
+        "xyUnits": 10000,
+        "falseZ": -100000,
+        "zUnits": 10000,
+        "falseM": -100000,
+        "mUnits": 10000
+      }
+    },
+    "hasAttachments": false,
+    "htmlPopupType": "esriServerHTMLPopupTypeAsHTMLText",
+    "displayField": "Owner_name",
+    "typeIdField": null,
+    "subtypeFieldName": null,
+    "subtypeField": null,
+    "defaultSubtypeCode": null,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID",
+        "domain": null
+      },
+      {
+        "name": "Shape",
+        "type": "esriFieldTypeGeometry",
+        "alias": "SHAPE",
+        "domain": null
+      },
+      {
+        "name": "TREEID",
+        "type": "esriFieldTypeInteger",
+        "alias": "Tree ID",
+        "domain": null
+      },
+      {
+        "name": "STATUS",
+        "type": "esriFieldTypeString",
+        "alias": "Status",
+        "length": 20,
+        "domain": null
+      },
+      {
+        "name": "HEIGHT",
+        "type": "esriFieldTypeSmallInteger",
+        "alias": "Height",
+        "domain": null
+      },
+      {
+        "name": "SPREAD",
+        "type": "esriFieldTypeSmallInteger",
+        "alias": "Spread",
+        "domain": null
+      },
+      {
+        "name": "DIAMETER",
+        "type": "esriFieldTypeInteger",
+        "alias": "Diameter",
+        "domain": null
+      },
+      {
+        "name": "NOTES",
+        "type": "esriFieldTypeString",
+        "alias": "Notes",
+        "length": 254,
+        "domain": null
+      },
+      {
+        "name": "SCIENTIFIC",
+        "type": "esriFieldTypeString",
+        "alias": "Scientific Name",
+        "length": 45,
+        "domain": null
+      },
+      {
+        "name": "COMMON",
+        "type": "esriFieldTypeString",
+        "alias": "Common Name",
+        "length": 30,
+        "domain": null
+      },
+      {
+        "name": "STATE_ID",
+        "type": "esriFieldTypeString",
+        "alias": "State ID",
+        "length": 20,
+        "domain": null
+      },
+      {
+        "name": "SITE_ADDRESS",
+        "type": "esriFieldTypeString",
+        "alias": "Site Address",
+        "length": 31,
+        "domain": null
+      },
+      {
+        "name": "Date_Height",
+        "type": "esriFieldTypeDate",
+        "alias": "Height Date",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "Date_Spread",
+        "type": "esriFieldTypeDate",
+        "alias": "Spread Date",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "CIRCUMF",
+        "type": "esriFieldTypeDouble",
+        "alias": "Circumference",
+        "domain": null
+      },
+      {
+        "name": "Date_Circumference",
+        "type": "esriFieldTypeDate",
+        "alias": "Circumference Date",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "YEAR_Designated",
+        "type": "esriFieldTypeSmallInteger",
+        "alias": "Year Designated",
+        "domain": null
+      },
+      {
+        "name": "DATE_DESIG",
+        "type": "esriFieldTypeDate",
+        "alias": "Date Designated",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "Ownership",
+        "type": "esriFieldTypeString",
+        "alias": "Ownership",
+        "length": 254,
+        "domain": null
+      },
+      {
+        "name": "LAT",
+        "type": "esriFieldTypeDouble",
+        "alias": "Latitude",
+        "domain": null
+      },
+      {
+        "name": "LON",
+        "type": "esriFieldTypeDouble",
+        "alias": "Longitude",
+        "domain": null
+      },
+      {
+        "name": "Delist_Date",
+        "type": "esriFieldTypeDate",
+        "alias": "Date Delisted",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "Delist_Ordinance",
+        "type": "esriFieldTypeString",
+        "alias": "Delist Ordinance",
+        "length": 75,
+        "domain": null
+      },
+      {
+        "name": "Delist_Reason",
+        "type": "esriFieldTypeString",
+        "alias": "Delist Reason",
+        "length": 500,
+        "domain": null
+      },
+      {
+        "name": "Neighborhood",
+        "type": "esriFieldTypeString",
+        "alias": "Neighborhood",
+        "length": 125,
+        "domain": null
+      },
+      {
+        "name": "Vol_Inspection",
+        "type": "esriFieldTypeDate",
+        "alias": "Vol_Inspection",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "Native",
+        "type": "esriFieldTypeString",
+        "alias": "Native",
+        "length": 50,
+        "domain": null
+      },
+      {
+        "name": "Site_Notes",
+        "type": "esriFieldTypeString",
+        "alias": "Site_Notes",
+        "length": 500,
+        "domain": null
+      },
+      {
+        "name": "Ordinance",
+        "type": "esriFieldTypeString",
+        "alias": "Ordinance",
+        "length": 50,
+        "domain": null
+      },
+      {
+        "name": "County_Rec",
+        "type": "esriFieldTypeString",
+        "alias": "County_Rec",
+        "length": 250,
+        "domain": null
+      },
+      {
+        "name": "Plaque_adjustment_date",
+        "type": "esriFieldTypeDate",
+        "alias": "Plaque adjustment date",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "Plaque_notes",
+        "type": "esriFieldTypeString",
+        "alias": "Plaque notes",
+        "length": 1000,
+        "domain": null
+      },
+      {
+        "name": "Tree_fact_short",
+        "type": "esriFieldTypeString",
+        "alias": "Tree Fact Short",
+        "length": 254,
+        "domain": null
+      },
+      {
+        "name": "Tree_fact_long",
+        "type": "esriFieldTypeString",
+        "alias": "Tree Fact Long",
+        "length": 1000,
+        "domain": null
+      },
+      {
+        "name": "Species_fact_short",
+        "type": "esriFieldTypeString",
+        "alias": "Species Fact Short",
+        "length": 254,
+        "domain": null
+      },
+      {
+        "name": "Species_fact_long",
+        "type": "esriFieldTypeString",
+        "alias": "Species Fact Long",
+        "length": 1000,
+        "domain": null
+      },
+      {
+        "name": "Owner_name",
+        "type": "esriFieldTypeString",
+        "alias": "Owner Name",
+        "length": 500,
+        "domain": null
+      },
+      {
+        "name": "Owner_address",
+        "type": "esriFieldTypeString",
+        "alias": "Owner Address",
+        "length": 500,
+        "domain": null
+      },
+      {
+        "name": "GlobalID",
+        "type": "esriFieldTypeGlobalID",
+        "alias": "GlobalID",
+        "length": 38,
+        "domain": null
+      },
+      {
+        "name": "created_user",
+        "type": "esriFieldTypeString",
+        "alias": "created_user",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "created_date",
+        "type": "esriFieldTypeDate",
+        "alias": "created_date",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "last_edited_user",
+        "type": "esriFieldTypeString",
+        "alias": "last_edited_user",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "last_edited_date",
+        "type": "esriFieldTypeDate",
+        "alias": "last_edited_date",
+        "length": 8,
+        "domain": null
+      }
+    ],
+    "geometryField": {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "SHAPE"
+    },
+    "indexes": [
+      {
+        "name": "FDO_OBJECTID",
+        "fields": "OBJECTID",
+        "isAscending": true,
+        "isUnique": true,
+        "description": ""
+      },
+      {
+        "name": "FDO_GlobalID",
+        "fields": "GlobalID",
+        "isAscending": true,
+        "isUnique": false,
+        "description": ""
+      },
+      {
+        "name": "FDO_Shape",
+        "fields": "Shape",
+        "isAscending": true,
+        "isUnique": false,
+        "description": ""
+      }
+    ],
+    "subtypes": [],
+    "relationships": [],
+    "canModifyLayer": false,
+    "canScaleSymbols": false,
+    "hasLabels": false,
+    "capabilities": "Map,Query,Data",
+    "maxRecordCount": 200,
+    "maxSelectionCount": 2000,
+    "supportsStatistics": true,
+    "supportsExceedsLimitStatistics": true,
+    "supportsAdvancedQueries": true,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "isDataVersioned": false,
+    "ownershipBasedAccessControlForFeatures": {
+      "allowOthersToQuery": true
+    },
+    "useStandardizedQueries": true,
+    "supportedSpatialRelationships": [
+      "esriSpatialRelIntersects",
+      "esriSpatialRelContains",
+      "esriSpatialRelCrosses",
+      "esriSpatialRelEnvelopeIntersects",
+      "esriSpatialRelIndexIntersects",
+      "esriSpatialRelOverlaps",
+      "esriSpatialRelTouches",
+      "esriSpatialRelWithin",
+      "esriSpatialRelRelation"
+    ],
+    "advancedQueryCapabilities": {
+      "useStandardizedQueries": true,
+      "supportsStatistics": true,
+      "supportsPercentileStatistics": true,
+      "supportsHavingClause": true,
+      "supportsOrderBy": true,
+      "supportsDistinct": true,
+      "supportsCountDistinct": true,
+      "supportsAdvancedQueryRelated": true,
+      "supportsQueryRelatedPagination": true,
+      "supportsPagination": true,
+      "supportsLod": false,
+      "supportsQueryWithLodSR": false,
+      "supportsTrueCurve": true,
+      "supportsQueryWithDatumTransformation": true,
+      "supportsReturningQueryExtent": true,
+      "supportsQueryWithDistance": true,
+      "supportsSqlExpression": true,
+      "supportsTimeRelation": true,
+      "supportsSqlFormat": false,
+      "supportsQueryAnalytic": false,
+      "supportsCurrentUserQueries": true
+    },
+    "supportsDatumTransformation": true,
+    "dateFieldsTimeReference": null,
+    "preferredTimeReference": null,
+    "datesInUnknownTimezone": false,
+    "hasMetadata": true,
+    "isDataArchived": false,
+    "archivingInfo": {
+      "supportsQueryWithHistoricMoment": false,
+      "startArchivingMoment": -1
+    },
+    "supportsCoordinatesQuantization": true,
+    "supportsDynamicLegends": true
+  },
+  "street": {
+    "currentVersion": 11.5,
+    "cimVersion": "3.5.0",
+    "id": 1415,
+    "name": "Street Tree Inventory - Active Records",
+    "type": "Feature Layer",
+    "description": "<DIV STYLE=\"text-align:Left;font-size:12pt\"><DIV><P><SPAN>--  Additional Information:</SPAN></P><P><SPAN>   Category:  Parks</SPAN></P><P><SPAN>   Purpose:  No purpose information available.</SPAN></P><P><SPAN>   Update Frequency:  Unknown</SPAN></P><P><SPAN /></P><P><SPAN>--  Metadata Link:</SPAN></P><P><SPAN>   https://www.portlandmaps.com/metadata/index.cfm?&amp;action=DisplayLayer&amp;LayerID=61079</SPAN></P><P><SPAN /></P></DIV></DIV>",
+    "geometryType": "esriGeometryPoint",
+    "sourceSpatialReference": {
+      "wkid": 102100,
+      "latestWkid": 3857,
+      "xyTolerance": 0.001,
+      "zTolerance": 0.001,
+      "mTolerance": 0.001,
+      "falseX": -20037700,
+      "falseY": -30241100,
+      "xyUnits": 10000,
+      "falseZ": -100000,
+      "zUnits": 10000,
+      "falseM": -100000,
+      "mUnits": 10000
+    },
+    "spatialReference": {
+      "wkid": 102100,
+      "latestWkid": 3857,
+      "xyTolerance": 0.001,
+      "zTolerance": 0.001,
+      "mTolerance": 0.001,
+      "falseX": -20037700,
+      "falseY": -30241100,
+      "xyUnits": 10000,
+      "falseZ": -100000,
+      "zUnits": 10000,
+      "falseM": -100000,
+      "mUnits": 10000
+    },
+    "copyrightText": "Bureau of Parks and Recreation",
+    "parentLayer": {
+      "id": 24,
+      "name": "Environment"
+    },
+    "subLayers": [],
+    "minScale": 0,
+    "maxScale": 0,
+    "referenceScale": 0,
+    "drawingInfo": {
+      "renderer": {
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [
+            146,
+            175,
+            66,
+            255
+          ],
+          "size": 4,
+          "angle": 0,
+          "xoffset": 0,
+          "yoffset": 0,
+          "outline": {
+            "color": [
+              0,
+              0,
+              0,
+              255
+            ],
+            "width": 0.7
+          }
+        }
+      },
+      "scaleSymbols": true,
+      "transparency": 0,
+      "labelingInfo": null
+    },
+    "defaultVisibility": true,
+    "extent": {
+      "xmin": -13673312.0021,
+      "ymin": 5690023.402099997,
+      "xmax": -13633612.5673,
+      "ymax": 5722721.331799999,
+      "spatialReference": {
+        "wkid": 102100,
+        "latestWkid": 3857,
+        "xyTolerance": 0.001,
+        "zTolerance": 0.001,
+        "mTolerance": 0.001,
+        "falseX": -20037700,
+        "falseY": -30241100,
+        "xyUnits": 10000,
+        "falseZ": -100000,
+        "zUnits": 10000,
+        "falseM": -100000,
+        "mUnits": 10000
+      }
+    },
+    "hasAttachments": false,
+    "htmlPopupType": "esriServerHTMLPopupTypeAsHTMLText",
+    "displayField": "NEIGHBORHOOD",
+    "typeIdField": null,
+    "subtypeFieldName": null,
+    "subtypeField": null,
+    "defaultSubtypeCode": null,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID",
+        "domain": null
+      },
+      {
+        "name": "Shape",
+        "type": "esriFieldTypeGeometry",
+        "alias": "Shape",
+        "domain": null
+      },
+      {
+        "name": "Neighborhood",
+        "type": "esriFieldTypeString",
+        "alias": "NEIGHBORHOOD",
+        "length": 100,
+        "domain": null
+      },
+      {
+        "name": "Address",
+        "type": "esriFieldTypeString",
+        "alias": "ADDRESS",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "Date_Inventoried",
+        "type": "esriFieldTypeDate",
+        "alias": "DATE INVENTORIED",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "SPECIES",
+        "type": "esriFieldTypeString",
+        "alias": "SPECIES",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "MATURE_SIZE",
+        "type": "esriFieldTypeString",
+        "alias": "MATURE SIZE",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "FUNCTIONAL_TYPE",
+        "type": "esriFieldTypeString",
+        "alias": "FUNCTIONAL TYPE",
+        "length": 25,
+        "domain": null
+      },
+      {
+        "name": "DIAMETER",
+        "type": "esriFieldTypeSingle",
+        "alias": "DIAMETER",
+        "domain": null
+      },
+      {
+        "name": "Condition",
+        "type": "esriFieldTypeString",
+        "alias": "CONDITION",
+        "length": 25,
+        "domain": null
+      },
+      {
+        "name": "Site_Type",
+        "type": "esriFieldTypeString",
+        "alias": "SITE TYPE",
+        "length": 50,
+        "domain": null
+      },
+      {
+        "name": "Site_Size",
+        "type": "esriFieldTypeString",
+        "alias": "SITE SIZE",
+        "length": 25,
+        "domain": null
+      },
+      {
+        "name": "Site_Width",
+        "type": "esriFieldTypeSingle",
+        "alias": "SITE WIDTH",
+        "domain": null
+      },
+      {
+        "name": "Wires",
+        "type": "esriFieldTypeString",
+        "alias": "WIRES",
+        "length": 50,
+        "domain": null
+      },
+      {
+        "name": "SITE_IMPROVEMENT",
+        "type": "esriFieldTypeString",
+        "alias": "SITE IMPROVEMENT",
+        "length": 50,
+        "domain": null
+      }
+    ],
+    "geometryField": {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape"
+    },
+    "indexes": [
+      {
+        "name": "FDO_OBJECTID",
+        "fields": "OBJECTID",
+        "isAscending": true,
+        "isUnique": true,
+        "description": ""
+      },
+      {
+        "name": "FDO_Shape",
+        "fields": "Shape",
+        "isAscending": true,
+        "isUnique": false,
+        "description": ""
+      }
+    ],
+    "subtypes": [],
+    "relationships": [],
+    "canModifyLayer": false,
+    "canScaleSymbols": false,
+    "hasLabels": false,
+    "capabilities": "Map,Query,Data",
+    "maxRecordCount": 200,
+    "maxSelectionCount": 2000,
+    "supportsStatistics": true,
+    "supportsExceedsLimitStatistics": true,
+    "supportsAdvancedQueries": true,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "isDataVersioned": false,
+    "ownershipBasedAccessControlForFeatures": {
+      "allowOthersToQuery": true
+    },
+    "useStandardizedQueries": true,
+    "supportedSpatialRelationships": [
+      "esriSpatialRelIntersects",
+      "esriSpatialRelContains",
+      "esriSpatialRelCrosses",
+      "esriSpatialRelEnvelopeIntersects",
+      "esriSpatialRelIndexIntersects",
+      "esriSpatialRelOverlaps",
+      "esriSpatialRelTouches",
+      "esriSpatialRelWithin",
+      "esriSpatialRelRelation"
+    ],
+    "advancedQueryCapabilities": {
+      "useStandardizedQueries": true,
+      "supportsStatistics": true,
+      "supportsPercentileStatistics": true,
+      "supportsHavingClause": true,
+      "supportsOrderBy": true,
+      "supportsDistinct": true,
+      "supportsCountDistinct": true,
+      "supportsAdvancedQueryRelated": true,
+      "supportsQueryRelatedPagination": true,
+      "supportsPagination": true,
+      "supportsLod": false,
+      "supportsQueryWithLodSR": false,
+      "supportsTrueCurve": true,
+      "supportsQueryWithDatumTransformation": true,
+      "supportsReturningQueryExtent": true,
+      "supportsQueryWithDistance": true,
+      "supportsSqlExpression": true,
+      "supportsTimeRelation": true,
+      "supportsSqlFormat": false,
+      "supportsQueryAnalytic": false,
+      "supportsCurrentUserQueries": true
+    },
+    "supportsDatumTransformation": true,
+    "dateFieldsTimeReference": null,
+    "preferredTimeReference": null,
+    "datesInUnknownTimezone": false,
+    "hasMetadata": true,
+    "isDataArchived": false,
+    "archivingInfo": {
+      "supportsQueryWithHistoricMoment": false,
+      "startArchivingMoment": -1
+    },
+    "supportsCoordinatesQuantization": true,
+    "supportsDynamicLegends": true
+  },
+  "parks": {
+    "currentVersion": 11.5,
+    "cimVersion": "3.5.0",
+    "id": 220,
+    "name": "Parks Tree Inventory",
+    "type": "Feature Layer",
+    "description": "None available\n\n--Additional Information:\nCategory:  Parks\nPurpose: \nUpdate Frequency:  As needed\n\n--  Metadata Link:\nhttps://www.portlandmaps.com/metadata/index.cfm?&action=DisplayLayer&LayerID=54554",
+    "geometryType": "esriGeometryPoint",
+    "sourceSpatialReference": {
+      "wkid": 2913,
+      "latestWkid": 2913,
+      "xyTolerance": 0.0032808398950131233,
+      "zTolerance": 0.001,
+      "mTolerance": 0.001,
+      "falseX": -111333600,
+      "falseY": -98152500,
+      "xyUnits": 3048,
+      "falseZ": 0,
+      "zUnits": 1,
+      "falseM": 0,
+      "mUnits": 1
+    },
+    "spatialReference": {
+      "wkid": 102100,
+      "latestWkid": 3857,
+      "xyTolerance": 0.001,
+      "zTolerance": 0.001,
+      "mTolerance": 0.001,
+      "falseX": -20037700,
+      "falseY": -30241100,
+      "xyUnits": 10000,
+      "falseZ": -100000,
+      "zUnits": 10000,
+      "falseM": -100000,
+      "mUnits": 10000
+    },
+    "copyrightText": "Bureau of Parks and Recreation",
+    "parentLayer": {
+      "id": 24,
+      "name": "Environment"
+    },
+    "subLayers": [],
+    "minScale": 0,
+    "maxScale": 0,
+    "referenceScale": 0,
+    "drawingInfo": {
+      "renderer": {
+        "type": "simple",
+        "symbol": {
+          "type": "esriSMS",
+          "style": "esriSMSCircle",
+          "color": [
+            95,
+            0,
+            168,
+            255
+          ],
+          "size": 4,
+          "angle": 0,
+          "xoffset": 0,
+          "yoffset": 0,
+          "outline": {
+            "color": [
+              0,
+              0,
+              0,
+              255
+            ],
+            "width": 1
+          }
+        }
+      },
+      "scaleSymbols": true,
+      "transparency": 0,
+      "labelingInfo": null
+    },
+    "defaultVisibility": true,
+    "extent": {
+      "xmin": -13667930.023670884,
+      "ymin": 5692003.3365270225,
+      "xmax": -13634819.144195437,
+      "ymax": 5725290.09058019,
+      "spatialReference": {
+        "wkid": 102100,
+        "latestWkid": 3857,
+        "xyTolerance": 0.001,
+        "zTolerance": 0.001,
+        "mTolerance": 0.001,
+        "falseX": -20037700,
+        "falseY": -30241100,
+        "xyUnits": 10000,
+        "falseZ": -100000,
+        "zUnits": 10000,
+        "falseM": -100000,
+        "mUnits": 10000
+      }
+    },
+    "hasAttachments": true,
+    "attachmentProperties": [
+      {
+        "name": "id",
+        "fieldName": "ATTACHMENTID",
+        "isEnabled": true
+      },
+      {
+        "name": "globalid",
+        "fieldName": "GLOBALID",
+        "isEnabled": true
+      },
+      {
+        "name": "keywords",
+        "fieldName": "KEYWORDS",
+        "isEnabled": false
+      },
+      {
+        "name": "name",
+        "fieldName": "ATT_NAME",
+        "isEnabled": true
+      },
+      {
+        "name": "contentType",
+        "fieldName": "CONTENT_TYPE",
+        "isEnabled": true
+      },
+      {
+        "name": "size",
+        "fieldName": "DATA_SIZE",
+        "isEnabled": true
+      },
+      {
+        "name": "exifInfo",
+        "fieldName": "EXIFINFO",
+        "isEnabled": false
+      }
+    ],
+    "attachmentFields": [
+      {
+        "name": "ATTACHMENTID",
+        "type": "esriFieldTypeOID",
+        "alias": "ATTACHMENTID",
+        "editable": false,
+        "nullable": false,
+        "length": 4,
+        "domain": null
+      },
+      {
+        "name": "GLOBALID",
+        "type": "esriFieldTypeGlobalID",
+        "alias": "GLOBALID",
+        "editable": false,
+        "nullable": false,
+        "length": 38,
+        "domain": null
+      },
+      {
+        "name": "ATT_NAME",
+        "type": "esriFieldTypeString",
+        "alias": "ATT_NAME",
+        "editable": true,
+        "nullable": false,
+        "length": 250,
+        "domain": null
+      },
+      {
+        "name": "CONTENT_TYPE",
+        "type": "esriFieldTypeString",
+        "alias": "CONTENT_TYPE",
+        "editable": true,
+        "nullable": false,
+        "length": 150,
+        "domain": null
+      },
+      {
+        "name": "DATA_SIZE",
+        "type": "esriFieldTypeInteger",
+        "alias": "DATA_SIZE",
+        "editable": true,
+        "nullable": false,
+        "length": 4,
+        "domain": null
+      }
+    ],
+    "supportsAttachmentsResizing": true,
+    "htmlPopupType": "esriServerHTMLPopupTypeAsHTMLText",
+    "displayField": "Common_name",
+    "typeIdField": null,
+    "subtypeFieldName": null,
+    "subtypeField": null,
+    "defaultSubtypeCode": null,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID",
+        "domain": null
+      },
+      {
+        "name": "Inventory_Date",
+        "type": "esriFieldTypeDate",
+        "alias": "Date Inventoried",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "Species",
+        "type": "esriFieldTypeString",
+        "alias": "Species",
+        "length": 150,
+        "domain": {
+          "type": "codedValue",
+          "name": "WS4_domain_uf_park_tree_species_5",
+          "description": "Display",
+          "codedValues": [
+            {
+              "name": "Abies alba, European silver fir",
+              "code": "ABAL"
+            },
+            {
+              "name": "Abies amabilis, Pacific silver fir",
+              "code": "ABAM"
+            },
+            {
+              "name": "Abies concolor, white fir",
+              "code": "ABCO"
+            },
+            {
+              "name": "Abies grandis x concolor, Leuteneggeri hybrid fir",
+              "code": "ABGRCO"
+            },
+            {
+              "name": "Abies grandis, grand fir",
+              "code": "ABGR"
+            },
+            {
+              "name": "Abies koreana, Korean fir",
+              "code": "ABKO"
+            },
+            {
+              "name": "Abies nordmanniana, Caucasian fir, Nordmann fir",
+              "code": "ABNO"
+            },
+            {
+              "name": "Abies pinsapo, Spanish fir",
+              "code": "ABPI"
+            },
+            {
+              "name": "Abies procera, noble fir",
+              "code": "ABPR"
+            },
+            {
+              "name": "Abies spp., fir",
+              "code": "AB"
+            },
+            {
+              "name": "Acer buergerianum, trident maple",
+              "code": "ACBU"
+            },
+            {
+              "name": "Acer campestre, hedge maple",
+              "code": "ACCA"
+            },
+            {
+              "name": "Acer circinatum, vine maple",
+              "code": "ACCI"
+            },
+            {
+              "name": "Acer davidii, snakebark maple",
+              "code": "ACDA"
+            },
+            {
+              "name": "Acer grandidentatum 'Schmidt', Rocky Mountain Glow maple",
+              "code": "ACGDSC"
+            },
+            {
+              "name": "Acer griseum, paperbark maple",
+              "code": "ACGR"
+            },
+            {
+              "name": "Acer heldreichii, Balkan maple",
+              "code": "ACHD"
+            },
+            {
+              "name": "Acer japonicum, fullmoon maple",
+              "code": "ACJA"
+            },
+            {
+              "name": "Acer macrophyllum, bigleaf maple",
+              "code": "ACMA"
+            },
+            {
+              "name": "Acer monspessulanum, Montpellier maple",
+              "code": "ACMO"
+            },
+            {
+              "name": "Acer negundo, box elder",
+              "code": "ACNE"
+            },
+            {
+              "name": "Acer palmatum, Japanese maple",
+              "code": "ACPA"
+            },
+            {
+              "name": "Acer platanoides, Norway maple",
+              "code": "ACPL"
+            },
+            {
+              "name": "Acer pseudoplatanus, sycamore maple",
+              "code": "ACPS"
+            },
+            {
+              "name": "Acer rubrum, red maple",
+              "code": "ACRU"
+            },
+            {
+              "name": "Acer rufinerve, redvein maple",
+              "code": "ACRF"
+            },
+            {
+              "name": "Acer saccharinum, silver maple",
+              "code": "ACSA"
+            },
+            {
+              "name": "Acer saccharum, sugar maple",
+              "code": "ACSA3"
+            },
+            {
+              "name": "Acer spp., maple",
+              "code": "AC"
+            },
+            {
+              "name": "Acer tartaricum ssp. ginnala, Amur maple",
+              "code": "ACGI"
+            },
+            {
+              "name": "Acer x freemanii, red-silver maple hybrid",
+              "code": "ACFR"
+            },
+            {
+              "name": "Aesculus californica, California buckeye",
+              "code": "AECF"
+            },
+            {
+              "name": "Aesculus chinensis, Chinese horsechestnut",
+              "code": "AECH"
+            },
+            {
+              "name": "Aesculus flava, yellow buckeye",
+              "code": "AEFL"
+            },
+            {
+              "name": "Aesculus glabra, Ohio buckeye",
+              "code": "AEGL"
+            },
+            {
+              "name": "Aesculus hippocastanum, common horsechestnut",
+              "code": "AEHI"
+            },
+            {
+              "name": "Aesculus spp., horsechestnuts, buckeyes",
+              "code": "AE"
+            },
+            {
+              "name": "Aesculus x carnea, red horsechestnut",
+              "code": "AECA"
+            },
+            {
+              "name": "Ailanthus altissima, tree of heaven",
+              "code": "AIAL"
+            },
+            {
+              "name": "Albizia julibrissin, silk tree",
+              "code": "ALJU"
+            },
+            {
+              "name": "Alnus rubra, red alder",
+              "code": "ALRU"
+            },
+            {
+              "name": "Alnus spp., alder",
+              "code": "AL"
+            },
+            {
+              "name": "Amelanchier laevis, Allegheny serviceberry",
+              "code": "AMLA"
+            },
+            {
+              "name": "Amelanchier spp., serviceberry",
+              "code": "AM"
+            },
+            {
+              "name": "Aralia elata, Japanese angelica-tree",
+              "code": "AAEL"
+            },
+            {
+              "name": "Aralia spinosa, devil's walking stick",
+              "code": "AA"
+            },
+            {
+              "name": "Araucaria araucana, monkey puzzle",
+              "code": "ARAR"
+            },
+            {
+              "name": "Arbutus menziesii, Pacific madrone",
+              "code": "ARME"
+            },
+            {
+              "name": "Arbutus spp., arbutus, strawberry tree or madrone",
+              "code": "AR"
+            },
+            {
+              "name": "Arbutus unedo, strawberry tree ",
+              "code": "ARUN"
+            },
+            {
+              "name": "Arbutus x 'Marina', Marina strawberry tree",
+              "code": "ARMA"
+            },
+            {
+              "name": "Asimina triloba, paw paw",
+              "code": "ASTR"
+            },
+            {
+              "name": "Athrotaxis x laxifolia, summit cedar ",
+              "code": "ATLA"
+            },
+            {
+              "name": "Azara microphylla, boxleaf azara",
+              "code": "AZMI"
+            },
+            {
+              "name": "Betula albosinensis, Chinese paper birch",
+              "code": "BEAS"
+            },
+            {
+              "name": "Betula nigra, river birch",
+              "code": "BENI"
+            },
+            {
+              "name": "Betula papyrifera, paper birch",
+              "code": "BEPA"
+            },
+            {
+              "name": "Betula pendula, European white birch ",
+              "code": "BEPE"
+            },
+            {
+              "name": "Betula spp., birch",
+              "code": "BE"
+            },
+            {
+              "name": "Betula utilis var. jacquemontii, Himalayan whitebarked birch",
+              "code": "BEUTJA"
+            },
+            {
+              "name": "Calocedrus decurrens, incense cedar ",
+              "code": "CADE"
+            },
+            {
+              "name": "Carpinus betulus, European hornbeam",
+              "code": "CABE"
+            },
+            {
+              "name": "Carpinus caroliniana, American hornbeam, blue beech",
+              "code": "CACA"
+            },
+            {
+              "name": "Carpinus japonica, Japanese hornbeam",
+              "code": "CAJA"
+            },
+            {
+              "name": "Carpinus spp., hornbeam",
+              "code": "CA"
+            },
+            {
+              "name": "Carya illinoinensis, pecan",
+              "code": "CNIL"
+            },
+            {
+              "name": "Carya ovata, shagbark hickory",
+              "code": "CNOV"
+            },
+            {
+              "name": "Carya spp., hickories",
+              "code": "CN"
+            },
+            {
+              "name": "Castanea mollissima, Chinese chestnut",
+              "code": "CSMO"
+            },
+            {
+              "name": "Castanea sativa, Spanish chestnut",
+              "code": "CSSA"
+            },
+            {
+              "name": "Castanea spp., chestnut ",
+              "code": "CS"
+            },
+            {
+              "name": "Castanopsis spp., chinkapin",
+              "code": "CK"
+            },
+            {
+              "name": "Catalpa bignonioides, southern catalpa",
+              "code": "CPBI"
+            },
+            {
+              "name": "Catalpa speciosa, northern catalpa ",
+              "code": "CPSP"
+            },
+            {
+              "name": "Catalpa spp., catalpa",
+              "code": "CP"
+            },
+            {
+              "name": "Catalpa x erubescens ‘Purpurea’, purple catalpa ",
+              "code": "CPERPU"
+            },
+            {
+              "name": "Cathaya argyrophylla, Chinese silver fir, cathaya",
+              "code": "CTAR"
+            },
+            {
+              "name": "Cedrus atlantica ‘Glauca’, blue Atlas cedar ",
+              "code": "CEATGL"
+            },
+            {
+              "name": "Cedrus deodara, deodar cedar",
+              "code": "CEDE"
+            },
+            {
+              "name": "Cedrus libani, cedar of Lebanon",
+              "code": "CELI"
+            },
+            {
+              "name": "Cedrus spp., cedar",
+              "code": "CE"
+            },
+            {
+              "name": "Celtis laevigata, sugarberry, southern hackberry",
+              "code": "CEHALA"
+            },
+            {
+              "name": "Celtis occidentalis, common hackberry",
+              "code": "CEHAOC"
+            },
+            {
+              "name": "Celtis reticulata, netleaf hackberry",
+              "code": "CEHARE"
+            },
+            {
+              "name": "Celtis spp., hackberry",
+              "code": "CEHA"
+            },
+            {
+              "name": "Cercidiphyllum japonicum, katsura",
+              "code": "CEJA"
+            },
+            {
+              "name": "Cercis canadensis, eastern redbud",
+              "code": "CECAER"
+            },
+            {
+              "name": "Cercis occidentalis, California redbud",
+              "code": "CEOCCR"
+            },
+            {
+              "name": "Cercis spp., redbud",
+              "code": "CECA"
+            },
+            {
+              "name": "Chamaecyparis lawsoniana, Port Orford cedar",
+              "code": "CHLA"
+            },
+            {
+              "name": "Chamaecyparis obtusa, Hinoki falsecypress",
+              "code": "CHOB"
+            },
+            {
+              "name": "Chamaecyparis pisifera, sawara cypress",
+              "code": "CHPI"
+            },
+            {
+              "name": "Chamaecyparis spp., falsecypress",
+              "code": "CH"
+            },
+            {
+              "name": "Chilopsis linearis, desert willow",
+              "code": "CHLI"
+            },
+            {
+              "name": "Chionanthus retusus, Chinese fringe tree ",
+              "code": "CHRE"
+            },
+            {
+              "name": "Chrysolepis chrysophylla, golden chinkapin",
+              "code": "CCCH"
+            },
+            {
+              "name": "Cinnamomum camphora, camphor tree",
+              "code": "CICA"
+            },
+            {
+              "name": "Cladrastis kentukea, American yellowwood ",
+              "code": "CLKE"
+            },
+            {
+              "name": "Cladrastis spp., yellowwood",
+              "code": "CLLU"
+            },
+            {
+              "name": "Clerodendrum spp., glory bower",
+              "code": "CL"
+            },
+            {
+              "name": "Clerodendrum trichotomum, Harlequin glory bower",
+              "code": "CLTR"
+            },
+            {
+              "name": "Cornus capitata, evergreen dogwood",
+              "code": "COCA"
+            },
+            {
+              "name": "Cornus controversa, giant dogwood",
+              "code": "COCN"
+            },
+            {
+              "name": "Cornus florida, eastern dogwood",
+              "code": "COFL"
+            },
+            {
+              "name": "Cornus kousa, kousa dogwood ",
+              "code": "COKO"
+            },
+            {
+              "name": "Cornus mas, cornelian cherry",
+              "code": "COMA"
+            },
+            {
+              "name": "Cornus nuttallii, Pacific dogwood",
+              "code": "CONU"
+            },
+            {
+              "name": "Cornus omeiense, evergreen dogwood",
+              "code": "COOM"
+            },
+            {
+              "name": "Cornus spp., dogwood",
+              "code": "CO"
+            },
+            {
+              "name": "Cornus walteri, Walter dogwood",
+              "code": "COWA"
+            },
+            {
+              "name": "Corylus avellana, hazel, filbert",
+              "code": "CYAV"
+            },
+            {
+              "name": "Corylus colurna, Turkish hazel ",
+              "code": "CYCO"
+            },
+            {
+              "name": "Corylus spp., hazel or hazelnut",
+              "code": "CY"
+            },
+            {
+              "name": "Cotinus obovatus, American smoketree ",
+              "code": "CTOB"
+            },
+            {
+              "name": "Cotinus spp., smoketree",
+              "code": "CT"
+            },
+            {
+              "name": "Crataegus douglasii, black hawthorn ",
+              "code": "CRDO"
+            },
+            {
+              "name": "Crataegus laevigata, midland hawthorn, English hawthorn",
+              "code": "CRLV"
+            },
+            {
+              "name": "Crataegus monogyna, English hawthorn, common hawthorn ",
+              "code": "CRMO"
+            },
+            {
+              "name": "Crataegus phaenopyrum, Washington hawthorn",
+              "code": "CRPH"
+            },
+            {
+              "name": "Crataegus spp., hawthorn ",
+              "code": "CR"
+            },
+            {
+              "name": "Crataegus x lavallei, Lavalle hawthorn",
+              "code": "CRLA"
+            },
+            {
+              "name": "Cryptomeria japonica, Japanese cedar",
+              "code": "CPJA"
+            },
+            {
+              "name": "Cunninghamia lanceolata, China fir ",
+              "code": "CULA"
+            },
+            {
+              "name": "Cupressus arizonica, Arizona cypress",
+              "code": "CUAR"
+            },
+            {
+              "name": "Cupressus nootkatensis syn. Xanthocyparis nootkatensis, Alaska yellow-cedar",
+              "code": "CUNO"
+            },
+            {
+              "name": "Cupressus sempervirens, Italian cypress",
+              "code": "CUSE"
+            },
+            {
+              "name": "Cupressus spp., cypress",
+              "code": "CU"
+            },
+            {
+              "name": "Cydonia oblonga, quince",
+              "code": "CDOB"
+            },
+            {
+              "name": "Daphniphyllum himalaense var. macropodum",
+              "code": "DPHIMA"
+            },
+            {
+              "name": "Davidia involucrata, dove or handkerchief tree ",
+              "code": "DAIN"
+            },
+            {
+              "name": "Diospyros kaki, Japanese persimmon, Asian persimmon",
+              "code": "DIKA"
+            },
+            {
+              "name": "Diospyros spp., persimmon",
+              "code": "DI"
+            },
+            {
+              "name": "Diospyros virginiana, American persimmon",
+              "code": "DIVI"
+            },
+            {
+              "name": "Elaeagnus spp., includes Russian olive, silver berry",
+              "code": "EL"
+            },
+            {
+              "name": "Elaeocarpus decipiens, Japanese blueberry tree",
+              "code": "ELDE"
+            },
+            {
+              "name": "Eriobotrya japonica, loquat",
+              "code": "ERJA"
+            },
+            {
+              "name": "Eucalyptus spp., eucalyptus",
+              "code": "EU"
+            },
+            {
+              "name": "Eucommia ulmoides, Hardy Chinese rubber tree, eucommia",
+              "code": "EUUL"
+            },
+            {
+              "name": "Eucryphia spp., leatherwood",
+              "code": "EC"
+            },
+            {
+              "name": "Euonymus europaeus, spindle-tree",
+              "code": "EOEU"
+            },
+            {
+              "name": "Euonymus spp., euonymus",
+              "code": "EO"
+            },
+            {
+              "name": "Fagus grandifolia, American beech",
+              "code": "FAGR"
+            },
+            {
+              "name": "Fagus spp., beech",
+              "code": "FA"
+            },
+            {
+              "name": "Fagus sylvatica, European beech",
+              "code": "FASY"
+            },
+            {
+              "name": "Ficus carica, common fig",
+              "code": "FICA"
+            },
+            {
+              "name": "Firmiana simplex, Chinese parasol tree",
+              "code": "FMSI"
+            },
+            {
+              "name": "Franklinia alatamaha, Franklin tree, franklinia",
+              "code": "FKAL"
+            },
+            {
+              "name": "Fraxinus americana, white ash",
+              "code": "FRAM"
+            },
+            {
+              "name": "Fraxinus angustifolia, narrowleaf ash",
+              "code": "FRAN"
+            },
+            {
+              "name": "Fraxinus excelsior, European ash",
+              "code": "FREX"
+            },
+            {
+              "name": "Fraxinus latifolia, Oregon ash",
+              "code": "FRLA"
+            },
+            {
+              "name": "Fraxinus ornus, flowering ash",
+              "code": "FROR"
+            },
+            {
+              "name": "Fraxinus pennsylvanica, green ash",
+              "code": "FRPE"
+            },
+            {
+              "name": "Fraxinus spp., ash",
+              "code": "FR"
+            },
+            {
+              "name": "Ginkgo biloba, ginkgo",
+              "code": "GIBI"
+            },
+            {
+              "name": "Gleditsia spp., honey locust",
+              "code": "GL"
+            },
+            {
+              "name": "Gleditsia triacanthos , honey locust",
+              "code": "GLTR"
+            },
+            {
+              "name": "Gymnocladus chinensis, Chinese coffeetree",
+              "code": "GYCH"
+            },
+            {
+              "name": "Gymnocladus dioica, Kentucky coffeetree",
+              "code": "GYDI"
+            },
+            {
+              "name": "Halesia spp., silverbell ",
+              "code": "HA"
+            },
+            {
+              "name": "Halesia tetraptera var. monticola syn. Halesia carolina var. monticola, mountain silverbell ",
+              "code": "HATEMO"
+            },
+            {
+              "name": "Hamamelis spp., witch hazel",
+              "code": "HM"
+            },
+            {
+              "name": "Heptacodium miconioides, Seven-son plant",
+              "code": "HEMI"
+            },
+            {
+              "name": "Hippophae rhamnoides, seaberry",
+              "code": "HIRH"
+            },
+            {
+              "name": "Hovenia dulcis, Japanese raisin tree",
+              "code": "HODU"
+            },
+            {
+              "name": "Ilex aquifolium, English holly",
+              "code": "ILAQ"
+            },
+            {
+              "name": "Ilex latifolia, lusterleaf holly",
+              "code": "ILLA"
+            },
+            {
+              "name": "Ilex spp., holly",
+              "code": "IL"
+            },
+            {
+              "name": "Illicium henryi, Henry anise tree, Henry's star anise",
+              "code": "ICHE"
+            },
+            {
+              "name": "Juglans cinerea, butternut",
+              "code": "JUCI"
+            },
+            {
+              "name": "Juglans nigra, black walnut",
+              "code": "JUNI"
+            },
+            {
+              "name": "Juglans regia, English walnut",
+              "code": "JURE"
+            },
+            {
+              "name": "Juglans spp., walnut",
+              "code": "JU"
+            },
+            {
+              "name": "Juniperus spp., juniper",
+              "code": "JN"
+            },
+            {
+              "name": "Kalopanax septemlobus, castor-aralia",
+              "code": "KXSE"
+            },
+            {
+              "name": "Keteleeria ssp., keteleeria",
+              "code": "KE"
+            },
+            {
+              "name": "Koelreuteria paniculata, goldenrain tree",
+              "code": "KOPA"
+            },
+            {
+              "name": "Laburnum spp., goldenchain tree",
+              "code": "LAAN"
+            },
+            {
+              "name": "Lagerstroemia spp., crape myrtle",
+              "code": "LAIN"
+            },
+            {
+              "name": "Larix decidua, European larch",
+              "code": "LADE"
+            },
+            {
+              "name": "Larix occidentalis, western larch",
+              "code": "LAOC"
+            },
+            {
+              "name": "Larix spp., larch",
+              "code": "LA"
+            },
+            {
+              "name": "Laurus nobilis, bay laurel",
+              "code": "LANO"
+            },
+            {
+              "name": "Leptospermum scoparium, manuka, tea tree",
+              "code": "LPSC"
+            },
+            {
+              "name": "Ligustrum spp., privet",
+              "code": "LG"
+            },
+            {
+              "name": "Liquidambar styraciflua, sweetgum",
+              "code": "LIST"
+            },
+            {
+              "name": "Liriodendron tulipifera, tuliptree",
+              "code": "LITU"
+            },
+            {
+              "name": "Lithocarpus densiflorus, tanoak or tanbark oak",
+              "code": "LTDE"
+            },
+            {
+              "name": "Lithocarpus spp., tanoak",
+              "code": "LT"
+            },
+            {
+              "name": "Lyonothamnus floribunda ssp. asplenifolius, Catalina ironwood",
+              "code": "LYFL"
+            },
+            {
+              "name": "Maackia amurensis, Amur maackia",
+              "code": "MAAM"
+            },
+            {
+              "name": "Machilus thunbergii syn. Persea thunbergii, Japanese bay tree",
+              "code": "MHTH"
+            },
+            {
+              "name": "Maclura pomifera, Osage orange ",
+              "code": "MAPO"
+            },
+            {
+              "name": "Magnolia acuminata, cucumber magnolia",
+              "code": "MGAC"
+            },
+            {
+              "name": "Magnolia ashei, Ashe's magnolia, dwarf bigleaf magnolia",
+              "code": "MGAS"
+            },
+            {
+              "name": "Magnolia campbellii, Campbell's magnolia",
+              "code": "MGCA"
+            },
+            {
+              "name": "Magnolia delavayi, Chinese evergreen magnolia, Delavay's magnolia",
+              "code": "MGDL"
+            },
+            {
+              "name": "Magnolia denudata, yulan magnolia",
+              "code": "MGDE"
+            },
+            {
+              "name": "Magnolia ernestii, Yellow Lily-tree",
+              "code": "MGER"
+            },
+            {
+              "name": "Magnolia grandiflora, southern magnolia",
+              "code": "MGGR"
+            },
+            {
+              "name": "Magnolia insignis, red lotus tree",
+              "code": "MGIN"
+            },
+            {
+              "name": "Magnolia martinii",
+              "code": "MGMA"
+            },
+            {
+              "name": "Magnolia maudiae syn. Michelia maudiae, smiling monkey tree",
+              "code": "MGMU"
+            },
+            {
+              "name": "Magnolia sieboldii, oyama magnolia",
+              "code": "MGSI"
+            },
+            {
+              "name": "Magnolia spp., magnolia",
+              "code": "MG"
+            },
+            {
+              "name": "Magnolia stellata, star magnolia",
+              "code": "MGST"
+            },
+            {
+              "name": "Magnolia virginiana, sweetbay",
+              "code": "MGVI"
+            },
+            {
+              "name": "Magnolia x soulangeana, saucer magnolia ",
+              "code": "MGSO"
+            },
+            {
+              "name": "Magnolia zenii, Zen magnolia",
+              "code": "MGZE"
+            },
+            {
+              "name": "Malus domestica, apple (MADO)",
+              "code": "MAAP"
+            },
+            {
+              "name": "Malus fusca, Pacific crabapple",
+              "code": "MAFU"
+            },
+            {
+              "name": "Malus spp., ornamental crabapple",
+              "code": "MA"
+            },
+            {
+              "name": "Malus tschonoskii, Chonosuke crabapple, pillar crabapple",
+              "code": "MATS"
+            },
+            {
+              "name": "Melliodendron xylocarpum, melliodendron",
+              "code": "MDXY"
+            },
+            {
+              "name": "Mespilus germanica, medlar",
+              "code": "MPGE"
+            },
+            {
+              "name": "Metapanax delavayi, false ginseng",
+              "code": "MXDE"
+            },
+            {
+              "name": "Metasequoia glyptostroboides, dawn redwood",
+              "code": "MEGL"
+            },
+            {
+              "name": "Morus spp., mulberry",
+              "code": "MO"
+            },
+            {
+              "name": "Neolitsea sericea, neolitsea",
+              "code": "NLSE"
+            },
+            {
+              "name": "Nothofagus spp., Southern beech",
+              "code": "NO"
+            },
+            {
+              "name": "Nyssa sinensis, Chinese tupelo",
+              "code": "NYSI"
+            },
+            {
+              "name": "Nyssa sylvatica, black tupelo",
+              "code": "NYSY"
+            },
+            {
+              "name": "Olea europaea, olive",
+              "code": "OLEU"
+            },
+            {
+              "name": "Osmanthus fragrans, fragrant olive",
+              "code": "OMFR"
+            },
+            {
+              "name": "Ostrya spp., hophornbeam",
+              "code": "OS"
+            },
+            {
+              "name": "Ostrya virginiana, American hophornbeam",
+              "code": "OSVI"
+            },
+            {
+              "name": "Oxydendrum arboreum, sourwood",
+              "code": "OXAR"
+            },
+            {
+              "name": "Parrotia persica, Persian ironwood",
+              "code": "PAPE"
+            },
+            {
+              "name": "Paulownia tomentosa, paulownia, Empress tree, foxglove tree",
+              "code": "PUTO"
+            },
+            {
+              "name": "Phellodendron amurense, Amur cork tree",
+              "code": "PLAMHM"
+            },
+            {
+              "name": "Phellodendron spp., cork tree",
+              "code": "PL"
+            },
+            {
+              "name": "Phoebe chekiangensis",
+              "code": "PBCH"
+            },
+            {
+              "name": "Picea abies, Norway spruce",
+              "code": "PCAB"
+            },
+            {
+              "name": "Picea breweriana, Brewer spruce",
+              "code": "PCBR"
+            },
+            {
+              "name": "Picea glauca, white spruce",
+              "code": "PCGL"
+            },
+            {
+              "name": "Picea koraiensis, Korean spruce",
+              "code": "PCKO"
+            },
+            {
+              "name": "Picea omorika, Serbian spruce",
+              "code": "PCOM"
+            },
+            {
+              "name": "Picea orientalis, oriental spruce",
+              "code": "PCOR"
+            },
+            {
+              "name": "Picea pungens, Colorado blue spruce",
+              "code": "PCPU"
+            },
+            {
+              "name": "Picea sitchensis, Sitka spruce",
+              "code": "PCSI"
+            },
+            {
+              "name": "Picea smithiana, Himalayan spruce",
+              "code": "PCSM"
+            },
+            {
+              "name": "Picea spp., spruce",
+              "code": "PC"
+            },
+            {
+              "name": "Pinus aristata, Rocky mountain bristlecone pine",
+              "code": "PIAR"
+            },
+            {
+              "name": "Pinus bungeana, lacebark pine",
+              "code": "PIBU"
+            },
+            {
+              "name": "Pinus cembroides, Mexican pinyon",
+              "code": "PICB"
+            },
+            {
+              "name": "Pinus contorta, shore pine, lodgepole pine",
+              "code": "PICO"
+            },
+            {
+              "name": "Pinus coulteri, Coulter pine",
+              "code": "PICL"
+            },
+            {
+              "name": "Pinus densiflora, Japanese red pine",
+              "code": "PIDE"
+            },
+            {
+              "name": "Pinus flexilis, limber pine",
+              "code": "PIFL"
+            },
+            {
+              "name": "Pinus halepensis, Aleppo pine",
+              "code": "PIHA"
+            },
+            {
+              "name": "Pinus jeffreyi, Jeffrey pine",
+              "code": "PIJE"
+            },
+            {
+              "name": "Pinus kwangtungensis, Guangdong pine",
+              "code": "PIKW"
+            },
+            {
+              "name": "Pinus monticola, western white pine ",
+              "code": "PIMO"
+            },
+            {
+              "name": "Pinus nigra, Austrian black pine",
+              "code": "PINI"
+            },
+            {
+              "name": "Pinus palustris, longleaf pine",
+              "code": "PIPL"
+            },
+            {
+              "name": "Pinus parviflora, Japanese white pine",
+              "code": "PIPA"
+            },
+            {
+              "name": "Pinus peuce, Macedonian pine",
+              "code": "PIPE"
+            },
+            {
+              "name": "Pinus ponderosa, ponderosa pine",
+              "code": "PIPO"
+            },
+            {
+              "name": "Pinus rudis, Hartweg's pine",
+              "code": "PIHW"
+            },
+            {
+              "name": "Pinus spp., pine",
+              "code": "PI"
+            },
+            {
+              "name": "Pinus strobus, eastern white pine",
+              "code": "PIST"
+            },
+            {
+              "name": "Pinus sylvestris, Scots pine",
+              "code": "PISY"
+            },
+            {
+              "name": "Pinus thunbergii, Japanese black pine",
+              "code": "PITH"
+            },
+            {
+              "name": "Pinus wallichiana, Himalayan white pine",
+              "code": "PIWA"
+            },
+            {
+              "name": "Pistacia chinensis, Chinese pistache",
+              "code": "PICH"
+            },
+            {
+              "name": "Platanus occidentalis, American sycamore",
+              "code": "PLOC"
+            },
+            {
+              "name": "Platanus x acerifolia, London plane tree",
+              "code": "PLAC"
+            },
+            {
+              "name": "Platycladus orientalis, Chinese arborvitae",
+              "code": "PDOR"
+            },
+            {
+              "name": "Podocarpus macrophyllus, Buddhist pine, yew pine",
+              "code": "PDMA"
+            },
+            {
+              "name": "Poliothyrsis sinensis, pearlbloom tree",
+              "code": "PHSI"
+            },
+            {
+              "name": "Populus alba, white poplar",
+              "code": "POAB"
+            },
+            {
+              "name": "Populus deltoides, eastern cotonwood",
+              "code": "PODE"
+            },
+            {
+              "name": "Populus nigra, black poplar, Lombardy poplar",
+              "code": "PONI"
+            },
+            {
+              "name": "Populus spp., poplar",
+              "code": "PO"
+            },
+            {
+              "name": "Populus tremula, European aspen",
+              "code": "POTM"
+            },
+            {
+              "name": "Populus tremuloides, quaking aspen",
+              "code": "POTR5"
+            },
+            {
+              "name": "Populus trichocarpa, black cottonwood",
+              "code": "POTR"
+            },
+            {
+              "name": "Prunus (cherry species and cultivars), cherry",
+              "code": "PRCH"
+            },
+            {
+              "name": "Prunus (other than cherry or plums), Prunus species",
+              "code": "PR"
+            },
+            {
+              "name": "Prunus (plum species and cultivars), plum",
+              "code": "PRPL"
+            },
+            {
+              "name": "Prunus avium, bird cherry",
+              "code": "PRAV"
+            },
+            {
+              "name": "Prunus cerasifera, flowering plum",
+              "code": "PRCE"
+            },
+            {
+              "name": "Prunus emarginata var. mollis, bitter cherry, Oregon cherry",
+              "code": "PREMMO"
+            },
+            {
+              "name": "Prunus laurocerasus, English laurel, cherry laurel",
+              "code": "PRLA"
+            },
+            {
+              "name": "Prunus lusitanica, Portugal laurel, Portuguese laurel",
+              "code": "PRLU"
+            },
+            {
+              "name": "Prunus mume, Japanese apricot",
+              "code": "PRMU"
+            },
+            {
+              "name": "Prunus sargentii, Sargent's cherry",
+              "code": "PRSG"
+            },
+            {
+              "name": "Prunus serrula, paperbark cherry, birchbark cherry, Tibetan cherry",
+              "code": "PRSR"
+            },
+            {
+              "name": "Prunus serrulata, Japanese flowering cherry",
+              "code": "PRSE"
+            },
+            {
+              "name": "Pseudolarix amabilis, golden larch ",
+              "code": "PSAM"
+            },
+            {
+              "name": "Pseudotsuga menziesii, Douglas-fir",
+              "code": "PSME"
+            },
+            {
+              "name": "Pterocarya spp., wingnut",
+              "code": "PTCN"
+            },
+            {
+              "name": "Pteroceltis tatarinowii, winged hackberry",
+              "code": "PTCLTA"
+            },
+            {
+              "name": "Pterostyrax spp., epaulette tree",
+              "code": "PX"
+            },
+            {
+              "name": "Pyrus calleryana, flowering pear",
+              "code": "PYCA"
+            },
+            {
+              "name": "Pyrus communis, European pear (including cultivars)",
+              "code": "PYCO"
+            },
+            {
+              "name": "Pyrus pyrifolia, Asian pear, sand pear",
+              "code": "PYPY"
+            },
+            {
+              "name": "Pyrus spp., pear",
+              "code": "PY"
+            },
+            {
+              "name": "Quercus acutissima, sawtooth oak",
+              "code": "QUAC"
+            },
+            {
+              "name": "Quercus agrifolia, coast live oak",
+              "code": "QUAG"
+            },
+            {
+              "name": "Quercus alba, eastern white oak",
+              "code": "QUAB"
+            },
+            {
+              "name": "Quercus bicolor, swamp white oak",
+              "code": "QUBI"
+            },
+            {
+              "name": "Quercus coccinea, scarlet oak",
+              "code": "QUCO"
+            },
+            {
+              "name": "Quercus dentata 'pinnatifida', Japanese emperor oak, Daimyo oak",
+              "code": "QUDEPI"
+            },
+            {
+              "name": "Quercus frainetto, Hungarian oak, Italian oak",
+              "code": "QUFR"
+            },
+            {
+              "name": "Quercus garryana, Oregon white oak",
+              "code": "QUGA"
+            },
+            {
+              "name": "Quercus glauca, ring-cupped oak, Japanese blue oak",
+              "code": "QUGL"
+            },
+            {
+              "name": "Quercus hypoleucoides, silverleaf oak ",
+              "code": "QUHY"
+            },
+            {
+              "name": "Quercus ilex, holly oak, holm oak",
+              "code": "QUIL"
+            },
+            {
+              "name": "Quercus kelloggii, California black oak ",
+              "code": "QUKE"
+            },
+            {
+              "name": "Quercus lobata, valley oak",
+              "code": "QULO"
+            },
+            {
+              "name": "Quercus macrocarpa, bur oak ",
+              "code": "QUMA"
+            },
+            {
+              "name": "Quercus muehlenbergii, chinkapin oak ",
+              "code": "QUMU"
+            },
+            {
+              "name": "Quercus nigra, water oak",
+              "code": "QUNI"
+            },
+            {
+              "name": "Quercus palustris, pin oak",
+              "code": "QUPA"
+            },
+            {
+              "name": "Quercus phellos, willow oak ",
+              "code": "QUPH"
+            },
+            {
+              "name": "Quercus robur, English oak",
+              "code": "QURO"
+            },
+            {
+              "name": "Quercus rubra, northern red oak",
+              "code": "QURU"
+            },
+            {
+              "name": "Quercus shumardii, shumard oak",
+              "code": "QUSH"
+            },
+            {
+              "name": "Quercus spp. (evergreen), evergreen oak",
+              "code": "QUEV"
+            },
+            {
+              "name": "Quercus spp., oak",
+              "code": "QU"
+            },
+            {
+              "name": "Quercus suber, cork oak",
+              "code": "QUSU"
+            },
+            {
+              "name": "Quercus velutina, black oak",
+              "code": "QUVE"
+            },
+            {
+              "name": "Quercus virginiana, southern live oak",
+              "code": "QUVI"
+            },
+            {
+              "name": "Rehderodendron macrocarpum, mu gua hong",
+              "code": "RDMA"
+            },
+            {
+              "name": "Rhamnus purshiana, cascara buckthorn",
+              "code": "RHPU"
+            },
+            {
+              "name": "Robinia pseudoacacia, black locust",
+              "code": "ROPS"
+            },
+            {
+              "name": "Salix babylonica, weeping willow",
+              "code": "SABA"
+            },
+            {
+              "name": "Salix matsudana 'Tortuosa', corkscrew willow",
+              "code": "SAMATO"
+            },
+            {
+              "name": "Salix spp., willow",
+              "code": "SA"
+            },
+            {
+              "name": "Sassafras albidum, sassafras",
+              "code": "SAAL"
+            },
+            {
+              "name": "Schima superba",
+              "code": "SHSU"
+            },
+            {
+              "name": "Sciadopitys verticillata, umbrella pine ",
+              "code": "SCVE"
+            },
+            {
+              "name": "Sequoia sempervirens, coast redwood",
+              "code": "SESE"
+            },
+            {
+              "name": "Sequoiadendron giganteum, giant sequoia",
+              "code": "SEGI"
+            },
+            {
+              "name": "Sorbus aucuparia, European mountain ash",
+              "code": "SOAU"
+            },
+            {
+              "name": "Sorbus intermedia, Swedish whitebeam",
+              "code": "SOIN"
+            },
+            {
+              "name": "Sorbus spp., mountain ash or whitebeam",
+              "code": "SO"
+            },
+            {
+              "name": "Stewartia monadelpha, orange-bark stewartia, tall stewartia",
+              "code": "STMO"
+            },
+            {
+              "name": "Stewartia pseudocamellia, Japanese stewartia",
+              "code": "STPS"
+            },
+            {
+              "name": "Stewartia spp., stewartia",
+              "code": "ST"
+            },
+            {
+              "name": "Stump",
+              "code": "STUMP"
+            },
+            {
+              "name": "Styphnolobium japonicum syn. Sophora japonica, Japanese pagoda tree, Chinese scholar tree ",
+              "code": "SOJA"
+            },
+            {
+              "name": "Styrax japonicus, Japanese snowbell",
+              "code": "STJA"
+            },
+            {
+              "name": "Styrax obassia, bigleaf snowbell, fragrant snowbell",
+              "code": "STJAOB"
+            },
+            {
+              "name": "Sycopsis sinensis, Chinese fig hazel ",
+              "code": "SYSI"
+            },
+            {
+              "name": "Syringa reticulata, Japanese tree lilac",
+              "code": "SYRE"
+            },
+            {
+              "name": "Taxodium distichum., bald cypress",
+              "code": "TADI"
+            },
+            {
+              "name": "Taxodium spp., bald cypress",
+              "code": "TA"
+            },
+            {
+              "name": "Taxus baccata, English yew",
+              "code": "TXBA"
+            },
+            {
+              "name": "Taxus brevifolia, Pacific yew",
+              "code": "TXBR"
+            },
+            {
+              "name": "Tetradium daniellii syn. Evodia daniellii, Korean evodia, bee-bee tree",
+              "code": "TEDA"
+            },
+            {
+              "name": "Thuja occidentalis, arborvitae, eastern arborvitae, northern white-cedar",
+              "code": "THOC"
+            },
+            {
+              "name": "Thuja plicata, western redcedar",
+              "code": "THPL"
+            },
+            {
+              "name": "Thuja spp., ",
+              "code": "TH"
+            },
+            {
+              "name": "Thujopsis dolabrata, hiba arborvitae, thujopsis",
+              "code": "THDO"
+            },
+            {
+              "name": "Tilia americana, American linden",
+              "code": "TIAM"
+            },
+            {
+              "name": "Tilia cordata, littleleaf linden",
+              "code": "TICO"
+            },
+            {
+              "name": "Tilia platyphyllos, largeleaf linden ",
+              "code": "TIPL"
+            },
+            {
+              "name": "Tilia spp., linden, basswood",
+              "code": "TI"
+            },
+            {
+              "name": "Tilia tomentosa, silver linden",
+              "code": "TITO"
+            },
+            {
+              "name": "Toona sinensis syn. Cedrela sinensis, Chinese toon, cedrela, Chinese mahogany",
+              "code": "TOSI"
+            },
+            {
+              "name": "Torreya, nutmeg spp.",
+              "code": "TY"
+            },
+            {
+              "name": "Trachycarpus fortunei, Chusan palm or windmill palm",
+              "code": "TRFO"
+            },
+            {
+              "name": "Trochodendron aralioides, wheel tree",
+              "code": "TDAR"
+            },
+            {
+              "name": "Tsuga diversifolia, Japanese hemlock",
+              "code": "TSDI"
+            },
+            {
+              "name": "Tsuga heterophylla, western hemlock",
+              "code": "TSHE"
+            },
+            {
+              "name": "Tsuga mertensiana, mountain hemlock",
+              "code": "TSME"
+            },
+            {
+              "name": "Tsuga spp., hemlock",
+              "code": "TS"
+            },
+            {
+              "name": "Ulmus alata, winged elm",
+              "code": "ULAL"
+            },
+            {
+              "name": "Ulmus americana, American elm",
+              "code": "ULAM"
+            },
+            {
+              "name": "Ulmus glabra ‘Camperdownii’, Camperdown elm",
+              "code": "ULGLCA"
+            },
+            {
+              "name": "Ulmus japonica x wilsoniana, Accolade elm",
+              "code": "ULDAJM"
+            },
+            {
+              "name": "Ulmus minor, field elm",
+              "code": "ULMI"
+            },
+            {
+              "name": "Ulmus parvifolia, Chinese lacebark elm",
+              "code": "ULPA"
+            },
+            {
+              "name": "Ulmus pumila, Siberian elm",
+              "code": "ULPU"
+            },
+            {
+              "name": "Ulmus spp., elm",
+              "code": "UL"
+            },
+            {
+              "name": "Ulmus x, elm hybrid",
+              "code": "ULHY"
+            },
+            {
+              "name": "Umbellularia californica, California bay",
+              "code": "UMCA"
+            },
+            {
+              "name": "unknown (dead)",
+              "code": "UNKN"
+            },
+            {
+              "name": "Viburnum cylindricum, tubeflower viburnum",
+              "code": "VICY"
+            },
+            {
+              "name": "x Chitalpa tashkentensis, chitalpa",
+              "code": "CHTA"
+            },
+            {
+              "name": "x Cupressocyparis leylandii, Leyland cypress",
+              "code": "CUCY"
+            },
+            {
+              "name": "x Gordlinia grandiflora, mountain gordlinia",
+              "code": "GOGF"
+            },
+            {
+              "name": "x Sycoparrotia semidecidua, sycoparrotia ",
+              "code": "SYSE"
+            },
+            {
+              "name": "Zelkova serrata, Japanese zelkova",
+              "code": "ZESE"
+            },
+            {
+              "name": "Zelkova spp., zelkova",
+              "code": "ZE"
+            },
+            {
+              "name": "Ziziphus jujuba, jujube, Chinese date",
+              "code": "ZIJU"
+            }
+          ],
+          "mergePolicy": "esriMPTDefaultValue",
+          "splitPolicy": "esriSPTDefaultValue"
+        }
+      },
+      {
+        "name": "DBH",
+        "type": "esriFieldTypeDouble",
+        "alias": "DBH",
+        "domain": null
+      },
+      {
+        "name": "Condition",
+        "type": "esriFieldTypeString",
+        "alias": "Condition",
+        "length": 20,
+        "domain": {
+          "type": "codedValue",
+          "name": "WS4_domain_health_3",
+          "description": "domain_health",
+          "codedValues": [
+            {
+              "name": "Excellent",
+              "code": "Excellent"
+            },
+            {
+              "name": "Good",
+              "code": "Good"
+            },
+            {
+              "name": "Fair",
+              "code": "Fair"
+            },
+            {
+              "name": "Poor",
+              "code": "Poor"
+            },
+            {
+              "name": "Dead",
+              "code": "Dead"
+            }
+          ],
+          "mergePolicy": "esriMPTDefaultValue",
+          "splitPolicy": "esriSPTDefaultValue"
+        }
+      },
+      {
+        "name": "TreeHeight",
+        "type": "esriFieldTypeSmallInteger",
+        "alias": "Tree Height (feet)",
+        "domain": null
+      },
+      {
+        "name": "CrownWidthNS",
+        "type": "esriFieldTypeSmallInteger",
+        "alias": "Crown Width N-S (feet)",
+        "domain": null
+      },
+      {
+        "name": "CrownWidthEW",
+        "type": "esriFieldTypeSmallInteger",
+        "alias": "Crown Width E-W (feet)",
+        "domain": null
+      },
+      {
+        "name": "CollectedBy",
+        "type": "esriFieldTypeString",
+        "alias": "Collected By",
+        "length": 25,
+        "domain": {
+          "type": "codedValue",
+          "name": "WS4_domain_collector_type",
+          "description": "domain_collector_type",
+          "codedValues": [
+            {
+              "name": "staff",
+              "code": "staff"
+            },
+            {
+              "name": "volunteer",
+              "code": "volunteer"
+            }
+          ],
+          "mergePolicy": "esriMPTDefaultValue",
+          "splitPolicy": "esriSPTDefaultValue"
+        }
+      },
+      {
+        "name": "Notes",
+        "type": "esriFieldTypeString",
+        "alias": "Notes",
+        "length": 1000,
+        "domain": null
+      },
+      {
+        "name": "CrownBaseHeight",
+        "type": "esriFieldTypeSmallInteger",
+        "alias": "Crown Base Height (feet)",
+        "domain": null
+      },
+      {
+        "name": "GlobalID",
+        "type": "esriFieldTypeGlobalID",
+        "alias": "GlobalID",
+        "length": 38,
+        "domain": null
+      },
+      {
+        "name": "StaffReview",
+        "type": "esriFieldTypeString",
+        "alias": "Staff Review?",
+        "length": 10,
+        "domain": {
+          "type": "codedValue",
+          "name": "WS4_dom_Yes_No",
+          "description": "dom_Yes_No",
+          "codedValues": [
+            {
+              "name": "Yes",
+              "code": "Y"
+            },
+            {
+              "name": "No",
+              "code": "N"
+            }
+          ],
+          "mergePolicy": "esriMPTDefaultValue",
+          "splitPolicy": "esriSPTDefaultValue"
+        }
+      },
+      {
+        "name": "created_user",
+        "type": "esriFieldTypeString",
+        "alias": "created_user",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "created_date",
+        "type": "esriFieldTypeDate",
+        "alias": "created_date",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "last_edited_user",
+        "type": "esriFieldTypeString",
+        "alias": "last_edited_user",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "last_edited_date",
+        "type": "esriFieldTypeDate",
+        "alias": "last_edited_date",
+        "length": 8,
+        "domain": null
+      },
+      {
+        "name": "Shape",
+        "type": "esriFieldTypeGeometry",
+        "alias": "Shape",
+        "domain": null
+      },
+      {
+        "name": "UserID",
+        "type": "esriFieldTypeInteger",
+        "alias": "Unique User ID",
+        "domain": null
+      },
+      {
+        "name": "Structural_Value",
+        "type": "esriFieldTypeDouble",
+        "alias": "Structural Value",
+        "domain": null
+      },
+      {
+        "name": "Carbon_Storage_lb",
+        "type": "esriFieldTypeDouble",
+        "alias": "Carbon Storage (lb)",
+        "domain": null
+      },
+      {
+        "name": "Carbon_Storage_value",
+        "type": "esriFieldTypeDouble",
+        "alias": "Carbon Storage value",
+        "domain": null
+      },
+      {
+        "name": "Carbon_Sequestration_lb",
+        "type": "esriFieldTypeDouble",
+        "alias": "Carbon Sequestration (lb)",
+        "domain": null
+      },
+      {
+        "name": "Carbon_Sequestration_value",
+        "type": "esriFieldTypeDouble",
+        "alias": "Carbon Sequestration value",
+        "domain": null
+      },
+      {
+        "name": "Stormwater_ft",
+        "type": "esriFieldTypeDouble",
+        "alias": "Stormwater (ft)",
+        "domain": null
+      },
+      {
+        "name": "Stormwater_value",
+        "type": "esriFieldTypeDouble",
+        "alias": "Stormwater value",
+        "domain": null
+      },
+      {
+        "name": "Pollution_Removal_value",
+        "type": "esriFieldTypeDouble",
+        "alias": "Pollution Removal value",
+        "domain": null
+      },
+      {
+        "name": "Pollution_Removal_oz",
+        "type": "esriFieldTypeDouble",
+        "alias": "Pollution Removal (oz)",
+        "domain": null
+      },
+      {
+        "name": "Total_Annual_Benefits",
+        "type": "esriFieldTypeDouble",
+        "alias": "Total Annual Benefits",
+        "domain": null
+      },
+      {
+        "name": "Family",
+        "type": "esriFieldTypeString",
+        "alias": "Family",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "Genus",
+        "type": "esriFieldTypeString",
+        "alias": "Genus",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "Common_name",
+        "type": "esriFieldTypeString",
+        "alias": "Common name",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "Genus_species",
+        "type": "esriFieldTypeString",
+        "alias": "Genus species",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "Functional_type",
+        "type": "esriFieldTypeString",
+        "alias": "Functional type",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "Size",
+        "type": "esriFieldTypeString",
+        "alias": "Size",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "Native",
+        "type": "esriFieldTypeString",
+        "alias": "Native",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "Edible",
+        "type": "esriFieldTypeString",
+        "alias": "Edible",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "Nuisance",
+        "type": "esriFieldTypeString",
+        "alias": "Nuisance",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "Origin",
+        "type": "esriFieldTypeString",
+        "alias": "Origin",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "Species_factoid",
+        "type": "esriFieldTypeString",
+        "alias": "Species factoid",
+        "length": 255,
+        "domain": null
+      },
+      {
+        "name": "PropertyID",
+        "type": "esriFieldTypeInteger",
+        "alias": "Property ID",
+        "domain": null
+      }
+    ],
+    "geometryField": {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape"
+    },
+    "indexes": [
+      {
+        "name": "FDO_OBJECTID",
+        "fields": "OBJECTID",
+        "isAscending": true,
+        "isUnique": true,
+        "description": ""
+      },
+      {
+        "name": "FDO_Shape",
+        "fields": "Shape",
+        "isAscending": true,
+        "isUnique": false,
+        "description": ""
+      },
+      {
+        "name": "FDO_GlobalID",
+        "fields": "GlobalID",
+        "isAscending": true,
+        "isUnique": false,
+        "description": ""
+      }
+    ],
+    "subtypes": [],
+    "relationships": [],
+    "canModifyLayer": false,
+    "canScaleSymbols": false,
+    "hasLabels": false,
+    "capabilities": "Map,Query,Data",
+    "maxRecordCount": 200,
+    "maxSelectionCount": 2000,
+    "supportsStatistics": true,
+    "supportsExceedsLimitStatistics": true,
+    "supportsAdvancedQueries": true,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "isDataVersioned": false,
+    "ownershipBasedAccessControlForFeatures": {
+      "allowOthersToQuery": true
+    },
+    "useStandardizedQueries": true,
+    "supportedSpatialRelationships": [
+      "esriSpatialRelIntersects",
+      "esriSpatialRelContains",
+      "esriSpatialRelCrosses",
+      "esriSpatialRelEnvelopeIntersects",
+      "esriSpatialRelIndexIntersects",
+      "esriSpatialRelOverlaps",
+      "esriSpatialRelTouches",
+      "esriSpatialRelWithin",
+      "esriSpatialRelRelation"
+    ],
+    "advancedQueryCapabilities": {
+      "useStandardizedQueries": true,
+      "supportsStatistics": true,
+      "supportsPercentileStatistics": true,
+      "supportsHavingClause": true,
+      "supportsOrderBy": true,
+      "supportsDistinct": true,
+      "supportsCountDistinct": true,
+      "supportsAdvancedQueryRelated": true,
+      "supportsQueryRelatedPagination": true,
+      "supportsPagination": true,
+      "supportsLod": false,
+      "supportsQueryWithLodSR": false,
+      "supportsTrueCurve": true,
+      "supportsQueryWithDatumTransformation": true,
+      "supportsReturningQueryExtent": true,
+      "supportsQueryWithDistance": true,
+      "supportsSqlExpression": true,
+      "supportsTimeRelation": true,
+      "supportsSqlFormat": false,
+      "supportsQueryAttachments": true,
+      "supportsQueryAttachmentsWithReturnUrl": true,
+      "supportsQueryAnalytic": false,
+      "supportsCurrentUserQueries": true
+    },
+    "supportsDatumTransformation": true,
+    "dateFieldsTimeReference": null,
+    "preferredTimeReference": null,
+    "datesInUnknownTimezone": false,
+    "hasMetadata": true,
+    "isDataArchived": false,
+    "archivingInfo": {
+      "supportsQueryWithHistoricMoment": false,
+      "startArchivingMoment": -1
+    },
+    "supportsCoordinatesQuantization": true,
+    "supportsDynamicLegends": true
+  }
+}

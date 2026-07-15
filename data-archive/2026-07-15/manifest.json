@@ -1,0 +1,19 @@
+{
+  "date": "2026-07-15",
+  "base": "https://www.portlandmaps.com/od/rest/services/COP_OpenData_Environment/MapServer",
+  "layers": {
+    "heritage": 26,
+    "street": 1415,
+    "parks": 220
+  },
+  "where": {
+    "heritage": "(UPPER(SCIENTIFIC) LIKE '%SEQUOIA%' OR UPPER(SCIENTIFIC) LIKE '%REDWOOD%' OR UPPER(COMMON) LIKE '%SEQUOIA%' OR UPPER(COMMON) LIKE '%REDWOOD%') AND STATUS <> 'Removed'",
+    "street": "UPPER(SPECIES) LIKE '%SEQUOIA%' OR UPPER(SPECIES) LIKE '%REDWOOD%'",
+    "parks": "UPPER(Genus_species) LIKE '%SEQUOIA%' OR UPPER(Genus_species) LIKE '%REDWOOD%' OR UPPER(Common_name) LIKE '%SEQUOIA%' OR UPPER(Common_name) LIKE '%REDWOOD%'"
+  },
+  "counts": {
+    "heritage": 31,
+    "street": 577,
+    "parks": 519
+  }
+}

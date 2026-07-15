@@ -239,3 +239,26 @@ node scripts/screenshot-redwoods.mjs
 Data notes: much of the street inventory was volunteer-collected 2010–2019,
 so treat locations as a strong guide rather than ground truth. Heritage
 trees deep-link to [Portland Wild](https://portlandwild.com) for write-ups.
+
+## Data backup & disaster recovery
+
+The map is protected against the city retiring its endpoints, in layers:
+
+1. `public/redwoods/data/trees.geojson` is committed — the live site keeps
+   working no matter what happens to the sources.
+2. Every online pipeline run also archives the **complete raw API
+   responses** (all fields, plus layer schemas and a manifest) to
+   `data-archive/<date>/`, committed to git. Old snapshots stay in history
+   forever.
+3. GitHub holds the whole repo off-site.
+
+If the city's ArcGIS services ever disappear, rebuild the map data from the
+newest archive with:
+
+```bash
+node scripts/fetch-trees.mjs --offline              # latest snapshot
+node scripts/fetch-trees.mjs --offline 2026-07-15   # specific snapshot
+```
+
+Normal (online) runs are unchanged — they always pull fresh, live data and
+never read from the archive.
