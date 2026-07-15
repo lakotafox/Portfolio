@@ -5,9 +5,11 @@ import { makeMarker } from './markers.js';
 import { initFilters } from './filters.js';
 import { initNearMe } from './nearme.js';
 import { initWalk } from './walk.js';
+import { initFullscreen } from './fullscreen.js';
 
 const map = createMap();
 const groups = createClusterGroups();
+initFullscreen(map);
 
 try {
   const store = await loadTrees();
