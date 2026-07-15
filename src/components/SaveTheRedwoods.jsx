@@ -12,11 +12,11 @@ const SaveTheRedwoods = () => (
           height="512"
         />
         <div className="redwoods-banner-body">
-          <h2 className="redwoods-banner-title">Before you scroll — the trees</h2>
+          <h2 className="redwoods-banner-title">Before you scroll — old growth forests need our help</h2>
           <p className="redwoods-banner-text">
-            Skip the "buy me a coffee" thing. If something here was useful, send a
-            few bucks to Save the Redwoods League instead — they've been protecting
-            these forests since 1918.
+            So instead of the "buy me a coffee" thing: if something here was useful,
+            send some coin to Save the Redwoods League. They've been protecting
+            these forests for more than 100 years.
           </p>
           <div className="redwoods-banner-actions">
             <a
