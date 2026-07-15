@@ -203,3 +203,39 @@ MinCoins builder tool allows you to create interactive programming environments 
 
 
 
+
+---
+
+# PDX Redwoods Map
+
+Live at [lakotafox.com/redwoods](https://lakotafox.com/redwoods/) — an
+interactive map of every giant sequoia, coast redwood, and dawn redwood in
+Portland, Oregon, built from City of Portland Urban Forestry open data.
+
+## How it works
+
+The site is fully static (`public/redwoods/` — vanilla JS modules + vendored
+Leaflet 1.9.4 / Leaflet.markercluster 1.5.3, no build step, no framework).
+Tree data is a committed snapshot, not a live API call:
+
+```bash
+node scripts/fetch-trees.mjs   # regenerates public/redwoods/data/trees.geojson
+```
+
+The script queries three ArcGIS layers (Heritage Trees, Street Tree
+Inventory, Parks Tree Inventory — field notes in `docs/schemas.md`), keeps
+only the three redwood-family species, normalizes them to one schema, and
+merges inventory records that duplicate a heritage tree within 15 m
+(merge decisions are logged). Re-run it whenever you want fresh data and
+commit the result — the inventories change on a scale of years.
+
+To refresh the project-card screenshot:
+
+```bash
+npm run build && npx vite preview --port 4174 &
+node scripts/screenshot-redwoods.mjs
+```
+
+Data notes: much of the street inventory was volunteer-collected 2010–2019,
+so treat locations as a strong guide rather than ground truth. Heritage
+trees deep-link to [Portland Wild](https://portlandwild.com) for write-ups.

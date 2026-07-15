@@ -818,91 +818,67 @@ body:not(.dark-theme) .moon-icon {
     border-color: var(--accent);
 }
 
-/* Save the Redwoods Section */
+/* Save the Redwoods Banner */
 .redwoods {
-    padding: 4rem 0 6rem;
+    padding: 1.5rem 0 0;
 }
 
-.redwoods-card {
-    background: linear-gradient(135deg, rgba(22, 101, 52, 0.12), rgba(21, 128, 61, 0.06)),
-                rgba(var(--card-bg-rgb), 0.5);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(34, 197, 94, 0.35);
-    border-radius: 16px;
-    padding: 3rem 2.5rem;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-    transition: all 0.3s ease;
-}
-
-.redwoods-card:hover {
-    border-color: #22c55e;
-    box-shadow: 0 12px 32px rgba(34, 197, 94, 0.15);
-}
-
-.redwoods-icon {
-    color: #22c55e;
-    margin-bottom: 1rem;
+.redwoods-banner {
     display: flex;
-    justify-content: center;
-}
-
-.redwoods-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-}
-
-.redwoods-subtitle {
-    color: #22c55e;
-    font-size: 0.95rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 1.5rem;
-}
-
-.redwoods-text {
-    color: var(--text-secondary);
-    line-height: 1.7;
-    max-width: 620px;
-    margin: 0 auto 2rem;
-}
-
-.redwoods-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    align-items: center;
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    background: rgba(var(--card-bg-rgb), 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
-.redwoods-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+.redwoods-banner-img {
+    width: 220px;
+    height: 147px;
+    object-fit: cover;
+    image-rendering: pixelated;
+    flex-shrink: 0;
+    display: block;
 }
 
-.redwoods-figure {
-    font-size: 2rem;
+.redwoods-banner-body {
+    padding: 1rem 1.5rem 1rem 0;
+    min-width: 0;
+}
+
+.redwoods-banner-title {
+    font-family: Georgia, 'Palatino Linotype', Palatino, serif;
+    font-size: 1.15rem;
     font-weight: 700;
-    color: #22c55e;
+    letter-spacing: 0.01em;
 }
 
-.redwoods-label {
+.redwoods-banner-text {
+    font-size: 0.9rem;
     color: var(--text-secondary);
-    font-size: 0.85rem;
+    margin: 0.35rem 0 0.75rem;
     line-height: 1.5;
+}
+
+.redwoods-banner-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .redwoods-donate-btn {
     display: inline-block;
-    padding: 0.9rem 2rem;
+    padding: 0.5rem 1.1rem;
     background: #16a34a;
     color: #ffffff;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-decoration: none;
     transition: all 0.2s;
 }
@@ -913,20 +889,26 @@ body:not(.dark-theme) .moon-icon {
     box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
 }
 
-.redwoods-disclaimer {
-    margin-top: 1.25rem;
+.redwoods-banner-disclaimer {
+    font-size: 0.75rem;
     color: var(--text-secondary);
-    font-size: 0.8rem;
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
-@media (max-width: 768px) {
-    .redwoods-card {
-        padding: 2rem 1.5rem;
+@media (max-width: 640px) {
+    .redwoods-banner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
     }
 
-    .redwoods-title {
-        font-size: 1.5rem;
+    .redwoods-banner-img {
+        width: 100%;
+        height: 140px;
+    }
+
+    .redwoods-banner-body {
+        padding: 1rem 1.25rem 1.25rem;
     }
 }
 

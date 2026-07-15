@@ -18,10 +18,10 @@ function App() {
 
       <Navigation />
       <Hero />
+      <SaveTheRedwoods />
       <Highlights />
       <Projects />
       <Recommendations />
-      <SaveTheRedwoods />
 
       <footer className="footer">
         <div className="container">

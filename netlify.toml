@@ -42,6 +42,12 @@
   status = 302
   force = true
 
+[[redirects]]
+  from = "/redwoods"
+  to = "/redwoods/"
+  status = 302
+  force = true
+
 # Portfolio (React SPA) is served at /portfolio and all other app routes.
 [[redirects]]
   from = "/*"

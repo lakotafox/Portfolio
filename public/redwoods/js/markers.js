@@ -1,0 +1,53 @@
+// Marker factory + popup HTML. Heritage trees get a bigger, ringed marker.
+import { trunkFigure } from './trunk.js';
+
+const L = window.L;
+
+const COLORS = {
+  sequoiadendron: '#9c4a26',
+  sequoia: '#1e5c46',
+  metasequoia: '#5f6428',
+};
+
+const esc = (s) =>
+  String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+function popupHtml(p) {
+  const rows = [];
+  if (p.dbh_in) rows.push(['diameter', `${p.dbh_in}"`]);
+  if (p.height_ft) rows.push(['height', `${p.height_ft} ft`]);
+  if (p.condition) rows.push(['condition', esc(p.condition)]);
+  if (p.year_designated) rows.push(['designated', p.year_designated]);
+  rows.push(['source', { heritage: 'heritage registry', street: 'street inventory', parks: 'parks inventory' }[p.source]]);
+
+  return `
+    <div class="popup">
+      ${p.heritage_number ? `<span class="heritage-badge">Heritage tree #${p.heritage_number}</span>` : ''}
+      ${p.heritage_status === 'Merit' ? '<span class="heritage-badge">Tree of merit</span>' : ''}
+      <h3>${esc(p.common)}</h3>
+      <p class="sci">${esc(p.scientific)}</p>
+      <div class="data-rows">
+        ${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}
+      </div>
+      ${p.address ? `<p class="addr">${esc(p.address)}</p>` : ''}
+      ${p.notes ? `<p class="note">${esc(p.notes)}</p>` : ''}
+      ${p.portlandwild_url ? `<a class="wild-link" href="${esc(p.portlandwild_url)}" target="_blank" rel="noopener noreferrer">More on Portland Wild →</a>` : ''}
+      ${trunkFigure(p.dbh_in)}
+    </div>`;
+}
+
+export function makeMarker(feature) {
+  const p = feature.properties;
+  const [lon, lat] = feature.geometry.coordinates;
+  const heritage = p.source === 'heritage';
+  const marker = L.circleMarker([lat, lon], {
+    radius: heritage ? 9 : 6,
+    color: heritage ? '#26302b' : COLORS[p.taxon],
+    weight: heritage ? 2.5 : 1.5,
+    fillColor: COLORS[p.taxon],
+    fillOpacity: 0.85,
+    className: heritage ? 'heritage-ring' : 'tree-marker',
+  });
+  marker.bindPopup(popupHtml(p), { maxWidth: 300 });
+  return marker;
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDX Redwoods Map — every sequoia and redwood in Portland</title>
+  <meta name="description" content="An interactive map of every giant sequoia, coast redwood, and dawn redwood in Portland, Oregon — built from City of Portland open data." />
+  <meta property="og:title" content="PDX Redwoods Map" />
+  <meta property="og:description" content="Every giant sequoia, coast redwood, and dawn redwood in Portland, on one map." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23274f3d' d='M12 1L7 8h2.5L6 13h3l-3.5 5H11v5h2v-5h5.5L15 13h3l-3.5-5H17L12 1z'/></svg>" />
+  <link rel="preload" href="fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="vendor/markercluster/MarkerCluster.css" />
+  <link rel="stylesheet" href="vendor/markercluster/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="css/redwoods.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="masthead">
+      <h1>PDX Redwoods</h1>
+      <p class="tagline">Every giant sequoia, coast redwood &amp; dawn redwood in Portland, Oregon</p>
+    </div>
+    <div class="stats-strip" id="stats-strip" aria-live="polite">
+      <span class="stat loading">loading inventory…</span>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="chips" role="group" aria-label="Filter by species">
+      <button class="chip chip-sequoiadendron" data-taxon="sequoiadendron" aria-pressed="true">
+        <span class="chip-dot"></span>Giant sequoia
+      </button>
+      <button class="chip chip-sequoia" data-taxon="sequoia" aria-pressed="true">
+        <span class="chip-dot"></span>Coast redwood
+      </button>
+      <button class="chip chip-metasequoia" data-taxon="metasequoia" aria-pressed="true">
+        <span class="chip-dot"></span>Dawn redwood
+      </button>
+    </div>
+    <div class="control-buttons">
+      <button class="btn" id="near-me-btn">Near me</button>
+      <button class="btn" id="walk-btn">The Laurelhurst walk</button>
+    </div>
+  </div>
+
+  <main class="map-wrap">
+    <div id="map" aria-label="Map of redwood-family trees in Portland"></div>
+    <div class="nearby-panel" id="nearby-panel" hidden>
+      <div class="nearby-head">
+        <h2>Closest trees</h2>
+        <button class="nearby-close" id="nearby-close" aria-label="Close nearby list">×</button>
+      </div>
+      <ol id="nearby-list"></ol>
+    </div>
+    <div class="walk-card" id="walk-card" hidden>
+      <button class="walk-close" id="walk-close" aria-label="Close walk info">×</button>
+      <h2>The Laurelhurst walk</h2>
+      <p>Laurelhurst Park grows all three surviving members of the redwood
+      subfamily along one stroll — giant sequoias, coast redwoods, and
+      deciduous dawn redwoods, a species known only from fossils until living
+      trees were found in China in the 1940s. Start near SE Oak &amp; César E.
+      Chávez and wander east.</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <details>
+      <summary>About this map — data sources &amp; caveats</summary>
+      <div class="about-body">
+        <p>Tree locations come from three City of Portland Urban Forestry open
+        datasets: the
+        <a href="https://gis-pdx.opendata.arcgis.com/datasets/heritage-trees" rel="noopener">Heritage Trees</a>
+        registry, the
+        <a href="https://gis-pdx.opendata.arcgis.com/datasets/PDX::street-tree-inventory-active-records" rel="noopener">Street Tree Inventory</a>,
+        and the
+        <a href="https://gis-pdx.opendata.arcgis.com/datasets/parks-tree-inventory" rel="noopener">Parks Tree Inventory</a>,
+        filtered to the three living species of the redwood subfamily and
+        merged into a single snapshot.</p>
+        <p><strong>Caveat:</strong> much of the street inventory was collected
+        by volunteers between 2010 and 2019. Trees grow, and some are gone —
+        treat the map as a very good guide, not gospel.</p>
+        <p><strong>Etiquette:</strong> many heritage trees stand on private
+        property. Admire them from the sidewalk.</p>
+        <p>Heritage tree write-ups link out to
+        <a href="https://portlandwild.com" rel="noopener">Portland Wild</a>.
+        Basemap © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>
+        contributors, tiles by <a href="https://carto.com/attributions" rel="noopener">CARTO</a>.
+        Built with <a href="https://leafletjs.com" rel="noopener">Leaflet</a>
+        and <a href="https://claude.com/claude-code" rel="noopener">Claude Code</a>
+        · <a href="https://lakotafox.com" rel="noopener">lakotafox.com</a></p>
+      </div>
+    </details>
+  </footer>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="vendor/markercluster/leaflet.markercluster.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -2,6 +2,15 @@ import { useState } from 'react';
 
 const projectsData = [
   {
+    id: 'redwoods-map',
+    title: 'PDX Redwoods Map',
+    description: 'Interactive map of every giant sequoia, coast redwood, and dawn redwood in Portland — built from City of Portland open data. Filter by species, find trees near you, see trunk sizes to scale.',
+    tag: 'Open Data',
+    link: '/redwoods/',
+    image: '/project-images/redwoods-map.png',
+    featured: true
+  },
+  {
     id: 'wattssite',
     title: 'Watts Automotive — Dealership Site',
     description: 'A modern, premium redesign of a lifted-truck dealership landing page — cinematic hero, slick category grid, and brand-grade polish, rebuilt from a dated dealer template. Next.js + Tailwind, mobile-first.',
