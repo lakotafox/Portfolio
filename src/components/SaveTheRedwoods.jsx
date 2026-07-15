@@ -28,7 +28,7 @@ const SaveTheRedwoods = () => (
               Donate to the League
             </a>
             <span className="redwoods-banner-disclaimer">
-              Not affiliated, get nothing — I just like the trees.
+              Not affiliated, I get nothing — I just like old trees.
             </span>
           </div>
         </div>
