@@ -1,5 +1,6 @@
 // Marker factory + popup HTML. Heritage trees get a bigger, ringed marker.
 import { trunkFigure } from './trunk.js';
+import { ageInfo } from './age.js';
 
 const L = window.L;
 
@@ -16,6 +17,9 @@ function popupHtml(p) {
   const rows = [];
   if (p.dbh_in) rows.push(['diameter', `${p.dbh_in}"`]);
   if (p.height_ft) rows.push(['height', `${p.height_ft} ft`]);
+  const age = ageInfo(p);
+  if (age?.documented) rows.push(['planted', `${age.planted} — ${age.years} yrs old`]);
+  else if (age) rows.push(['age', `~${age.years} yrs (est.)`]);
   if (p.condition) rows.push(['condition', esc(p.condition)]);
   if (p.year_designated) rows.push(['designated', p.year_designated]);
   rows.push(['source', { heritage: 'heritage registry', street: 'street inventory', parks: 'parks inventory' }[p.source]]);

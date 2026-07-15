@@ -103,8 +103,15 @@ function normalizeHeritage(f) {
   const taxon = classifyTaxon(p.SCIENTIFIC, p.COMMON);
   if (!taxon) return null;
   const heritageNumber = num(p.TREEID);
-  const fact = str(p.Tree_fact_short) ?? str(p.Species_fact_short);
+  const fact = str(p.Tree_fact_short) ?? str(p.Species_fact_short) ?? str(p.NOTES);
+  // A documented planting year beats any diameter-based age estimate; a few
+  // heritage write-ups mention one ("planted from seed in 1948...").
+  const factAll = [p.Tree_fact_short, p.Tree_fact_long, p.Species_fact_short, p.NOTES]
+    .filter(Boolean)
+    .join(' ');
+  const planted = factAll.match(/planted[^.]*?\b(1[89]\d\d)\b/i);
   return {
+    planted: planted ? Number(planted[1]) : null,
     id: `heritage-${heritageNumber ?? `obj${p.OBJECTID}`}`,
     source: 'heritage',
     taxon,
