@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1b3a2b" />
+  <title>Plant Identifier</title>
+  <meta name="description" content="Snap up to five photos of a plant and get an instant AI identification with a confidence score. Powered by Pl@ntNet." />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icons/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <link rel="stylesheet" href="./css/plant-id.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1 class="app-title">🌿 Plant Identifier</h1>
+    <p class="app-sub">Add up to 5 photos of one plant &middot; tap Identify</p>
+    <span id="quota" class="quota-chip" hidden></span>
+  </header>
+
+  <main class="app-main">
+    <!-- Capture / compose -->
+    <section id="composer" class="composer">
+      <div id="slots" class="slots"><!-- photo slots injected here --></div>
+
+      <label class="add-photo" id="add-photo">
+        <input id="file-input" type="file" accept="image/*" capture="environment" multiple hidden />
+        <span class="add-photo-icon">＋</span>
+        <span class="add-photo-text">Add photo</span>
+      </label>
+
+      <label class="reject-toggle">
+        <input id="no-reject" type="checkbox" />
+        <span>Still guess if it doesn't look like a plant</span>
+      </label>
+
+      <button id="identify-btn" class="identify-btn" disabled>Identify</button>
+      <p id="composer-msg" class="composer-msg" role="alert" hidden></p>
+    </section>
+
+    <!-- Busy -->
+    <section id="loading" class="loading" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Identifying&hellip;</p>
+    </section>
+
+    <!-- Results -->
+    <section id="results" class="results" hidden>
+      <div id="verdict" class="verdict"><!-- verdict card --></div>
+      <h2 class="results-heading">Other candidates</h2>
+      <ul id="candidates" class="candidates"><!-- candidate rows --></ul>
+      <button id="reset-btn" class="reset-btn">Identify another plant</button>
+    </section>
+
+    <!-- Error -->
+    <section id="error" class="error-state" hidden>
+      <div class="error-icon" aria-hidden="true">🌱</div>
+      <p id="error-msg" class="error-msg"></p>
+      <button id="error-back" class="reset-btn">Try again</button>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>Identification by <a href="https://plantnet.org" target="_blank" rel="noopener noreferrer">Pl@ntNet</a></span>
+    <a href="/" class="home-link">&larr; Portfolio</a>
+  </footer>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
