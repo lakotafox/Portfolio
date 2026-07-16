@@ -1,5 +1,10 @@
 # Session Context - Lakota Fox Portfolio
 
+## ACTIVE WORK: Plant Identifier app
+**Read `PLANT-ID-HANDOFF.md` first** — full context for the plant-identification app
+(live at lakotafox.com/plant-id/), its architecture, gotchas, and the open item the
+user is picking this session up locally to do (swap in a card image from ~/Downloads).
+
 ## Current Task: IBM AI Developer Professional Certificate
 Grinding through the 10-course IBM AI Developer cert on Coursera. Goal is to finish TODAY.
 
