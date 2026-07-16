@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 300" width="60" height="300">
+  <!-- Vertically tileable cartoon ivy vine: stem enters (18,0) exits (18,300) -->
+  <defs>
+    <path id="leaf" d="M0,0 C-9,-4 -14,-14 -8,-22 C-4,-26 4,-26 8,-22 C14,-14 9,-4 0,0 Z"/>
+  </defs>
+  <!-- stem -->
+  <path d="M18,0 C30,40 6,70 18,110 C30,150 6,190 18,230 C28,262 12,280 18,300"
+        fill="none" stroke="#3e8e4f" stroke-width="3.2" stroke-linecap="round"/>
+  <!-- tendrils -->
+  <path d="M22,58 q10,-2 12,6 q2,8 -6,8 q-6,0 -5,-6" fill="none" stroke="#4fae60" stroke-width="1.6"/>
+  <path d="M14,168 q-10,3 -11,11 q0,7 7,6 q5,-1 4,-6" fill="none" stroke="#4fae60" stroke-width="1.6"/>
+  <path d="M22,262 q9,-1 10,6 q1,7 -5,7 q-5,0 -5,-5" fill="none" stroke="#4fae60" stroke-width="1.6"/>
+  <!-- leaves (alternating, varied greens/rotations) -->
+  <use href="#leaf" x="0" y="0" fill="#2f7d3d" transform="translate(23,22) rotate(48) scale(1.05)"/>
+  <use href="#leaf" x="0" y="0" fill="#54b868" transform="translate(10,48) rotate(-58) scale(0.9)"/>
+  <use href="#leaf" x="0" y="0" fill="#3f9c50" transform="translate(26,86) rotate(65) scale(1.15)"/>
+  <use href="#leaf" x="0" y="0" fill="#71c97f" transform="translate(9,120) rotate(-45) scale(0.85)"/>
+  <use href="#leaf" x="0" y="0" fill="#2f7d3d" transform="translate(24,150) rotate(52) scale(1.0)"/>
+  <use href="#leaf" x="0" y="0" fill="#54b868" transform="translate(10,196) rotate(-62) scale(1.1)"/>
+  <use href="#leaf" x="0" y="0" fill="#3f9c50" transform="translate(25,226) rotate(40) scale(0.9)"/>
+  <use href="#leaf" x="0" y="0" fill="#71c97f" transform="translate(11,258) rotate(-50) scale(0.95)"/>
+  <use href="#leaf" x="0" y="0" fill="#2f7d3d" transform="translate(24,288) rotate(58) scale(0.85)"/>
+  <!-- little pink flower -->
+  <g transform="translate(13,140)">
+    <circle r="3" cx="0" cy="-4.5" fill="#f06fa0"/><circle r="3" cx="4.3" cy="-1.4" fill="#f06fa0"/>
+    <circle r="3" cx="2.6" cy="3.6" fill="#f584ae"/><circle r="3" cx="-2.6" cy="3.6" fill="#f06fa0"/>
+    <circle r="3" cx="-4.3" cy="-1.4" fill="#f584ae"/><circle r="2.1" fill="#ffd23e"/>
+  </g>
+</svg>

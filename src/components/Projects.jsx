@@ -11,6 +11,15 @@ const projectsData = [
     featured: true
   },
   {
+    id: 'plant-id',
+    title: 'Plant Identifier',
+    description: 'Snap up to five photos of a plant and get an instant AI identification — a best-match verdict with a confidence score, plus ranked candidates linking out to GBIF, Wikipedia, and iNaturalist. Powered by Pl@ntNet, mobile-first, installable to your home screen.',
+    tag: 'AI Tool',
+    link: '/plant-id/',
+    image: '/project-images/plant-id.jpg',
+    featured: true
+  },
+  {
     id: 'wattssite',
     title: 'Watts Automotive — Dealership Site',
     description: 'A modern, premium redesign of a lifted-truck dealership landing page — cinematic hero, slick category grid, and brand-grade polish, rebuilt from a dated dealer template. Next.js + Tailwind, mobile-first.',

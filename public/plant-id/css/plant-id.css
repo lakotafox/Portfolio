@@ -1,0 +1,368 @@
+:root {
+  --text: #f2f7f3;
+  --text-dim: #a9c2b3;
+  --accent: #5cc98a;
+  --accent-strong: #3fae6d;
+  --high: #35c46a;   /* green  >= 85% */
+  --mid: #e0a52b;    /* amber  50-84% */
+  --low: #e0573b;    /* red    < 50%  */
+  --glass: rgba(12, 24, 17, 0.42);
+  --glass-2: rgba(20, 38, 28, 0.44);
+  --border: rgba(92, 201, 138, 0.22);
+  --radius: 16px;
+  --tap: 44px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+/* The view sections toggle via the `hidden` attribute; author `display` rules
+   (e.g. .loading { display:flex }) would otherwise override it, so make hidden win. */
+[hidden] { display: none !important; }
+
+/* Background lives on html ONLY: if body also had one, it would stop propagating
+   to the page canvas and instead paint OVER the fixed z-index:-1 strands layer. */
+html {
+  margin: 0;
+  background: #0b140e;
+  color: var(--text);
+  -webkit-text-size-adjust: 100%;
+}
+body { margin: 0; background: transparent; }
+
+body {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* ---------- Animated background ---------- */
+.bg-strands {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 0%, #10241a 0%, #0b140e 55%, #070d09 100%);
+}
+.bg-strands canvas { display: block; width: 100%; height: 100%; }
+
+/* ---------- Decorative vine/grass borders (small, non-interactive) ---------- */
+.vine, .grass-edge {
+  position: fixed;
+  z-index: -1; /* above .bg-strands (later in DOM), below content */
+  pointer-events: none;
+  opacity: 0.9;
+}
+.vine {
+  top: 0;
+  bottom: 0;
+  width: 34px;
+  background: url('../img/vine-side.svg') repeat-y left top / 34px auto;
+}
+.vine-left { left: 0; }
+.vine-right { right: 0; transform: scaleX(-1); }
+.grass-edge {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 30px;
+  background: url('../img/grass-bottom.svg') repeat-x left bottom / auto 30px;
+}
+@media (min-width: 700px) {
+  .vine { width: 44px; background-size: 44px auto; }
+  .grass-edge { height: 38px; background-size: auto 38px; }
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  padding: 26px 20px 16px;
+  text-align: center;
+}
+.app-title {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.app-sub { margin: 6px 0 0; color: var(--text-dim); font-size: 0.92rem; font-weight: 300; }
+.quota-chip {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: var(--glass-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ---------- Layout ---------- */
+.app-main {
+  flex: 1;
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 16px 20px 28px;
+}
+
+/* ---------- Composer ---------- */
+.slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.slots:empty { margin-bottom: 0; }
+
+.slot {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.slot img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
+.slot-remove {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 32px; height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.slot-organ {
+  width: 100%;
+  border: none;
+  border-top: 1px solid var(--border);
+  background: rgba(20, 38, 28, 0.8);
+  color: var(--text);
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  min-height: var(--tap);
+  appearance: none;
+  cursor: pointer;
+}
+
+.add-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 96px;
+  padding: 16px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  cursor: pointer;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.15s, color 0.15s;
+}
+.add-photo:hover { border-color: var(--accent); color: var(--accent); }
+.add-photo.hidden { display: none; }
+.add-photo-icon {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.add-photo-icon::before {
+  content: '+';
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: 300;
+}
+.add-photo-text { font-size: 0.92rem; font-weight: 600; }
+
+.reject-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.reject-toggle input { width: 20px; height: 20px; accent-color: var(--accent-strong); }
+
+/* Primary full-width action (also enhanced into a specular button by JS) */
+.identify-btn {
+  width: 100%;
+  min-height: 58px;
+  border: 1px solid rgba(132, 204, 22, 0.5);
+  border-radius: 60px;
+  background: rgba(16, 185, 129, 0.14);
+  color: var(--text);
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+.identify-btn:hover:not(:disabled) { background: rgba(16, 185, 129, 0.22); }
+.identify-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.composer-msg {
+  margin: 14px 0 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(224, 87, 59, 0.14);
+  border: 1px solid rgba(224, 87, 59, 0.4);
+  color: #f4b8a9;
+  font-size: 0.88rem;
+}
+
+/* ---------- Loading ---------- */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 70px 0;
+  color: var(--text-dim);
+}
+.spinner {
+  width: 46px; height: 46px;
+  border: 4px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Verdict ---------- */
+.verdict {
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.verdict.band-high { border-color: var(--high); box-shadow: 0 0 24px rgba(53, 196, 106, 0.18), 0 0 0 1px var(--high) inset; }
+.verdict.band-mid  { border-color: var(--mid);  box-shadow: 0 0 24px rgba(224, 165, 43, 0.15), 0 0 0 1px var(--mid) inset; }
+.verdict.band-low  { border-color: var(--low);  box-shadow: 0 0 24px rgba(224, 87, 59, 0.15), 0 0 0 1px var(--low) inset; }
+
+.verdict-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+.band-high .verdict-label { color: var(--high); }
+.band-mid  .verdict-label { color: var(--mid); }
+.band-low  .verdict-label { color: var(--low); }
+
+.verdict-pct { font-size: 3.1rem; font-weight: 800; line-height: 1; margin: 8px 0; }
+.verdict-name { font-size: 1.4rem; font-style: italic; margin: 0; font-weight: 500; }
+.verdict-common { color: var(--text-dim); margin: 4px 0 0; font-size: 1.02rem; }
+.verdict-taxon { color: var(--text-dim); margin: 10px 0 0; font-size: 0.85rem; }
+.verdict-hint { margin: 14px 0 0; font-size: 0.85rem; color: var(--text-dim); }
+
+/* ---------- Candidates ---------- */
+.results-heading { font-size: 1rem; color: var(--text-dim); margin: 0 0 12px; font-weight: 500; }
+.candidates { list-style: none; margin: 0 0 24px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.candidate {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.candidate-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.candidate-name { font-style: italic; font-weight: 600; }
+.candidate-score { font-variant-numeric: tabular-nums; color: var(--text-dim); font-size: 0.9rem; }
+.candidate-common { color: var(--text-dim); font-size: 0.88rem; margin: 2px 0 0; }
+.candidate-bar { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.08); margin: 10px 0; overflow: hidden; }
+.candidate-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent-strong), var(--accent)); }
+.candidate-taxon { color: var(--text-dim); font-size: 0.8rem; }
+.candidate-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.candidate-links a {
+  font-size: 0.78rem;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(20, 38, 28, 0.7);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  text-decoration: none;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+.candidate-links a:hover { border-color: var(--accent); }
+
+/* ---------- Reset / error ---------- */
+.reset-btn {
+  width: 100%;
+  min-height: 52px;
+  border: 1px solid var(--border);
+  border-radius: 60px;
+  background: rgba(20, 38, 28, 0.5);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.reset-btn:hover { border-color: var(--accent); }
+
+.error-state { text-align: center; padding: 60px 20px; }
+.error-msg { font-size: 1.08rem; margin: 0 0 26px; }
+
+/* ---------- Footer ---------- */
+.app-footer {
+  padding: 16px 20px 42px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+.app-footer a { color: var(--accent); text-decoration: none; }
+.home-link { font-weight: 600; }
+
+/* ---------- Specular button (React Bits port) ---------- */
+.specular-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: var(--sb-text-color, #f5f5f5);
+  cursor: pointer;
+  outline: none;
+  overflow: visible;
+}
+.specular-button:active { transform: scale(0.985); }
+.specular-button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  outline-offset: 3px;
+}
+.specular-button:disabled { cursor: not-allowed; }
+.specular-button:disabled:active { transform: none; }
+
+/* The canvas extends past the button so the rim glow bleeds outside the edge. */
+.specular-button__fx {
+  position: absolute;
+  inset: -20px;
+  pointer-events: none;
+  z-index: 1;
+}
+.specular-button__fx canvas { display: block; width: 100%; height: 100%; }
+.specular-button__label { position: relative; z-index: 2; }
