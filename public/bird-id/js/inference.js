@@ -1,7 +1,7 @@
-const MODEL_URL = 'https://huggingface.co/tphakala/BirdNET-v2.4/resolve/main/BirdNET_v2.4_int8_arm.onnx';
+const MODEL_URL = 'https://huggingface.co/justinchuby/BirdNET-onnx/resolve/main/birdnet.onnx';
 const DB_NAME = 'birdnet-cache';
 const STORE_NAME = 'models';
-const MODEL_KEY = 'birdnet-v2.4-int8';
+const MODEL_KEY = 'birdnet-v2.4-fp32';
 
 let session = null;
 let labels = null;
