@@ -193,19 +193,9 @@ body {
 }
 .reject-toggle input { width: 20px; height: 20px; accent-color: var(--accent-strong); }
 
-/* Location toggle: keep its helper caveat tucked directly beneath it. */
-.reject-toggle + .location-hint { margin-top: -8px; }
-.location-hint {
-  margin: 0 0 4px;
-  padding-left: 30px; /* line up under the checkbox label text */
-  font-size: 0.78rem;
-  line-height: 1.45;
-  color: var(--text-dim);
-  opacity: 0.8;
-}
 .region-status {
-  margin: 4px 0 0;
-  padding-left: 30px;
+  margin: 4px 0 8px;
+  padding-left: 30px; /* line up under the checkbox label text */
   font-size: 0.82rem;
   color: var(--accent);
 }
@@ -268,6 +258,15 @@ body {
 .verdict.band-mid  { border-color: var(--mid);  box-shadow: 0 0 24px rgba(224, 165, 43, 0.15), 0 0 0 1px var(--mid) inset; }
 .verdict.band-low  { border-color: var(--low);  box-shadow: 0 0 24px rgba(224, 87, 59, 0.15), 0 0 0 1px var(--low) inset; }
 
+.verdict-note {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(92, 201, 138, 0.12);
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
 .verdict-label {
   font-size: 0.78rem;
   text-transform: uppercase;

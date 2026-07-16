@@ -168,16 +168,41 @@ el.identifyBtn.addEventListener('click', async () => {
   setMsg('');
   show('loading');
 
-  try {
-    const result = await identify({ images, noReject: el.noReject.checked, project: selectedProject });
+  const opts = { images, noReject: el.noReject.checked };
+  const usedRegion = selectedProject !== 'all';
+
+  const showResult = (result, note) => {
     renderQuota(el.quota, result.remaining);
-    renderVerdict(el.verdict, result);
+    renderVerdict(el.verdict, result, { note });
     renderCandidates(el.candidates, result, {
       detailsEl: el.candidatesDetails,
       countEl: el.candidatesCount,
     });
     show('results');
+  };
+
+  try {
+    let result = await identify({ ...opts, project: selectedProject });
+    // A regional flora only contains that region's plants, so a cultivated /
+    // non-native species (e.g. a Chinese magnolia on a Portland street) comes back
+    // empty. Retry worldwide so location never dead-ends on common ornamentals.
+    if (usedRegion && (!result.results || result.results.length === 0)) {
+      result = await identify({ ...opts, project: 'all' });
+      showResult(result, 'Not found in your regional flora — showing the worldwide match.');
+    } else {
+      showResult(result);
+    }
   } catch (err) {
+    // A region filter can also reject a non-regional plant outright; retry worldwide.
+    if (usedRegion && err.code === 'NOT_A_PLANT') {
+      try {
+        const result = await identify({ ...opts, project: 'all' });
+        showResult(result, 'Not found in your regional flora — showing the worldwide match.');
+        return;
+      } catch (e2) {
+        err = e2;
+      }
+    }
     if (err.remaining != null) renderQuota(el.quota, err.remaining);
     el.errorMsg.textContent = err.message || friendlyError('UPSTREAM');
     show('error');

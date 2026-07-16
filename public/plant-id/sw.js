@@ -2,7 +2,7 @@
 // works offline. Identification itself always needs the network (and the /api proxy),
 // so API requests are never cached.
 
-const CACHE = 'plant-id-v8';
+const CACHE = 'plant-id-v9';
 const SHELL = [
   './',
   './index.html',
@@ -39,7 +39,10 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return; // never cache the identify POST
 
   const url = new URL(request.url);
-  if (url.pathname.startsWith('/api/')) return; // always hit the network for identification
+  // Never intercept serverless calls (identify / projects) — always go straight to
+  // the network. Caching or proxying these through the SW would serve stale data and
+  // add a needless hop in front of the API.
+  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/.netlify/')) return;
 
   // Cache-first for same-origin shell assets, network fallback.
   event.respondWith(

@@ -23,7 +23,7 @@ export function renderQuota(el, remaining) {
   el.hidden = false;
 }
 
-export function renderVerdict(el, result) {
+export function renderVerdict(el, result, opts = {}) {
   const top = result.results[0];
   if (!top) {
     el.innerHTML = '<p class="verdict-name">No match found.</p>';
@@ -34,6 +34,7 @@ export function renderVerdict(el, result) {
   el.className = `verdict band-${b}`;
   el.innerHTML = '';
 
+  if (opts.note) el.appendChild(node('p', 'verdict-note', opts.note));
   el.appendChild(node('div', 'verdict-label', BAND_LABEL[b]));
   el.appendChild(node('div', 'verdict-pct', `${pct}%`));
   el.appendChild(node('p', 'verdict-name', top.scientificName));
