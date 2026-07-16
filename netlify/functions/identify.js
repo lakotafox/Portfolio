@@ -27,7 +27,8 @@ export async function handler(event) {
     return json(405, { ok: false, code: 'BAD_REQUEST', message: 'Use POST.' });
   }
 
-  const apiKey = process.env.PLANTNET_API_KEY;
+  // Accept either the canonical name or the one set in this site's Netlify config.
+  const apiKey = process.env.PLANTNET_API_KEY || process.env.Plant_key;
   if (!apiKey) {
     return json(500, {
       ok: false,
