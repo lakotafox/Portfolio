@@ -2,7 +2,7 @@
 // works offline. Identification itself always needs the network (and the /api proxy),
 // so API requests are never cached.
 
-const CACHE = 'plant-id-v2';
+const CACHE = 'plant-id-v3';
 const SHELL = [
   './',
   './index.html',
@@ -18,6 +18,8 @@ const SHELL = [
   './js/vendor/ogl.js',
   './manifest.json',
   './icons/favicon.svg',
+  './img/vine-side.svg',
+  './img/grass-bottom.svg',
 ];
 
 self.addEventListener('install', (event) => {

@@ -134,18 +134,18 @@ function buildPalette(colors) {
 export function initStrands(container, opts = {}) {
   const o = {
     colors: GREEN_PALETTE,
-    count: 9,
+    count: 6,
     speed: 0.5,
     amplitude: 1.35,
     waviness: 1,
-    thickness: 0.85,
-    glow: 2.8,
-    taper: 2.2,
-    spread: 1,
+    thickness: 0.55,
+    glow: 1.8,
+    taper: 2.4,
+    spread: 1.15,
     hueShift: 0,
-    intensity: 0.72,
-    saturation: 1.4,
-    opacity: 1,
+    intensity: 0.4,
+    saturation: 1.5,
+    opacity: 0.7,
     scale: 1.35,
     ...opts,
   };
@@ -208,6 +208,9 @@ export function initStrands(container, opts = {}) {
     renderer.render({ scene: mesh });
   };
   animateId = requestAnimationFrame(update);
+
+  // Debug hook for automated tests (same-frame pixel readback).
+  window.__strands = { gl, renderer, program, mesh };
 
   return () => {
     cancelAnimationFrame(animateId);

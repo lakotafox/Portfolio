@@ -6,8 +6,8 @@
   --high: #35c46a;   /* green  >= 85% */
   --mid: #e0a52b;    /* amber  50-84% */
   --low: #e0573b;    /* red    < 50%  */
-  --glass: rgba(12, 24, 17, 0.28);
-  --glass-2: rgba(20, 38, 28, 0.3);
+  --glass: rgba(12, 24, 17, 0.42);
+  --glass-2: rgba(20, 38, 28, 0.44);
   --border: rgba(92, 201, 138, 0.22);
   --radius: 16px;
   --tap: 44px;
@@ -20,12 +20,15 @@
    (e.g. .loading { display:flex }) would otherwise override it, so make hidden win. */
 [hidden] { display: none !important; }
 
-html, body {
+/* Background lives on html ONLY: if body also had one, it would stop propagating
+   to the page canvas and instead paint OVER the fixed z-index:-1 strands layer. */
+html {
   margin: 0;
   background: #0b140e;
   color: var(--text);
   -webkit-text-size-adjust: 100%;
 }
+body { margin: 0; background: transparent; }
 
 body {
   min-height: 100dvh;
@@ -44,6 +47,33 @@ body {
     radial-gradient(120% 90% at 50% 0%, #10241a 0%, #0b140e 55%, #070d09 100%);
 }
 .bg-strands canvas { display: block; width: 100%; height: 100%; }
+
+/* ---------- Decorative vine/grass borders (small, non-interactive) ---------- */
+.vine, .grass-edge {
+  position: fixed;
+  z-index: -1; /* above .bg-strands (later in DOM), below content */
+  pointer-events: none;
+  opacity: 0.9;
+}
+.vine {
+  top: 0;
+  bottom: 0;
+  width: 34px;
+  background: url('../img/vine-side.svg') repeat-y left top / 34px auto;
+}
+.vine-left { left: 0; }
+.vine-right { right: 0; transform: scaleX(-1); }
+.grass-edge {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 30px;
+  background: url('../img/grass-bottom.svg') repeat-x left bottom / auto 30px;
+}
+@media (min-width: 700px) {
+  .vine { width: 44px; background-size: 44px auto; }
+  .grass-edge { height: 38px; background-size: auto 38px; }
+}
 
 /* ---------- Header ---------- */
 .app-header {
@@ -294,7 +324,7 @@ body {
 
 /* ---------- Footer ---------- */
 .app-footer {
-  padding: 16px 20px;
+  padding: 16px 20px 42px;
   display: flex;
   justify-content: space-between;
   align-items: center;
