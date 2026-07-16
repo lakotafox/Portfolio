@@ -16,7 +16,7 @@ const projectsData = [
     description: 'Snap up to five photos of a plant and get an instant AI identification — a best-match verdict with a confidence score, plus ranked candidates linking out to GBIF, Wikipedia, and iNaturalist. Powered by Pl@ntNet, mobile-first, installable to your home screen.',
     tag: 'AI Tool',
     link: '/plant-id/',
-    image: '/project-images/plant-id.png',
+    image: '/project-images/plant-id.jpg',
     featured: true
   },
   {

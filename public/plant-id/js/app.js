@@ -132,6 +132,19 @@ el.errorBack.addEventListener('click', () => show('composer'));
 
 // --- Service worker (PWA) ---
 if ('serviceWorker' in navigator) {
+  // When a deploy ships a new SW (skipWaiting + clients.claim), the page that's
+  // already open was built from the OLD cache. Reload once so users see the new
+  // version immediately instead of being stuck until a manual second refresh.
+  // Guards: skip the first-ever install (no previous controller — nothing is
+  // stale), and never reload once the user has photos staged or a result up.
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || reloaded) return;
+    if (store.count > 0 || el.composer.hidden) return;
+    reloaded = true;
+    window.location.reload();
+  });
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {
       /* offline shell is a nice-to-have; ignore failures */

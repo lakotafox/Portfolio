@@ -132,20 +132,21 @@ function buildPalette(colors) {
 
 // Mounts the animated background into `container`. Returns a cleanup function.
 export function initStrands(container, opts = {}) {
+  // Values tuned by the user on the React Bits playground (2026-07-15).
   const o = {
     colors: GREEN_PALETTE,
     count: 6,
-    speed: 0.5,
-    amplitude: 1.35,
-    waviness: 1,
-    thickness: 0.55,
-    glow: 1.8,
-    taper: 2.4,
-    spread: 1.15,
-    hueShift: 0,
-    intensity: 0.4,
-    saturation: 1.5,
-    opacity: 0.7,
+    speed: 0.03, // slow-motion drift (user asked for much slower than the playground's 0.1)
+    amplitude: 3,
+    waviness: 3,
+    thickness: 0.2,
+    glow: 1.5,
+    taper: 0.5,
+    spread: 0,
+    hueShift: 0.78,
+    intensity: 0.15,
+    saturation: 2,
+    opacity: 1,
     scale: 1.35,
     ...opts,
   };
