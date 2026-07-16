@@ -1,10 +1,10 @@
-// In-app species info: turns the GBIF / Wikipedia / iNaturalist source pills into
-// expandable panels that fetch and show a summary right here, instead of jumping to
-// another site. Each external site still has an escape-hatch link inside its panel.
+// In-app species info: the GBIF / Wikipedia / iNaturalist pills expand into rich,
+// in-page panels that pull the real depth of data from each source and render it
+// here, with a "Source" credit + link to the original at the bottom of each panel.
 //
-// All three public APIs send `Access-Control-Allow-Origin: *`, so the browser can
-// call them directly — no serverless proxy needed. Results are cached per species so
-// re-opening a panel (or opening it on another card for the same plant) is instant.
+// All three public APIs send `Access-Control-Allow-Origin: *`, so the browser calls
+// them directly (no serverless proxy). Each source may fan out to several endpoints;
+// results are cached per species so re-opening a panel is instant.
 
 const WIKI_UA = 'lakotafox.com Plant Identifier (contact via lakotafox.com)';
 
@@ -16,9 +16,9 @@ function speciesKey(sp) {
 }
 
 const SOURCES = [
-  { id: 'wikipedia', label: 'Wikipedia' },
-  { id: 'gbif', label: 'GBIF' },
-  { id: 'inaturalist', label: 'iNaturalist' },
+  { id: 'wikipedia', label: 'Wikipedia', name: 'Wikipedia' },
+  { id: 'gbif', label: 'GBIF', name: 'GBIF (Global Biodiversity Information Facility)' },
+  { id: 'inaturalist', label: 'iNaturalist', name: 'iNaturalist' },
 ];
 
 // Public: append a source strip (pills + a shared panel area) to `container`.
@@ -46,7 +46,6 @@ export function attachSources(container, species) {
     btn.textContent = src.label;
     btn.addEventListener('click', () => {
       if (openId === src.id) {
-        // second click on the open tab collapses it
         openId = null;
         panel.hidden = true;
         setActive(tabs, null);
@@ -80,10 +79,9 @@ function renderPanel(panel, src, species) {
 
   load(src.id, species).then(
     (data) => {
-      // Guard: user may have switched panels before this resolved.
-      if (panel.dataset.src !== src.id) return;
+      if (panel.dataset.src !== src.id) return; // user switched panels mid-fetch
       panel.innerHTML = '';
-      panel.appendChild(VIEWS[src.id](data, species));
+      panel.appendChild(VIEWS[src.id](data, species, src));
     },
     () => {
       if (panel.dataset.src !== src.id) return;
@@ -108,103 +106,175 @@ function load(srcId, species) {
   return entry[srcId];
 }
 
+const okJson = (res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status))));
+const softJson = (url, opts) => fetch(url, opts).then(okJson).catch(() => null);
+
 const FETCHERS = {
   async wikipedia(sp) {
-    const title = encodeURIComponent(sp.scientificName.replace(/ /g, '_'));
-    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${title}`, {
-      headers: { 'Api-User-Agent': WIKI_UA },
-    });
+    // MediaWiki Action API: full plain-text article + lead image + short description.
+    const api =
+      'https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1' +
+      '&prop=extracts%7Cpageimages%7Cdescription&explaintext=1&piprop=original%7Cthumbnail&pithumbsize=640' +
+      `&titles=${encodeURIComponent(sp.scientificName)}`;
+    const res = await fetch(api, { headers: { 'Api-User-Agent': WIKI_UA } });
     if (!res.ok) throw new Error(`wiki ${res.status}`);
     const d = await res.json();
-    if (d.type === 'disambiguation' || !d.extract) throw new Error('no summary');
+    const page = Object.values((d.query && d.query.pages) || {})[0];
+    if (!page || page.missing !== undefined || !page.extract) throw new Error('no article');
+    const resolved = page.title || sp.scientificName;
     return {
-      title: d.title,
-      description: d.description || null,
-      extract: d.extract,
-      thumb: d.thumbnail ? d.thumbnail.source : null,
-      page: (d.content_urls && d.content_urls.desktop && d.content_urls.desktop.page) || sp.links.wikipedia,
+      title: resolved,
+      description: page.description || null,
+      sections: parseSections(page.extract),
+      image: (page.original && page.original.source) || (page.thumbnail && page.thumbnail.source) || null,
+      page: `https://en.wikipedia.org/wiki/${encodeURIComponent(resolved.replace(/ /g, '_'))}`,
     };
   },
 
   async gbif(sp) {
-    // Prefer the exact backbone record Pl@ntNet gave us; fall back to a name match.
-    let d;
-    if (sp.gbifId) {
-      const res = await fetch(`https://api.gbif.org/v1/species/${encodeURIComponent(sp.gbifId)}`);
-      if (res.ok) d = await res.json();
-    }
-    if (!d || !d.key) {
-      const res = await fetch(
+    // Resolve the backbone key (prefer Pl@ntNet's, fall back to a name match).
+    let key = sp.gbifId || null;
+    let detail = null;
+    if (key) detail = await softJson(`https://api.gbif.org/v1/species/${encodeURIComponent(key)}`);
+    if (!detail || !detail.key) {
+      const m = await softJson(
         `https://api.gbif.org/v1/species/match?name=${encodeURIComponent(sp.scientificName)}`
       );
-      if (!res.ok) throw new Error(`gbif ${res.status}`);
-      const m = await res.json();
-      if (!m.usageKey) throw new Error('no gbif match');
-      d = { ...m, key: m.usageKey };
+      if (!m || !m.usageKey) throw new Error('no gbif match');
+      key = m.usageKey;
+      detail = await softJson(`https://api.gbif.org/v1/species/${key}`);
     }
-    const key = d.key || d.usageKey;
-    let occurrences = null;
-    try {
-      const oc = await fetch(
-        `https://api.gbif.org/v1/occurrence/search?taxonKey=${encodeURIComponent(key)}&limit=0`
-      );
-      if (oc.ok) occurrences = (await oc.json()).count;
-    } catch {
-      /* occurrence count is a nice-to-have */
+    key = (detail && detail.key) || key;
+
+    const [descs, verns, dists, profiles, occ] = await Promise.all([
+      softJson(`https://api.gbif.org/v1/species/${key}/descriptions?limit=25`),
+      softJson(`https://api.gbif.org/v1/species/${key}/vernacularNames?limit=60`),
+      softJson(`https://api.gbif.org/v1/species/${key}/distributions?limit=60`),
+      softJson(`https://api.gbif.org/v1/species/${key}/speciesProfiles?limit=10`),
+      softJson(`https://api.gbif.org/v1/occurrence/search?taxonKey=${key}&limit=0`),
+    ]);
+
+    // Merge habitat/extinct flags from the profile records.
+    const profile = { marine: null, freshwater: null, terrestrial: null, extinct: null, habitat: null };
+    for (const p of (profiles && profiles.results) || []) {
+      for (const k of Object.keys(profile)) {
+        if (p[k] != null && profile[k] == null) profile[k] = p[k];
+      }
     }
+
+    // Dedupe vernacular names case-insensitively, keep first casing + language.
+    const seen = new Set();
+    const vernacular = [];
+    for (const v of (verns && verns.results) || []) {
+      const n = v.vernacularName;
+      if (!n) continue;
+      const k = n.toLowerCase();
+      if (seen.has(k)) continue;
+      seen.add(k);
+      vernacular.push({ name: n, lang: v.language || null });
+    }
+
+    // Unique distribution regions.
+    const regSeen = new Set();
+    const regions = [];
+    for (const r of (dists && dists.results) || []) {
+      const name = r.locality || r.country || r.area;
+      if (!name || regSeen.has(name)) continue;
+      regSeen.add(name);
+      regions.push(name);
+    }
+
+    // Keep readable descriptions (skip empty; label by type).
+    const descriptions = [];
+    for (const r of (descs && descs.results) || []) {
+      const text = (r.description || '').trim();
+      if (text.length < 3) continue;
+      descriptions.push({ type: r.type || null, text: text.length > 600 ? text.slice(0, 600) + '…' : text });
+    }
+
     return {
-      status: d.taxonomicStatus || d.status || null,
       classification: [
-        ['Kingdom', d.kingdom],
-        ['Phylum', d.phylum],
-        ['Class', d.class],
-        ['Order', d.order],
-        ['Family', d.family],
-        ['Genus', d.genus],
-        ['Species', d.species || d.canonicalName],
+        ['Kingdom', detail.kingdom],
+        ['Phylum', detail.phylum],
+        ['Class', detail.class],
+        ['Order', detail.order],
+        ['Family', detail.family],
+        ['Genus', detail.genus],
+        ['Species', detail.species || detail.canonicalName],
       ].filter((row) => row[1]),
-      vernacular: d.vernacularName || null,
-      occurrences,
-      page: key ? `https://www.gbif.org/species/${key}` : sp.links.gbif,
+      authorship: detail.authorship || null,
+      status: detail.taxonomicStatus || detail.status || null,
+      profile,
+      vernacular,
+      regions,
+      descriptions,
+      occurrences: occ && typeof occ.count === 'number' ? occ.count : null,
+      page: `https://www.gbif.org/species/${key}`,
     };
   },
 
   async inaturalist(sp) {
-    const res = await fetch(
-      `https://api.inaturalist.org/v1/taxa?q=${encodeURIComponent(sp.scientificName)}&per_page=1&rank=species`
+    const search = await softJson(
+      `https://api.inaturalist.org/v1/taxa?q=${encodeURIComponent(sp.scientificName)}&per_page=5&rank=species`
     );
-    if (!res.ok) throw new Error(`inat ${res.status}`);
-    const d = await res.json();
-    const t = (d.results || [])[0];
-    if (!t) throw new Error('no inat taxon');
-    const photo = t.default_photo || null;
+    const results = (search && search.results) || [];
+    const match =
+      results.find((r) => (r.name || '').toLowerCase() === sp.scientificName.toLowerCase()) || results[0];
+    if (!match) throw new Error('no inat taxon');
+
+    const detail = await softJson(`https://api.inaturalist.org/v1/taxa/${match.id}`);
+    const t = (detail && detail.results && detail.results[0]) || match;
+
+    const photos = ((t.taxon_photos || []).map((p) => p.photo).filter(Boolean).length
+      ? t.taxon_photos.map((p) => p.photo)
+      : t.default_photo
+      ? [t.default_photo]
+      : []
+    )
+      .filter(Boolean)
+      .slice(0, 8)
+      .map((ph) => ({ url: ph.medium_url || ph.square_url, attr: ph.attribution || null }));
+
     return {
       commonName: t.preferred_common_name || null,
       observations: typeof t.observations_count === 'number' ? t.observations_count : null,
-      conservation: t.conservation_status ? t.conservation_status.status_name || t.conservation_status.status : null,
-      photo: photo ? photo.medium_url || photo.square_url : null,
-      photoCredit: photo ? photo.attribution : null,
+      conservation:
+        (t.conservation_status && (t.conservation_status.status_name || t.conservation_status.status)) || null,
+      extinct: t.extinct || false,
+      ancestors: (t.ancestors || [])
+        .filter((a) => a.rank !== 'stateofmatter')
+        .map((a) => ({ name: a.name, common: a.preferred_common_name || null, rank: a.rank })),
+      summary: stripHtml(t.wikipedia_summary),
+      photos,
       page: `https://www.inaturalist.org/taxa/${t.id}`,
     };
   },
 };
 
-// ---------- views ----------
+// ---------- views (content first, source credit last) ----------
 
 const VIEWS = {
-  wikipedia(d) {
+  wikipedia(d, sp, src) {
     const frag = document.createDocumentFragment();
-    if (d.thumb) frag.appendChild(thumb(d.thumb, d.title));
-    if (d.description) frag.appendChild(node('p', 'panel-sub', d.description));
-    frag.appendChild(node('p', 'panel-text', d.extract));
-    frag.appendChild(externalLink(d.page, 'Read full article on Wikipedia'));
+    if (d.image) frag.appendChild(thumb(d.image, d.title));
+    if (d.description) frag.appendChild(node('p', 'panel-sub', titleCase(d.description)));
+    for (const sec of d.sections) {
+      if (sec.heading) frag.appendChild(node('h4', 'panel-section-title', sec.heading));
+      // A section can have several paragraphs.
+      for (const para of sec.text.split(/\n{2,}/)) {
+        const p = para.trim();
+        if (p) frag.appendChild(node('p', 'panel-text', p));
+      }
+    }
+    frag.appendChild(sourceFooter(src.name, d.page, 'Read the full article on Wikipedia'));
     return frag;
   },
 
-  gbif(d) {
+  gbif(d, sp, src) {
     const frag = document.createDocumentFragment();
 
     if (d.classification.length) {
+      frag.appendChild(sectionTitle('Classification'));
       const chips = document.createElement('div');
       chips.className = 'taxo-chips';
       for (const [rank, name] of d.classification) {
@@ -218,27 +288,73 @@ const VIEWS = {
     }
 
     const facts = [];
+    if (d.authorship) facts.push(`Author: ${d.authorship}`);
     if (d.status) facts.push(`Taxonomic status: ${titleCase(d.status)}`);
+    const habitats = [];
+    if (d.profile.terrestrial) habitats.push('terrestrial');
+    if (d.profile.freshwater) habitats.push('freshwater');
+    if (d.profile.marine) habitats.push('marine');
+    if (habitats.length) facts.push(`Habitat: ${habitats.join(', ')}`);
+    if (d.profile.extinct === true) facts.push('Flagged as extinct');
     if (typeof d.occurrences === 'number') {
       facts.push(`${d.occurrences.toLocaleString()} recorded occurrences worldwide`);
     }
-    for (const f of facts) frag.appendChild(node('p', 'panel-fact', f));
+    if (facts.length) {
+      frag.appendChild(sectionTitle('Overview'));
+      for (const f of facts) frag.appendChild(node('p', 'panel-fact', f));
+    }
 
-    frag.appendChild(externalLink(d.page, 'View record on GBIF'));
+    if (d.vernacular.length) {
+      frag.appendChild(sectionTitle(`Also known as (${d.vernacular.length})`));
+      frag.appendChild(chipRow(d.vernacular.map((v) => (v.lang ? `${v.name} · ${v.lang}` : v.name))));
+    }
+
+    if (d.regions.length) {
+      frag.appendChild(sectionTitle(`Recorded distribution (${d.regions.length})`));
+      frag.appendChild(chipRow(d.regions));
+    }
+
+    if (d.descriptions.length) {
+      frag.appendChild(sectionTitle('Descriptions'));
+      for (const desc of d.descriptions.slice(0, 8)) {
+        if (desc.type) frag.appendChild(node('p', 'panel-desc-type', titleCase(desc.type)));
+        frag.appendChild(node('p', 'panel-text', desc.text));
+      }
+    }
+
+    frag.appendChild(sourceFooter(src.name, d.page, 'View the full record on GBIF'));
     return frag;
   },
 
-  inaturalist(d) {
+  inaturalist(d, sp, src) {
     const frag = document.createDocumentFragment();
-    if (d.photo) frag.appendChild(thumb(d.photo, d.commonName || 'Observation photo', d.photoCredit));
+
+    if (d.photos.length) frag.appendChild(gallery(d.photos));
     if (d.commonName) frag.appendChild(node('p', 'panel-sub', titleCase(d.commonName)));
+
+    const facts = [];
     if (typeof d.observations === 'number') {
-      frag.appendChild(node('p', 'panel-fact', `${d.observations.toLocaleString()} observations logged by the iNaturalist community`));
+      facts.push(`${d.observations.toLocaleString()} observations logged by the community`);
     }
-    if (d.conservation) {
-      frag.appendChild(node('p', 'panel-fact', `Conservation status: ${titleCase(d.conservation)}`));
+    if (d.conservation) facts.push(`Conservation status: ${titleCase(d.conservation)}`);
+    if (d.extinct) facts.push('Flagged as extinct');
+    for (const f of facts) frag.appendChild(node('p', 'panel-fact', f));
+
+    if (d.summary) frag.appendChild(node('p', 'panel-text', d.summary));
+
+    if (d.ancestors.length) {
+      frag.appendChild(sectionTitle('Lineage'));
+      const trail = document.createElement('div');
+      trail.className = 'panel-ancestry';
+      d.ancestors.forEach((a, i) => {
+        if (i) trail.appendChild(node('span', 'ancestry-sep', '›')); // ›
+        const label = a.common ? `${a.name} (${a.common})` : a.name;
+        trail.appendChild(node('span', 'ancestry-node', label));
+      });
+      frag.appendChild(trail);
     }
-    frag.appendChild(externalLink(d.page, 'Explore on iNaturalist'));
+
+    frag.appendChild(sourceFooter(src.name, d.page, 'Explore this species on iNaturalist'));
     return frag;
   },
 };
@@ -246,11 +362,83 @@ const VIEWS = {
 function errorView(src, species) {
   const frag = document.createDocumentFragment();
   frag.appendChild(node('p', 'panel-text', `Couldn't load details from ${src.label} right now.`));
-  frag.appendChild(externalLink(species.links[src.id], `Open ${src.label} in a new tab`));
+  frag.appendChild(sourceFooter(src.name, species.links[src.id], `Open ${src.label} in a new tab`));
   return frag;
 }
 
-// ---------- small DOM helpers ----------
+// ---------- content helpers ----------
+
+// Split a Wikipedia plaintext extract into { heading, text } sections, dropping the
+// reference/navigation tail sections that carry no readable prose.
+const SKIP_SECTIONS = new Set([
+  'references', 'external links', 'see also', 'notes', 'further reading',
+  'bibliography', 'citations', 'sources', 'footnotes', 'gallery',
+]);
+function parseSections(extract) {
+  const lines = extract.split('\n');
+  const sections = [];
+  let cur = { heading: null, text: '' };
+  const push = () => {
+    cur.text = cur.text.trim();
+    if (cur.text) sections.push(cur);
+  };
+  for (const line of lines) {
+    const m = line.match(/^\s*(==+)\s*(.+?)\s*==+\s*$/);
+    if (m) {
+      push();
+      cur = { heading: m[2], text: '' };
+    } else {
+      cur.text += line + '\n';
+    }
+  }
+  push();
+  return sections.filter((s) => !s.heading || !SKIP_SECTIONS.has(s.heading.toLowerCase()));
+}
+
+function stripHtml(html) {
+  if (!html) return null;
+  const txt = new DOMParser().parseFromString(html, 'text/html').body.textContent || '';
+  return txt.trim() || null;
+}
+
+function sectionTitle(text) {
+  return node('h4', 'panel-section-title', text);
+}
+
+function chipRow(items) {
+  const row = document.createElement('div');
+  row.className = 'info-chips';
+  for (const it of items) row.appendChild(node('span', 'info-chip', it));
+  return row;
+}
+
+function gallery(photos) {
+  const strip = document.createElement('div');
+  strip.className = 'panel-gallery';
+  for (const p of photos) {
+    if (!p.url) continue;
+    const fig = document.createElement('figure');
+    fig.className = 'gallery-item';
+    const img = document.createElement('img');
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.src = p.url;
+    img.alt = '';
+    img.onerror = () => fig.remove();
+    fig.appendChild(img);
+    if (p.attr) fig.appendChild(node('figcaption', 'gallery-credit', p.attr));
+    strip.appendChild(fig);
+  }
+  return strip;
+}
+
+function sourceFooter(name, href, linkText) {
+  const foot = document.createElement('div');
+  foot.className = 'panel-source';
+  foot.appendChild(node('span', 'panel-source-label', `Source: ${name}`));
+  foot.appendChild(externalLink(href, linkText));
+  return foot;
+}
 
 function spinner(text) {
   const wrap = document.createElement('div');
@@ -263,7 +451,7 @@ function spinner(text) {
   return wrap;
 }
 
-function thumb(src, alt, credit) {
+function thumb(src, alt) {
   const fig = document.createElement('figure');
   fig.className = 'panel-figure';
   const img = document.createElement('img');
@@ -272,11 +460,8 @@ function thumb(src, alt, credit) {
   img.decoding = 'async';
   img.src = src;
   img.alt = alt || '';
+  img.onerror = () => fig.remove();
   fig.appendChild(img);
-  if (credit) {
-    const cap = node('figcaption', 'panel-credit', credit);
-    fig.appendChild(cap);
-  }
   return fig;
 }
 
