@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a1420" />
+  <title>Bird Song ID</title>
+  <meta name="description" content="Record a bird sound and get an instant AI identification with confidence scores. Powered by BirdNET, Cornell Lab of Ornithology." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F426;</text></svg>" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/bird-id.css" />
+</head>
+<body>
+  <div id="bg" class="bg-strands" aria-hidden="true"></div>
+
+  <header class="app-header">
+    <h1 class="app-title">Bird Song ID</h1>
+    <p class="app-sub">Record a bird sound to identify the species.</p>
+  </header>
+
+  <main class="app-main">
+    <!-- Recorder -->
+    <section id="recorder" class="recorder">
+      <div id="viz" class="viz">
+        <canvas id="waveform" class="waveform"></canvas>
+        <p id="rec-timer" class="rec-timer" hidden>0:00</p>
+      </div>
+
+      <button id="rec-btn" class="rec-btn">Hold to record</button>
+
+      <label id="upload-label" class="upload-label">
+        <input id="file-input" type="file" accept="audio/*" hidden />
+        <span>or upload an audio file</span>
+      </label>
+
+      <div class="options-card">
+        <label class="option-toggle">
+          <input id="use-location" type="checkbox" />
+          <span>Use location for better results</span>
+        </label>
+        <p id="region-status" class="region-status" hidden></p>
+      </div>
+
+      <p id="recorder-msg" class="recorder-msg" role="alert" hidden></p>
+    </section>
+
+    <!-- Loading -->
+    <section id="loading" class="loading" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="loading-msg">Analyzing bird sounds&hellip;</p>
+    </section>
+
+    <!-- Model download progress -->
+    <section id="model-download" class="loading" hidden>
+      <div class="progress-bar-outer">
+        <div id="model-progress" class="progress-bar-inner" style="width:0%"></div>
+      </div>
+      <p id="model-msg">Downloading bird identification model&hellip;</p>
+    </section>
+
+    <!-- Results -->
+    <section id="results" class="results" hidden>
+      <div id="verdict" class="verdict"></div>
+
+      <details id="candidates-details" class="candidates-details" hidden>
+        <summary class="candidates-summary">
+          <span class="candidates-summary-label">Other candidates</span>
+          <span id="candidates-count" class="candidates-count"></span>
+          <span class="candidates-caret" aria-hidden="true"></span>
+        </summary>
+        <ul id="candidates" class="candidates"></ul>
+      </details>
+
+      <button id="reset-btn" class="reset-btn">Identify another bird</button>
+    </section>
+
+    <!-- Error -->
+    <section id="error" class="error-state" hidden>
+      <p id="error-msg" class="error-msg"></p>
+      <button id="error-back" class="reset-btn">Try again</button>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>Powered by <a href="https://birdnet.cornell.edu" target="_blank" rel="noopener noreferrer">BirdNET</a> &middot; <a href="https://birds.cornell.edu" target="_blank" rel="noopener noreferrer">Cornell Lab</a></span>
+    <a href="/" class="home-link">&larr; Portfolio</a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/ort.min.js"></script>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

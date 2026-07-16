@@ -20,6 +20,13 @@
   status = 302
   force = true
 
+# Bird Song ID app: clean URL -> its static folder.
+[[redirects]]
+  from = "/bird-id"
+  to = "/bird-id/"
+  status = 302
+  force = true
+
 # Root "/" stays the portfolio (React SPA index.html). The livestream demo
 # landing lives at /free instead.
 [[redirects]]

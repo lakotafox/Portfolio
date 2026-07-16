@@ -20,6 +20,15 @@ const projectsData = [
     featured: true
   },
   {
+    id: 'bird-id',
+    title: 'Bird Song ID',
+    description: 'Record a bird sound and get an instant AI identification with confidence scores and ranked candidates. Runs BirdNET entirely in-browser via ONNX Runtime — no server needed. Links out to eBird, Wikipedia, iNaturalist, and Xeno-canto.',
+    tag: 'AI Tool',
+    link: '/bird-id/',
+    image: '/project-images/bird-id.png',
+    featured: true
+  },
+  {
     id: 'wattssite',
     title: 'Watts Automotive — Dealership Site',
     description: 'A modern, premium redesign of a lifted-truck dealership landing page — cinematic hero, slick category grid, and brand-grade polish, rebuilt from a dated dealer template. Next.js + Tailwind, mobile-first.',
