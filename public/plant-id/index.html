@@ -36,20 +36,22 @@
         <span class="add-photo-text">Add photo</span>
       </label>
 
-      <label class="reject-toggle">
-        <input id="no-reject" type="checkbox" />
-        <span>Still guess if it doesn't look like a plant</span>
-      </label>
+      <div class="options-card">
+        <label class="reject-toggle">
+          <input id="no-reject" type="checkbox" />
+          <span>Still guess if it doesn't look like a plant</span>
+        </label>
 
-      <label class="reject-toggle">
-        <input id="use-location" type="checkbox" />
-        <span>Use my location for better accuracy</span>
-      </label>
-      <p class="location-hint">
-        Narrows results to plants in your region. Turn this off at a botanical garden
-        or arboretum, where plants come from all over the world.
-      </p>
-      <p id="region-status" class="region-status" hidden></p>
+        <label class="reject-toggle">
+          <input id="use-location" type="checkbox" />
+          <span>Use my location for better accuracy</span>
+        </label>
+        <p class="location-hint">
+          Narrows results to plants in your region. Turn this off at a botanical garden
+          or arboretum.
+        </p>
+        <p id="region-status" class="region-status" hidden></p>
+      </div>
 
       <button id="identify-btn" class="identify-btn" disabled>Identify</button>
       <p id="composer-msg" class="composer-msg" role="alert" hidden></p>

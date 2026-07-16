@@ -171,11 +171,22 @@ body {
 }
 .add-photo-text { font-size: 0.92rem; font-weight: 600; }
 
+/* Glass card grouping the identify options (reject toggle + location toggle). */
+.options-card {
+  margin: 18px 0;
+  padding: 4px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
 .reject-toggle {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 18px 0;
+  margin: 14px 0;
   color: var(--text-dim);
   font-size: 0.85rem;
   cursor: pointer;
