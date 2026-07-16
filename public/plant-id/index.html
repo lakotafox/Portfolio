@@ -56,8 +56,16 @@
     <!-- Results -->
     <section id="results" class="results" hidden>
       <div id="verdict" class="verdict"><!-- verdict card --></div>
-      <h2 class="results-heading">Other candidates</h2>
-      <ul id="candidates" class="candidates"><!-- candidate rows --></ul>
+
+      <details id="candidates-details" class="candidates-details" hidden>
+        <summary class="candidates-summary">
+          <span class="candidates-summary-label">Other candidates</span>
+          <span id="candidates-count" class="candidates-count"></span>
+          <span class="candidates-caret" aria-hidden="true"></span>
+        </summary>
+        <ul id="candidates" class="candidates"><!-- candidate rows --></ul>
+      </details>
+
       <button id="reset-btn" class="reset-btn">Identify another plant</button>
     </section>
 

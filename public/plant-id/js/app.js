@@ -27,6 +27,8 @@ const el = {
   results: document.getElementById('results'),
   verdict: document.getElementById('verdict'),
   candidates: document.getElementById('candidates'),
+  candidatesDetails: document.getElementById('candidates-details'),
+  candidatesCount: document.getElementById('candidates-count'),
   resetBtn: document.getElementById('reset-btn'),
   error: document.getElementById('error'),
   errorMsg: document.getElementById('error-msg'),
@@ -112,7 +114,10 @@ el.identifyBtn.addEventListener('click', async () => {
     const result = await identify({ images, noReject: el.noReject.checked });
     renderQuota(el.quota, result.remaining);
     renderVerdict(el.verdict, result);
-    renderCandidates(el.candidates, result);
+    renderCandidates(el.candidates, result, {
+      detailsEl: el.candidatesDetails,
+      countEl: el.candidatesCount,
+    });
     show('results');
   } catch (err) {
     if (err.remaining != null) renderQuota(el.quota, err.remaining);

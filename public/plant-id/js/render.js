@@ -1,5 +1,7 @@
 // Renders the verdict card, the ranked candidate list, and the quota chip.
 
+import { attachSources } from './species-info.js';
+
 export function band(score) {
   if (score >= 0.85) return 'high';
   if (score >= 0.5) return 'mid';
@@ -47,17 +49,26 @@ export function renderVerdict(el, result) {
       node('p', 'verdict-hint', 'Low confidence — add more photos (a flower or fruit helps most) for a better result.')
     );
   }
+
+  // Expandable GBIF / Wikipedia / iNaturalist detail for the top guess.
+  attachSources(el, top);
 }
 
-export function renderCandidates(el, result) {
-  el.innerHTML = '';
+// Renders the candidate list into the <details> body and updates the summary count.
+export function renderCandidates(listEl, result, opts = {}) {
+  listEl.innerHTML = '';
   const rest = result.results.slice(1);
-  if (rest.length === 0) {
-    el.appendChild(node('li', 'candidate-common', 'No other candidates.'));
-    return;
+
+  if (opts.countEl) {
+    opts.countEl.textContent = rest.length ? `(${rest.length})` : '';
   }
+  if (opts.detailsEl) {
+    opts.detailsEl.hidden = rest.length === 0; // hide the whole section if nothing to show
+    opts.detailsEl.open = false; // always start collapsed on a fresh result
+  }
+
   for (const r of rest) {
-    el.appendChild(candidateRow(r));
+    listEl.appendChild(candidateRow(r));
   }
 }
 
@@ -83,23 +94,10 @@ function candidateRow(r) {
   const taxon = [r.genus, r.family].filter(Boolean).join(' · ');
   if (taxon) li.appendChild(node('div', 'candidate-taxon', taxon));
 
-  const links = document.createElement('div');
-  links.className = 'candidate-links';
-  links.appendChild(link(r.links.gbif, 'GBIF'));
-  links.appendChild(link(r.links.wikipedia, 'Wikipedia'));
-  links.appendChild(link(r.links.inaturalist, 'iNaturalist'));
-  li.appendChild(links);
+  // Same expandable GBIF / Wikipedia / iNaturalist detail as the verdict card.
+  attachSources(li, r);
 
   return li;
-}
-
-function link(href, text) {
-  const a = document.createElement('a');
-  a.href = href;
-  a.target = '_blank';
-  a.rel = 'noopener noreferrer';
-  a.textContent = text;
-  return a;
 }
 
 function node(tag, className, text) {
