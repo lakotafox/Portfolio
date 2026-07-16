@@ -29,11 +29,12 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html, body {
+html {
   height: 100%;
 }
 
 body {
+  height: 100%;
   display: flex;
   flex-direction: column;
   font-family: var(--font-body);
@@ -219,11 +220,40 @@ summary:focus-visible {
   outline-offset: 2px;
 }
 
-/* Map */
+/* Map — a big fixed-height viewport; the page scrolls instead of the
+   controls squeezing the map (svh keeps iOS Safari's toolbars honest). */
 .map-wrap {
   position: relative;
   flex: 1;
-  min-height: 420px;
+  min-height: 340px;
+}
+
+/* Fullscreen mode: the map takes over the viewport until minimized. */
+body.map-fullscreen .map-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  min-height: 0;
+  height: 100dvh;
+}
+
+.fullscreen-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.fullscreen-btn:hover {
+  background: var(--fog);
+  border-color: var(--ink-soft);
 }
 
 #map {
@@ -420,10 +450,10 @@ summary:focus-visible {
   .site-header { padding: 0.7rem 0.9rem 0.35rem; }
   .masthead h1 { font-size: 1.35rem; display: block; }
   .tagline { display: block; }
+  .stats-strip { font-size: 0.68rem; gap: 0.15rem 0.7rem; }
   .controls { padding: 0.5rem 0.9rem; }
   .chip-groups { gap: 0.5rem; flex-direction: column; align-items: flex-start; }
   .slider input[type='range'] { width: 110px; }
-  .map-wrap { min-height: 0; }
   .walk-card { bottom: 0.6rem; }
 }
 
