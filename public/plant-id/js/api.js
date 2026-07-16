@@ -1,6 +1,8 @@
 // Talks to the serverless proxy at /api/identify and maps errors to friendly copy.
 
-const ENDPOINT = '/api/identify';
+// Call the Netlify function directly — the canonical path is always available,
+// whereas the cosmetic /api/identify rewrite proved flaky for POST.
+const ENDPOINT = '/.netlify/functions/identify';
 
 const MESSAGES = {
   NOT_A_PLANT: "That didn't look like a plant. Try a clear, close-up photo of a leaf, flower, or fruit — or tick the box to guess anyway.",
