@@ -19,6 +19,8 @@ const el = {
   addPhoto: document.getElementById('add-photo'),
   fileInput: document.getElementById('file-input'),
   noReject: document.getElementById('no-reject'),
+  useLocation: document.getElementById('use-location'),
+  regionStatus: document.getElementById('region-status'),
   identifyBtn: document.getElementById('identify-btn'),
   composerMsg: document.getElementById('composer-msg'),
   quota: document.getElementById('quota'),
@@ -94,6 +96,62 @@ el.fileInput.addEventListener('change', async (e) => {
   }
 });
 
+// --- Region / flora selection (optional, location-based) ---
+// Default is the worldwide flora ('all'); toggling location on narrows to the
+// regional flora Pl@ntNet recommends for the user's coordinates, which is more
+// accurate for wild plants but wrong at a botanical garden / arboretum.
+let selectedProject = 'all';
+
+function setRegionStatus(text) {
+  if (!text) {
+    el.regionStatus.hidden = true;
+    el.regionStatus.textContent = '';
+  } else {
+    el.regionStatus.textContent = text;
+    el.regionStatus.hidden = false;
+  }
+}
+
+function getPosition() {
+  return new Promise((resolve, reject) => {
+    if (!('geolocation' in navigator)) return reject(new Error('no geolocation'));
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: false,
+      timeout: 10000,
+      maximumAge: 600000,
+    });
+  });
+}
+
+el.useLocation.addEventListener('change', async () => {
+  if (!el.useLocation.checked) {
+    selectedProject = 'all';
+    setRegionStatus('');
+    return;
+  }
+  setRegionStatus('Finding plants in your area…');
+  try {
+    const pos = await getPosition();
+    // Round to ~1 km so we never send a precise location to the flora service.
+    const lat = pos.coords.latitude.toFixed(2);
+    const lon = pos.coords.longitude.toFixed(2);
+    const res = await fetch(`/.netlify/functions/projects?lat=${lat}&lon=${lon}`);
+    const data = await res.json();
+    if (data && data.ok && data.best && data.best.id) {
+      selectedProject = data.best.id;
+      setRegionStatus(`Using regional flora: ${data.best.title}`);
+    } else {
+      selectedProject = 'all';
+      setRegionStatus('No regional flora found nearby — using worldwide.');
+    }
+  } catch (err) {
+    // Permission denied, timeout, or offline — quietly fall back to worldwide.
+    selectedProject = 'all';
+    el.useLocation.checked = false;
+    setRegionStatus("Couldn't get your location — using worldwide.");
+  }
+});
+
 // --- Identify ---
 el.identifyBtn.addEventListener('click', async () => {
   const images = store.payload();
@@ -111,7 +169,7 @@ el.identifyBtn.addEventListener('click', async () => {
   show('loading');
 
   try {
-    const result = await identify({ images, noReject: el.noReject.checked });
+    const result = await identify({ images, noReject: el.noReject.checked, project: selectedProject });
     renderQuota(el.quota, result.remaining);
     renderVerdict(el.verdict, result);
     renderCandidates(el.candidates, result, {

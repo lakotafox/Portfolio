@@ -19,9 +19,10 @@ export function friendlyError(code) {
   return MESSAGES[code] || MESSAGES.UPSTREAM;
 }
 
-// Sends { images, noReject } -> resolves to the normalized success payload, or
-// throws an Error with a `.code` matching MESSAGES.
-export async function identify({ images, noReject }) {
+// Sends { images, noReject, project } -> resolves to the normalized success payload,
+// or throws an Error with a `.code` matching MESSAGES. `project` is a Pl@ntNet flora
+// id ('all' = worldwide, the default).
+export async function identify({ images, noReject, project }) {
   let res;
   try {
     res = await fetch(ENDPOINT, {
@@ -29,7 +30,7 @@ export async function identify({ images, noReject }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         images,
-        project: 'all',
+        project: project || 'all',
         lang: 'en',
         noReject: !!noReject,
         nbResults: 10,

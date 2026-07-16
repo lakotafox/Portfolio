@@ -2,7 +2,7 @@
 // works offline. Identification itself always needs the network (and the /api proxy),
 // so API requests are never cached.
 
-const CACHE = 'plant-id-v6';
+const CACHE = 'plant-id-v7';
 const SHELL = [
   './',
   './index.html',

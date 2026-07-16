@@ -182,6 +182,23 @@ body {
 }
 .reject-toggle input { width: 20px; height: 20px; accent-color: var(--accent-strong); }
 
+/* Location toggle: keep its helper caveat tucked directly beneath it. */
+.reject-toggle + .location-hint { margin-top: -8px; }
+.location-hint {
+  margin: 0 0 4px;
+  padding-left: 30px; /* line up under the checkbox label text */
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-dim);
+  opacity: 0.8;
+}
+.region-status {
+  margin: 4px 0 0;
+  padding-left: 30px;
+  font-size: 0.82rem;
+  color: var(--accent);
+}
+
 /* Primary full-width action (also enhanced into a specular button by JS) */
 .identify-btn {
   width: 100%;

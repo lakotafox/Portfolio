@@ -28,7 +28,10 @@
       <div id="slots" class="slots"><!-- photo slots injected here --></div>
 
       <label class="add-photo" id="add-photo">
-        <input id="file-input" type="file" accept="image/*" capture="environment" multiple hidden />
+        <!-- No `capture` attribute: on mobile that would force the camera and hide
+             the photo library. Without it the OS lets the user pick an existing
+             photo OR take a new one. -->
+        <input id="file-input" type="file" accept="image/*" multiple hidden />
         <span class="add-photo-icon" aria-hidden="true"></span>
         <span class="add-photo-text">Add photo</span>
       </label>
@@ -37,6 +40,16 @@
         <input id="no-reject" type="checkbox" />
         <span>Still guess if it doesn't look like a plant</span>
       </label>
+
+      <label class="reject-toggle">
+        <input id="use-location" type="checkbox" />
+        <span>Use my location for better accuracy</span>
+      </label>
+      <p class="location-hint">
+        Narrows results to plants in your region. Turn this off at a botanical garden
+        or arboretum, where plants come from all over the world.
+      </p>
+      <p id="region-status" class="region-status" hidden></p>
 
       <button id="identify-btn" class="identify-btn" disabled>Identify</button>
       <p id="composer-msg" class="composer-msg" role="alert" hidden></p>
