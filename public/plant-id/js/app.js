@@ -5,12 +5,16 @@ import { PhotoStore } from './camera.js';
 import { downscaleToBase64 } from './downscale.js';
 import { identify, friendlyError } from './api.js';
 import { renderVerdict, renderCandidates, renderQuota } from './render.js';
+import { initStrands } from './strands.js';
+import { enhanceSpecular } from './specular-button.js';
+import { playChirp } from './birdsong.js';
 
 // Keep the total base64 payload comfortably under Netlify's ~6 MB function limit
 // (base64 adds ~33%). 4 MB of base64 across up to 5 images is a safe ceiling.
 const MAX_TOTAL_BASE64 = 4 * 1024 * 1024;
 
 const el = {
+  bg: document.getElementById('bg'),
   slots: document.getElementById('slots'),
   addPhoto: document.getElementById('add-photo'),
   fileInput: document.getElementById('file-input'),
@@ -36,6 +40,14 @@ const store = new PhotoStore({
     el.identifyBtn.disabled = store.count === 0;
   },
 });
+
+// Animated green Strands background behind everything.
+if (el.bg) initStrands(el.bg);
+
+// Big, shiny green specular buttons on the primary actions.
+enhanceSpecular(el.identifyBtn, { size: 'lg', radius: 60, intensity: 1.1, thickness: 1.6 });
+enhanceSpecular(el.resetBtn, { size: 'md', radius: 60 });
+enhanceSpecular(el.errorBack, { size: 'md', radius: 60 });
 
 function show(view) {
   el.composer.hidden = view !== 'composer';
@@ -84,6 +96,8 @@ el.fileInput.addEventListener('change', async (e) => {
 el.identifyBtn.addEventListener('click', async () => {
   const images = store.payload();
   if (images.length === 0) return;
+
+  playChirp(); // cheerful bird tweet on tap
 
   const total = images.reduce((sum, im) => sum + im.data.length, 0);
   if (total > MAX_TOTAL_BASE64) {

@@ -3,18 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#1b3a2b" />
+  <meta name="theme-color" content="#0b140e" />
   <title>Plant Identifier</title>
-  <meta name="description" content="Snap up to five photos of a plant and get an instant AI identification with a confidence score. Powered by Pl@ntNet." />
+  <meta name="description" content="Capture up to five photos of a plant and get an instant AI identification with a confidence score. Powered by Pl@ntNet." />
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./icons/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./css/plant-id.css" />
 </head>
-<body>
+<body class="dark-theme">
+  <!-- Animated WebGL background (Strands), mounted by app.js -->
+  <div id="bg" class="bg-strands" aria-hidden="true"></div>
+
   <header class="app-header">
-    <h1 class="app-title">🌿 Plant Identifier</h1>
-    <p class="app-sub">Add up to 5 photos of one plant &middot; tap Identify</p>
+    <h1 class="app-title">Plant Identifier</h1>
+    <p class="app-sub">Add up to 5 photos of one plant, then identify it.</p>
     <span id="quota" class="quota-chip" hidden></span>
   </header>
 
@@ -25,7 +29,7 @@
 
       <label class="add-photo" id="add-photo">
         <input id="file-input" type="file" accept="image/*" capture="environment" multiple hidden />
-        <span class="add-photo-icon">＋</span>
+        <span class="add-photo-icon" aria-hidden="true"></span>
         <span class="add-photo-text">Add photo</span>
       </label>
 
@@ -54,7 +58,6 @@
 
     <!-- Error -->
     <section id="error" class="error-state" hidden>
-      <div class="error-icon" aria-hidden="true">🌱</div>
       <p id="error-msg" class="error-msg"></p>
       <button id="error-back" class="reset-btn">Try again</button>
     </section>
