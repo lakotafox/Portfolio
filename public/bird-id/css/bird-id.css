@@ -107,6 +107,8 @@ body {
   transition: background 0.15s, opacity 0.15s, box-shadow 0.2s;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 .rec-btn:hover { background: rgba(59, 142, 191, 0.22); }
 .rec-btn.recording {

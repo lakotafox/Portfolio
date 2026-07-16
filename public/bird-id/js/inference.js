@@ -5,6 +5,22 @@ const MODEL_KEY = 'birdnet-v2.4-fp32';
 
 let session = null;
 let labels = null;
+let loadPromise = null;
+let lastProgress = 0;
+const progressListeners = new Set();
+
+function emitProgress(p) {
+  lastProgress = p;
+  for (const fn of progressListeners) fn(p);
+}
+
+export function isModelReady() {
+  return !!session;
+}
+
+export function offProgress(fn) {
+  progressListeners.delete(fn);
+}
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -40,11 +56,26 @@ async function putCached(buf) {
 }
 
 export async function loadModel(onProgress) {
+  // A late subscriber (e.g. the explicit call after a background preload started)
+  // still gets progress updates, and immediately sees the current value.
+  if (onProgress) {
+    progressListeners.add(onProgress);
+    onProgress(session ? 1 : lastProgress);
+  }
   if (session) return;
+  // Dedupe concurrent calls so the 64 MB model is only fetched once.
+  if (loadPromise) return loadPromise;
+  loadPromise = _loadModel().catch((err) => {
+    loadPromise = null; // allow retry after a failure
+    throw err;
+  });
+  return loadPromise;
+}
 
+async function _loadModel() {
   let buf = await getCached();
   if (buf) {
-    if (onProgress) onProgress(1);
+    emitProgress(1);
   } else {
     const res = await fetch(MODEL_URL);
     if (!res.ok) throw new Error(`Model download failed: ${res.status}`);
@@ -57,7 +88,7 @@ export async function loadModel(onProgress) {
       if (done) break;
       chunks.push(value);
       loaded += value.length;
-      if (onProgress && total) onProgress(loaded / total);
+      if (total) emitProgress(loaded / total);
     }
     buf = new Uint8Array(loaded);
     let offset = 0;

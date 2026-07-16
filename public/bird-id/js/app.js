@@ -1,5 +1,5 @@
 import { Recorder, decodeFile, segmentAudio } from './recorder.js';
-import { loadModel, loadLabels, classify } from './inference.js';
+import { loadModel, loadLabels, classify, isModelReady, offProgress } from './inference.js';
 import { renderVerdict, renderCandidates } from './render.js';
 import { initStrands } from './strands.js';
 import { enhanceSpecular } from './specular-button.js';
@@ -57,17 +57,24 @@ function setMsg(text) {
 
 // ---------- Waveform drawing ----------
 const wCtx = el.waveform.getContext('2d');
+// Size the backing store once (on load + on resize), NOT every frame — reallocating
+// the canvas 60x/second is what made recording lag on phones.
+let cw = 0, ch = 0;
+function sizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  cw = el.waveform.width = el.waveform.offsetWidth * dpr;
+  ch = el.waveform.height = el.waveform.offsetHeight * dpr;
+}
+
 function drawWaveform(data) {
-  const w = el.waveform.width = el.waveform.offsetWidth * (window.devicePixelRatio || 1);
-  const h = el.waveform.height = el.waveform.offsetHeight * (window.devicePixelRatio || 1);
-  wCtx.clearRect(0, 0, w, h);
+  wCtx.clearRect(0, 0, cw, ch);
   wCtx.lineWidth = 2;
   wCtx.strokeStyle = '#5ba8d4';
   wCtx.beginPath();
-  const sliceW = w / data.length;
+  const sliceW = cw / data.length;
   for (let i = 0; i < data.length; i++) {
     const v = data[i] / 128.0;
-    const y = (v * h) / 2;
+    const y = (v * ch) / 2;
     if (i === 0) wCtx.moveTo(0, y);
     else wCtx.lineTo(i * sliceW, y);
   }
@@ -75,17 +82,18 @@ function drawWaveform(data) {
 }
 
 function drawIdleWaveform() {
-  const w = el.waveform.width = el.waveform.offsetWidth * (window.devicePixelRatio || 1);
-  const h = el.waveform.height = el.waveform.offsetHeight * (window.devicePixelRatio || 1);
-  wCtx.clearRect(0, 0, w, h);
+  sizeCanvas();
+  wCtx.clearRect(0, 0, cw, ch);
   wCtx.lineWidth = 1.5;
-  wCtx.strokeStyle = 'rgba(91, 168, 212, 0.3)';
+  wCtx.strokeStyle = 'rgba(91, 168, 212, 0.35)';
   wCtx.beginPath();
-  wCtx.moveTo(0, h / 2);
-  wCtx.lineTo(w, h / 2);
+  wCtx.moveTo(0, ch / 2);
+  wCtx.lineTo(cw, ch / 2);
   wCtx.stroke();
 }
+sizeCanvas();
 drawIdleWaveform();
+window.addEventListener('resize', () => { if (!recorder?.recording) drawIdleWaveform(); });
 
 // ---------- Location toggle ----------
 let userCoords = null;
@@ -115,13 +123,22 @@ el.useLocation.addEventListener('change', async () => {
 let recorder = null;
 
 async function ensureModel() {
-  show('model-download');
-  el.modelMsg.textContent = 'Downloading bird identification model…';
-  await loadModel((progress) => {
+  // If the background preload (started when recording began) already finished,
+  // skip the download screen entirely and go straight to analyzing.
+  if (!isModelReady()) {
+    show('model-download');
+    el.modelMsg.textContent = 'Downloading bird identification model…';
+  }
+  const onProgress = (progress) => {
     const pct = Math.round(progress * 100);
     el.modelProgress.style.width = `${pct}%`;
     if (pct >= 100) el.modelMsg.textContent = 'Loading model…';
-  });
+  };
+  try {
+    await loadModel(onProgress);
+  } finally {
+    offProgress(onProgress);
+  }
   await loadLabels();
 }
 
@@ -159,29 +176,48 @@ async function processAudio(samples) {
   show('results');
 }
 
-el.recBtn.addEventListener('pointerdown', async (e) => {
-  e.preventDefault();
-  if (recorder?.recording) return;
+let starting = false;
+
+async function startRecording() {
+  if (recorder?.recording || starting) return;
+  starting = true;
   setMsg('');
+
+  // Instant visual feedback — don't wait for the mic to spin up.
+  el.recBtn.textContent = 'Starting…';
+  el.recBtn.classList.add('recording');
+
+  // Warm the model download in the background while the user records,
+  // so it's often ready by the time they stop.
+  loadModel().catch(() => {});
+
   try {
     recorder = new Recorder({
       onWaveform: drawWaveform,
-      onTimer: (t) => {
+      onTimer: (t, elapsed) => {
         el.recTimer.textContent = t;
         el.recTimer.hidden = false;
+        el.recBtn.textContent = elapsed < 3
+          ? 'Tap to stop (keep going…)'
+          : 'Tap to stop';
       },
     });
     await recorder.start();
-    el.recBtn.textContent = 'Release to stop';
-    el.recBtn.classList.add('recording');
+    el.recBtn.textContent = 'Tap to stop';
   } catch (err) {
+    starting = false;
+    recorder = null;
+    el.recBtn.textContent = 'Tap to record';
+    el.recBtn.classList.remove('recording');
     setMsg('Microphone access denied. Please allow microphone access and try again.');
+  } finally {
+    starting = false;
   }
-});
+}
 
 async function stopAndProcess() {
   if (!recorder?.recording) return;
-  el.recBtn.textContent = 'Hold to record';
+  el.recBtn.textContent = 'Tap to record';
   el.recBtn.classList.remove('recording');
   el.recTimer.hidden = true;
 
@@ -190,7 +226,7 @@ async function stopAndProcess() {
   drawIdleWaveform();
 
   if (samples.length < 24000) {
-    setMsg('Recording too short. Hold for at least 1 second.');
+    setMsg('That was too short — try recording for a few seconds.');
     return;
   }
 
@@ -203,8 +239,12 @@ async function stopAndProcess() {
   }
 }
 
-el.recBtn.addEventListener('pointerup', stopAndProcess);
-el.recBtn.addEventListener('pointerleave', stopAndProcess);
+// Tap to toggle: first tap starts, next tap stops.
+el.recBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  if (recorder?.recording) stopAndProcess();
+  else startRecording();
+});
 
 // ---------- File upload ----------
 el.fileInput.addEventListener('change', async (e) => {

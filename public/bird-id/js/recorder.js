@@ -18,7 +18,15 @@ export class Recorder {
   }
 
   async start() {
-    this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // Raw mic: echo cancellation / noise suppression are meant for voice calls —
+    // they slow down mic startup and actively filter out birdsong.
+    this.stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false,
+      },
+    });
     this.ctx = new AudioContext({ sampleRate: TARGET_SR });
     this.source = this.ctx.createMediaStreamSource(this.stream);
     this.analyser = this.ctx.createAnalyser();
@@ -43,7 +51,7 @@ export class Recorder {
       const elapsed = (performance.now() - this.startTime) / 1000;
       const m = Math.floor(elapsed / 60);
       const s = Math.floor(elapsed % 60);
-      if (this.onTimer) this.onTimer(`${m}:${String(s).padStart(2, '0')}`);
+      if (this.onTimer) this.onTimer(`${m}:${String(s).padStart(2, '0')}`, elapsed);
     }, 250);
   }
 
