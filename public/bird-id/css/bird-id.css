@@ -154,6 +154,28 @@ body {
   color: var(--text-dim);
 }
 
+.prep-status {
+  margin: 14px 0 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.prep-status.ready { color: var(--high); }
+.prep-status::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: prep-pulse 1.2s ease-in-out infinite;
+}
+.prep-status.ready::before { background: var(--high); animation: none; }
+@keyframes prep-pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
 .recorder-msg {
   margin: 14px 0 0;
   padding: 10px 14px;

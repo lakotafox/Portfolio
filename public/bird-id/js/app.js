@@ -14,6 +14,7 @@ const el = {
   uploadLabel: document.getElementById('upload-label'),
   useLocation: document.getElementById('use-location'),
   regionStatus: document.getElementById('region-status'),
+  prepStatus: document.getElementById('prep-status'),
   recorderMsg: document.getElementById('recorder-msg'),
   loading: document.getElementById('loading'),
   loadingMsg: document.getElementById('loading-msg'),
@@ -187,8 +188,8 @@ async function startRecording() {
   el.recBtn.textContent = 'Starting…';
   el.recBtn.classList.add('recording');
 
-  // Warm the model download in the background while the user records,
-  // so it's often ready by the time they stop.
+  // Safety net: the model download normally starts on page open, but if that
+  // failed, kick it off again here so it's downloading while they record.
   loadModel().catch(() => {});
 
   try {
@@ -275,3 +276,40 @@ el.resetBtn.addEventListener('click', reset);
 el.errorBack.addEventListener('click', reset);
 
 show('recorder');
+
+// ---------- Warm up on open ----------
+// The moment the page opens: start downloading the model AND ask for mic
+// permission in parallel, so both are ready before the first recording.
+function warmProgress(p) {
+  const pct = Math.round(p * 100);
+  el.prepStatus.hidden = false;
+  el.prepStatus.classList.remove('ready');
+  el.prepStatus.textContent = pct < 100 ? `Preparing model… ${pct}%` : 'Finishing setup…';
+}
+
+function warmUp() {
+  // 1) Kick off the 64 MB model download right now (progress shown subtly).
+  loadModel(warmProgress)
+    .then(() => loadLabels())
+    .then(() => {
+      offProgress(warmProgress);
+      el.prepStatus.classList.add('ready');
+      el.prepStatus.textContent = 'Ready to identify';
+    })
+    .catch(() => {
+      offProgress(warmProgress);
+      el.prepStatus.hidden = true; // fall back to on-demand download when they record
+    });
+
+  // 2) Ask for mic permission in parallel, while the model downloads. Release
+  //    the mic immediately — the grant persists, so tapping record won't prompt
+  //    again. If the browser needs a tap first (iOS), we simply ask on record.
+  if (navigator.mediaDevices?.getUserMedia) {
+    navigator.mediaDevices
+      .getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } })
+      .then((stream) => stream.getTracks().forEach((t) => t.stop()))
+      .catch(() => {});
+  }
+}
+
+warmUp();
