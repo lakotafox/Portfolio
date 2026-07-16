@@ -55,8 +55,12 @@ verified end-to-end against the real API.
 6. **Client downscales to 1280px long edge** (never below 800) before upload; total
    base64 capped ~4MB (Netlify sync function limit is ~6MB).
 7. **Service worker caches the shell** — bump `CACHE` version in `sw.js` on ANY
-   frontend change or users get stale files. Currently `plant-id-v3`. Tell the user to
-   hard-refresh after deploys.
+   frontend change. Currently `plant-id-v4`. Since v4, `app.js` listens for
+   `controllerchange` and reloads once, so users pick up new deploys on their next
+   visit automatically (guarded: no reload on first install, or while photos are
+   staged / results are showing). Devices still on v2/v3 need one manual refresh to
+   get v4; after that it's hands-off. The "blank background" reports were exactly
+   this: the pre-fix CSS being served forever by the stale v2 cache.
 8. **Deploys**: pushing `master` auto-deploys via Netlify (site = lakotafox.com,
    `npm run build` → `dist`, `public/` passes through). The feature branch
    `claude/plant-identifier-app-yvpxvh` is kept synced to master after each push.
@@ -88,16 +92,26 @@ verified end-to-end against the real API.
 
 ## Open items (what the user wants next)
 
-1. **Replace the card image** `public/project-images/plant-id.png`: user has a specific
-   photo (magnifying glass over seedling, green/gold bokeh) in their local Downloads —
-   the reason this session moved to the CLI. Card refs it in `Projects.jsx`; keep
-   1280×720-ish. If it's a paid-stock image, flag licensing before publishing.
-2. Possibly swap the SVG vine borders for the user's own cartoon vine image (they
-   pasted one; SVG recreation is live). Ask before redoing.
+1. ~~Replace the card image~~ DONE 2026-07-15: card now uses the real seedling photo
+   (`public/project-images/plant-id.jpg`, "free photo" per source filename); the old
+   placeholder `plant-id.png` was deleted and `Projects.jsx` updated.
+2. Possibly swap the SVG vine borders for the user's own cartoon vine image — they
+   downloaded `vecteezy_border-design-with-vine-and-butterflies-illustration_431475`
+   (JPG/EPS + license PDF) to Downloads, but when asked said "idk what your asking",
+   so it's parked. Explain in plain words and ask again before redoing.
 3. User should regenerate the Pl@ntNet key at some point (chat exposure) — set the new
    value in Netlify (either var name works) and redeploy.
 4. Untested nice-to-haves: real-device PWA install flow; multi-photo (2–5) real-world
    identification quality; `detailed`/genus results; regional flora (deferred by choice).
+
+## Strands settings (user-tuned 2026-07-15, don't "fix" back to defaults)
+
+The user dialed these in on the React Bits playground; they live as the defaults in
+`strands.js` `initStrands`: count 6, speed **0.03** (they asked for slow motion —
+playground had 0.1), amplitude 3, waviness 3, thickness 0.2, glow 1.5, taper 0.5,
+spread 0, hueShift 0.78, intensity 0.15, saturation 2, opacity 1, scale 1.35 (kept
+from before; the playground screenshot had no scale slider). Look = thin neon lines,
+tall slow waves. Verified desktop + mobile emulation (390×844 dpr3), no console errors.
 
 ## User preferences (important)
 
