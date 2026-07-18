@@ -2,6 +2,11 @@
   command = "npm run build"
   publish = "dist"
 
+# Pretty URLs rewrote ./scan.html links to extensionless /lidar/scan, which
+# broke the 3D Scanner's QR URL construction. Never let Netlify rewrite HTML.
+[build.processing.html]
+  pretty_urls = false
+
 [functions]
   directory = "netlify/functions"
 

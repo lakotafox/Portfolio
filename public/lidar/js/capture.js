@@ -51,6 +51,53 @@ function updateBuildBtn() {
     : `Build 3D model (need 10+)`;
 }
 
+// iOS Safari suspends the camera on any interruption (notification pull-down,
+// call, app switch, auto-lock). The <video> then freezes on its last frame but
+// still reports a videoWidth, so without recovery every later shutter tap
+// would silently re-upload the same frozen frame.
+async function openCamera() {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: 'environment', width: { ideal: 2560 }, height: { ideal: 1920 } },
+    audio: false,
+  });
+  const track = stream.getVideoTracks()[0];
+  track.addEventListener('ended', reviveCamera);
+  track.addEventListener('mute', reviveCamera);
+  el.preview.srcObject = stream;
+  await el.preview.play().catch(() => {});
+}
+
+let reviving = false;
+async function reviveCamera() {
+  if (reviving || el.capture.hidden) return;
+  reviving = true;
+  try {
+    el.preview.srcObject?.getTracks().forEach((t) => t.stop());
+    await openCamera();
+  } catch {
+    el.msg.textContent = 'Camera stopped — reload if the preview stays frozen.';
+    el.msg.hidden = false;
+  } finally {
+    reviving = false;
+  }
+}
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    reviveCamera();
+    requestWakeLock();
+  }
+});
+
+// Keep the screen awake during a multi-minute walk-around.
+let wakeLock = null;
+async function requestWakeLock() {
+  try {
+    wakeLock = await navigator.wakeLock?.request('screen');
+  } catch {
+    /* not critical */
+  }
+}
+
 async function start() {
   if (!(await brainOnline())) {
     fail("Can't reach the brains (Lakota's M4). Check that it's online.");
@@ -62,16 +109,12 @@ async function start() {
   }
 
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 2560 }, height: { ideal: 1920 } },
-      audio: false,
-    });
-    el.preview.srcObject = stream;
-    await el.preview.play().catch(() => {});
+    await openCamera();
   } catch {
     fail('Camera access denied — allow the camera and reload.');
     return;
   }
+  requestWakeLock();
   show('capture');
   updateBuildBtn();
 }
@@ -132,7 +175,7 @@ async function pollBuild() {
       clearInterval(timer);
       fail(s.error || 'Reconstruction failed.');
     }
-  }, 2000);
+  }, 4000);
 }
 
 el.errorBack.addEventListener('click', () => location.reload());
