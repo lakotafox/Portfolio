@@ -29,6 +29,15 @@ const projectsData = [
     featured: true
   },
   {
+    id: 'lidar-scan',
+    title: '3D Scanner',
+    description: "Snap a photo and turn it into a 3D point cloud you can spin, pinch, and export. Browsers can't touch the iPhone's LiDAR, so an AI depth model (Depth Anything V2) runs entirely in-browser via Transformers.js instead — no server needed.",
+    tag: 'AI Tool',
+    link: '/lidar/',
+    image: '/project-images/lidar.png',
+    featured: true
+  },
+  {
     id: 'wattssite',
     title: 'Watts Automotive — Dealership Site',
     description: 'A modern, premium redesign of a lifted-truck dealership landing page — cinematic hero, slick category grid, and brand-grade polish, rebuilt from a dated dealer template. Next.js + Tailwind, mobile-first.',
