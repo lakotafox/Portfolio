@@ -1,6 +1,6 @@
 // Pro-mode desktop page: create a session, show the QR, watch photos arrive,
 // then render the finished gaussian splat.
-import { BRAIN_URL, brainOnline } from './config.js';
+import { BRAIN_URL, brainOnline, brainFetch } from './config.js';
 import { initStrands } from './strands.js';
 import { enhanceSpecular } from './specular-button.js';
 
@@ -49,7 +49,7 @@ function fail(msg) {
 }
 
 async function api(path, opts) {
-  const res = await fetch(`${BRAIN_URL}${path}`, opts);
+  const res = await brainFetch(path, opts);
   const j = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(j.error || `Request failed (${res.status})`);
   return j;
@@ -100,11 +100,14 @@ async function poll() {
 
 async function showModel() {
   show('result');
-  const modelUrl = `${BRAIN_URL}/api/session/${session.id}/model.ply`;
-  el.downloadLink.href = modelUrl;
-  el.downloadLink.download = 'scan.ply';
   if (viewerStarted) return;
   viewerStarted = true;
+
+  // Fetch the model ourselves (ngrok header) and hand everyone a local blob URL.
+  const blob = await (await brainFetch(`/api/session/${session.id}/model.ply`)).blob();
+  const modelUrl = URL.createObjectURL(blob);
+  el.downloadLink.href = modelUrl;
+  el.downloadLink.download = 'scan.ply';
 
   const GaussianSplats3D = await import('@mkkellogg/gaussian-splats-3d');
   const viewer = new GaussianSplats3D.Viewer({

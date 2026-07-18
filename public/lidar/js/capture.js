@@ -1,6 +1,6 @@
 // Phone capture page. With ?s=<id> it joins a desktop-paired session; opened
 // bare it creates its own session (phone-only mode).
-import { BRAIN_URL, brainOnline } from './config.js';
+import { BRAIN_URL, brainOnline, brainFetch } from './config.js';
 
 const el = {
   capture: document.getElementById('capture'),
@@ -36,7 +36,7 @@ function fail(msg) {
 }
 
 async function api(path, opts) {
-  const res = await fetch(`${BRAIN_URL}${path}`, opts);
+  const res = await brainFetch(path, opts);
   const j = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(j.error || `Request failed (${res.status})`);
   return j;

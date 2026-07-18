@@ -40,13 +40,17 @@
   </footer>
 
   <script type="module">
-    import { BRAIN_URL } from './js/config.js';
+    import { brainFetch } from './js/config.js';
     const id = new URLSearchParams(location.search).get('s');
     const err = document.getElementById('err');
-    const modelUrl = `${BRAIN_URL}/api/session/${id}/model.ply`;
-    document.getElementById('download-link').href = modelUrl;
 
     try {
+      const blob = await (await brainFetch(`/api/session/${id}/model.ply`)).blob();
+      const modelUrl = URL.createObjectURL(blob);
+      const dl = document.getElementById('download-link');
+      dl.href = modelUrl;
+      dl.download = 'scan.ply';
+
       const GaussianSplats3D = await import('@mkkellogg/gaussian-splats-3d');
       const viewer = new GaussianSplats3D.Viewer({
         rootElement: document.getElementById('viewer-canvas'),
