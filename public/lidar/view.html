@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#120a20" />
+  <title>3D Scanner — Model</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F48E;</text></svg>" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/lidar.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+      "@mkkellogg/gaussian-splats-3d": "https://cdn.jsdelivr.net/npm/@mkkellogg/gaussian-splats-3d@0.4.7/build/gaussian-splats-3d.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <header class="app-header">
+    <h1 class="app-title">Your Scan</h1>
+    <p class="app-sub">Gaussian splat &mdash; built on Lakota's M4.</p>
+  </header>
+
+  <main class="app-main">
+    <div class="viewer-card">
+      <div id="viewer-canvas" class="viewer-canvas" style="aspect-ratio: 3 / 4;"></div>
+      <p class="viewer-hint">Drag to orbit &middot; pinch or scroll to zoom</p>
+    </div>
+    <div class="viewer-actions">
+      <a id="download-link" class="export-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">Download .PLY</a>
+    </div>
+    <p id="err" class="capture-msg" style="margin-top:14px;" hidden></p>
+  </main>
+
+  <footer class="app-footer">
+    <span>Powered by <a href="https://github.com/ArthurBrussee/brush" target="_blank" rel="noopener noreferrer">Brush</a> &middot; <a href="https://github.com/mkkellogg/GaussianSplats3D" target="_blank" rel="noopener noreferrer">GaussianSplats3D</a></span>
+    <a href="./" class="home-link">&larr; Scanner</a>
+  </footer>
+
+  <script type="module">
+    import { BRAIN_URL } from './js/config.js';
+    const id = new URLSearchParams(location.search).get('s');
+    const err = document.getElementById('err');
+    const modelUrl = `${BRAIN_URL}/api/session/${id}/model.ply`;
+    document.getElementById('download-link').href = modelUrl;
+
+    try {
+      const GaussianSplats3D = await import('@mkkellogg/gaussian-splats-3d');
+      const viewer = new GaussianSplats3D.Viewer({
+        rootElement: document.getElementById('viewer-canvas'),
+        sharedMemoryForWorkers: false,
+        cameraUp: [0, -1, 0],
+        initialCameraPosition: [0, 0, -3],
+        initialCameraLookAt: [0, 0, 0],
+      });
+      await viewer.addSplatScene(modelUrl, { format: GaussianSplats3D.SceneFormat.Ply, showLoadingUI: true });
+      viewer.start();
+    } catch (e) {
+      err.textContent = 'Could not load the model — is the session still alive? (Scans purge after 24h.)';
+      err.hidden = false;
+    }
+  </script>
+</body>
+</html>

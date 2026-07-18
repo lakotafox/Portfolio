@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#120a20" />
+  <title>3D Scanner — Pro Mode</title>
+  <meta name="description" content="Pair your phone with a QR code, circle an object, and Lakota's M4 builds a real gaussian-splat 3D model." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F9E0;</text></svg>" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/lidar.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/",
+      "@mkkellogg/gaussian-splats-3d": "https://cdn.jsdelivr.net/npm/@mkkellogg/gaussian-splats-3d@0.4.7/build/gaussian-splats-3d.module.js"
+    }
+  }
+  </script>
+  <style>
+    .qr-card { text-align: center; padding: 26px 20px; }
+    .qr-box { display: inline-block; padding: 14px; background: #fff; border-radius: 12px; }
+    .qr-box svg { display: block; width: 220px; height: 220px; }
+    .session-code { margin: 12px 0 0; font-size: 0.85rem; color: var(--text-dim); letter-spacing: 0.12em; }
+    .photo-count { font-size: 2.6rem; font-weight: 800; margin: 0; }
+    .status-card { text-align: center; padding: 20px; }
+    .stage-line { margin: 6px 0 0; color: var(--text-dim); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div id="bg" class="bg-strands" aria-hidden="true"></div>
+
+  <header class="app-header">
+    <h1 class="app-title">3D Scanner &mdash; Pro Mode</h1>
+    <p class="app-sub">Your phone is the camera. Lakota's M4 is the brains.</p>
+  </header>
+
+  <main class="app-main">
+    <!-- Brains offline -->
+    <section id="offline" class="error-state" hidden>
+      <p class="error-msg">The brains (Lakota's M4) are offline right now.</p>
+      <a href="./" class="reset-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">Use the instant scanner instead</a>
+    </section>
+
+    <!-- Pairing -->
+    <section id="pair" hidden>
+      <div class="viz qr-card">
+        <div id="qr" class="qr-box" aria-label="QR code to open the capture page on your phone"></div>
+        <p class="session-code">session <span id="code"></span></p>
+        <p class="stage-line">Scan with your iPhone camera &mdash; it opens the capture page, already linked to this screen.</p>
+      </div>
+
+      <div class="options-card status-card">
+        <p id="photo-count" class="photo-count">0</p>
+        <p class="stage-line">photos received</p>
+        <p id="stage" class="stage-line">Waiting for your phone&hellip;</p>
+      </div>
+
+      <button id="build-btn" class="snap-btn" disabled style="opacity:.5">Build 3D model</button>
+
+      <label id="upload-label" class="upload-label">
+        <input id="file-input" type="file" accept="image/*" multiple hidden />
+        <span>no phone handy? upload photos from this computer</span>
+      </label>
+      <p id="pair-msg" class="capture-msg" role="alert" hidden></p>
+    </section>
+
+    <!-- Building -->
+    <section id="building" class="loading" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="build-stage">Working&hellip;</p>
+      <p class="stage-line">Real photogrammetry takes a few minutes. Leave this open.</p>
+    </section>
+
+    <!-- Result -->
+    <section id="result" class="viewer-section" hidden>
+      <div class="viewer-card">
+        <div id="viewer-canvas" class="viewer-canvas"></div>
+        <p class="viewer-hint">Drag to orbit &middot; scroll to zoom</p>
+      </div>
+      <div class="viewer-actions">
+        <a id="download-link" class="export-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">Download .PLY</a>
+        <button id="new-scan" class="reset-btn">New scan</button>
+      </div>
+    </section>
+
+    <!-- Error -->
+    <section id="error" class="error-state" hidden>
+      <p id="error-msg" class="error-msg"></p>
+      <button id="error-back" class="reset-btn">Start over</button>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>COLMAP + <a href="https://github.com/ArthurBrussee/brush" target="_blank" rel="noopener noreferrer">Brush</a> on Apple&nbsp;Silicon &middot; <a href="https://github.com/mkkellogg/GaussianSplats3D" target="_blank" rel="noopener noreferrer">GaussianSplats3D</a></span>
+    <a href="./" class="home-link">&larr; Instant mode</a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script type="module" src="./js/scan.js"></script>
+</body>
+</html>

@@ -41,6 +41,12 @@
         <span>or upload a photo</span>
       </label>
 
+      <a id="pro-link" href="./scan.html" class="options-card" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-dim);font-size:0.88rem;">
+        <span>&#x1F9E0;</span>
+        <span style="flex:1"><strong style="color:var(--text)">Pro mode</strong> &mdash; pair your phone, circle an object, get a real 3D model</span>
+        <span id="brain-dot" style="width:9px;height:9px;border-radius:50%;background:#555;flex:none;" title="checking the brains…"></span>
+      </a>
+
       <p id="prep-status" class="prep-status" hidden></p>
       <p id="capture-msg" class="capture-msg" role="alert" hidden></p>
     </section>
@@ -92,5 +98,13 @@
   </footer>
 
   <script type="module" src="./js/app.js"></script>
+  <script type="module">
+    import { brainOnline } from './js/config.js';
+    const dot = document.getElementById('brain-dot');
+    brainOnline().then((up) => {
+      dot.style.background = up ? '#38b2ac' : '#e0573b';
+      dot.title = up ? "Lakota's M4 is online" : "Lakota's M4 is offline — pro mode unavailable";
+    });
+  </script>
 </body>
 </html>
