@@ -38,6 +38,15 @@ const projectsData = [
     featured: true
   },
   {
+    id: 'backlog',
+    title: 'Backlog — Issue Board',
+    description: 'A Jira-style backlog board built from scratch — draggable issue cards across Backlog / To Do / In Progress / Done, with issue types, priorities, labels, and story points. Vanilla JS, drag-and-drop via SortableJS, state persisted locally.',
+    tag: 'Tool',
+    link: '/backlog/',
+    image: '/project-images/backlog.png',
+    featured: true
+  },
+  {
     id: 'wattssite',
     title: 'Watts Automotive — Dealership Site',
     description: 'A modern, premium redesign of a lifted-truck dealership landing page — cinematic hero, slick category grid, and brand-grade polish, rebuilt from a dated dealer template. Next.js + Tailwind, mobile-first.',

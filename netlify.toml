@@ -32,6 +32,13 @@
   status = 302
   force = true
 
+# Backlog issue board: clean URL -> its static folder.
+[[redirects]]
+  from = "/backlog"
+  to = "/backlog/"
+  status = 302
+  force = true
+
 # Root "/" stays the portfolio (React SPA index.html). The livestream demo
 # landing lives at /free instead.
 [[redirects]]
