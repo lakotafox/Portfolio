@@ -2,6 +2,15 @@ import { useState } from 'react';
 
 const projectsData = [
   {
+    id: 'pawsinmotion',
+    title: 'Paws in Motion PDX',
+    description: 'Landing site for a Portland dog walking & pet sitting business. Next.js + React Bits Pro — animated shader backgrounds with live color theming, scrolling photo marquees, a 3D infinite dog gallery, and a Time to Pet app showcase.',
+    tag: 'Client Work',
+    link: 'https://pawsinmotionpdx.com',
+    image: '/project-images/pawsinmotion.png',
+    featured: true
+  },
+  {
     id: 'redwoods-map',
     title: 'PDX Redwoods Map',
     description: 'Interactive map of every redwood in Portland plus 19,000+ native giants — Douglas-firs, white oaks, redcedars — from City of Portland open data. Filter by species, size, and age; find trees that predate the city itself.',
