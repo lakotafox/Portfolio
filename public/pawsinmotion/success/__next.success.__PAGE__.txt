@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[17010,["/pawsinmotion/_next/static/chunks/0uzs_tv9yy3mk.js","/pawsinmotion/_next/static/chunks/1vz19qrtz-xyg.js"],"OutletBoundary"]
+3:"$Sreact.suspense"
+0:{"rsc":["$","$1","c",{"children":[["$","main",null,{"className":"flex flex-1 flex-col items-center justify-center px-4 py-32 text-center","children":[["$","span",null,{"className":"text-6xl","aria-hidden":"true","children":"🐾"}],["$","h1",null,{"className":"mt-6 text-4xl font-medium text-neutral-900 dark:text-white","children":"Got it — thanks!"}],["$","p",null,{"className":"mt-4 max-w-md text-lg text-neutral-600 dark:text-neutral-400","children":"Your message is on its way. We'll reply within 24 hours to set up your free meet & greet."}],["$","a",null,{"href":"/pawsinmotion/","className":"mt-8 rounded-full bg-black px-8 py-3.5 text-sm font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200","children":"Back to the site"}]]}],null,["$","$L2",null,{"children":["$","$3",null,{"name":"Next.MetadataOutlet","children":"$@4"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"TzKrxCc6IDoMX8eDTn0QG"}
+4:null

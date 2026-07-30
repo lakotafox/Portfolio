@@ -6,7 +6,7 @@ const projectsData = [
     title: 'Paws in Motion PDX',
     description: 'Landing site for a Portland dog walking & pet sitting business. Next.js + React Bits Pro — animated shader backgrounds with live color theming, scrolling photo marquees, a 3D infinite dog gallery, and a Time to Pet app showcase.',
     tag: 'Client Work',
-    link: 'https://pawsinmotionpdx.com',
+    link: '/pawsinmotion/',
     image: '/project-images/pawsinmotion.png',
     featured: true
   },
