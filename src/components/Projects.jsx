@@ -105,9 +105,9 @@ const projectsData = [
   {
     id: 'puddl3',
     title: 'Puddl3',
-    description: 'Real-time payroll platform providing instant wage access. Co-founded with two friends. Built with React, Node.js, PostgreSQL, and AWS infrastructure.',
+    description: 'Real-time payroll — workers watch their pay accrue by the second and cash out instantly, settled in USDC on the Stellar network. Co-founded with two friends. Next.js front end, FastAPI + PostgreSQL back end, on-chain wallets provisioned per employee. Sign in as a demo worker or register your own company.',
     tag: 'Startup',
-    link: 'https://puddle2pool.com/',
+    link: '/puddl3/',
     image: '/project-images/PUDDLE.png'
   },
   {

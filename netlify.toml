@@ -85,6 +85,13 @@
   status = 302
   force = true
 
+# Puddl3 payroll app (Next.js static export, basePath /puddl3).
+[[redirects]]
+  from = "/puddl3"
+  to = "/puddl3/"
+  status = 302
+  force = true
+
 # Portfolio (React SPA) is served at /portfolio and all other app routes.
 [[redirects]]
   from = "/*"
