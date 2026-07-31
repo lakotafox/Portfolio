@@ -85,6 +85,18 @@
   status = 302
   force = true
 
+# Puddl3 API proxy. The app calls /puddl3-api/... on this domain and Netlify
+# forwards it to the backend, so the browser only ever makes a same-origin
+# request: no CORS preflight, no ngrok browser interstitial, and none of
+# Safari's cross-site cookie rules apply. Calling the backend directly worked
+# in Chrome but failed in Safari with "Load failed"; this sidesteps all of it.
+# MUST come before the SPA catch-all.
+[[redirects]]
+  from = "/puddl3-api/*"
+  to = "https://agonizing-perm-precinct.ngrok-free.dev/:splat"
+  status = 200
+  force = true
+
 # Puddl3 payroll app (Next.js static export, basePath /puddl3).
 [[redirects]]
   from = "/puddl3"
