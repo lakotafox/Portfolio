@@ -93,7 +93,7 @@
 # MUST come before the SPA catch-all.
 [[redirects]]
   from = "/puddl3-api/*"
-  to = "https://agonizing-perm-precinct.ngrok-free.dev/:splat"
+  to = "/.netlify/functions/puddl3-api/:splat"
   status = 200
   force = true
 
