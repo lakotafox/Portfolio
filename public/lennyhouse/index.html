@@ -296,6 +296,21 @@
 if (localStorage.getItem('lh-theme') !== 'light') {
   document.documentElement.classList.add('dark');
 }
+
+// horse neigh every 10s (browsers block audio until first interaction)
+const neigh = new Audio('assets/horse-neigh.mp3');
+neigh.volume = 0.6;
+let neighing = false;
+function startNeighing() {
+  if (neighing) return;
+  neighing = true;
+  neigh.play().catch(() => {});
+  setInterval(() => { neigh.currentTime = 0; neigh.play().catch(() => {}); }, 10000);
+}
+neigh.play().then(startNeighing).catch(() => {
+  ['click', 'touchstart', 'keydown'].forEach(ev =>
+    addEventListener(ev, startNeighing, { once: true }));
+});
 document.getElementById('themeToggle').addEventListener('click', () => {
   const dark = document.documentElement.classList.toggle('dark');
   localStorage.setItem('lh-theme', dark ? 'dark' : 'light');
