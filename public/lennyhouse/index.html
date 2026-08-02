@@ -149,6 +149,12 @@
     background: var(--card-secondary); color: var(--card-foreground);
     font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 3px 10px; width: fit-content;
   }
+  .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge.src { background: var(--muted); color: var(--muted-foreground); border: 1px solid var(--border); }
+  .card .desc {
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; font-style: italic;
+  }
   .card .links { margin-top: auto; padding-top: 10px; display: flex; gap: 10px; align-items: center; }
   .view-btn {
     display: inline-flex; align-items: center; position: relative;
@@ -248,7 +254,7 @@
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-badge">Portland, OR · Under $2,200 <span class="spark">✦</span></div>
   <h1>Cute little houses<br>for you &amp; your <span class="fancy">cat</span></h1>
-  <p class="sub">58 cat-friendly houses &amp; cottages under $2,200 — no corpo mega-complexes</p>
+  <p class="sub">Cat-friendly houses, cottages &amp; vintage apartments under $2,200 — Apartments.com + Bristol Urban, no corpo mega-complexes</p>
   <a class="hero-cta" href="#listings">
     <span class="tail-bg"></span>
     <span class="label">Browse Listings</span>
@@ -264,6 +270,11 @@
       <span class="price-val" id="maxPriceVal">$2,200</span>
     </label>
     <label><input id="catOnly" type="checkbox" checked> Cat friendly</label>
+    <select id="source">
+      <option value="all">All sources</option>
+      <option value="Bristol Urban">Bristol Urban</option>
+      <option value="Apartments.com">Apartments.com</option>
+    </select>
     <select id="sort">
       <option value="default">Sort: featured</option>
       <option value="asc">Price: low → high</option>
@@ -338,6 +349,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const fmt = n => '$' + n.toLocaleString();
 const els = {
   q: document.getElementById('q'),
+  source: document.getElementById('source'),
   max: document.getElementById('maxPrice'),
   maxVal: document.getElementById('maxPriceVal'),
   cat: document.getElementById('catOnly'),
@@ -350,9 +362,10 @@ function filtered() {
   const q = els.q.value.trim().toLowerCase();
   const max = +els.max.value;
   let rows = DATA.filter(r =>
-    (!q || (r.name + ' ' + r.address).toLowerCase().includes(q)) &&
+    (!q || (r.name + ' ' + r.address + ' ' + (r.desc || '')).toLowerCase().includes(q)) &&
     (r.minPrice == null || r.minPrice <= max) &&
-    (!els.cat.checked || r.catFriendly)
+    (!els.cat.checked || r.catFriendly) &&
+    (els.source.value === 'all' || r.source === els.source.value)
   );
   const s = els.sort.value;
   if (s === 'asc') rows = rows.slice().sort((a, b) => (a.minPrice ?? 9e9) - (b.minPrice ?? 9e9));
@@ -382,7 +395,11 @@ function render() {
         <div class="addr">${r.address}</div>
         <div class="price">${r.priceText || 'Call for price'}</div>
         ${r.beds ? `<div class="addr">${r.beds}</div>` : ''}
-        ${r.catFriendly ? '<span class="badge">🐱 Cat friendly</span>' : ''}
+        ${r.desc ? `<div class="addr desc">${r.desc}</div>` : ''}
+        <div class="badges">
+          ${r.catFriendly ? '<span class="badge">🐱 Cat friendly</span>' : ''}
+          ${r.source === 'Bristol Urban' ? '<span class="badge src">🏛 Bristol Urban</span>' : ''}
+        </div>
         <div class="links">
           <a class="view-btn" href="${r.url}" target="_blank" rel="noopener">
             <span class="tail-bg"></span><span class="label">View listing</span>
@@ -401,7 +418,7 @@ function render() {
       const mk = L.marker([r.lat, r.lng]).addTo(map);
       mk.bindPopup(
         `<b>${r.name}</b><br>${r.priceText}${r.beds ? ' · ' + r.beds : ''}<br>${r.address}<br>` +
-        `<a href="${r.url}" target="_blank" rel="noopener">View on Apartments.com ↗</a>` +
+        `<a href="${r.url}" target="_blank" rel="noopener">View on ${r.source || 'Apartments.com'} ↗</a>` +
         `<img src="${r.img}" loading="lazy">`
       );
       mk.on('click', () => focusListing(r, false));
@@ -442,6 +459,7 @@ function focusListing(r, pan) {
   els.max.addEventListener(ev, render);
   els.cat.addEventListener(ev, render);
   els.sort.addEventListener(ev, render);
+  els.source.addEventListener(ev, render);
 });
 
 fetch('data/listings.json')
