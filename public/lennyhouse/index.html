@@ -297,21 +297,23 @@ if (localStorage.getItem('lh-theme') !== 'light') {
   document.documentElement.classList.add('dark');
 }
 
-// horse neigh every 10s (browsers block audio until first interaction,
-// so listeners are attached unconditionally — the play() promise can hang)
-const neigh = new Audio('assets/horse-neigh.mp3');
-neigh.preload = 'auto';
-neigh.volume = 0.6;
-let neighing = false;
-function startNeighing() {
+// horse neigh every 10s. Prefetched as a blob (some Chromes defer media-element
+// network loads indefinitely); playback still needs one user interaction first.
+const neighUrl = fetch('assets/horse-neigh.mp3')
+  .then(r => r.blob()).then(b => URL.createObjectURL(b)).catch(() => null);
+let neigh = null, neighing = false;
+async function startNeighing() {
   if (neighing) return;
   neighing = true;
+  const url = await neighUrl;
+  if (!url) { neighing = false; return; }
+  neigh = new Audio(url);
+  neigh.volume = 0.6;
   neigh.play().catch(() => {});
   setInterval(() => { neigh.currentTime = 0; neigh.play().catch(() => {}); }, 10000);
 }
 ['pointerdown', 'click', 'touchstart', 'keydown'].forEach(ev =>
   addEventListener(ev, startNeighing, { once: true, capture: true }));
-neigh.play().then(startNeighing).catch(() => {});
 document.getElementById('themeToggle').addEventListener('click', () => {
   const dark = document.documentElement.classList.toggle('dark');
   localStorage.setItem('lh-theme', dark ? 'dark' : 'light');
