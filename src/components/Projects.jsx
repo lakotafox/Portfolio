@@ -2,6 +2,15 @@ import { useState } from 'react';
 
 const projectsData = [
   {
+    id: 'lennyhouse',
+    title: 'LennyHouse',
+    description: 'Apartment finder for cats and their humans — 40 cat-friendly Portland rentals under $2,200/mo scraped from Apartments.com, with live filters, price sorting, and every listing pinned on an interactive map. Light/dark themed single-page app.',
+    tag: 'Tool',
+    link: '/lennyhouse/',
+    image: '/project-images/lennyhouse.png',
+    featured: true
+  },
+  {
     id: 'pawsinmotion',
     title: 'Paws in Motion PDX',
     description: 'Landing site for a Portland dog walking & pet sitting business. Next.js + React Bits Pro — animated shader backgrounds with live color theming, scrolling photo marquees, a 3D infinite dog gallery, and a Time to Pet app showcase.',

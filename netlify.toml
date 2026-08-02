@@ -85,6 +85,13 @@
   status = 302
   force = true
 
+# LennyHouse apartment finder: clean URL -> its static folder.
+[[redirects]]
+  from = "/lennyhouse"
+  to = "/lennyhouse/"
+  status = 302
+  force = true
+
 # Puddl3 API proxy. The app calls /puddl3-api/... on this domain and Netlify
 # forwards it to the backend, so the browser only ever makes a same-origin
 # request: no CORS preflight, no ngrok browser interstitial, and none of
