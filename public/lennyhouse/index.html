@@ -297,20 +297,29 @@ if (localStorage.getItem('lh-theme') !== 'light') {
   document.documentElement.classList.add('dark');
 }
 
-// horse neigh every 10s. Prefetched as a blob (some Chromes defer media-element
-// network loads indefinitely); playback still needs one user interaction first.
-const neighUrl = fetch('assets/horse-neigh.mp3')
-  .then(r => r.blob()).then(b => URL.createObjectURL(b)).catch(() => null);
-let neigh = null, neighing = false;
+// horse neigh every 10s via WebAudio (media elements defer network loads in
+// some Chromes; decodeAudioData is dependable). Needs one interaction to start.
+const neighBuf = fetch('assets/horse-neigh.mp3').then(r => r.arrayBuffer()).catch(() => null);
+let neighing = false;
 async function startNeighing() {
   if (neighing) return;
   neighing = true;
-  const url = await neighUrl;
-  if (!url) { neighing = false; return; }
-  neigh = new Audio(url);
-  neigh.volume = 0.6;
-  neigh.play().catch(() => {});
-  setInterval(() => { neigh.currentTime = 0; neigh.play().catch(() => {}); }, 10000);
+  try {
+    const buf = await neighBuf;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const sample = await ctx.decodeAudioData(buf);
+    const playNeigh = () => {
+      ctx.resume();
+      const src = ctx.createBufferSource();
+      src.buffer = sample;
+      const gain = ctx.createGain();
+      gain.gain.value = 0.6;
+      src.connect(gain).connect(ctx.destination);
+      src.start();
+    };
+    playNeigh();
+    setInterval(playNeigh, 10000);
+  } catch (e) { neighing = false; }
 }
 ['pointerdown', 'click', 'touchstart', 'keydown'].forEach(ev =>
   addEventListener(ev, startNeighing, { once: true, capture: true }));
