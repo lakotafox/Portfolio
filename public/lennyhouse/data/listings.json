@@ -12,7 +12,8 @@
   "lat": 45.47908128155,
   "lng": -122.61012375749,
   "sourceImg": "https://images1.apartments.com/i2/tJzdd2OuZn2lnPCGYLVFDvclX1g2pwdt1vjMQ7fqLoU/102/the-stock-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": null
  },
  {
   "name": "2534 SE 92nd Ave",
@@ -27,7 +28,8 @@
   "lat": 45.504116347111,
   "lng": -122.568531377658,
   "sourceImg": "https://images1.apartments.com/i2/aC5klgehsdSZhVLW41p4bb1C1CNCOe6nz7BZmZVgjfM/102/2534-se-92nd-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": null
  },
  {
   "name": "4980 S Landing Dr",
@@ -42,7 +44,8 @@
   "lat": 45.485054027509,
   "lng": -122.674091659317,
   "sourceImg": "https://images1.apartments.com/i2/Hc8fU38KJ3G7rmAR7kgbbq36o12LV62dm8mL1okc2fU/102/4980-s-landing-dr-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": null
  },
  {
   "name": "12815 NE Fremont St",
@@ -57,7 +60,8 @@
   "lat": 45.548151814224,
   "lng": -122.530936881516,
   "sourceImg": "https://images1.apartments.com/i2/N77neu7pPlj954Cvq96WSWf_E5-o57__l8LCyjUOyAU/102/12815-ne-fremont-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": null
  },
  {
   "name": "100 Kerr Pkwy",
@@ -72,7 +76,8 @@
   "lat": 45.427917641872,
   "lng": -122.711711468171,
   "sourceImg": "https://images1.apartments.com/i2/lbt7MGbUdpzZ4MSZ-8Wg34a8fv-BJ47Pdx8d0rRZqMU/102/100-kerr-pkwy-lake-oswego-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": null
  },
  {
   "name": "47 Eagle Crest Dr",
@@ -87,7 +92,8 @@
   "lat": 45.434999492629,
   "lng": -122.708951811996,
   "sourceImg": "https://images1.apartments.com/i2/Fdk9hBQC3T8gL89daf5ZKwojdnaKagEfTovWig4Vld4/102/47-eagle-crest-dr-lake-oswego-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": null
  },
  {
   "name": "8808 N Peninsular Ave",
@@ -102,7 +108,8 @@
   "lat": 45.586264184195,
   "lng": -122.697133131701,
   "sourceImg": "https://images1.apartments.com/i2/ZjOD0SpptkoX4vUyiFbH_NHcjzpMQPx6YGsk0Knn-aM/102/8808-n-peninsular-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": null
  },
  {
   "name": "2605 SE 23rd Ave",
@@ -117,7 +124,8 @@
   "lat": 45.504020777777,
   "lng": -122.642662789176,
   "sourceImg": "https://images1.apartments.com/i2/Od8odQ-V0FXBgbBuQl__78y_MZNbAGLbF5nkcH6Nn4k/102/2605-se-23rd-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": null
  },
  {
   "name": "638 NE Prescott St",
@@ -132,7 +140,8 @@
   "lat": 45.555435235571,
   "lng": -122.659162001546,
   "sourceImg": "https://images1.apartments.com/i2/yQF_aYKKXsMXFuNfMJx1U6LLaJ_BGgAp-9Pr1c2yqvk/102/638-ne-prescott-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": null
  },
  {
   "name": "16745 SE Division St",
@@ -147,7 +156,8 @@
   "lat": 45.50464581265,
   "lng": -122.490805575561,
   "sourceImg": "https://images1.apartments.com/i2/qnoUjATaSIVThCs57utRgdYbn4eofBZNTpyGlZj32N0/117/16745-se-division-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": null
  },
  {
   "name": "153 N Hayden Bay Dr",
@@ -162,7 +172,8 @@
   "lat": 45.610265178334,
   "lng": -122.670400687955,
   "sourceImg": "https://images1.apartments.com/i2/vBJB_kI0pxE6leE_tB6rb143zESx9FCweCeuYJG61NE/117/153-n-hayden-bay-dr-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "1420 NW Lovejoy St",
@@ -177,7 +188,8 @@
   "lat": 45.529962988347,
   "lng": -122.685657548381,
   "sourceImg": "https://images1.apartments.com/i2/R59WjQTWH89jeCGtXVaQewhNC2k87vxOnJ-qsLoWZSM/117/1420-nw-lovejoy-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 0
  },
  {
   "name": "7521 N Williams Ave",
@@ -192,7 +204,8 @@
   "lat": 45.577392216004,
   "lng": -122.666876864768,
   "sourceImg": "https://images1.apartments.com/i2/l2-zcot4vSgv7mJakvAfNLqtW3vaxW7NJDBjYU-_yBw/117/7521-n-williams-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 0
  },
  {
   "name": "12859 SE Stark St",
@@ -207,7 +220,8 @@
   "lat": 45.519117815949,
   "lng": -122.531249029709,
   "sourceImg": "https://images1.apartments.com/i2/cwirbHcY8c9MeU-aPxlqP_hV99zSB57iw043RPr7Dpc/117/12859-se-stark-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "1320 SW Hall St",
@@ -222,7 +236,8 @@
   "lat": 45.512262009288,
   "lng": -122.690493129568,
   "sourceImg": "https://images1.apartments.com/i2/QbzcJnwxbuE3DW4FakVHVVptuC9VGKYPr76VHZa97yA/117/1320-sw-hall-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "4716 NE 108th Ave",
@@ -237,7 +252,8 @@
   "lat": 45.557352697394,
   "lng": -122.551593681374,
   "sourceImg": "https://images1.apartments.com/i2/nl0BaVCQU8JhVz5-t61E7ss0dJRUX1v32LN6U8BRQNs/117/4716-ne-108th-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 1
  },
  {
   "name": "3419 SW Naito Pkwy",
@@ -252,7 +268,8 @@
   "lat": 45.499157047989,
   "lng": -122.677883916034,
   "sourceImg": "https://images1.apartments.com/i2/rq-gBVkG4Jh643d1z8giwfkH6v7hJQ1XajSdybLYDPI/117/3419-sw-naito-pkwy-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "16971 SE Ankeny St",
@@ -267,7 +284,8 @@
   "lat": 45.52128105185,
   "lng": -122.488238639085,
   "sourceImg": "https://images1.apartments.com/i2/EW7Y8LIkO65Pn1bfHs1xdA-5OvhYyxzQy1jkC2OQfyU/117/16971-se-ankeny-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 3
  },
  {
   "name": "4815 NE 50th Pl",
@@ -282,7 +300,8 @@
   "lat": 45.557578342656,
   "lng": -122.610808179925,
   "sourceImg": "https://images1.apartments.com/i2/DeJco4wfNYiPjk9fKkx_I7ROTR2E5w_IWEeC98UiVqU/117/4815-ne-50th-pl-portland-or-building-photo.png",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "3622 SE Harrison St",
@@ -297,7 +316,8 @@
   "lat": 45.508725234909,
   "lng": -122.626363642841,
   "sourceImg": "https://images1.apartments.com/i2/jFk3wU10B4v-cWtPsAVuOFcDLS13uCg2j9VWXM4Mnco/117/3622-se-harrison-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 1
  },
  {
   "name": "5011 SW Beaverton Hillsdale Hwy",
@@ -312,7 +332,8 @@
   "lat": 45.487103513558,
   "lng": -122.728505302867,
   "sourceImg": "https://images1.apartments.com/i2/G698msnC8dyl_maLDhYIIct1xDoW3oc9-GrJ-jgb5uA/117/5011-sw-beaverton-hillsdale-hwy-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "2557 N Arlington Pl",
@@ -327,7 +348,8 @@
   "lat": 45.583155509187,
   "lng": -122.693165022287,
   "sourceImg": "https://images1.apartments.com/i2/vUBlrrQpu8Mkjc99etMI6JWe71iqtbIQkd9UJ43n3Uw/117/2557-n-arlington-pl-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "1515 N Rosa Parks Way",
@@ -342,7 +364,8 @@
   "lat": 45.5701506,
   "lng": -122.6827048,
   "sourceImg": "https://images1.apartments.com/i2/8OVo6KTs1ITYlPFNwWF2sFx0pP_psc-tlisqf7LTnnY/117/1515-n-rosa-parks-way-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 1
  },
  {
   "name": "4553 NE 105th Ave",
@@ -357,7 +380,8 @@
   "lat": 45.555886812423,
   "lng": -122.554804354914,
   "sourceImg": "https://images1.apartments.com/i2/__kBl3yA5_6kOHUR5t6iKSRmtaapl4KBtHLmeFjHY28/117/4553-ne-105th-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "15076 NW Central Dr",
@@ -372,7 +396,8 @@
   "lat": 45.553993906147,
   "lng": -122.83235767363,
   "sourceImg": "https://images1.apartments.com/i2/NTDC_nQwmTtkDJToC5t73LNFL4WYduJVYoW2wvqo8FE/117/15076-nw-central-dr-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 1
  },
  {
   "name": "3816 N Borthwick Ave",
@@ -387,7 +412,8 @@
   "lat": 45.550271732919,
   "lng": -122.673334594449,
   "sourceImg": "https://images1.apartments.com/i2/l95vf7C7M3wsoWOjW-AIPYS-soHSkK31gdmgf2dkH6s/102/3816-n-borthwick-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "11811 SE Boise St",
@@ -402,7 +428,8 @@
   "lat": 45.492136729431,
   "lng": -122.541406457851,
   "sourceImg": "https://images1.apartments.com/i2/_XGcOoP467hZkIyRrSuKfCJTtJ40xujWk8xnq3l567A/117/11811-se-boise-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "7550 N Burlington Ave",
@@ -417,7 +444,8 @@
   "lat": 45.590932160953,
   "lng": -122.754184903439,
   "sourceImg": "https://images1.apartments.com/i2/qBG5G4iwPSAc6yC-vIdHmuNOtPyk9Hc9o_Rx0A5g5Zc/117/7550-n-burlington-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 1
  },
  {
   "name": "8324 SE Rhine St",
@@ -432,7 +460,8 @@
   "lat": 45.49681267278,
   "lng": -122.577254664185,
   "sourceImg": "https://images1.apartments.com/i2/nKmf9FayyFX8dNg2EQ3MiMpjwDG4ftR_D3Of9floksI/117/8324-se-rhine-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "5117 SW 62nd Ave",
@@ -447,7 +476,8 @@
   "lat": 45.486936312682,
   "lng": -122.741078855405,
   "sourceImg": "https://images1.apartments.com/i2/3UpOdvjv6UuWQV-oWSa4aA1sOMr7nwW7irlxQ3JiuNc/117/5117-sw-62nd-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 1
  },
  {
   "name": "1420 SW Bertha Blvd",
@@ -462,7 +492,8 @@
   "lat": 45.471179272872,
   "lng": -122.693887437317,
   "sourceImg": "https://images1.apartments.com/i2/3yYpLB7GY80MBlDnKUUposJj-x6oIq657ULSkHoIctc/117/1420-sw-bertha-blvd-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "3928 SE Gladstone St",
@@ -477,7 +508,8 @@
   "lat": 45.493271102876,
   "lng": -122.622205199159,
   "sourceImg": "https://images1.apartments.com/i2/sDZVXO2gXxrckrAmbX3ffL-e7M6aL6DiWkBNnh7fCO8/102/3928-se-gladstone-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "20 NW 16th Ave",
@@ -492,7 +524,8 @@
   "lat": 45.523044820502,
   "lng": -122.687136452995,
   "sourceImg": "https://images1.apartments.com/i2/0d2Tm3x2iX0Jb-f3xPBP0ExzvQRx9pdYBsWf6CtxFjE/117/20-nw-16th-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 0
  },
  {
   "name": "11359 SW Greenburg Rd",
@@ -507,7 +540,8 @@
   "lat": 45.437704978099,
   "lng": -122.778656522609,
   "sourceImg": "https://images1.apartments.com/i2/Kzed-4QG_ovpYQqF4TXoosP6kx8dJdAgM08L22l4hgk/117/11359-sw-greenburg-rd-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "20 SE 172nd Ave",
@@ -522,7 +556,8 @@
   "lat": 45.521899529171,
   "lng": -122.486065270553,
   "sourceImg": "https://images1.apartments.com/i2/PnDZV7dfpm-DdGtqgow8_44fqY3PPxEM6QZ5E1qsbso/117/20-se-172nd-ave-portland-or-building-photo.png",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "3331 SW Garden View Ave",
@@ -537,7 +572,8 @@
   "lat": 45.495779425246,
   "lng": -122.773441644599,
   "sourceImg": "https://images1.apartments.com/i2/O5FseznSLPW6YM46-KAgm3HwUS83XnrCRNLXQ__Mw6w/117/3331-sw-garden-view-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "4716 SE 83rd Ave",
@@ -552,7 +588,8 @@
   "lat": 45.488610928242,
   "lng": -122.577665366395,
   "sourceImg": "https://images1.apartments.com/i2/f8-SKckFBPBmhgFI-N7Th1UWwehKBjhuvQkmP7ahtgQ/117/4716-se-83rd-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 3
  },
  {
   "name": "1420 NE 53rd Ave",
@@ -567,7 +604,8 @@
   "lat": 45.533176926279,
   "lng": -122.608708233114,
   "sourceImg": "https://images1.apartments.com/i2/mj1lIs1UPUyDr0AmeT9cv_OWHhFrDrbQN4d0g0Hnk0U/117/1420-ne-53rd-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "9037 NE Humboldt St",
@@ -582,7 +620,8 @@
   "lat": 45.558693752529,
   "lng": -122.569709886933,
   "sourceImg": "https://images1.apartments.com/i2/SSBIyRz_-_5Ha6Aqfo4-nkeonOIxtnkMxXvoyhaJd0E/117/9037-ne-humboldt-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "6016 NE Willow St",
@@ -597,7 +636,8 @@
   "lat": 45.528667310301,
   "lng": -122.601915921022,
   "sourceImg": "https://images1.apartments.com/i2/5Q3Sr7Oj56lC_AgeJR8WtkNpS3rfeUxLBplD-Y9HbzM/102/6016-ne-willow-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "5885 S Macadam Ave",
@@ -612,7 +652,8 @@
   "lat": 45.481244177442,
   "lng": -122.673477948945,
   "sourceImg": "https://images1.apartments.com/i2/omDy2H_VPddejnkFxCRNuk9e2Zr6leMh_cuFeElGZrQ/117/5885-s-macadam-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 1
  },
  {
   "name": "7537 SE 51st Ave",
@@ -627,7 +668,8 @@
   "lat": 45.468969724848,
   "lng": -122.611078805673,
   "sourceImg": "https://images1.apartments.com/i2/hoQeVJxh7_ayHTWBGIQs-9-0nOhFUYt7bVUEE2KaSLk/117/7537-se-51st-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "3879 NE 152nd Ave",
@@ -642,7 +684,8 @@
   "lat": 45.551426359324,
   "lng": -122.506181794115,
   "sourceImg": "https://images1.apartments.com/i2/R-erZfhqahS4rV9y2wXjmF_pgr4lv6BeexeLPyl-nFw/102/3879-ne-152nd-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 1
  },
  {
   "name": "3554 NE Sandy Blvd",
@@ -657,7 +700,8 @@
   "lat": 45.5329127941,
   "lng": -122.627509985978,
   "sourceImg": "https://images1.apartments.com/i2/_ynuVhRTDrg05R6GB6yLNCUCZNa1SwNz6OZIe79N7i8/102/3554-ne-sandy-blvd-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 0
  },
  {
   "name": "3552 NE Sandy Blvd",
@@ -672,7 +716,8 @@
   "lat": 45.532904635661,
   "lng": -122.627530183093,
   "sourceImg": "https://images1.apartments.com/i2/cqkssK6EW2QrellhiyMqG3_FfrFZwMN73NNEfAQoUQo/117/3552-ne-sandy-blvd-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 0
  },
  {
   "name": "11353 SW Greenburg Rd",
@@ -687,7 +732,8 @@
   "lat": 45.437734061796,
   "lng": -122.778711353263,
   "sourceImg": "https://images1.apartments.com/i2/Kzed-4QG_ovpYQqF4TXoosP6kx8dJdAgM08L22l4hgk/117/11353-sw-greenburg-rd-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "4819 NE 50th Pl",
@@ -702,7 +748,8 @@
   "lat": 45.557598027764,
   "lng": -122.610807935891,
   "sourceImg": "https://images1.apartments.com/i2/dmfDxx_J9jVPOd6udVSPfxev7iL1oBdiWzfyZ1g7VBc/117/4819-ne-50th-pl-portland-or-building-photo.png",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "18510 SE Blanton St",
@@ -717,7 +764,8 @@
   "lat": 45.389285661399,
   "lng": -122.612813354121,
   "sourceImg": "https://images1.apartments.com/i2/WnrUBxngQciFmM9Q0eFAQpsUc4HrrNZOpBf4cufZUxA/117/18510-se-blanton-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "4538 N Vancouver Ave",
@@ -732,7 +780,8 @@
   "lat": 45.555954408712,
   "lng": -122.667966012289,
   "sourceImg": "https://images1.apartments.com/i2/Ipl238zOhXAdW-OXbyn0oreBh6GX4b7ogKh6cZRhEuI/102/4538-n-vancouver-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 1
  },
  {
   "name": "10030 N Lombard St",
@@ -747,7 +796,8 @@
   "lat": 45.599090372436,
   "lng": -122.761996660023,
   "sourceImg": "https://images1.apartments.com/i2/0yTHQ1Ss5AteElWtjkcv92oMjnGrlvwh2Yr5FRXWz7g/102/10030-n-lombard-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "8211 N Montana Ave",
@@ -762,7 +812,8 @@
   "lat": 45.582216322375,
   "lng": -122.680259968169,
   "sourceImg": "https://images1.apartments.com/i2/NS1fdX_O8mAVCMNDhj0An-DijYLhKi2-PWK5WrMzcqM/102/8211-n-montana-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "537 NE 113th Ave",
@@ -777,7 +828,8 @@
   "lat": 45.526492757582,
   "lng": -122.546763754902,
   "sourceImg": "https://images1.apartments.com/i2/fZpnNNybwABNyx0zAIya82LqItcDlq2N-DRh2tvFrNM/117/537-ne-113th-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "2680 SW 87th Ave",
@@ -792,7 +844,8 @@
   "lat": 45.500506492283,
   "lng": -122.766542599983,
   "sourceImg": "https://images1.apartments.com/i2/puaHR7_ppHgJ9E_oxGv9oTbdbMT5VRtAzg8ISkS6X2I/117/2680-sw-87th-ave-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "26 N Morgan St",
@@ -807,7 +860,8 @@
   "lat": 45.574371235291,
   "lng": -122.667078934766,
   "sourceImg": "https://images1.apartments.com/i2/2SlqsUVEAAdBRQy0GdGTlvqPsfFjy8-K_qVCmgMwSCg/117/26-n-morgan-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "6044 SE Henderson St",
@@ -822,7 +876,8 @@
   "lat": 45.469269234661,
   "lng": -122.60155515117,
   "sourceImg": "https://images1.apartments.com/i2/dmY5CZKZbf2estd1CJQdt680FgGb5UwsOFQngn6AxXo/117/6044-se-henderson-st-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 0
  },
  {
   "name": "4656 SW Comus Pl",
@@ -837,7 +892,8 @@
   "lat": 45.446278368501,
   "lng": -122.724502009558,
   "sourceImg": "https://images1.apartments.com/i2/cLV346XAbWIXqtf6m2U1FzOd-f9luktWMjzB68bW4U4/117/4656-sw-comus-pl-portland-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 2
  },
  {
   "name": "108 Oswego Summit",
@@ -852,7 +908,8 @@
   "lat": 45.4350297685,
   "lng": -122.715174514285,
   "sourceImg": "https://images1.apartments.com/i2/kX2QYKKs3B1JyCotE9_eX710rtiqKvvJD9NCoZZdMWc/117/108-oswego-summit-lake-oswego-or-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 1
  },
  {
   "name": "1712 SE Cutter Ln",
@@ -867,7 +924,8 @@
   "lat": 45.617099258467,
   "lng": -122.652620786429,
   "sourceImg": "https://images1.apartments.com/i2/S9wT-bsrkukMgAktfFz9R0G5JojtoUuhe-D_kpvC_FA/117/1712-se-cutter-ln-vancouver-wa-building-photo.jpg",
-  "source": "Apartments.com"
+  "source": "Apartments.com",
+  "bedsN": 3
  },
  {
   "name": "2081 NW Everett",
@@ -883,7 +941,8 @@
   "source": "Bristol Urban",
   "lat": 45.524936039505,
   "lng": -122.694130897113,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/a3b808a1-9684-40bd-a02c-b61e16908940/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/a3b808a1-9684-40bd-a02c-b61e16908940/medium.jpg",
+  "bedsN": 1
  },
  {
   "name": "1809 SE Hawthorne Blvd.",
@@ -899,7 +958,8 @@
   "source": "Bristol Urban",
   "lat": 45.51224702658,
   "lng": -122.647271593447,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/3200e30a-7ca4-40a6-9bb0-0b5c20281fe0/medium.jpeg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/3200e30a-7ca4-40a6-9bb0-0b5c20281fe0/medium.jpeg",
+  "bedsN": 1
  },
  {
   "name": "1809 SE Hawthorne Blvd.",
@@ -915,7 +975,8 @@
   "source": "Bristol Urban",
   "lat": 45.51224702658,
   "lng": -122.647271593447,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/42ee3a6c-e5c5-4174-b2b4-384bce7911ea/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/42ee3a6c-e5c5-4174-b2b4-384bce7911ea/medium.jpg",
+  "bedsN": 0
  },
  {
   "name": "3046 NE Holladay",
@@ -931,7 +992,8 @@
   "source": "Bristol Urban",
   "lat": 45.529969984647,
   "lng": -122.633697001857,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/903cbcd4-25e9-400d-9c2e-718d5cb7092b/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/903cbcd4-25e9-400d-9c2e-718d5cb7092b/medium.jpg",
+  "bedsN": 0
  },
  {
   "name": "7900 SW Brentwood St.",
@@ -947,7 +1009,8 @@
   "source": "Bristol Urban",
   "lat": 45.490994233423,
   "lng": -122.758117961875,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/5a22c491-9a16-4c28-b35f-a61f256ae890/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/5a22c491-9a16-4c28-b35f-a61f256ae890/medium.jpg",
+  "bedsN": 1
  },
  {
   "name": "2190 W Burnside",
@@ -963,7 +1026,8 @@
   "source": "Bristol Urban",
   "lat": 45.523253061317,
   "lng": -122.696178206645,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/a6476b31-7392-41f4-a465-2fa8ea6e6f0f/medium.jpeg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/a6476b31-7392-41f4-a465-2fa8ea6e6f0f/medium.jpeg",
+  "bedsN": 0
  },
  {
   "name": "2129 SE 10th",
@@ -979,7 +1043,8 @@
   "source": "Bristol Urban",
   "lat": 45.507709089906,
   "lng": -122.655817220504,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/f3c29110-e80e-4e83-9c04-b69c4fd11ae4/medium.jpeg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/f3c29110-e80e-4e83-9c04-b69c4fd11ae4/medium.jpeg",
+  "bedsN": 0
  },
  {
   "name": "1809 SE Hawthorne Blvd.",
@@ -995,7 +1060,8 @@
   "source": "Bristol Urban",
   "lat": 45.51224702658,
   "lng": -122.647271593447,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/5830bc60-120a-4c3a-b7b0-ea124694df25/medium.jpeg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/5830bc60-120a-4c3a-b7b0-ea124694df25/medium.jpeg",
+  "bedsN": 0
  },
  {
   "name": "5400 NE Sandycrest Terrace",
@@ -1011,7 +1077,8 @@
   "source": "Bristol Urban",
   "lat": 45.540610126378,
   "lng": -122.607316782952,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/0a856af0-f738-48f4-b0d8-3939a27a29c3/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/0a856af0-f738-48f4-b0d8-3939a27a29c3/medium.jpg",
+  "bedsN": 1
  },
  {
   "name": "2235 NW Johnson St",
@@ -1027,7 +1094,8 @@
   "source": "Bristol Urban",
   "lat": 45.528446880302,
   "lng": -122.697257724054,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/af40eb54-8b22-4a1b-94a0-c13d1306a22c/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/af40eb54-8b22-4a1b-94a0-c13d1306a22c/medium.jpg",
+  "bedsN": 1
  },
  {
   "name": "2081 NW Everett",
@@ -1043,7 +1111,8 @@
   "source": "Bristol Urban",
   "lat": 45.524936039505,
   "lng": -122.694130897113,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/4244573d-37e4-45df-851f-706fd04b62f5/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/4244573d-37e4-45df-851f-706fd04b62f5/medium.jpg",
+  "bedsN": 0
  },
  {
   "name": "215 E 12th, Vancouver",
@@ -1059,7 +1128,8 @@
   "source": "Bristol Urban",
   "lat": 45.630225232401,
   "lng": -122.670256114185,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/1329e625-8925-409d-9041-d6a9e9b73adf/medium.jpeg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/1329e625-8925-409d-9041-d6a9e9b73adf/medium.jpeg",
+  "bedsN": 0
  },
  {
   "name": "3030 SE Waverleigh",
@@ -1075,7 +1145,8 @@
   "source": "Bristol Urban",
   "lat": 45.4985917,
   "lng": -122.630016,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/3a33fb25-f5ea-4223-9468-0f7a567ababd/medium.jpeg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/3a33fb25-f5ea-4223-9468-0f7a567ababd/medium.jpeg",
+  "bedsN": 2
  },
  {
   "name": "2920 SE Waverleigh",
@@ -1091,7 +1162,8 @@
   "source": "Bristol Urban",
   "lat": 45.4979834,
   "lng": -122.6353581,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/1538305f-a3e8-4d9c-acdc-b89aa706ae7c/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/1538305f-a3e8-4d9c-acdc-b89aa706ae7c/medium.jpg",
+  "bedsN": 2
  },
  {
   "name": "2255 NW Johnson",
@@ -1107,7 +1179,8 @@
   "source": "Bristol Urban",
   "lat": 45.528440125356,
   "lng": -122.697638536299,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/9101cc8c-1343-4591-8504-612bff33d640/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/9101cc8c-1343-4591-8504-612bff33d640/medium.jpg",
+  "bedsN": 0
  },
  {
   "name": "411 NE 22nd",
@@ -1123,7 +1196,8 @@
   "source": "Bristol Urban",
   "lat": 45.525855728111,
   "lng": -122.643516701506,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/79d18451-f934-4fc6-bd03-7c6365b9d826/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/79d18451-f934-4fc6-bd03-7c6365b9d826/medium.jpg",
+  "bedsN": 0
  },
  {
   "name": "4916 SW 56th Ave",
@@ -1139,7 +1213,8 @@
   "source": "Bristol Urban",
   "lat": 45.487991269379,
   "lng": -122.734753287981,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/c2171ca5-bcc1-4c9a-a95e-e52af3884911/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/c2171ca5-bcc1-4c9a-a95e-e52af3884911/medium.jpg",
+  "bedsN": 1
  },
  {
   "name": "2211 NE Pacific Street",
@@ -1155,7 +1230,8 @@
   "source": "Bristol Urban",
   "lat": 45.529323826845,
   "lng": -122.643249108923,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/5273dd62-a2b7-4520-a148-d3def3bfc7a0/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/5273dd62-a2b7-4520-a148-d3def3bfc7a0/medium.jpg",
+  "bedsN": 1
  },
  {
   "name": "2500 NE Weidler Street",
@@ -1171,7 +1247,8 @@
   "source": "Bristol Urban",
   "lat": 45.534402234823,
   "lng": -122.640032725848,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/88fc7eb9-b07f-4af5-adca-845d6cb1a3d8/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/88fc7eb9-b07f-4af5-adca-845d6cb1a3d8/medium.jpg",
+  "bedsN": 1
  },
  {
   "name": "5318 NE Wistaria Dr.",
@@ -1187,7 +1264,8 @@
   "source": "Bristol Urban",
   "lat": 45.541240933689,
   "lng": -122.608580781,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/9b8638f2-6e68-47fc-bff5-b054db68b53d/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/9b8638f2-6e68-47fc-bff5-b054db68b53d/medium.jpg",
+  "bedsN": 1
  },
  {
   "name": "4926 SW 56th Ave",
@@ -1203,7 +1281,8 @@
   "source": "Bristol Urban",
   "lat": 45.487942564395,
   "lng": -122.734753287991,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/73490fbb-fc22-4785-a366-10f7e576e74a/medium.jpg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/73490fbb-fc22-4785-a366-10f7e576e74a/medium.jpg",
+  "bedsN": 1
  },
  {
   "name": "1931 NW 29th Ave.",
@@ -1219,7 +1298,8 @@
   "source": "Bristol Urban",
   "lat": 45.536221143522,
   "lng": -122.711096886875,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/c8bd5398-cd2c-4c76-8eb2-70e721b8f7cb/medium.jpeg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/c8bd5398-cd2c-4c76-8eb2-70e721b8f7cb/medium.jpeg",
+  "bedsN": 1
  },
  {
   "name": "3046 NE Holladay",
@@ -1235,6 +1315,7 @@
   "source": "Bristol Urban",
   "lat": 45.529969984647,
   "lng": -122.633697001857,
-  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/6441926d-db91-4994-9e7b-96dce4ac5c86/medium.jpeg"
+  "sourceImg": "https://images.cdn.appfolio.com/bristolequities/images/6441926d-db91-4994-9e7b-96dce4ac5c86/medium.jpeg",
+  "bedsN": 0
  }
 ]

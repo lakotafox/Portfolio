@@ -270,6 +270,13 @@
       <span class="price-val" id="maxPriceVal">$2,200</span>
     </label>
     <label><input id="catOnly" type="checkbox" checked> Cat friendly</label>
+    <select id="beds">
+      <option value="any">Any beds</option>
+      <option value="0">Studio</option>
+      <option value="1">1 bed</option>
+      <option value="2" selected>2 beds</option>
+      <option value="3">3+ beds</option>
+    </select>
     <select id="source">
       <option value="all">All sources</option>
       <option value="Bristol Urban">Bristol Urban</option>
@@ -349,6 +356,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const fmt = n => '$' + n.toLocaleString();
 const els = {
   q: document.getElementById('q'),
+  beds: document.getElementById('beds'),
   source: document.getElementById('source'),
   max: document.getElementById('maxPrice'),
   maxVal: document.getElementById('maxPriceVal'),
@@ -365,7 +373,9 @@ function filtered() {
     (!q || (r.name + ' ' + r.address + ' ' + (r.desc || '')).toLowerCase().includes(q)) &&
     (r.minPrice == null || r.minPrice <= max) &&
     (!els.cat.checked || r.catFriendly) &&
-    (els.source.value === 'all' || r.source === els.source.value)
+    (els.source.value === 'all' || r.source === els.source.value) &&
+    (els.beds.value === 'any' || (r.bedsN != null &&
+      (els.beds.value === '3' ? r.bedsN >= 3 : r.bedsN === +els.beds.value)))
   );
   const s = els.sort.value;
   if (s === 'asc') rows = rows.slice().sort((a, b) => (a.minPrice ?? 9e9) - (b.minPrice ?? 9e9));
@@ -378,7 +388,7 @@ function render() {
   const rows = filtered();
   els.maxVal.textContent = fmt(+els.max.value);
   els.count.textContent = rows.length + ' of ' + DATA.length + ' listings';
-  els.list.innerHTML = rows.length ? '' : '<div class="empty">No listings match — raise the max price or clear the search.</div>';
+  els.list.innerHTML = rows.length ? '' : '<div class="empty">No listings match — raise the max price, set beds to Any, or clear the search.</div>';
 
   Object.values(markers).forEach(m => map.removeLayer(m));
   markers = {};
@@ -460,6 +470,7 @@ function focusListing(r, pan) {
   els.cat.addEventListener(ev, render);
   els.sort.addEventListener(ev, render);
   els.source.addEventListener(ev, render);
+  els.beds.addEventListener(ev, render);
 });
 
 fetch('data/listings.json')
