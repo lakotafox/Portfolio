@@ -164,7 +164,28 @@
   .empty { color: var(--muted-foreground); padding: 48px; font-size: 15px; grid-column: 1 / -1; text-align: center; }
 
   #mapPanel { position: sticky; top: 88px; height: calc(100vh - 108px); border-radius: 18px; overflow: hidden; border: 1px solid var(--border); }
+  #mapPanel.map-full { position: fixed; inset: 0; z-index: 12000; height: 100vh; height: 100dvh; border-radius: 0; border: none; }
+  body.map-locked { overflow: hidden; }
   #map { height: 100%; background: var(--muted); }
+  .map-fs-btn {
+    position: absolute; top: 12px; right: 12px; z-index: 1001;
+    width: 40px; height: 40px; border-radius: 10px; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border); color: var(--foreground);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,.18);
+  }
+  .map-fs-btn:hover { background: var(--muted); }
+  .map-fs-btn svg { width: 18px; height: 18px; }
+  .map-fs-btn .compress, .map-full .map-fs-btn .expand { display: none; }
+  .map-full .map-fs-btn .compress { display: block; }
+  .mobile-map-btn {
+    display: none; position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+    z-index: 10000; align-items: center; gap: 8px;
+    padding: 12px 22px; border-radius: 999px; border: none; cursor: pointer;
+    background: #000; color: #fff; font: inherit; font-size: 15px; font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0,0,0,.3);
+  }
+  .mobile-map-btn .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--accent); }
   .dark .leaflet-tile { filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7); }
   .dark .leaflet-container { background: #111; }
   .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--surface); color: var(--foreground); }
@@ -175,8 +196,16 @@
   .leaflet-popup-content img { width: 100%; border-radius: 8px; margin-top: 6px; }
 
   @media (max-width: 900px) {
-    main { grid-template-columns: 1fr; }
-    #mapPanel { position: relative; top: 0; height: 340px; order: -1; }
+    main { grid-template-columns: 1fr; padding: 10px 14px 96px; }
+    #mapPanel { display: none; }
+    #mapPanel.map-full { display: block; }
+    .mobile-map-btn { display: inline-flex; }
+    .toolbar-wrap { padding: 10px 12px; top: 0; }
+    .toolbar { gap: 10px; padding: 10px 14px; }
+    .toolbar input[type="search"] { flex: 1; min-width: 140px; }
+    .toolbar input[type="range"] { width: 110px; }
+    .count { flex-basis: 100%; margin-left: 0; text-align: right; }
+    .theme-toggle { bottom: 22px; right: 14px; }
   }
 
   /* ── Theme toggle ─────────────────────────────────────────── */
@@ -247,16 +276,24 @@
 
 <main>
   <div id="list"></div>
-  <div id="mapPanel"><div id="map"></div></div>
+  <div id="mapPanel">
+    <div id="map"></div>
+    <button class="map-fs-btn" id="mapFsBtn" aria-label="Toggle fullscreen map">
+      <svg class="expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+      <svg class="compress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg>
+    </button>
+  </div>
 </main>
+
+<button class="mobile-map-btn" id="mobileMapBtn"><span class="dot"></span> Map</button>
 
 <footer>Data scraped from Apartments.com on Aug 1, 2026 · prices &amp; availability change fast — verify with the property. Map © OpenStreetMap contributors.</footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // theme
-const savedTheme = localStorage.getItem('lh-theme');
-if (savedTheme === 'dark' || (!savedTheme && matchMedia('(prefers-color-scheme: dark)').matches)) {
+// dark by default; only an explicit user choice of light overrides it
+if (localStorage.getItem('lh-theme') !== 'light') {
   document.documentElement.classList.add('dark');
 }
 document.getElementById('themeToggle').addEventListener('click', () => {
@@ -344,8 +381,25 @@ function render() {
       bounds.push([r.lat, r.lng]);
     }
   });
-  if (bounds.length) map.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
+  lastBounds = bounds;
+  if (bounds.length && mapPanel.offsetWidth > 0) map.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
 }
+
+let lastBounds = [];
+const mapPanel = document.getElementById('mapPanel');
+function toggleMapFull(force) {
+  const on = mapPanel.classList.toggle('map-full', force);
+  document.body.classList.toggle('map-locked', on);
+  setTimeout(() => {
+    map.invalidateSize();
+    if (on && lastBounds.length) map.fitBounds(lastBounds, { padding: [30, 30], maxZoom: 14 });
+  }, 60);
+}
+document.getElementById('mapFsBtn').addEventListener('click', () => toggleMapFull());
+document.getElementById('mobileMapBtn').addEventListener('click', () => toggleMapFull(true));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && mapPanel.classList.contains('map-full')) toggleMapFull(false);
+});
 
 function focusListing(r, pan) {
   document.querySelectorAll('.card.active').forEach(c => c.classList.remove('active'));
