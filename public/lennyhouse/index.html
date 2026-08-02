@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LennyHouse · Portland cat-friendly apartments under $2,200</title>
+<title>LennyHouse · Cute cat-friendly houses in Portland under $2,200</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/geist-sans@5.2.5/400.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/geist-sans@5.2.5/500.css">
@@ -247,8 +247,8 @@
 <section class="hero">
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-badge">Portland, OR · Under $2,200 <span class="spark">✦</span></div>
-  <h1>Find a place<br>you &amp; your <span class="fancy">cat</span> will love</h1>
-  <p class="sub">40 cat-friendly apartments, hand-scraped fresh from Apartments.com</p>
+  <h1>Cute little houses<br>for you &amp; your <span class="fancy">cat</span></h1>
+  <p class="sub">58 cat-friendly houses &amp; cottages under $2,200 — no corpo mega-complexes</p>
   <a class="hero-cta" href="#listings">
     <span class="tail-bg"></span>
     <span class="label">Browse Listings</span>
@@ -381,6 +381,7 @@ function render() {
         <h3>${r.name}</h3>
         <div class="addr">${r.address}</div>
         <div class="price">${r.priceText || 'Call for price'}</div>
+        ${r.beds ? `<div class="addr">${r.beds}</div>` : ''}
         ${r.catFriendly ? '<span class="badge">🐱 Cat friendly</span>' : ''}
         <div class="links">
           <a class="view-btn" href="${r.url}" target="_blank" rel="noopener">
@@ -399,7 +400,7 @@ function render() {
     if (r.lat && r.lng) {
       const mk = L.marker([r.lat, r.lng]).addTo(map);
       mk.bindPopup(
-        `<b>${r.name}</b><br>${r.priceText}<br>${r.address}<br>` +
+        `<b>${r.name}</b><br>${r.priceText}${r.beds ? ' · ' + r.beds : ''}<br>${r.address}<br>` +
         `<a href="${r.url}" target="_blank" rel="noopener">View on Apartments.com ↗</a>` +
         `<img src="${r.img}" loading="lazy">`
       );

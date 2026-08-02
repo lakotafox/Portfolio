@@ -4,7 +4,7 @@ const projectsData = [
   {
     id: 'lennyhouse',
     title: 'LennyHouse',
-    description: 'Apartment finder for cats and their humans — 40 cat-friendly Portland rentals under $2,200/mo scraped from Apartments.com, with live filters, price sorting, and every listing pinned on an interactive map. Light/dark themed single-page app.',
+    description: 'House finder for cats and their humans — 58 cute cat-friendly Portland houses & cottages under $2,200/mo scraped from Apartments.com, with live filters, price sorting, and every listing pinned on an interactive map. Light/dark themed single-page app.',
     tag: 'Tool',
     link: '/lennyhouse/',
     image: '/project-images/lennyhouse.png',
