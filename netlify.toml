@@ -111,6 +111,34 @@
   status = 302
   force = true
 
+# Really Cool Hair — salon site, owner dashboard and phone app, built from the
+# reallycoolhair repo with RCH_BASE=/reallycoolhair and copied into public/.
+# The live salon site at reallycoolhair.com is a separate deploy and is not
+# affected by anything here.
+#
+# The booking flow talks to the salon's own database over Tailscale, so it only
+# works from a device on that tailnet with the salon machine awake. Browsing
+# works for anyone; booking will not.
+#
+# Both sub-apps are SPAs and need their own catch-all ABOVE the portfolio's,
+# or a deep link falls through to the portfolio shell.
+[[redirects]]
+  from = "/reallycoolhair/admin/*"
+  to = "/reallycoolhair/admin/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/reallycoolhair/app/*"
+  to = "/reallycoolhair/app/index.html"
+  status = 200
+
+# Clean URL -> its static folder, same as the other projects above.
+[[redirects]]
+  from = "/reallycoolhair"
+  to = "/reallycoolhair/"
+  status = 302
+  force = true
+
 # Portfolio (React SPA) is served at /portfolio and all other app routes.
 [[redirects]]
   from = "/*"

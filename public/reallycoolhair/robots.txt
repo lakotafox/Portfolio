@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /win98/upload.html
+
+Sitemap: https://reallycoolhair.com/sitemap-index.xml

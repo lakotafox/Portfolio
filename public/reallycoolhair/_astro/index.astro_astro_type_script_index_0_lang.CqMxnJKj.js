@@ -1,0 +1,1 @@
+function s(){const t=document.querySelectorAll(".reveal");if(!t.length)return;if(!("IntersectionObserver"in window)){t.forEach(e=>e.classList.add("visible"));return}const r=new IntersectionObserver(e=>{e.forEach(i=>{i.isIntersecting&&(i.target.classList.add("visible"),r.unobserve(i.target))})},{threshold:.15});t.forEach(e=>r.observe(e))}s();
