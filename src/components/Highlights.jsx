@@ -194,7 +194,7 @@ const Highlights = () => {
               </svg>
             </div>
             <h3>Diverse Project Experience</h3>
-            <p>Full-stack platforms, security tools, startup MVPs, AI-powered applications, and client websites. I've shipped production software with Java, Python, TypeScript, React, Next.js, and AWS. I build systems that solve real problems — from automated security scanners to AI agent pipelines.</p>
+            <p>Full-stack platforms, security tools, startup MVPs, AI-powered applications, and client websites. I've shipped production software with Java, Python, TypeScript, React, Next.js, and AWS — and I self-host: SQLite and Postgres, Stripe payments, private networking, real migrations of live customer data off SaaS. I build systems that solve real problems, and I run the ones that matter.</p>
             <button
               className="skills-toggle"
               onClick={() => {
