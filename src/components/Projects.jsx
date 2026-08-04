@@ -122,9 +122,9 @@ const projectsData = [
   {
     id: 'reallycoolhair',
     title: 'Really Cool Hair',
-    description: 'Creative hair salon website with appointment booking and gallery showcase.',
+    description: 'A Portland salon moved off GlossGenius onto its own system: a booking flow that reads real availability, an owner dashboard, and a phone app the stylist runs the day from. The salon database is self-hosted on hardware they own, so booking here only works from my own devices — the site and apps are fully browsable.',
     tag: 'Client Work',
-    link: 'https://reallycoolhair.com',
+    link: '/reallycoolhair/',
     image: '/project-images/reallycoolhair.jpg'
   },
   {
