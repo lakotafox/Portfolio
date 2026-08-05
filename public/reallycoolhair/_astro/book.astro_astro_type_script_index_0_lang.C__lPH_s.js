@@ -1,0 +1,1 @@
+import{i as o}from"./wizard.C0ovwHN2.js";import"./cart.BphryUGA.js";import"./calendar-links.BXKUxolH.js";import"./services.BPd3Nm4_.js";o();const e="/reallycoolhair".replace(/\/$/,"");document.addEventListener("click",t=>{t.target.closest('[data-goto-step="1"]')&&(t.preventDefault(),t.stopPropagation(),window.location.href=`${e}/1998/services`)},!0);
