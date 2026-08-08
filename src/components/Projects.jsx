@@ -2,6 +2,15 @@ import { useState } from 'react';
 
 const projectsData = [
   {
+    id: 'gifsmith',
+    title: 'Gifsmith',
+    description: "Mobile-first GIF e-card maker with a full 1997 GeoCities soul. Search 4.6 million GIFs rescued by the Internet Archive's Wayback Machine, drag/pinch/rotate them onto a phone-shaped canvas with retro text and animated pixel backgrounds, then send your gram as a link or a rendered animated GIF. Guided tutorial by Floppy the mascot, installable as a PWA.",
+    tag: 'Web Toy',
+    link: '/gifsmith/',
+    image: '/project-images/gifsmith.png',
+    featured: true
+  },
+  {
     id: 'lennyhouse',
     title: 'LennyHouse',
     description: 'House finder for cats and their humans — 81 cute cat-friendly Portland houses, cottages & vintage apartments under $2,200/mo from Apartments.com and Bristol Urban, with live filters, source/price sorting, and every listing pinned on an interactive map.',

@@ -139,6 +139,21 @@
   status = 302
   force = true
 
+# GifCities search proxy for Gifsmith (no API/CORS upstream; the client
+# parses the HTML). MUST come before the SPA catch-all.
+[[redirects]]
+  from = "/gifsmith-api/search"
+  to = "/.netlify/functions/gifcities-search"
+  status = 200
+  force = true
+
+# Gifsmith app: clean URL -> its static folder (mirrors /plant-id etc).
+[[redirects]]
+  from = "/gifsmith"
+  to = "/gifsmith/"
+  status = 302
+  force = true
+
 # Portfolio (React SPA) is served at /portfolio and all other app routes.
 [[redirects]]
   from = "/*"
