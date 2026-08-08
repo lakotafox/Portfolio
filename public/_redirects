@@ -1,0 +1,38 @@
+# Redirects for lakotafox.com. This file ships INSIDE the publish dir, so it
+# deploys atomically with the site and takes precedence over netlify.toml —
+# whose redirect changes stopped being picked up by Netlify around mid-July
+# (builds read the toml fine; the serving layer kept ~11 stale rules. The
+# proof: /puddl3-api/*, /reallycoolhair/* deep links, and any rule added
+# after July 2026 fell through to the SPA catch-all until this file).
+# Keep netlify.toml's [[redirects]] in sync as documentation, but THIS file
+# is what production actually serves. "!" = force.
+
+# --- function proxies ---
+/api/identify         /.netlify/functions/identify            200!
+/puddl3-api/*         /.netlify/functions/puddl3-api/:splat   200!
+/gifsmith-api/search  /.netlify/functions/gifcities-search    200!
+
+# --- clean URLs -> static folders ---
+/plant-id       /plant-id/       302!
+/bird-id        /bird-id/        302!
+/backlog        /backlog/        302!
+/watts          /watts/          302!
+/redwoods       /redwoods/       302!
+/lennyhouse     /lennyhouse/     302!
+/puddl3         /puddl3/         302!
+/reallycoolhair /reallycoolhair/ 302!
+/gifsmith       /gifsmith/       302!
+
+# --- livestream pages: clean URLs -> static .html ---
+/free   /demo.html   200!
+/fred   /fred.html   200!
+/games  /games.html  200!
+/tank   /tank.html   200!
+/battle /battle.html 200!
+
+# --- sub-app SPA catch-alls (before the portfolio's) ---
+/reallycoolhair/admin/* /reallycoolhair/admin/index.html 200
+/reallycoolhair/app/*   /reallycoolhair/app/index.html   200
+
+# --- portfolio SPA catch-all (must stay last) ---
+/* /index.html 200
