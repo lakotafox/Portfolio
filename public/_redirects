@@ -12,16 +12,10 @@
 /puddl3-api/*         /.netlify/functions/puddl3-api/:splat   200!
 /gifsmith-api/search  /.netlify/functions/gifcities-search    200!
 
-# --- clean URLs -> static folders ---
-/plant-id       /plant-id/       302!
-/bird-id        /bird-id/        302!
-/backlog        /backlog/        302!
-/watts          /watts/          302!
-/redwoods       /redwoods/       302!
-/lennyhouse     /lennyhouse/     302!
-/puddl3         /puddl3/         302!
-/reallycoolhair /reallycoolhair/ 302!
-/gifsmith       /gifsmith/       302!
+# NOTE: no clean-URL rules for the static app folders (/gifsmith, /plant-id,
+# …) — in _redirects a rule for "/x" ALSO matches "/x/", so a forced
+# "/x -> /x/" redirect loops forever. Netlify's automatic trailing-slash
+# folder redirect already handles those URLs.
 
 # --- livestream pages: clean URLs -> static .html ---
 /free   /demo.html   200!
