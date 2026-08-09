@@ -87,10 +87,12 @@ export function initNearMe(map, filters, openTree) {
         }
         panel.hidden = false;
         goTo(map, [lat, lon], 15);
+        if (nearest.length) document.dispatchEvent(new CustomEvent('ofm:nearme-shown'));
       },
       () => {
         btn.disabled = false;
         btn.textContent = 'Location denied';
+        document.dispatchEvent(new CustomEvent('ofm:nearme-denied'));
         setTimeout(() => (btn.textContent = 'Near me'), 2500);
       },
       { enableHighAccuracy: true, timeout: 12000 }

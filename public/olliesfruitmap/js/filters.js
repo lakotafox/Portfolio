@@ -65,6 +65,7 @@ export function initFilters(map, groups, store, markerFor) {
     refreshTaxon(taxon);
     renderStats();
     document.getElementById('pick-hint')?.remove(); // they picked — hint done
+    document.dispatchEvent(new CustomEvent('ofm:fruit-picked'));
   }
 
   // --- chips, generated from the taxa table into the two group containers

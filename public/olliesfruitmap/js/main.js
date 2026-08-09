@@ -8,6 +8,7 @@ import { initNearMe } from './nearme.js';
 import { initWalk } from './walk.js';
 import { initTitle } from './title.js';
 import { initFullscreen } from './fullscreen.js';
+import { initMrApple } from './mrapple.js';
 import { initMuteButton } from './sounds.js';
 
 initTitle();
@@ -16,6 +17,8 @@ initMuteButton(document.getElementById('mute-btn'));
 const map = createMap();
 const groups = createClusterGroups();
 initFullscreen(map);
+initMrApple();
+map.on('popupopen', () => document.dispatchEvent(new CustomEvent('ofm:popup')));
 
 try {
   const store = await loadTrees();

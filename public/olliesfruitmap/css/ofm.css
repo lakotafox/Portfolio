@@ -549,6 +549,67 @@ body.map-fullscreen .map-wrap {
 .trunk-fig { margin: 8px 10px 0; }
 .trunk-caption { font-size: 10px; color: #333; margin-top: 2px; }
 
+/* Mr Apple */
+.mrapple-wrap {
+  position: absolute;
+  z-index: 1300;
+  right: 8px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  max-width: min(320px, calc(100% - 16px));
+  animation: mrapple-in 0.45s ease-out;
+}
+.mrapple-wrap.leaving { animation: mrapple-out 0.45s ease-in forwards; }
+@keyframes mrapple-in {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes mrapple-out {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(50px); opacity: 0; }
+}
+#mrapple-img {
+  width: 96px;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.35));
+}
+.tutor-bubble {
+  padding: 10px 12px;
+  cursor: pointer;
+}
+.tutor-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  min-height: 2.9em;
+}
+.type-cursor { animation: cursor-blink2 0.9s steps(1) infinite; }
+@keyframes cursor-blink2 { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+.tutor-go {
+  margin-top: 8px;
+  min-width: 78px;
+  min-height: 32px;
+  font-weight: 700;
+}
+.tutor-skip {
+  display: block;
+  margin-top: 6px;
+  background: none;
+  border: none;
+  padding: 2px 0;
+  font-size: 11px;
+  color: var(--w95-title);
+  text-decoration: underline;
+  cursor: pointer;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mrapple-wrap, .mrapple-wrap.leaving { animation: none; }
+}
+
 /* footer / about */
 .site-footer { padding: 4px 6px 6px; }
 .about-fold summary { display: inline-block; font-size: 12px; list-style: none; }
