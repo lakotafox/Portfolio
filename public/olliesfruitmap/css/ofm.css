@@ -610,6 +610,32 @@ body.map-fullscreen .map-wrap {
   .mrapple-wrap, .mrapple-wrap.leaving { animation: none; }
 }
 
+.mrapple-welcome-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0, 0, 16, 0.45);
+}
+.mrapple-welcome { width: min(330px, 100%); }
+.mrapple-welcome-body {
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+#mrapple-welcome-img {
+  width: 110px;
+  height: auto;
+  image-rendering: pixelated;
+  margin-bottom: 8px;
+}
+.welcome-line { min-height: 3.2em; font-size: 14px; }
+
 /* footer / about */
 .site-footer { padding: 4px 6px 6px; }
 .about-fold summary { display: inline-block; font-size: 12px; list-style: none; }

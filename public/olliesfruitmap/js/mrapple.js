@@ -1,10 +1,13 @@
-// Mr Apple — the map's Floppy-style guide, mechanics lifted from
-// Gifsmith's welcome/tour: typewriter at 60 ms/char with a talk/talk2
-// mouth cycle and ▌ cursor; tapping the bubble while typing fast-forwards
-// the line; steps that need a manual advance get one ">>" button that
-// reads "next >>" once the line lands; action steps have NO button — they
-// advance when the user actually does the thing, and wrong turns get a
-// recovery line that waits for the fix.
+// Mr Apple — the map's Floppy-style guide, shaped like Gifsmith's:
+//
+// 1. WELCOME WINDOW first: a centered w95 window ("a msg 4 u") with big
+//    Mr Apple and a few typewriter intro lines. One button (">>" while
+//    typing, "next >>" between lines, "lets go!" on the last) and the
+//    "skip tutorial — i know what im doing!" link — the ONLY place skip
+//    exists.
+// 2. Then the in-app TOUR: a corner bubble with NO buttons — each line
+//    advances only when the user does the right thing; wrong turns get a
+//    recovery line that waits for the fix.
 import { REDUCED_MOTION } from './map.js';
 import { click } from './sounds.js';
 
@@ -13,46 +16,67 @@ const DIR = 'mrapple/';
 const TYPE_MS = 60;
 const MOUTH = ['talk', 'idle', 'talk2', 'idle'];
 
+const WELCOME_LINES = [
+  { line: 'hi!! im mr apple 🍎', frame: 'talk2' },
+  { line: 'this map knows where EVERY fruit tree in portland is — all 34,992 of em!!', frame: 'idle' },
+  { line: 'lemme show u how it works!', frame: 'squint' },
+];
+
+const TOUR = [
+  { line: 'first — tap the fruit u want up top! apples r a good start :)', frame: 'look' },
+  { line: 'yesss!! now tap 📍 near me n ill find the closest ones 2 u', frame: 'idle' },
+  { line: 'tap any tree 4 the deets! (the number bubbles zoom in when u tap em)', frame: 'idle' },
+  { line: 'those buttons walk u right to the tree!! tap 🧭 apple maps or 🗺️ google maps', frame: 'look2', orClick: '.dir-btn' },
+  { line: 'last thing — tap that ⤢ button up there!! it makes the map go fullscreen', frame: 'look2', orClick: '.fullscreen-btn' },
+  { line: 'thats it!! take a lil, leave a lot. ok im out — bye!!', frame: 'squint', farewell: true },
+];
+
 export function initMrApple() {
+  const welcome = document.getElementById('mrapple-welcome');
+  const wImg = document.getElementById('mrapple-welcome-img');
+  const wText = document.getElementById('mrapple-welcome-text');
+  const wCursor = document.getElementById('mrapple-welcome-cursor');
+  const goBtn = document.getElementById('mrapple-go');
+  const skipBtn = document.getElementById('mrapple-skip');
+
   const wrap = document.getElementById('mrapple');
   const img = document.getElementById('mrapple-img');
   const textEl = document.getElementById('mrapple-text');
   const cursorEl = document.getElementById('mrapple-cursor');
-  const goBtn = document.getElementById('mrapple-go');
-  const skipBtn = document.getElementById('mrapple-skip');
   const bubble = document.getElementById('mrapple-bubble');
 
   let timers = [];
   let typing = false;
   let fastForward = null;
+  let phase = 'off'; // 'welcome' | 'tour' | 'off'
+  let wLine = 0;
   let step = -1;
-  let running = false;
   let noLocation = false;
 
-  const setFrame = (f) => { img.src = `${DIR}${f}.png`; };
   const later = (fn, ms) => timers.push(setTimeout(fn, ms));
   function clearTimers() {
     for (const t of timers) { clearTimeout(t); clearInterval(t); }
     timers = [];
   }
 
-  function say(text, { frame = 'idle', onDone } = {}) {
+  // one typewriter, pointed at whichever surface is active
+  function say(text, frame, { imgEl, txtEl, curEl, onDone } = {}) {
     clearTimers();
     typing = true;
-    cursorEl.hidden = false;
+    curEl.hidden = false;
+    const setFrame = (f) => { imgEl.src = `${DIR}${f}.png`; };
 
     const finish = () => {
       clearTimers();
       typing = false;
       fastForward = null;
-      textEl.textContent = text;
-      cursorEl.hidden = true;
+      txtEl.textContent = text;
+      curEl.hidden = true;
       setFrame(frame);
       if (frame === 'idle') {
-        // blink while waiting
         timers.push(setInterval(() => {
           setFrame('blink');
-          later(() => running && setFrame(frame), 160);
+          later(() => phase !== 'off' && setFrame(frame), 160);
         }, 3200));
       }
       renderGo();
@@ -61,132 +85,153 @@ export function initMrApple() {
     fastForward = finish;
 
     if (REDUCED_MOTION) { finish(); return; }
-    textEl.textContent = '';
+    txtEl.textContent = '';
     let i = 0;
     timers.push(setInterval(() => {
-      textEl.textContent = text.slice(0, ++i);
+      txtEl.textContent = text.slice(0, ++i);
       if (i % 3 === 0) setFrame(MOUTH[((i / 3) | 0) % MOUTH.length]);
       if (i >= text.length) finish();
     }, TYPE_MS));
     renderGo();
   }
 
-  // --- the script -----------------------------------------------------
-  // manual: advance via the >> button; event: wait for the real action.
-  const steps = [
-    { line: 'hi!! im mr apple 🍎 welcome 2 ollies fruit map!', frame: 'talk2', manual: true },
-    { line: 'first — tap the fruit u want up top! apples r a good start :)', frame: 'look', event: 'fruit' },
-    { line: 'yesss!! now tap 📍 near me n ill find the closest ones 2 u', frame: 'idle', event: 'nearme' },
-    { line: 'tap any tree 4 the deets! (the number bubbles zoom in when u tap em)', frame: 'idle', event: 'popup' },
-    { line: 'see those buttons?? 🧭 apple maps or 🗺️ google maps will walk u right to the tree!', frame: 'look2', manual: true, orClick: '.dir-btn' },
-    { line: 'last thing — that ⤢ button up there makes the map go fullscreen!! tap it again 2 come back', frame: 'look2', manual: true, orClick: '.fullscreen-btn' },
-    { line: 'thats it!! take a lil, leave a lot. ok im out — bye!!', frame: 'squint', farewell: true },
-  ];
-
+  // --- welcome window --------------------------------------------------
   function renderGo() {
-    const s = steps[step];
-    if (!s || (!s.manual && !typing) || s.farewell) {
-      goBtn.hidden = !typing || !!s?.farewell;
-    } else {
-      goBtn.hidden = false;
-    }
-    goBtn.textContent = typing ? '>>' : 'next >>';
+    if (phase !== 'welcome') return;
+    goBtn.textContent = typing ? '>>' : wLine < WELCOME_LINES.length - 1 ? 'next >>' : 'lets go!';
   }
 
+  function showWelcomeLine(i) {
+    wLine = i;
+    const l = WELCOME_LINES[i];
+    say(l.line, l.frame, { imgEl: wImg, txtEl: wText, curEl: wCursor });
+  }
+
+  function openWelcome() {
+    phase = 'welcome';
+    noLocation = false;
+    welcome.hidden = false;
+    showWelcomeLine(0);
+  }
+
+  function closeWelcome() {
+    welcome.hidden = true;
+    clearTimers();
+  }
+
+  goBtn.addEventListener('click', () => {
+    if (phase !== 'welcome') return;
+    click();
+    if (typing) { fastForward?.(); return; }
+    if (wLine < WELCOME_LINES.length - 1) showWelcomeLine(wLine + 1);
+    else { closeWelcome(); startTour(); }
+  });
+  skipBtn.addEventListener('click', () => {
+    click();
+    closeWelcome();
+    end();
+  });
+
+  // --- the in-app tour (no buttons — actions advance it) ---------------
   function showStep(i) {
     step = i;
-    const s = steps[i];
-    skipBtn.hidden = !!s.farewell;
-    say(s.line, {
-      frame: s.frame,
-      onDone: s.farewell ? () => later(dismiss, 2600) : undefined,
+    const s = TOUR[i];
+    say(s.line, s.frame, {
+      imgEl: img,
+      txtEl: textEl,
+      curEl: cursorEl,
+      onDone: s.farewell ? () => later(dismissTour, 2600) : undefined,
     });
   }
 
-  function advance() {
-    if (!running) return;
-    if (step + 1 < steps.length) showStep(step + 1);
-  }
-
-  function dismiss() {
-    running = false;
-    clearTimers();
-    localStorage.setItem(KEY, '1');
-    wrap.classList.add('leaving');
-    setTimeout(() => { wrap.hidden = true; wrap.classList.remove('leaving'); }, REDUCED_MOTION ? 0 : 450);
-  }
-
-  // --- what they do drives the tour -----------------------------------
-  document.addEventListener('ofm:fruit-picked', () => {
-    if (running && step === 1) advance();
-  });
-  document.addEventListener('ofm:nearme-shown', () => {
-    if (running && step === 2) advance();
-  });
-  document.addEventListener('ofm:nearme-denied', () => {
-    if (!running || step !== 2) return;
-    noLocation = true;
-    step = 3; // the tap-a-tree action rescues them
-    say('no location? no worries!! just tap any tree u see on the map instead', { frame: 'idle' });
-  });
-  document.addEventListener('ofm:popup', () => {
-    if (!running) return;
-    if (step === 3) { noLocation = false; advance(); }
-  });
-  document.addEventListener('click', (e) => {
-    if (!running) return;
-    const t = e.target;
-    // wrong turn: near me / walk before any fruit is on
-    if (step === 1 && t.closest?.('#near-me-btn, #walk-btn')) {
-      say('not yet!! pick a fruit first — then i can find em near u', { frame: 'talk' });
-      return;
-    }
-    // doing the optional thing also advances its step
-    const s = steps[step];
-    if (s?.orClick && t.closest?.(s.orClick)) advance();
-  });
-
-  // tap the bubble while typing = fast-forward (Gifsmith's welcome-body click)
-  bubble.addEventListener('click', (e) => {
-    if (!running) return;
-    if (typing && !e.target.closest('button')) fastForward?.();
-  });
-  goBtn.addEventListener('click', () => {
-    if (!running) return;
-    click();
-    if (typing) { fastForward?.(); return; }
-    if (steps[step]?.manual) advance();
-  });
-  skipBtn.addEventListener('click', () => { click(); dismiss(); });
-
-  function start() {
-    if (running) return;
-    noLocation = false;
-    running = true;
+  function startTour() {
+    phase = 'tour';
     wrap.hidden = false;
     showStep(0);
   }
 
-  // first visit: appear once the title screen is gone
+  function advance() {
+    if (phase !== 'tour') return;
+    if (step + 1 < TOUR.length) showStep(step + 1);
+  }
+
+  function dismissTour() {
+    clearTimers();
+    wrap.classList.add('leaving');
+    setTimeout(() => { wrap.hidden = true; wrap.classList.remove('leaving'); }, REDUCED_MOTION ? 0 : 450);
+    end();
+  }
+
+  function end() {
+    phase = 'off';
+    localStorage.setItem(KEY, '1');
+  }
+
+  document.addEventListener('ofm:fruit-picked', () => {
+    if (phase === 'tour' && step === 0) advance();
+  });
+  document.addEventListener('ofm:nearme-shown', () => {
+    if (phase === 'tour' && step === 1) advance();
+  });
+  document.addEventListener('ofm:nearme-denied', () => {
+    if (phase !== 'tour' || step !== 1) return;
+    noLocation = true;
+    step = 2; // the tap-a-tree action rescues them
+    say('no location? no worries!! just tap any tree u see on the map instead', 'idle',
+      { imgEl: img, txtEl: textEl, curEl: cursorEl });
+  });
+  document.addEventListener('ofm:popup', () => {
+    if (phase === 'tour' && step === 2) { noLocation = false; advance(); }
+  });
+  // capture phase: Leaflet stops propagation on its controls/popups, so a
+  // bubble-phase listener would never see dir-btn or fullscreen-btn taps.
+  document.addEventListener('click', (e) => {
+    if (phase !== 'tour') return;
+    const t = e.target;
+    // wrong turn: near me / walk before any fruit is on
+    if (step === 0 && t.closest?.('#near-me-btn, #walk-btn')) {
+      say('not yet!! pick a fruit first — then i can find em near u', 'talk',
+        { imgEl: img, txtEl: textEl, curEl: cursorEl });
+      return;
+    }
+    const s = TOUR[step];
+    if (s?.orClick && t.closest?.(s.orClick)) advance();
+  }, true);
+
+  // tap the bubble while typing = fast-forward
+  bubble.addEventListener('click', (e) => {
+    if (phase === 'tour' && typing && !e.target.closest('button')) fastForward?.();
+  });
+  welcome.addEventListener('click', (e) => {
+    if (phase === 'welcome' && typing && !e.target.closest('button')) fastForward?.();
+  });
+
+  // --- entry points ----------------------------------------------------
+  function begin() {
+    if (phase !== 'off') return;
+    openWelcome();
+  }
+
   if (localStorage.getItem(KEY) !== '1') {
     const title = document.getElementById('title-screen');
     if (!title) {
-      setTimeout(start, 900);
+      setTimeout(begin, 900);
     } else {
       const watch = new MutationObserver(() => {
         if (!document.getElementById('title-screen')) {
           watch.disconnect();
-          setTimeout(start, 1100);
+          setTimeout(begin, 1100);
         }
       });
       watch.observe(document.body, { childList: true });
     }
   }
 
-  // replay any time from the titlebar
+  // replay any time from the titlebar apple
   document.getElementById('mrapple-btn').addEventListener('click', () => {
     click();
-    if (running) return dismiss();
-    start();
+    if (phase === 'tour') { dismissTour(); return; }
+    if (phase === 'welcome') { closeWelcome(); end(); return; }
+    begin();
   });
 }
