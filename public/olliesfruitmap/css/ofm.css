@@ -163,6 +163,14 @@ button { font-family: inherit; }
   font-size: 20px;
   color: var(--lime);
 }
+.menu-stats {
+  margin: 2px 0 0;
+  font-family: var(--font-pixel);
+  font-size: 17px;
+  color: var(--cyber-yellow);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+}
+.menu-stats b { font-weight: 400; color: #fff; }
 .menu-start {
   margin-top: 14px;
   padding: 12px 26px;
@@ -317,6 +325,37 @@ button { font-family: inherit; }
   font-size: 12px;
 }
 .leaflet-container { font-family: var(--font-system); }
+
+/* fullscreen map (CSS overlay — iOS has no Fullscreen API for elements) */
+body.map-fullscreen .map-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  margin: 0;
+  min-height: 0;
+  height: 100dvh;
+}
+.fullscreen-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--w95-face);
+  color: var(--ink);
+  border-top: 2px solid var(--w95-light);
+  border-left: 2px solid var(--w95-light);
+  border-right: 2px solid var(--w95-dark);
+  border-bottom: 2px solid var(--w95-dark);
+  cursor: pointer;
+  padding: 0;
+}
+.fullscreen-btn:active {
+  border-top: 2px solid var(--w95-dark);
+  border-left: 2px solid var(--w95-dark);
+  border-right: 2px solid var(--w95-light);
+  border-bottom: 2px solid var(--w95-light);
+}
 
 /* floating mini windows over the map */
 .w95-window-mini {

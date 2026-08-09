@@ -404,6 +404,16 @@ async function main() {
     });
   const kb = (path) => `${Math.round(statSync(path).size / 1024)} KB`;
 
+  // small metadata file the title screen reads for its stats line
+  writeFileSync(
+    join(dirname(OUT), 'meta.json'),
+    JSON.stringify({
+      generated: dataDate,
+      total: all.length,
+      taxa: Object.fromEntries(Object.entries(counts).map(([k, c]) => [k, c.total])),
+    })
+  );
+
   const MORE_DIR = join(dirname(OUT), 'more');
   mkdirSync(MORE_DIR, { recursive: true });
   writeFileSync(OUT, fc(stars));

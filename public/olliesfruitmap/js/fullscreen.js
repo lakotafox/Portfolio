@@ -2,6 +2,7 @@
 // CSS overlay (not the Fullscreen API, which iOS Safari doesn't support
 // for page elements). Esc also exits.
 import { REDUCED_MOTION } from './map.js';
+import { click } from './sounds.js';
 
 const L = window.L;
 
@@ -33,7 +34,7 @@ export function initFullscreen(map) {
       btn.type = 'button';
       render();
       L.DomEvent.disableClickPropagation(wrap);
-      L.DomEvent.on(btn, 'click', () => setFullscreen(!on));
+      L.DomEvent.on(btn, 'click', () => { click(); setFullscreen(!on); });
       return wrap;
     },
   });

@@ -16,6 +16,18 @@ export function initTitle() {
     return;
   }
 
+  // brag line: real numbers from the data build
+  fetch('data/meta.json')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((meta) => {
+      if (!meta) return;
+      const el = document.getElementById('title-stats');
+      el.innerHTML = `<b>${meta.total.toLocaleString()}</b> trees &middot; ` +
+        `<b>${Object.keys(meta.taxa).length}</b> kinds of fruit &middot; city open data`;
+      el.hidden = false;
+    })
+    .catch(() => {});
+
   // Add-to-home-screen helper: no tip when already running as an app.
   const standalone =
     window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
