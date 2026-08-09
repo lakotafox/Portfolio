@@ -357,6 +357,29 @@ body.map-fullscreen .map-wrap {
   border-bottom: 2px solid var(--w95-light);
 }
 
+.pick-hint {
+  position: absolute;
+  z-index: 1100;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 14px;
+  background: var(--cyber-yellow);
+  font-family: var(--font-pixel);
+  font-size: 19px;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: hint-bounce 1.1s ease-in-out infinite;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
+}
+@keyframes hint-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-7px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pick-hint { animation: none; }
+}
+
 /* floating mini windows over the map */
 .w95-window-mini {
   background: var(--w95-face);
@@ -397,6 +420,12 @@ body.map-fullscreen .map-wrap {
   font-size: 12px;
 }
 .nearby-panel li button:hover { background: var(--w95-light); }
+.nearby-empty {
+  padding: 10px 8px;
+  font-family: var(--font-pixel);
+  font-size: 15px;
+  text-align: center;
+}
 .nearby-panel .dist {
   flex: none;
   font-family: var(--font-pixel);

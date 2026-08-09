@@ -64,6 +64,12 @@ export function initNearMe(map, filters, openTree) {
           .slice(0, 10);
 
         list.innerHTML = '';
+        if (!nearest.length) {
+          const li = document.createElement('li');
+          li.className = 'nearby-empty';
+          li.textContent = 'pick a fruit up top first!! ☝';
+          list.appendChild(li);
+        }
         for (const { f, d } of nearest) {
           const li = document.createElement('li');
           const b = document.createElement('button');

@@ -1,14 +1,14 @@
 // Fruit chips: orchard stars on by default, the rest lazy-loaded on first
 // toggle. Owns which markers are on the map; exposes the visibility
 // predicate for the near-me list and activate() for the orchard walk.
-import { TAXA, BOOT_KEYS } from './taxa.js';
+import { TAXA } from './taxa.js';
 import { loadMoreTaxon } from './data.js';
 import { click } from './sounds.js';
 
 export function initFilters(map, groups, store, markerFor) {
   const strip = document.getElementById('stats-strip');
   const counter = document.getElementById('tree-counter');
-  const active = new Set(BOOT_KEYS);
+  const active = new Set(); // nothing on until they pick a fruit
   const chipByTaxon = {};
 
   const shown = {};
@@ -29,6 +29,10 @@ export function initFilters(map, groups, store, markerFor) {
     const total = Object.values(shown).reduce((a, b) => a + b, 0);
     // odometer-style counter, like a 1997 visitor counter
     counter.textContent = String(total).padStart(6, '0');
+    if (!active.size) {
+      strip.innerHTML = '<span class="stat">no fruit selected — pick one up top!</span>';
+      return;
+    }
     const parts = [];
     for (const taxon of active) {
       parts.push(
@@ -60,6 +64,7 @@ export function initFilters(map, groups, store, markerFor) {
     map.addLayer(groups[taxon]);
     refreshTaxon(taxon);
     renderStats();
+    document.getElementById('pick-hint')?.remove(); // they picked — hint done
   }
 
   // --- chips, generated from the taxa table into the two group containers
