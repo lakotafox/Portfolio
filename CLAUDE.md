@@ -77,3 +77,17 @@ Grinding through the 10-course IBM AI Developer cert on Coursera. Goal is to fin
 - `/src/components/Navigation.jsx` - nav bar
 - `/public/certs/` - PDF certificates
 - `/index.html` - SEO meta tags
+
+## Netlify redirects GOTCHA (2026-08-08)
+- netlify.toml [[redirects]] changes were SILENTLY IGNORED by Netlify's
+  serving layer starting ~mid-July 2026 (builds read the toml fine; the
+  live rule set stayed stale — puddl3-api proxy, reallycoolhair deep
+  links, and new rules all fell through to the SPA catch-all).
+- Fix: redirect rules now live in `public/_redirects` (ships inside the
+  publish dir, deploys atomically, takes precedence). EDIT THAT FILE, not
+  netlify.toml, for routing changes.
+- _redirects trap: a rule for `/x` ALSO matches `/x/`, so a forced
+  `/x -> /x/ 302!` loops forever. Don't add clean-URL rules for static
+  app folders — Netlify's automatic trailing-slash redirect handles them.
+- Gifsmith deployed at /gifsmith/ (app in public/gifsmith/, search proxy
+  function netlify/functions/gifcities-search.js, card in Projects.jsx).
