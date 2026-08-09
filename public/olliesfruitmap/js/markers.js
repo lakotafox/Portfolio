@@ -8,7 +8,7 @@ const L = window.L;
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
-function popupHtml(p) {
+function popupHtml(p, lat, lon) {
   const t = TAXA[p.taxon];
   const rows = [];
   if (t.ripen) rows.push(['ripens', t.ripen]);
@@ -33,6 +33,10 @@ function popupHtml(p) {
       </div>
       ${p.address ? `<p class="addr">${esc(p.address)}</p>` : ''}
       ${p.notes ? `<p class="note">${esc(p.notes)}</p>` : ''}
+      <div class="dir-links">
+        <a class="w95-btn dir-btn" href="https://maps.apple.com/?daddr=${lat},${lon}&dirflg=w" target="_blank" rel="noopener noreferrer">🧭 Apple Maps</a>
+        <a class="w95-btn dir-btn" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=walking" target="_blank" rel="noopener noreferrer">🗺️ Google Maps</a>
+      </div>
       ${p.portlandwild_url ? `<a class="wild-link w95-btn" href="${esc(p.portlandwild_url)}" target="_blank" rel="noopener noreferrer">More on Portland Wild →</a>` : ''}
       ${trunkFigure(p.dbh_in)}
     </div>`;
@@ -50,6 +54,6 @@ export function makeMarker(feature) {
     fillOpacity: 0.85,
     className: heritage ? 'heritage-ring' : 'tree-marker',
   });
-  marker.bindPopup(popupHtml(p), { maxWidth: 300 });
+  marker.bindPopup(popupHtml(p, lat, lon), { maxWidth: 300 });
   return marker;
 }

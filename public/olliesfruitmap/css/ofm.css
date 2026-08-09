@@ -527,6 +527,19 @@ body.map-fullscreen .map-wrap {
 .data-rows dd { margin: 0; }
 .popup .addr { margin: 6px 10px 0; color: #333; }
 .popup .note { margin: 6px 10px 0; font-size: 11px; color: #333; }
+.dir-links {
+  display: flex;
+  gap: 6px;
+  margin: 9px 10px 0;
+}
+.dir-btn {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  padding: 6px 4px;
+  white-space: nowrap;
+}
 .wild-link {
   display: inline-block;
   margin: 8px 10px 0;
