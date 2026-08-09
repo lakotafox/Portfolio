@@ -36,6 +36,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { margin: 0; height: 100%; }
 html { height: 100dvh; }
 body {
@@ -112,28 +113,20 @@ button { font-family: inherit; }
   justify-content: center;
   padding: 16px;
   background-color: #000010;
-  background-image: url('../title-pattern.gif');
-  background-repeat: repeat;
-  image-rendering: pixelated;
+  background-image: url('../assets/title-bg.jpg'), url('../title-pattern.gif');
+  background-size: cover, auto;
+  background-position: center, 0 0;
+  background-repeat: no-repeat, repeat;
+  image-rendering: auto;
   overflow: hidden;
 }
 .menu-backdrop::before {
-  /* dim the pattern/video so the pixel type pops */
+  /* gentle dim so the pixel type pops off the artwork */
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 16, 0.72);
+  background: rgba(0, 0, 16, 0.3);
 }
-#title-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.6s;
-}
-#title-video.ready { opacity: 1; }
 .menu-screen {
   position: relative;
   z-index: 1;
@@ -161,8 +154,8 @@ button { font-family: inherit; }
   animation: heart-beat 1.2s ease-in-out infinite;
 }
 @keyframes heart-beat {
-  0%, 100% { transform: scale(1) rotate(90deg); }
-  50% { transform: scale(1.25) rotate(90deg); }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.25); }
 }
 .menu-tagline {
   margin: 0;
@@ -181,6 +174,39 @@ button { font-family: inherit; }
   0%, 60% { background: var(--w95-face); }
   61%, 100% { background: var(--cyber-yellow); }
 }
+.menu-a2hs {
+  margin: 18px 0 0;
+  max-width: 300px;
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  line-height: 1.35;
+  color: var(--cyber-yellow);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+}
+.menu-a2hs .a2hs-how {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 4px;
+  font: inherit;
+  color: var(--lime);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.a2hs-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 16, 0.6);
+}
+.a2hs-dialog { width: min(330px, 100%); }
+.a2hs-body { padding: 10px 12px 12px; font-size: 13px; line-height: 1.5; }
+.a2hs-body p { margin: 0 0 8px; }
+.a2hs-note { color: #333; font-size: 11px; }
 .menu-caution {
   position: absolute;
   left: 0;

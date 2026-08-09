@@ -1,7 +1,7 @@
-// Title screen: pixel title + blinking START over a tree background.
-// The backdrop holds a <video> slot (assets/title-bg.mp4, optional) with a
-// tiled-pattern fallback; START whooshes the whole screen away into the
-// map. Skipped on same-session reloads so a mid-walk refresh doesn't
+// Title screen: pixel title + blinking START over the orchard artwork
+// (assets/title-bg.jpg, tiled-pattern fallback underneath), plus the
+// add-to-home-screen helper. START whooshes the whole screen away into
+// the map. Skipped on same-session reloads so a mid-walk refresh doesn't
 // replay it.
 import { REDUCED_MOTION } from './map.js';
 import { menuOpen } from './sounds.js';
@@ -10,18 +10,25 @@ const KEY = 'ofm-started';
 
 export function initTitle() {
   const screen = document.getElementById('title-screen');
-  const video = document.getElementById('title-video');
 
   if (sessionStorage.getItem(KEY) === '1') {
     screen.remove();
     return;
   }
 
-  // Only surface the video layer if the file actually exists (it lands
-  // later than the code); the pattern fallback is always behind it.
-  if (video) {
-    video.addEventListener('canplay', () => video.classList.add('ready'), { once: true });
-    video.addEventListener('error', () => video.remove(), { once: true });
+  // Add-to-home-screen helper: no tip when already running as an app.
+  const standalone =
+    window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if (standalone) {
+    document.getElementById('a2hs-tip').remove();
+  } else {
+    const overlay = document.getElementById('a2hs-overlay');
+    document.getElementById('a2hs-open').addEventListener('click', () => {
+      overlay.hidden = false;
+    });
+    document.getElementById('a2hs-close').addEventListener('click', () => {
+      overlay.hidden = true;
+    });
   }
 
   document.getElementById('start-btn').addEventListener('click', () => {

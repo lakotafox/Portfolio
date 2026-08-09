@@ -8,7 +8,13 @@
   <meta name="description" content="Every apple, fig, plum, cherry, pear, persimmon and nut tree in Portland, Oregon on one cute retro map — built from City of Portland open data." />
   <meta property="og:title" content="Ollie's fruit map <3" />
   <meta property="og:description" content="Every fruit tree in Portland, on one Win95 map. Find fruit near you." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🍎</text></svg>" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon-192.png" type="image/png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <!-- Add to Home Screen = full screen, no browser chrome -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Fruit map" />
   <link rel="preload" href="fonts/vt323.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
   <link rel="stylesheet" href="vendor/markercluster/MarkerCluster.css" />
@@ -17,17 +23,32 @@
 </head>
 <body>
 
-  <!-- Title screen: video slot (assets/title-bg.mp4, optional) over a tiled
-       pattern fallback. START whooshes it away; skipped on session reloads. -->
+  <!-- Title screen: orchard artwork over a tiled pattern fallback.
+       START whooshes it away; skipped on session reloads. -->
   <div id="title-screen" class="menu-backdrop">
-    <video id="title-video" autoplay muted loop playsinline src="assets/title-bg.mp4"></video>
     <div class="menu-screen">
       <h1 class="menu-title">Ollie&#39;s<br>fruit map</h1>
       <div class="menu-heart">&lt;3</div>
       <p class="menu-tagline">every fruit tree in portland &middot; 4 u</p>
       <button class="w95-btn menu-start" id="start-btn">START</button>
+      <p class="menu-a2hs" id="a2hs-tip">tip: Share &rarr; Add to Home Screen —
+        the map goes fullscreen and you get a lil apple icon!
+        <button class="a2hs-how" id="a2hs-open" type="button">show me how</button></p>
     </div>
     <div class="menu-caution" aria-hidden="true"></div>
+    <div class="a2hs-overlay" id="a2hs-overlay" hidden>
+      <div class="w95-window-mini a2hs-dialog">
+        <div class="w95-titlebar"><span>🍎 add 2 home screen</span>
+          <button class="w95-btn title-btn" id="a2hs-close" aria-label="Close">×</button>
+        </div>
+        <div class="a2hs-body">
+          <p><b>1.</b> tap <b>Share</b> at the bottom of Safari (the square with the arrow)</p>
+          <p><b>2.</b> scroll down, tap <b>"Add to Home Screen"</b></p>
+          <p><b>3.</b> thats it — the fruit map lives on your phone now! 🍎</p>
+          <p class="a2hs-note">on Android: browser menu &rarr; "Install app" / "Add to Home screen"</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="desktop">

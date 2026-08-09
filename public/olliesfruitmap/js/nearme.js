@@ -70,7 +70,12 @@ export function initNearMe(map, filters, openTree) {
           b.innerHTML = `${f.properties.common}${
             f.properties.heritage_number ? ' ★' : ''
           } <span class="dist">${fmtDist(d)}</span>`;
-          b.addEventListener('click', () => openTree(f));
+          b.addEventListener('click', () => {
+            click();
+            // small screens: the panel would sit on top of the popup
+            if (window.innerWidth < 700) panel.hidden = true;
+            openTree(f);
+          });
           li.appendChild(b);
           list.appendChild(li);
         }

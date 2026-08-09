@@ -7,8 +7,8 @@ import { click } from './sounds.js';
 const L = window.L;
 
 // Densest orchard cell — printed by the data pipeline; update when re-fetching.
-const PATCH = { south: 45.559, north: 45.564, west: -122.6, east: -122.595 };
-const FALLBACK_CENTER = [45.5615, -122.5975];
+const PATCH = { south: 45.5950, north: 45.6000, west: -122.6650, east: -122.6600 };
+const FALLBACK_CENTER = [45.5975, -122.6625];
 
 export function initWalk(map, store) {
   const btn = document.getElementById('walk-btn');
