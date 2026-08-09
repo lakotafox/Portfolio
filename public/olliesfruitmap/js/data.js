@@ -1,8 +1,6 @@
 // Data store: orchard stars load at boot; the rest lazy-load on first
-// toggle. Ages are precomputed per feature (properties._age) so the
-// size/age sliders filter on plain numbers.
+// toggle.
 import { TAXA, BOOT_KEYS } from './taxa.js';
-import { ageInfo } from './age.js';
 
 async function fetchGeo(url) {
   const res = await fetch(url);
@@ -13,9 +11,7 @@ async function fetchGeo(url) {
 function ingest(store, geojson) {
   for (const feature of geojson.features) {
     const list = store.byTaxon[feature.properties.taxon];
-    if (!list) continue;
-    feature.properties._age = ageInfo(feature.properties);
-    list.push(feature);
+    if (list) list.push(feature);
   }
 }
 

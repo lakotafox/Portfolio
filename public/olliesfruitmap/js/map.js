@@ -33,6 +33,7 @@ export function createClusterGroups() {
   for (const [taxon, t] of Object.entries(TAXA)) {
     groups[taxon] = L.markerClusterGroup({
       maxClusterRadius: 44,
+      disableClusteringAtZoom: 18, // walking distance — show every tree
       showCoverageOnHover: false,
       chunkedLoading: true,
       iconCreateFunction(cluster) {

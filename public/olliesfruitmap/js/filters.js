@@ -1,6 +1,6 @@
-// Fruit chips (orchard stars on by default, the rest lazy-loaded on first
-// toggle) + min-trunk / min-age sliders. Owns which markers are on the
-// map; exposes the visibility predicate for the near-me list.
+// Fruit chips: orchard stars on by default, the rest lazy-loaded on first
+// toggle. Owns which markers are on the map; exposes the visibility
+// predicate for the near-me list and activate() for the orchard walk.
 import { TAXA, BOOT_KEYS } from './taxa.js';
 import { loadMoreTaxon } from './data.js';
 import { click } from './sounds.js';
@@ -9,14 +9,7 @@ export function initFilters(map, groups, store, markerFor) {
   const strip = document.getElementById('stats-strip');
   const counter = document.getElementById('tree-counter');
   const active = new Set(BOOT_KEYS);
-  let minDbh = 0;
-  let minAge = 0;
-
-  const passes = (p) => {
-    if (minDbh && !(p.dbh_in >= minDbh)) return false;
-    if (minAge && !(p._age && p._age.years >= minAge)) return false;
-    return true;
-  };
+  const chipByTaxon = {};
 
   const shown = {};
 
@@ -27,10 +20,7 @@ export function initFilters(map, groups, store, markerFor) {
       shown[taxon] = 0;
       return;
     }
-    const markers = [];
-    for (const f of store.byTaxon[taxon]) {
-      if (passes(f.properties)) markers.push(markerFor(f));
-    }
+    const markers = store.byTaxon[taxon].map(markerFor);
     group.addLayers(markers);
     shown[taxon] = markers.length;
   }
@@ -48,8 +38,27 @@ export function initFilters(map, groups, store, markerFor) {
     strip.innerHTML = parts.join('');
   }
 
-  function refreshAll() {
-    for (const taxon of Object.keys(groups)) refreshTaxon(taxon);
+  async function turnOn(taxon) {
+    const chip = chipByTaxon[taxon];
+    if (active.has(taxon)) return;
+    if (!store.loaded.has(taxon)) {
+      chip.disabled = true;
+      chip.classList.add('loading');
+      try {
+        await loadMoreTaxon(store, taxon);
+      } catch (err) {
+        console.error(err);
+        chip.title = 'Could not load this fruit — tap to retry';
+        return;
+      } finally {
+        chip.disabled = false;
+        chip.classList.remove('loading');
+      }
+    }
+    active.add(taxon);
+    chip.setAttribute('aria-pressed', 'true');
+    map.addLayer(groups[taxon]);
+    refreshTaxon(taxon);
     renderStats();
   }
 
@@ -61,8 +70,9 @@ export function initFilters(map, groups, store, markerFor) {
     chip.dataset.taxon = taxon;
     chip.setAttribute('aria-pressed', String(active.has(taxon)));
     chip.innerHTML = `<span class="chip-emoji">${t.emoji}</span><span class="chip-label">${t.label}</span>`;
+    chipByTaxon[taxon] = chip;
 
-    chip.addEventListener('click', async () => {
+    chip.addEventListener('click', () => {
       if (chip.disabled) return;
       click();
       if (active.has(taxon)) {
@@ -73,25 +83,7 @@ export function initFilters(map, groups, store, markerFor) {
         renderStats();
         return;
       }
-      if (!store.loaded.has(taxon)) {
-        chip.disabled = true;
-        chip.classList.add('loading');
-        try {
-          await loadMoreTaxon(store, taxon);
-        } catch (err) {
-          console.error(err);
-          chip.title = 'Could not load this fruit — tap to retry';
-          return;
-        } finally {
-          chip.disabled = false;
-          chip.classList.remove('loading');
-        }
-      }
-      active.add(taxon);
-      chip.setAttribute('aria-pressed', 'true');
-      map.addLayer(groups[taxon]);
-      refreshTaxon(taxon);
-      renderStats();
+      turnOn(taxon);
     });
     return chip;
   }
@@ -102,29 +94,13 @@ export function initFilters(map, groups, store, markerFor) {
     (TAXA[taxon].group === 'orchard' ? orchardBox : moreBox).appendChild(makeChip(taxon));
   }
 
-  // --- sliders
-  let debounce;
-  function bindSlider(inputId, labelId, format, apply) {
-    const input = document.getElementById(inputId);
-    const label = document.getElementById(labelId);
-    input.addEventListener('input', () => {
-      label.textContent = format(Number(input.value));
-      clearTimeout(debounce);
-      debounce = setTimeout(() => {
-        apply(Number(input.value));
-        refreshAll();
-      }, 150);
-    });
-  }
-  bindSlider('min-dbh', 'min-dbh-label', (v) => (v ? `≥ ${v}"` : 'any'), (v) => (minDbh = v));
-  bindSlider('min-age', 'min-age-label', (v) => (v ? `≥ ${v} yrs` : 'any'), (v) => (minAge = v));
-
   for (const taxon of active) map.addLayer(groups[taxon]);
-  refreshAll();
+  for (const taxon of Object.keys(groups)) refreshTaxon(taxon);
+  renderStats();
 
   return {
-    isVisible: (f) => active.has(f.properties.taxon) && passes(f.properties),
-    visibleFeatures: () =>
-      [...active].flatMap((taxon) => store.byTaxon[taxon].filter((f) => passes(f.properties))),
+    isVisible: (f) => active.has(f.properties.taxon),
+    visibleFeatures: () => [...active].flatMap((taxon) => store.byTaxon[taxon]),
+    activate: turnOn,
   };
 }

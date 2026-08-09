@@ -42,7 +42,7 @@ try {
   };
 
   initNearMe(map, filters, openTree);
-  initWalk(map, store);
+  initWalk(map, store, filters.activate);
 
   const when = store.generated ? ` · data ${store.generated}` : '';
   document.getElementById('status-note').textContent = `city open data${when}`;
