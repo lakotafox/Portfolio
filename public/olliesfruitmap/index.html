@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#008080" />
+  <title>Ollie's fruit map &lt;3 — every fruit tree in Portland</title>
+  <meta name="description" content="Every apple, fig, plum, cherry, pear, persimmon and nut tree in Portland, Oregon on one cute retro map — built from City of Portland open data." />
+  <meta property="og:title" content="Ollie's fruit map <3" />
+  <meta property="og:description" content="Every fruit tree in Portland, on one Win95 map. Find fruit near you." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🍎</text></svg>" />
+  <link rel="preload" href="fonts/vt323.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="vendor/markercluster/MarkerCluster.css" />
+  <link rel="stylesheet" href="vendor/markercluster/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="css/ofm.css" />
+</head>
+<body>
+
+  <!-- Title screen: video slot (assets/title-bg.mp4, optional) over a tiled
+       pattern fallback. START whooshes it away; skipped on session reloads. -->
+  <div id="title-screen" class="menu-backdrop">
+    <video id="title-video" autoplay muted loop playsinline src="assets/title-bg.mp4"></video>
+    <div class="menu-screen">
+      <h1 class="menu-title">Ollie&#39;s<br>fruit map</h1>
+      <div class="menu-heart">&lt;3</div>
+      <p class="menu-tagline">every fruit tree in portland &middot; 4 u</p>
+      <button class="w95-btn menu-start" id="start-btn">START</button>
+    </div>
+    <div class="menu-caution" aria-hidden="true"></div>
+  </div>
+
+  <div class="desktop">
+    <div class="w95-window">
+      <div class="w95-titlebar">
+        <span class="title-text">🍎 Ollie&#39;s fruit map &lt;3</span>
+        <span class="title-btns">
+          <button class="w95-btn title-btn" id="mute-btn">🔊</button>
+        </span>
+      </div>
+
+      <div class="toolbar">
+        <div class="chip-group" role="group" aria-label="Orchard stars">
+          <span class="chip-group-label">the orchard</span>
+          <div class="chips" id="chips-orchard"></div>
+        </div>
+        <div class="chip-group" role="group" aria-label="More fruit and nuts">
+          <span class="chip-group-label">more fruit &amp; nuts</span>
+          <div class="chips" id="chips-more"></div>
+        </div>
+        <div class="control-row">
+          <button class="w95-btn ctl-btn" id="near-me-btn">📍 Near me</button>
+          <button class="w95-btn ctl-btn" id="walk-btn">🧺 Ollie's orchard walk</button>
+          <details class="filters-fold">
+            <summary class="w95-btn ctl-btn">🔧 Filters</summary>
+            <div class="sliders w95-raised">
+              <label class="slider">
+                <span class="slider-name">min trunk</span>
+                <input type="range" id="min-dbh" min="0" max="40" step="2" value="0" />
+                <span class="slider-value" id="min-dbh-label">any</span>
+              </label>
+              <label class="slider">
+                <span class="slider-name">min age</span>
+                <input type="range" id="min-age" min="0" max="120" step="10" value="0" />
+                <span class="slider-value" id="min-age-label">any</span>
+              </label>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <main class="map-wrap">
+        <div id="map" class="w95-sunken" aria-label="Map of fruit trees in Portland"></div>
+
+        <div class="nearby-panel w95-window-mini" id="nearby-panel" hidden>
+          <div class="w95-titlebar"><span>🧭 Closest fruit</span>
+            <button class="w95-btn title-btn" id="nearby-close" aria-label="Close nearby list">×</button>
+          </div>
+          <ol id="nearby-list"></ol>
+        </div>
+
+        <div class="walk-card w95-window-mini" id="walk-card" hidden>
+          <div class="w95-titlebar"><span>🧺 Ollie's orchard walk</span>
+            <button class="w95-btn title-btn" id="walk-close" aria-label="Close walk info">×</button>
+          </div>
+          <p>The thickest patch of apple and fig trees in the whole city —
+          wander block to block and see how many kinds of fruit you can spot
+          from the sidewalk. Best in late summer. Bring a basket, take only
+          what you'll eat, and always ask if a tree's in someone's yard.</p>
+        </div>
+      </main>
+
+      <div class="statusbar">
+        <span class="w95-sunken cell counter-cell">🌳 <span id="tree-counter">000000</span></span>
+        <span class="w95-sunken cell stats-cell" id="stats-strip" aria-live="polite">
+          <span class="stat">loading the trees…</span>
+        </span>
+        <span class="w95-sunken cell note-cell" id="status-note">city open data</span>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <details class="w95-window-mini about-fold">
+        <summary class="w95-btn">ℹ️ about this map — data &amp; fruit-picking manners</summary>
+        <div class="about-body">
+          <p>Tree locations come from three City of Portland Urban Forestry open
+          datasets: the
+          <a href="https://gis-pdx.opendata.arcgis.com/datasets/heritage-trees" rel="noopener">Heritage Trees</a>
+          registry, the
+          <a href="https://gis-pdx.opendata.arcgis.com/datasets/PDX::street-tree-inventory-active-records" rel="noopener">Street Tree Inventory</a>,
+          and the
+          <a href="https://gis-pdx.opendata.arcgis.com/datasets/parks-tree-inventory" rel="noopener">Parks Tree Inventory</a>.
+          Apples and figs load first; the other seven groups load when you tap
+          them on. Ornamental look-alikes that don't fruit (callery pear,
+          flowering cherries, crabapples) are filtered out — but "flowering
+          plum" stays, because its little cherry plums are real and delicious.</p>
+          <p><strong>Manners:</strong> street trees belong to everyone, yard
+          trees belong to somebody — knock and ask, most people are thrilled to
+          share. Never eat anything you can't identify yourself. Take a little,
+          leave a lot.</p>
+          <p><strong>Caveat:</strong> much of the street inventory was collected
+          by volunteers between 2010 and 2019; trees grow and some are gone.
+          Ages marked "est." are estimated from trunk size. A tree marked
+          "old orchard survivor" likely predates the neighborhood around it.</p>
+          <p>Heritage tree write-ups link to
+          <a href="https://portlandwild.com" rel="noopener">Portland Wild</a>.
+          Basemap © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>
+          contributors, tiles by <a href="https://carto.com/attributions" rel="noopener">CARTO</a>.
+          Built with <a href="https://leafletjs.com" rel="noopener">Leaflet</a>
+          and <a href="https://claude.com/claude-code" rel="noopener">Claude Code</a>
+          · <a href="https://lakotafox.com" rel="noopener">lakotafox.com</a></p>
+        </div>
+      </details>
+    </footer>
+  </div>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="vendor/markercluster/leaflet.markercluster.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

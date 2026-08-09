@@ -29,6 +29,15 @@ const projectsData = [
     featured: true
   },
   {
+    id: 'olliesfruitmap',
+    title: "Ollie's Fruit Map <3",
+    description: "Every fruit and nut tree in Portland on one cute Win95 map — 30,000+ apples, figs, plums, cherries, pears, persimmons and walnuts from City of Portland open data. Tap 'Near me' to find fruit around you, filter by trunk size and age, and meet the old orchard survivors that predate their neighborhoods. Click sounds included.",
+    tag: 'Open Data',
+    link: '/olliesfruitmap/',
+    image: '/project-images/olliesfruitmap.png',
+    featured: true
+  },
+  {
     id: 'redwoods-map',
     title: 'PDX Redwoods Map',
     description: 'Interactive map of every redwood in Portland plus 19,000+ native giants — Douglas-firs, white oaks, redcedars — from City of Portland open data. Filter by species, size, and age; find trees that predate the city itself.',
