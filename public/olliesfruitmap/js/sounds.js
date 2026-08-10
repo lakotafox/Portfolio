@@ -105,7 +105,7 @@ export function setMuted(next) {
 
 export function initMuteButton(btn) {
   const render = () => {
-    btn.textContent = muted ? '🔇' : '🔊';
+    btn.innerHTML = `<img class="px-icon" src="icons/sound-${muted ? 'off' : 'on'}.png" alt="" width="14" height="14">`;
     btn.setAttribute('aria-label', muted ? 'Unmute sounds' : 'Mute sounds');
     btn.setAttribute('aria-pressed', String(muted));
   };

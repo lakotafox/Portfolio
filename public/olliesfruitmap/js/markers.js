@@ -1,6 +1,6 @@
 // Marker factory + popup HTML. Heritage trees get a bigger, ringed marker.
 import { ageInfo, predatesOrchardEra, ORCHARD_ERA_YEAR } from './age.js';
-import { TAXA } from './taxa.js';
+import { TAXA, pxIcon } from './taxa.js';
 
 const L = window.L;
 
@@ -22,7 +22,7 @@ function popupHtml(p, lat, lon) {
 
   return `
     <div class="popup">
-      <div class="popup-titlebar w95-titlebar"><span>${t.emoji} ${esc(p.common)}</span></div>
+      <div class="popup-titlebar w95-titlebar"><span>${pxIcon(t.icon, 14)} ${esc(p.common)}</span></div>
       ${p.heritage_number ? `<span class="heritage-badge">★ Heritage tree #${p.heritage_number}</span>` : ''}
       ${p.heritage_status === 'Merit' ? '<span class="heritage-badge">Tree of merit</span>' : ''}
       ${predatesOrchardEra(age) ? `<span class="heritage-badge age-badge">Old orchard survivor (pre-${ORCHARD_ERA_YEAR} est.)</span>` : ''}
@@ -33,8 +33,8 @@ function popupHtml(p, lat, lon) {
       ${p.address ? `<p class="addr">${esc(p.address)}</p>` : ''}
       ${p.notes ? `<p class="note">${esc(p.notes)}</p>` : ''}
       <div class="dir-links">
-        <a class="w95-btn dir-btn" href="https://maps.apple.com/?daddr=${lat},${lon}&dirflg=w" target="_blank" rel="noopener noreferrer">🧭 Apple Maps</a>
-        <a class="w95-btn dir-btn" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=walking" target="_blank" rel="noopener noreferrer">🗺️ Google Maps</a>
+        <a class="w95-btn dir-btn" href="https://maps.apple.com/?daddr=${lat},${lon}&dirflg=w" target="_blank" rel="noopener noreferrer">${pxIcon('compass', 13)} Apple Maps</a>
+        <a class="w95-btn dir-btn" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=walking" target="_blank" rel="noopener noreferrer">${pxIcon('map', 13)} Google Maps</a>
       </div>
       ${p.portlandwild_url ? `<a class="wild-link w95-btn" href="${esc(p.portlandwild_url)}" target="_blank" rel="noopener noreferrer">More on Portland Wild →</a>` : ''}
     </div>`;

@@ -39,13 +39,13 @@
     </div>
     <div class="a2hs-overlay" id="a2hs-overlay" hidden>
       <div class="w95-window-mini a2hs-dialog">
-        <div class="w95-titlebar"><span>🍎 add 2 home screen</span>
+        <div class="w95-titlebar"><span><img class="px-icon" src="icons/apple.png" alt="" width="13" height="13"> add 2 home screen</span>
           <button class="w95-btn title-btn" id="a2hs-close" aria-label="Close">×</button>
         </div>
         <div class="a2hs-body">
           <p><b>1.</b> tap <b>Share</b> at the bottom of Safari (the square with the arrow)</p>
           <p><b>2.</b> scroll down, tap <b>"Add to Home Screen"</b></p>
-          <p><b>3.</b> That's it — the fruit map lives on your phone now! 🍎</p>
+          <p><b>3.</b> That's it — the fruit map lives on your phone now! <img class="px-icon" src="icons/apple.png" alt="" width="13" height="13"></p>
           <p class="a2hs-note">On Android: browser menu &rarr; "Install app" / "Add to Home screen"</p>
         </div>
       </div>
@@ -55,10 +55,10 @@
   <div class="desktop">
     <div class="w95-window">
       <div class="w95-titlebar">
-        <span class="title-text">🍎 Ollie&#39;s fruit map &lt;3</span>
+        <span class="title-text"><img class="px-icon" src="icons/apple.png" alt="" width="14" height="14"> Ollie&#39;s fruit map &lt;3</span>
         <span class="title-btns">
-          <button class="w95-btn title-btn" id="mrapple-btn" aria-label="Mr Apple tutorial">🍎</button>
-          <button class="w95-btn title-btn" id="mute-btn">🔊</button>
+          <button class="w95-btn title-btn" id="mrapple-btn" aria-label="Mr Apple tutorial"><img class="px-icon" src="mrapple/idle.png" alt="" width="12" height="14"></button>
+          <button class="w95-btn title-btn" id="mute-btn"></button>
         </span>
       </div>
 
@@ -72,26 +72,26 @@
           <div class="chips" id="chips-more"></div>
         </div>
         <div class="control-row">
-          <button class="w95-btn ctl-btn" id="near-me-btn">📍 Near me</button>
-          <button class="w95-btn ctl-btn" id="walk-btn">🧺 Ollie's orchard walk</button>
+          <button class="w95-btn ctl-btn" id="near-me-btn"><img class="px-icon" src="icons/pin.png" alt="" width="13" height="13"> Near me</button>
+          <button class="w95-btn ctl-btn" id="walk-btn"><img class="px-icon" src="icons/basket.png" alt="" width="13" height="13"> Ollie's orchard walk</button>
         </div>
       </div>
 
       <main class="map-wrap">
         <div id="map" class="w95-sunken" aria-label="Map of fruit trees in Portland"></div>
 
-        <div class="pick-hint w95-raised" id="pick-hint" aria-hidden="true">☝ select the fruits you&#39;re looking for to get started!</div>
+        <div class="pick-hint w95-raised" id="pick-hint" aria-hidden="true"><img class="px-icon" src="icons/hand.png" alt="" width="14" height="14"> select the fruits you&#39;re looking for to get started!</div>
           <ol id="nearby-list"></ol>
         </div>
 
         <div class="walk-card w95-window-mini" id="walk-card" hidden>
-          <div class="w95-titlebar"><span>🧺 Ollie's orchard walk</span>
+          <div class="w95-titlebar"><span><img class="px-icon" src="icons/basket.png" alt="" width="13" height="13"> Ollie's orchard walk</span>
             <button class="w95-btn title-btn" id="walk-close" aria-label="Close walk info">×</button>
           </div>
           <p><b>Columbia Children's Arboretum</b>, N Portland — a real old
           orchard: 40+ apple trees hiding in one little park, the thickest
           patch in the whole city. Follow the dotted line from the
-          <b>🍎 start here</b> pin and see how many you can spot. Best in
+          <b><img class="px-icon" src="icons/apple.png" alt="" width="12" height="12"> start here</b> pin and see how many you can spot. Best in
           late summer. Take a little, leave a lot.</p>
         </div>
         <div class="mrapple-wrap" id="mrapple" hidden>
@@ -103,7 +103,7 @@
 
         <div class="mrapple-welcome-overlay" id="mrapple-welcome" hidden>
           <div class="w95-window-mini mrapple-welcome">
-            <div class="w95-titlebar"><span>🍎 a msg 4 u</span></div>
+            <div class="w95-titlebar"><span><img class="px-icon" src="icons/apple.png" alt="" width="13" height="13"> a msg 4 u</span></div>
             <div class="mrapple-welcome-body">
               <img id="mrapple-welcome-img" src="mrapple/talk2.png" alt="Mr Apple, a cheerful pixel apple" width="120" height="141" />
               <p class="tutor-text welcome-line"><span id="mrapple-welcome-text"></span><span class="type-cursor" id="mrapple-welcome-cursor">▌</span></p>
@@ -115,7 +115,7 @@
       </main>
 
       <div class="statusbar">
-        <span class="w95-sunken cell counter-cell">🌳 <span id="tree-counter">000000</span></span>
+        <span class="w95-sunken cell counter-cell"><img class="px-icon" src="icons/tree.png" alt="" width="15" height="15"> <span id="tree-counter">000000</span></span>
         <span class="w95-sunken cell stats-cell" id="stats-strip" aria-live="polite">
           <span class="stat">loading the trees…</span>
         </span>
@@ -125,7 +125,7 @@
 
     <footer class="site-footer">
       <details class="w95-window-mini about-fold">
-        <summary class="w95-btn">ℹ️ about this map — data &amp; fruit-picking manners</summary>
+        <summary class="w95-btn"><img class="px-icon" src="icons/info.png" alt="" width="12" height="12"> about this map — data &amp; fruit-picking manners</summary>
         <div class="about-body">
           <p>Tree locations come from three City of Portland Urban Forestry open
           datasets: the

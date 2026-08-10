@@ -103,7 +103,7 @@ export function initWalk(map, store, activateTaxon) {
       startPin = L.marker(start, {
         icon: L.divIcon({
           className: '',
-          html: '<div class="walk-start w95-raised">🍎 start here</div>',
+          html: '<div class="walk-start w95-raised"><img class="px-icon" src="icons/apple.png" alt="" width="13" height="13"> start here</div>',
           iconSize: null,
           iconAnchor: [8, 30],
         }),

@@ -1,7 +1,7 @@
 // Fruit chips: orchard stars on by default, the rest lazy-loaded on first
 // toggle. Owns which markers are on the map; exposes the visibility
 // predicate for the near-me list and activate() for the orchard walk.
-import { TAXA } from './taxa.js';
+import { TAXA, pxIcon } from './taxa.js';
 import { loadMoreTaxon } from './data.js';
 import { click } from './sounds.js';
 
@@ -36,7 +36,7 @@ export function initFilters(map, groups, store, markerFor) {
     const parts = [];
     for (const taxon of active) {
       parts.push(
-        `<span class="stat">${TAXA[taxon].emoji} <b>${(shown[taxon] ?? 0).toLocaleString()}</b></span>`
+        `<span class="stat">${pxIcon(TAXA[taxon].icon, 13)} <b>${(shown[taxon] ?? 0).toLocaleString()}</b></span>`
       );
     }
     strip.innerHTML = parts.join('');
@@ -75,7 +75,7 @@ export function initFilters(map, groups, store, markerFor) {
     chip.className = 'w95-btn chip';
     chip.dataset.taxon = taxon;
     chip.setAttribute('aria-pressed', String(active.has(taxon)));
-    chip.innerHTML = `<span class="chip-emoji">${t.emoji}</span><span class="chip-label">${t.label}</span>`;
+    chip.innerHTML = `${pxIcon(t.icon)}<span class="chip-label">${t.label}</span>`;
     chipByTaxon[taxon] = chip;
 
     chip.addEventListener('click', () => {

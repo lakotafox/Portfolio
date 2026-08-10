@@ -5,6 +5,8 @@ import { click } from './sounds.js';
 
 const L = window.L;
 
+const BTN_HTML = '<img class="px-icon" src="icons/pin.png" alt="" width="13" height="13"> Near me';
+
 export function initNearMe(map) {
   const btn = document.getElementById('near-me-btn');
   let youMarker = null;
@@ -20,7 +22,7 @@ export function initNearMe(map) {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         btn.disabled = false;
-        btn.innerHTML = '📍 Near me';
+        btn.innerHTML = BTN_HTML;
         const { latitude: lat, longitude: lon } = coords;
 
         if (youMarker) youMarker.remove();
@@ -41,7 +43,7 @@ export function initNearMe(map) {
         btn.disabled = false;
         btn.textContent = 'Location denied';
         document.dispatchEvent(new CustomEvent('ofm:nearme-denied'));
-        setTimeout(() => (btn.innerHTML = '📍 Near me'), 2500);
+        setTimeout(() => (btn.innerHTML = BTN_HTML), 2500);
       },
       { enableHighAccuracy: true, timeout: 12000 }
     );
