@@ -1,5 +1,4 @@
 // Marker factory + popup HTML. Heritage trees get a bigger, ringed marker.
-import { trunkFigure } from './trunk.js';
 import { ageInfo, predatesOrchardEra, ORCHARD_ERA_YEAR } from './age.js';
 import { TAXA } from './taxa.js';
 
@@ -12,7 +11,6 @@ function popupHtml(p, lat, lon) {
   const t = TAXA[p.taxon];
   const rows = [];
   if (t.ripen) rows.push(['ripens', t.ripen]);
-  if (p.dbh_in) rows.push(['diameter', `${p.dbh_in}"`]);
   if (p.height_ft) rows.push(['height', `${p.height_ft} ft`]);
   const age = ageInfo(p);
   if (age?.documented) rows.push(['planted', `${age.planted} — ${age.years} yrs old`]);
@@ -39,7 +37,6 @@ function popupHtml(p, lat, lon) {
         <a class="w95-btn dir-btn" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=walking" target="_blank" rel="noopener noreferrer">🗺️ Google Maps</a>
       </div>
       ${p.portlandwild_url ? `<a class="wild-link w95-btn" href="${esc(p.portlandwild_url)}" target="_blank" rel="noopener noreferrer">More on Portland Wild →</a>` : ''}
-      ${trunkFigure(p.dbh_in)}
     </div>`;
 }
 

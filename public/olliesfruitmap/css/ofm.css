@@ -458,9 +458,9 @@ body.map-fullscreen .map-wrap {
 }
 .leaflet-popup-tip { background: var(--w95-face); }
 .leaflet-popup-content { margin: 0; width: auto !important; }
-.popup { width: min(270px, 76vw); padding: 0 0 8px; font-size: 12px; }
+.popup { width: min(290px, 80vw); padding: 0 0 8px; font-size: 14px; }
 .popup-titlebar { margin-bottom: 6px; }
-.popup .sci { margin: 0 10px 6px; font-style: italic; color: #333; }
+.popup .sci { margin: 0 10px 6px; font-style: italic; font-size: 13px; color: #333; }
 .heritage-badge {
   display: inline-block;
   margin: 0 10px 5px;
@@ -475,14 +475,14 @@ body.map-fullscreen .map-wrap {
 .data-rows > div { display: flex; gap: 6px; padding: 1px 0; }
 .data-rows dt {
   flex: none;
-  width: 72px;
+  width: 80px;
   color: #333;
   font-family: var(--font-pixel);
-  font-size: 14px;
+  font-size: 16px;
 }
 .data-rows dd { margin: 0; }
 .popup .addr { margin: 6px 10px 0; color: #333; }
-.popup .note { margin: 6px 10px 0; font-size: 11px; color: #333; }
+.popup .note { margin: 6px 10px 0; font-size: 13px; color: #333; }
 .dir-links {
   display: flex;
   gap: 6px;
@@ -492,7 +492,7 @@ body.map-fullscreen .map-wrap {
   flex: 1;
   text-align: center;
   text-decoration: none;
-  font-size: 12px;
+  font-size: 13px;
   padding: 6px 4px;
   white-space: nowrap;
 }
@@ -502,9 +502,6 @@ body.map-fullscreen .map-wrap {
   text-decoration: none;
   font-size: 12px;
 }
-.trunk-fig { margin: 8px 10px 0; }
-.trunk-caption { font-size: 10px; color: #333; margin-top: 2px; }
-
 /* Mr Apple */
 .mrapple-wrap {
   position: absolute;
