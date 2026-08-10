@@ -1,6 +1,6 @@
 // Boot: title screen first (map tiles load behind it), then data, then
 // everything else.
-import { createMap, createClusterGroups, goTo } from './map.js';
+import { createMap, createClusterGroups } from './map.js';
 import { loadTrees } from './data.js';
 import { makeMarker } from './markers.js';
 import { initFilters } from './filters.js';
@@ -37,16 +37,7 @@ try {
 
   const filters = initFilters(map, groups, store, markerFor);
 
-  const openTree = (feature) => {
-    const [lon, lat] = feature.geometry.coordinates;
-    goTo(map, [lat, lon], 18);
-    const marker = markerFor(feature);
-    const group = groups[feature.properties.taxon];
-    // Marker may be inside a cluster; zoomToShowLayer expands it first.
-    group.zoomToShowLayer(marker, () => marker.openPopup());
-  };
-
-  initNearMe(map, filters, openTree);
+  initNearMe(map);
   initWalk(map, store, filters.activate);
 
   const when = store.generated ? ` · data ${store.generated}` : '';

@@ -104,9 +104,5 @@ export function initFilters(map, groups, store, markerFor) {
   for (const taxon of Object.keys(groups)) refreshTaxon(taxon);
   renderStats();
 
-  return {
-    isVisible: (f) => active.has(f.properties.taxon),
-    visibleFeatures: () => [...active].flatMap((taxon) => store.byTaxon[taxon]),
-    activate: turnOn,
-  };
+  return { activate: turnOn };
 }

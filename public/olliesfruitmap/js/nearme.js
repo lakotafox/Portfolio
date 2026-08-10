@@ -1,33 +1,13 @@
-// Geolocate on demand (never on load), list the ten closest visible trees.
+// Geolocate on demand (never on load) and fly the map to you — the
+// trees around you speak for themselves.
 import { goTo } from './map.js';
 import { click } from './sounds.js';
 
 const L = window.L;
 
-function haversineM(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const toRad = (d) => (d * Math.PI) / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(a));
-}
-
-const fmtDist = (m) =>
-  m < 1000 ? `${Math.round(m)} m` : `${(m / 1609.34).toFixed(1)} mi`;
-
-export function initNearMe(map, filters, openTree) {
+export function initNearMe(map) {
   const btn = document.getElementById('near-me-btn');
-  const panel = document.getElementById('nearby-panel');
-  const list = document.getElementById('nearby-list');
   let youMarker = null;
-
-  document.getElementById('nearby-close').addEventListener('click', () => {
-    click();
-    panel.hidden = true;
-  });
 
   btn.addEventListener('click', () => {
     click();
@@ -40,60 +20,28 @@ export function initNearMe(map, filters, openTree) {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         btn.disabled = false;
-        btn.textContent = 'Near me';
+        btn.innerHTML = '📍 Near me';
         const { latitude: lat, longitude: lon } = coords;
 
         if (youMarker) youMarker.remove();
         youMarker = L.circleMarker([lat, lon], {
-          radius: 7,
-          color: '#26302b',
-          weight: 2,
-          fillColor: '#f7f6f1',
+          radius: 8,
+          color: '#000080',
+          weight: 3,
+          fillColor: '#ffff00',
           fillOpacity: 1,
         })
           .addTo(map)
           .bindTooltip('You are here');
 
-        const nearest = filters
-          .visibleFeatures()
-          .map((f) => ({
-            f,
-            d: haversineM(lat, lon, f.geometry.coordinates[1], f.geometry.coordinates[0]),
-          }))
-          .sort((a, b) => a.d - b.d)
-          .slice(0, 10);
-
-        list.innerHTML = '';
-        if (!nearest.length) {
-          const li = document.createElement('li');
-          li.className = 'nearby-empty';
-          li.textContent = 'pick a fruit up top first!! ☝';
-          list.appendChild(li);
-        }
-        for (const { f, d } of nearest) {
-          const li = document.createElement('li');
-          const b = document.createElement('button');
-          b.innerHTML = `${f.properties.common}${
-            f.properties.heritage_number ? ' ★' : ''
-          } <span class="dist">${fmtDist(d)}</span>`;
-          b.addEventListener('click', () => {
-            click();
-            // small screens: the panel would sit on top of the popup
-            if (window.innerWidth < 700) panel.hidden = true;
-            openTree(f);
-          });
-          li.appendChild(b);
-          list.appendChild(li);
-        }
-        panel.hidden = false;
-        goTo(map, [lat, lon], 15);
-        if (nearest.length) document.dispatchEvent(new CustomEvent('ofm:nearme-shown'));
+        goTo(map, [lat, lon], 17);
+        document.dispatchEvent(new CustomEvent('ofm:nearme-shown'));
       },
       () => {
         btn.disabled = false;
         btn.textContent = 'Location denied';
         document.dispatchEvent(new CustomEvent('ofm:nearme-denied'));
-        setTimeout(() => (btn.textContent = 'Near me'), 2500);
+        setTimeout(() => (btn.innerHTML = '📍 Near me'), 2500);
       },
       { enableHighAccuracy: true, timeout: 12000 }
     );
