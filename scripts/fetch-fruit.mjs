@@ -100,6 +100,8 @@ function classifyTaxon(scientific, common) {
 
 const num = (v) =>
   typeof v === 'number' && Number.isFinite(v) && v > 0 ? Math.round(v * 10) / 10 : null;
+// epoch-ms timestamp -> year the record was captured
+const year = (v) => (typeof v === 'number' && v > 0 ? new Date(v).getUTCFullYear() : null);
 const str = (v) => (typeof v === 'string' && v.trim() ? v.trim() : null);
 
 // Keep the inventory's own species wording for the popup ("Malus domestica -
@@ -123,6 +125,7 @@ function normalizeHeritage(f) {
     planted: planted ? Number(planted[1]) : null,
     id: `heritage-${heritageNumber ?? `obj${p.OBJECTID}`}`,
     source: 'heritage',
+    recorded: year(p.Date_Height) ?? year(p.DATE_DESIG),
     taxon,
     species: str(p.COMMON) ?? str(p.SCIENTIFIC),
     dbh_in: num(p.DIAMETER) ?? (num(p.CIRCUMF) ? Math.round((p.CIRCUMF * 12) / Math.PI) : null),
@@ -144,6 +147,7 @@ function normalizeStreet(f) {
   return {
     id: `street-${p.OBJECTID}`,
     source: 'street',
+    recorded: year(p.Date_Inventoried),
     taxon,
     species: commonFrom(p.SPECIES),
     dbh_in: num(p.DIAMETER),
@@ -161,6 +165,7 @@ function normalizeParks(f) {
   return {
     id: `parks-${p.OBJECTID}`,
     source: 'parks',
+    recorded: year(p.Inventory_Date),
     taxon,
     species: str(p.Common_name),
     dbh_in: num(p.DBH),

@@ -19,7 +19,8 @@ function popupHtml(p, lat, lon) {
   else if (age) rows.push(['age', `~${age.years} yrs (est.)`]);
   if (p.condition) rows.push(['condition', esc(p.condition)]);
   if (p.year_designated) rows.push(['designated', p.year_designated]);
-  rows.push(['source', { heritage: 'heritage registry', street: 'street inventory', parks: 'parks inventory' }[p.source]]);
+  const src = { heritage: 'heritage registry', street: 'street inventory', parks: 'parks inventory' }[p.source];
+  rows.push(['source', p.recorded ? `${src} · ${p.recorded}` : src]);
 
   return `
     <div class="popup">
