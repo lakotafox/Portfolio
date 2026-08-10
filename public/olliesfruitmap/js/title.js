@@ -22,8 +22,7 @@ export function initTitle() {
     .then((meta) => {
       if (!meta) return;
       const el = document.getElementById('title-stats');
-      el.innerHTML = `<b>${meta.total.toLocaleString()}</b> trees &middot; ` +
-        `<b>${Object.keys(meta.taxa).length}</b> kinds of fruit &middot; city open data`;
+      el.innerHTML = `<b>${meta.total.toLocaleString()}</b> trees`;
       el.hidden = false;
     })
     .catch(() => {});
