@@ -19,6 +19,7 @@ const groups = createClusterGroups();
 initFullscreen(map);
 initMrApple();
 map.on('popupopen', () => document.dispatchEvent(new CustomEvent('ofm:popup')));
+map.on('popupclose', () => document.dispatchEvent(new CustomEvent('ofm:popupclose')));
 
 try {
   const store = await loadTrees();

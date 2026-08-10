@@ -33,6 +33,8 @@ const TOUR = [
   { line: 'The fruit buttons up top are filters!! Pick one, two, or ALL of them — each one lights up its trees on the map.', frame: 'look' },
   { line: "Yesss!! Now tap 📍 Near me and I'll zoom right to you.", frame: 'idle' },
   { line: 'Tap any tree for the details! (The number bubbles zoom in when you tap them.)', frame: 'idle' },
+  { line: 'See the details? Tap anywhere else on the map to close them. Try it!', frame: 'idle' },
+  { line: 'Now open one back up — tap any tree!', frame: 'idle' },
   { line: "Those buttons give you walking directions right to the tree!! Go ahead — tap 🧭 Apple Maps or 🗺️ Google Maps now. I'll wait right here!", frame: 'look2', orClick: '.dir-btn' },
   { line: 'Last thing — tap that ⤢ button up there!! It makes the map go fullscreen.', frame: 'look2', orClick: '.fullscreen-btn' },
   { line: "That's it!! Take a little, leave a lot. Okay, I'm out — bye!!", frame: 'squint', farewell: true },
@@ -200,7 +202,11 @@ export function initMrApple() {
       { imgEl: img, txtEl: textEl, curEl: cursorEl });
   });
   document.addEventListener('ofm:popup', () => {
-    if (phase === 'tour' && step === 2) { noLocation = false; advance(); }
+    if (phase !== 'tour') return;
+    if (step === 2 || step === 4) { noLocation = false; advance(); }
+  });
+  document.addEventListener('ofm:popupclose', () => {
+    if (phase === 'tour' && step === 3) advance();
   });
   // capture phase: Leaflet stops propagation on its controls/popups, so a
   // bubble-phase listener would never see dir-btn or fullscreen-btn taps.
