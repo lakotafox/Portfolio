@@ -30,7 +30,7 @@ const WELCOME_LINES = [
 const WELCOME_MS = 38; // Floppy's intro types faster than the tour
 
 const TOUR = [
-  { line: 'pick a fruit from the bar up top! apples r a good start :)', frame: 'look' },
+  { line: 'the fruit buttons up top r filters!! pick one, two, or ALL of em — each one lights up its trees on the map', frame: 'look' },
   { line: 'yesss!! now tap 📍 near me n ill zoom right to you', frame: 'idle' },
   { line: 'tap any tree 4 the deets! (the number bubbles zoom in when u tap em)', frame: 'idle' },
   { line: 'those buttons walk u right to the tree!! tap 🧭 apple maps or 🗺️ google maps', frame: 'look2', orClick: '.dir-btn' },
