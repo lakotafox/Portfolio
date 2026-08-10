@@ -9,7 +9,7 @@
 //    advances only when the user does the right thing; wrong turns get a
 //    recovery line that waits for the fix.
 import { REDUCED_MOTION } from './map.js';
-import { click } from './sounds.js';
+import { click, menuOpen } from './sounds.js';
 
 const KEY = 'ofm-tutorial-done';
 const DIR = 'mrapple/';
@@ -25,12 +25,12 @@ const WELCOME_LINES = [
   { line: 'most people walk right past em every single day :(', frame: 'look' },
   { line: 'so we mapped every single one — all 34,992 of em!!', frame: 'talk' },
   { line: 'now… whats the closest fruit 2 u?', frame: 'look2' },
-  { line: 'let me show you!', frame: 'squint' },
+  { line: 'lets pick a fruit!!', frame: 'squint' },
 ];
 const WELCOME_MS = 38; // Floppy's intro types faster than the tour
 
 const TOUR = [
-  { line: 'first — tap the fruit u want up top! apples r a good start :)', frame: 'look' },
+  { line: 'pick a fruit from the bar up top! apples r a good start :)', frame: 'look' },
   { line: 'yesss!! now tap 📍 near me n ill find the closest ones 2 u', frame: 'idle' },
   { line: 'tap any tree 4 the deets! (the number bubbles zoom in when u tap em)', frame: 'idle' },
   { line: 'those buttons walk u right to the tree!! tap 🧭 apple maps or 🗺️ google maps', frame: 'look2', orClick: '.dir-btn' },
@@ -121,9 +121,20 @@ export function initMrApple() {
     showWelcomeLine(0);
   }
 
-  function closeWelcome() {
-    welcome.hidden = true;
+  function closeWelcome(whoosh) {
     clearTimers();
+    if (!whoosh || REDUCED_MOTION) {
+      welcome.hidden = true;
+      return;
+    }
+    // Floppy's moment ends with a whoosh: the intro screen flies away and
+    // the app is revealed underneath.
+    menuOpen();
+    welcome.classList.add('leaving');
+    setTimeout(() => {
+      welcome.hidden = true;
+      welcome.classList.remove('leaving');
+    }, 950);
   }
 
   goBtn.addEventListener('click', () => {
@@ -131,7 +142,7 @@ export function initMrApple() {
     click();
     if (typing) { fastForward?.(); return; }
     if (wLine < WELCOME_LINES.length - 1) showWelcomeLine(wLine + 1);
-    else { closeWelcome(); startTour(); }
+    else { closeWelcome(true); startTour(); }
   });
   skipBtn.addEventListener('click', () => {
     click();

@@ -611,14 +611,32 @@ body.map-fullscreen .map-wrap {
 }
 
 .mrapple-welcome-overlay {
-  position: absolute;
+  /* Mr Apple's own moment: a full opaque screen BEFORE the app shows,
+     like Floppy's welcome — the map waits underneath. */
+  position: fixed;
   inset: 0;
-  z-index: 1400;
+  z-index: 1900;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 18px;
-  background: rgba(0, 0, 16, 0.45);
+  background: var(--desktop-bg);
+}
+.mrapple-welcome-overlay.leaving {
+  animation: welcome-fade 0.9s ease-in forwards;
+  pointer-events: none;
+}
+.mrapple-welcome-overlay.leaving .mrapple-welcome {
+  animation: welcome-fly 0.85s ease-in forwards;
+}
+@keyframes welcome-fade {
+  0% { opacity: 1; }
+  45% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes welcome-fly {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(3.4) translateY(-10%); opacity: 0; }
 }
 .mrapple-welcome { width: min(330px, 100%); }
 .mrapple-welcome-body {
