@@ -107,3 +107,27 @@ for name, paint in FRAMES.items():
     paint(d)
     im.resize((W * SCALE, H * SCALE), Image.NEAREST).save(OUT / f"{name}.png")
     print(f"wrote mrapple/{name}.png")
+
+# --- app icons: Mr Apple IS the icon -----------------------------------
+# Centered on a square logical canvas, integer-scaled so pixels stay crisp.
+APP = OUT.parent
+
+
+def app_icon(size, bg=None):
+    logical = 44  # 34x40 sprite + breathing room
+    im, d = base()
+    FRAMES["idle"](d)
+    canvas = Image.new("RGBA", (logical, logical), bg or (0, 0, 0, 0))
+    canvas.alpha_composite(im, ((logical - W) // 2, (logical - H) // 2))
+    scale = size // logical
+    big = canvas.resize((logical * scale, logical * scale), Image.NEAREST)
+    out = Image.new("RGBA", (size, size), bg or (0, 0, 0, 0))
+    off = (size - big.width) // 2
+    out.alpha_composite(big, (off, off))
+    return out.convert("RGB") if bg else out
+
+
+app_icon(512).save(APP / "icon-512.png")
+app_icon(192).save(APP / "icon-192.png")
+app_icon(180, bg=(0, 128, 128, 255)).save(APP / "apple-touch-icon.png")
+print("wrote app icons from Mr Apple")
