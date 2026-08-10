@@ -40,6 +40,29 @@ async function loadClicks() {
   }
 }
 
+// Floppy's talk voice: a soft triangle blip at a random pitch, fired
+// every couple of typed characters by the typewriter.
+export function talkBlip() {
+  if (muted) return;
+  try {
+    const ac = audioCtx();
+    if (!ac || ac.state !== 'running') return;
+    const t = ac.currentTime;
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.type = 'triangle';
+    osc.frequency.value = 340 + Math.random() * 180;
+    gain.gain.setValueAtTime(0.05, t);
+    gain.gain.exponentialRampToValueAtTime(0.0004, t + 0.05);
+    osc.connect(gain);
+    gain.connect(ac.destination);
+    osc.start(t);
+    osc.stop(t + 0.06);
+  } catch {
+    /* decoration only */
+  }
+}
+
 export function click() {
   if (muted) return;
   try {

@@ -9,7 +9,7 @@
 //    advances only when the user does the right thing; wrong turns get a
 //    recovery line that waits for the fix.
 import { REDUCED_MOTION } from './map.js';
-import { click, menuOpen } from './sounds.js';
+import { click, menuOpen, talkBlip } from './sounds.js';
 
 const KEY = 'ofm-tutorial-done';
 const DIR = 'mrapple/';
@@ -24,7 +24,7 @@ const WELCOME_LINES = [
   { line: 'apples, figs, plums, cherries… just growing on the street!', frame: 'idle' },
   { line: 'most people walk right past em every single day :(', frame: 'look' },
   { line: 'so we mapped every single one — all 34,992 of em!!', frame: 'talk' },
-  { line: 'now… whats the closest fruit 2 u?', frame: 'look2' },
+  { line: 'ever wonder where the closest fruit tree is?', frame: 'look2' },
   { line: 'lets pick a fruit!!', frame: 'squint' },
 ];
 const WELCOME_MS = 38; // Floppy's intro types faster than the tour
@@ -97,6 +97,7 @@ export function initMrApple() {
     timers.push(setInterval(() => {
       txtEl.textContent = text.slice(0, ++i);
       if (i % 3 === 0) setFrame(MOUTH[((i / 3) | 0) % MOUTH.length]);
+      if (i % 2 === 0 && text[i - 1] !== ' ') talkBlip(); // Floppy's voice
       if (i >= text.length) finish();
     }, speed));
     renderGo();
