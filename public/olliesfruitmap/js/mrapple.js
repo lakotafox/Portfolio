@@ -16,11 +16,18 @@ const DIR = 'mrapple/';
 const TYPE_MS = 60;
 const MOUTH = ['talk', 'idle', 'talk2', 'idle'];
 
+// Floppy's intro shape: greeting → problem → gripe :( → mission!! →
+// the treasure (big number) → question… → "let me show you!"
 const WELCOME_LINES = [
-  { line: 'hi!! im mr apple 🍎', frame: 'talk2' },
-  { line: 'this map knows where EVERY fruit tree in portland is — all 34,992 of em!!', frame: 'idle' },
-  { line: 'lemme show u how it works!', frame: 'squint' },
+  { line: 'hi!! im MR APPLE — welcome 2 ollies fruit map!!', frame: 'talk2' },
+  { line: 'did u know portland is FULL of fruit trees?', frame: 'idle' },
+  { line: 'apples, figs, plums, cherries… just growing on the street!', frame: 'idle' },
+  { line: 'most people walk right past em every single day :(', frame: 'look' },
+  { line: 'so we mapped every single one — all 34,992 of em!!', frame: 'talk' },
+  { line: 'now… whats the closest fruit 2 u?', frame: 'look2' },
+  { line: 'let me show you!', frame: 'squint' },
 ];
+const WELCOME_MS = 38; // Floppy's intro types faster than the tour
 
 const TOUR = [
   { line: 'first — tap the fruit u want up top! apples r a good start :)', frame: 'look' },
@@ -60,7 +67,7 @@ export function initMrApple() {
   }
 
   // one typewriter, pointed at whichever surface is active
-  function say(text, frame, { imgEl, txtEl, curEl, onDone } = {}) {
+  function say(text, frame, { imgEl, txtEl, curEl, onDone, speed = TYPE_MS } = {}) {
     clearTimers();
     typing = true;
     curEl.hidden = false;
@@ -91,7 +98,7 @@ export function initMrApple() {
       txtEl.textContent = text.slice(0, ++i);
       if (i % 3 === 0) setFrame(MOUTH[((i / 3) | 0) % MOUTH.length]);
       if (i >= text.length) finish();
-    }, TYPE_MS));
+    }, speed));
     renderGo();
   }
 
@@ -104,7 +111,7 @@ export function initMrApple() {
   function showWelcomeLine(i) {
     wLine = i;
     const l = WELCOME_LINES[i];
-    say(l.line, l.frame, { imgEl: wImg, txtEl: wText, curEl: wCursor });
+    say(l.line, l.frame, { imgEl: wImg, txtEl: wText, curEl: wCursor, speed: WELCOME_MS });
   }
 
   function openWelcome() {
