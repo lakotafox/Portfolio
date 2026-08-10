@@ -231,14 +231,17 @@ export function initMrApple() {
   }
 
   if (localStorage.getItem(KEY) !== '1') {
+    // Pre-stage the intro screen UNDER the title screen so the title's
+    // fly-away reveals Mr Apple directly — the app never peeks through.
+    welcome.hidden = false;
     const title = document.getElementById('title-screen');
     if (!title) {
-      setTimeout(begin, 900);
+      begin();
     } else {
       const watch = new MutationObserver(() => {
         if (!document.getElementById('title-screen')) {
           watch.disconnect();
-          setTimeout(begin, 1100);
+          begin();
         }
       });
       watch.observe(document.body, { childList: true });
