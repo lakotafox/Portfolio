@@ -19,23 +19,23 @@ const MOUTH = ['talk', 'idle', 'talk2', 'idle'];
 // Floppy's intro shape: greeting → problem → gripe :( → mission!! →
 // the treasure (big number) → question… → "let me show you!"
 const WELCOME_LINES = [
-  { line: 'hi!! im MR APPLE — welcome 2 ollies fruit map!!', frame: 'talk2' },
-  { line: 'did u know portland is FULL of fruit trees?', frame: 'idle' },
-  { line: 'apples, figs, plums, cherries… just growing on the street!', frame: 'idle' },
-  { line: 'most people walk right past em every single day :(', frame: 'look' },
-  { line: 'so we mapped every single one — all 34,992 of em!!', frame: 'talk' },
-  { line: 'ever wonder where the closest fruit tree is?', frame: 'look2' },
-  { line: 'lets pick a fruit!!', frame: 'squint' },
+  { line: "Hi!! I'm MR APPLE — welcome to Ollie's fruit map!!", frame: 'talk2' },
+  { line: 'Did you know Portland is FULL of fruit trees?', frame: 'idle' },
+  { line: 'Apples, figs, plums, cherries… just growing on the street!', frame: 'idle' },
+  { line: 'Most people walk right past them every single day :(', frame: 'look' },
+  { line: 'So we mapped every single one — all 34,992 of them!!', frame: 'talk' },
+  { line: 'Ever wonder where the closest fruit tree is?', frame: 'look2' },
+  { line: "Let's pick a fruit!!", frame: 'squint' },
 ];
 const WELCOME_MS = 38; // Floppy's intro types faster than the tour
 
 const TOUR = [
-  { line: 'the fruit buttons up top r filters!! pick one, two, or ALL of em — each one lights up its trees on the map', frame: 'look' },
-  { line: 'yesss!! now tap 📍 near me n ill zoom right to you', frame: 'idle' },
-  { line: 'tap any tree 4 the deets! (the number bubbles zoom in when u tap em)', frame: 'idle' },
-  { line: 'those buttons walk u right to the tree!! tap 🧭 apple maps or 🗺️ google maps', frame: 'look2', orClick: '.dir-btn' },
-  { line: 'last thing — tap that ⤢ button up there!! it makes the map go fullscreen', frame: 'look2', orClick: '.fullscreen-btn' },
-  { line: 'thats it!! take a lil, leave a lot. ok im out — bye!!', frame: 'squint', farewell: true },
+  { line: 'The fruit buttons up top are filters!! Pick one, two, or ALL of them — each one lights up its trees on the map.', frame: 'look' },
+  { line: "Yesss!! Now tap 📍 Near me and I'll zoom right to you.", frame: 'idle' },
+  { line: 'Tap any tree for the details! (The number bubbles zoom in when you tap them.)', frame: 'idle' },
+  { line: 'Those buttons walk you right to the tree!! Tap 🧭 Apple Maps or 🗺️ Google Maps.', frame: 'look2', orClick: '.dir-btn' },
+  { line: 'Last thing — tap that ⤢ button up there!! It makes the map go fullscreen.', frame: 'look2', orClick: '.fullscreen-btn' },
+  { line: "That's it!! Take a little, leave a lot. Okay, I'm out — bye!!", frame: 'squint', farewell: true },
 ];
 
 export function initMrApple() {
@@ -106,7 +106,7 @@ export function initMrApple() {
   // --- welcome window --------------------------------------------------
   function renderGo() {
     if (phase !== 'welcome') return;
-    goBtn.textContent = typing ? '>>' : wLine < WELCOME_LINES.length - 1 ? 'next >>' : 'lets go!';
+    goBtn.textContent = typing ? '>>' : wLine < WELCOME_LINES.length - 1 ? 'next >>' : "Let's go!";
   }
 
   function showWelcomeLine(i) {
@@ -196,7 +196,7 @@ export function initMrApple() {
     if (phase !== 'tour' || step !== 1) return;
     noLocation = true;
     step = 2; // the tap-a-tree action rescues them
-    say('no location? no worries!! just tap any tree u see on the map instead', 'idle',
+    say('No location? No worries!! Just tap any tree you see on the map instead.', 'idle',
       { imgEl: img, txtEl: textEl, curEl: cursorEl });
   });
   document.addEventListener('ofm:popup', () => {
@@ -209,7 +209,7 @@ export function initMrApple() {
     const t = e.target;
     // wrong turn: near me / walk before any fruit is on
     if (step === 0 && t.closest?.('#near-me-btn, #walk-btn')) {
-      say('not yet!! pick a fruit first — then i can find em near u', 'talk',
+      say('Not yet!! Pick a fruit first — then I can find them near you.', 'talk',
         { imgEl: img, txtEl: textEl, curEl: cursorEl });
       return;
     }
