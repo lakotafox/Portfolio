@@ -42,17 +42,17 @@ PALETTE = {
 
 ICONS = {
     "apple": [
-        ".....SS.LL..",
-        ".....S.LLLL.",
-        "....SS.LL...",
+        ".....S.LL...",
+        ".....S.LLL..",
+        ".....SS.....",
+        "...RRRRRR...",
         "..RRRRRRRR..",
         ".RRRRRRRRRR.",
         ".RhRRRRRRRR.",
-        "RhhRRRRRRRR.",
-        "RhRRRRRRRRR.",
-        ".RRRRRRRRR..",
-        ".RRRRRRRRR..",
-        "..RRR..RRR..",
+        ".RhhRRRRRRR.",
+        ".RRRRRRRRRR.",
+        "..RRRRRRRR..",
+        "...RRRRRR...",
         "............",
     ],
     "fig": [
