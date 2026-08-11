@@ -151,7 +151,23 @@
   }
   #hero .top-label { margin-bottom: 40px; }
   #hero h1 { max-width: 1000px; margin-bottom: 24px; }
-  #hero .sub { max-width: 600px; margin-bottom: 48px; }
+  #hero .sub { max-width: 600px; margin-bottom: 40px; }
+  .scroll-hint {
+    font-size: clamp(15px, 1.15vw, 17px); letter-spacing: 0.02em;
+    color: #cdcdd8; text-shadow: 0 2px 14px rgba(0,0,0,0.9);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .scroll-hint::after {
+    content: ""; width: 9px; height: 9px; flex: none;
+    border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+    transform: rotate(45deg) translate(-1px, -1px);
+    animation: hint-bob 2.4s ease-in-out infinite;
+  }
+  @keyframes hint-bob {
+    0%, 100% { transform: rotate(45deg) translate(-1px, -1px); }
+    50%      { transform: rotate(45deg) translate(2px, 2px); }
+  }
+  @media (prefers-reduced-motion: reduce) { .scroll-hint::after { animation: none; } }
   .btn-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
 
   /* story cards (funnel + tunnel windows) */
@@ -354,12 +370,9 @@
     </span>
     <h1 class="display center t-hero rv" data-title data-w="hero">The home stretch of a degree worth finishing</h1>
     <p class="sub rv" data-w="hero">I'm Khabe &ldquo;Lakota&rdquo; Fox. Salt Lake Community College is closing its Computer Science &amp; Information Systems program &mdash; and I have until Summer 2027 to finish my degree before the trail closes for good.</p>
-    <div class="btn-row rv" data-w="hero">
-      <a class="btn btn-primary" href="https://lakotafox.com" target="_blank" rel="noopener"><span class="ring"></span>See my work
-        <span class="arrow-badge"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
-      </a>
-      <button class="btn btn-secondary" id="ride-along">Ride along</button>
-    </div>
+    <!-- No buttons here on purpose. The first screen should ask exactly one
+         thing of the reader, and that thing is to scroll. -->
+    <p class="scroll-hint rv" data-w="hero">Scroll down to read the application</p>
   </section>
 
   <!-- 2. THE TRAIL SO FAR (funnel window) -->
@@ -969,10 +982,6 @@ const glow = document.getElementById('glow');
 const lenis = new Lenis({ smoothWheel: true });
 window.scrollTo(0, 0);
 
-document.getElementById('ride-along').addEventListener('click', () => {
-  const max = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-  lenis.scrollTo(max * 0.09, { duration: 2 });
-});
 
 let time = 0;
 const INTRO_MS = 2600;
