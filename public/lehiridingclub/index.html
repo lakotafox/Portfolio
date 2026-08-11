@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Unlisted page: reachable only by full URL, never indexed -->
+<meta name="robots" content="noindex, nofollow">
+<title>Khabe Fox — Lehi Riding Club Scholarship</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scrollbar-width: thin; }
+  body {
+    background: #030305;
+    color: #fff;
+    font-family: Inter, sans-serif;
+    overflow-x: hidden;
+  }
+  #scene { position: fixed; inset: 0; z-index: -10; }
+
+  /* ---------- eyebrow pill ---------- */
+  .top-label {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 8px;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.04);
+    padding: 10px 20px;
+    font-size: clamp(13px, 0.95vw, 14px);
+    font-weight: 500; color: #fff;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .top-label svg { width: 14px; height: 14px; }
+  .ring {
+    position: absolute; inset: 0; padding: 1px; border-radius: inherit;
+    background-image: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.35), rgba(255,255,255,0.08));
+    background-size: 200% 100%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    animation: ring-slide 3000ms linear infinite;
+    pointer-events: none;
+  }
+  @keyframes ring-slide { from { background-position: 0% 0%; } to { background-position: 200% 0%; } }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    position: relative;
+    height: 56px; border-radius: 9999px;
+    font-family: Inter, sans-serif;
+    font-size: clamp(15px, 1.1vw, 16px); font-weight: 500;
+    cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center;
+    transition: all 0.2s;
+    pointer-events: auto;
+    border: none;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary {
+    padding: 0 16px 0 32px; gap: 12px; color: #fff;
+    background: rgba(20,25,35,0.4);
+    backdrop-filter: blur(24px) saturate(1.5);
+    box-shadow: inset 0 2px 10px rgba(255,255,255,0.35), inset 0 -6px 16px rgba(0,0,0,0.75), inset 0 0 0 1px rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .btn-primary:hover {
+    background: rgba(30,35,50,0.5);
+    box-shadow: inset 0 2px 12px rgba(255,255,255,0.45), inset 0 -8px 20px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.08), 0 12px 32px rgba(0,0,0,0.5);
+  }
+  .btn-primary .ring {
+    background-image: linear-gradient(90deg, #ffa091, #8da9fc, #ffa091);
+    animation-duration: 4000ms;
+  }
+  .arrow-badge {
+    position: relative;
+    width: 32px; height: 32px; border-radius: 9999px;
+    background: rgba(255,255,255,0.02);
+    display: inline-flex; align-items: center; justify-content: center;
+    flex: none;
+  }
+  .arrow-badge .ring {
+    background-image: linear-gradient(135deg, #ffa091, #8da9fc);
+    animation: none;
+  }
+  .arrow-badge svg { width: 12px; height: 12px; }
+  .btn-secondary {
+    padding: 0 32px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.75);
+    backdrop-filter: blur(12px);
+  }
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  /* ---------- headings ---------- */
+  .display {
+    font-family: Assistant, sans-serif;
+    font-weight: 400; line-height: 1.2; letter-spacing: -0.03em;
+    /* the template's trailing-edge fade, pulled back: at 60%/0.2 it swallowed
+       whole words of the headline, and every word here is load-bearing */
+    mask-image: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 90%, rgba(0,0,0,0.62) 100%);
+    -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 90%, rgba(0,0,0,0.62) 100%);
+    display: flex; flex-wrap: wrap;
+    /* whitespace-only text nodes between flex items are not rendered, so the
+       inter-word space has to come from the flex gap (gaps are not applied at
+       line ends, so wrapped lines still align correctly) */
+    column-gap: 0.26em;
+  }
+  .display.center { justify-content: center; }
+  .display .word { display: inline-flex; white-space: pre; }
+  .display .char {
+    display: inline-block;
+    transform: translateY(40px); opacity: 0; filter: blur(16px);
+  }
+  .display.cascade-in .char {
+    transform: translateY(0); opacity: 1; filter: blur(0);
+    transition: transform 1200ms cubic-bezier(0.165, 0.84, 0.44, 1), opacity 1200ms cubic-bezier(0.165, 0.84, 0.44, 1), filter 1200ms cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  .t-hero { font-size: clamp(34px, 5.4vw, 80px); text-align: center; }
+  .t-wave { font-size: clamp(30px, 4.6vw, 64px); text-align: left; }
+
+  /* ---------- reveal states ---------- */
+  .rv { opacity: 0; transform: translateY(30px); transition: opacity 1.2s cubic-bezier(0.2,1,0.2,1), transform 1.2s cubic-bezier(0.2,1,0.2,1); }
+  .rv.is-visible { opacity: 1; transform: translateY(0); }
+  .rv.is-leaving { opacity: 0; transform: translateY(-30px); }
+
+  /* ---------- overlays ---------- */
+  .overlay { position: fixed; inset: 0; pointer-events: none; }
+  /* mobile-only readability scrim, enabled in the media query below */
+  .scrim { display: none; position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .scrim, .scrim.is-visible, .scrim.is-leaving { transform: none; }
+  #wave .scrim { background: radial-gradient(ellipse 130% 65% at 40% 52%, rgba(3,3,7,0.72) 0%, rgba(3,3,7,0.48) 55%, rgba(3,3,7,0) 88%); }
+  #galaxy .scrim { background: radial-gradient(ellipse 125% 55% at 50% 58%, rgba(3,3,7,0.85) 0%, rgba(3,3,7,0.62) 48%, rgba(3,3,7,0) 84%); }
+  .sub { font-size: clamp(16px, 1.25vw, 18px); line-height: 1.55; color: #c9c9d3; text-shadow: 0 2px 14px rgba(0,0,0,0.9); }
+
+  #hero {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0 20px; text-align: center; z-index: 10;
+  }
+  #hero .top-label { margin-bottom: 40px; }
+  #hero h1 { max-width: 1000px; margin-bottom: 24px; }
+  #hero .sub { max-width: 600px; margin-bottom: 48px; }
+  .btn-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+
+  /* story cards (funnel + tunnel windows) */
+  .story {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0 20px; z-index: 10; text-align: left;
+  }
+  .story .top-label { margin-bottom: 28px; }
+  .story-card {
+    width: min(720px, 92vw);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(6,8,16,0.90);
+    padding: clamp(26px, 3.6vw, 42px);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.55);
+  }
+  /* Question headings. The committee reads this on paper first — name the
+     prompt being answered, then answer it. Audience skews elderly: contrast
+     and size beat subtlety everywhere below. */
+  .q-head {
+    font-family: Assistant, sans-serif; font-weight: 600;
+    font-size: clamp(23px, 2.9vw, 40px); line-height: 1.15;
+    letter-spacing: -0.01em; text-align: center; color: #fff;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.7);
+  }
+  .q-prompt {
+    font-size: clamp(15px, 1.1vw, 17px); line-height: 1.45;
+    color: #cdcdd8; font-style: italic;
+    text-align: center; max-width: 660px; margin: 0 auto 20px;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.95), 0 0 4px rgba(0,0,0,0.8);
+  }
+  .story-card p { font-size: clamp(17px, 1.4vw, 21px); line-height: 1.62; color: #f2f2f6; }
+  /* The answers are long and the type is deliberately large, so a card can be
+     taller than the screen. No inner scrollbar: the section is pinned, and
+     scrolling the page walks the whole block up through the viewport (see
+     applyStoryPin). Reading a card and moving through the page are the same
+     gesture, which is the only one worth asking of this audience. */
+  .story-inner {
+    display: flex; flex-direction: column; align-items: center;
+    width: 100%; will-change: transform;
+  }
+  .story.is-tall { justify-content: flex-start; padding-top: 16px; }
+  .story-card p + p { margin-top: 1em; }
+  .story-card a { color: #a8c0ff; text-decoration: underline; text-underline-offset: 3px; pointer-events: auto; }
+  .story-card a:hover { color: #fff; }
+  .story-card .sig {
+    font-family: Assistant, sans-serif; font-weight: 600;
+    color: #ffc7bd; margin-top: 1.1em; font-size: clamp(15px, 1.15vw, 17px);
+  }
+  .story .btn-row { margin-top: 22px; }
+
+  /* DNA stat cards */
+  #dna-cards {
+    position: fixed; inset: 0; z-index: 5; pointer-events: none; opacity: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: clamp(14px, 1.6vw, 22px); padding: 0 20px;
+    transition: opacity 0.5s ease;
+  }
+  .dna-card {
+    width: min(360px, 31vw);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(6,8,16,0.90);
+    padding: clamp(22px, 2.2vw, 34px);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.55);
+  }
+  .dna-card .kicker {
+    font-family: Assistant, sans-serif;
+    font-size: clamp(12px, 0.9vw, 14px); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.95); margin-bottom: 16px;
+  }
+  .dna-card .stat {
+    font-family: Assistant, sans-serif;
+    font-size: clamp(40px, 4vw, 62px); font-weight: 600; line-height: 1;
+    margin-bottom: 14px;
+    background: linear-gradient(90deg, #ffa091, #8da9fc);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+  }
+  .dna-card .desc { font-size: clamp(15px, 1.15vw, 17px); line-height: 1.5; color: #e6e6ec; }
+
+  /* #wave and #galaxy were a two-column block and a space-between block before
+     they became question sections; their old ID-level rules outranked the
+     .story layout and fought the pin, so they are gone. Both are plain .story
+     sections now. */
+
+  /* big-bang flash */
+  #glow {
+    position: fixed; left: 50%; top: 50%;
+    width: 100px; height: 100px; border-radius: 9999px;
+    transform: translate(-50%,-50%) scale(0); opacity: 0;
+    z-index: 10; pointer-events: none;
+    background: radial-gradient(circle, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 80%);
+  }
+
+  /* ==================================================================
+     MOBILE OVERRIDES — phone-class viewports only. Desktop is untouched.
+     ================================================================== */
+  @media (max-width: 768px) {
+    /* The right-edge mask is a subtle flourish on a wide line, but on a
+       narrow column it eats the last word of every line. Soften it. */
+    .display {
+      mask-image: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 88%, rgba(0,0,0,0.55) 100%);
+      -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 88%, rgba(0,0,0,0.55) 100%);
+    }
+
+    /* body copy: 15px -> 16px, a touch more leading, lifted off the
+       nebula behind it */
+    .sub { font-size: 16px; line-height: 1.55; color: #b9b9c1; }
+
+    /* buttons stack full-width so they never wrap into ragged rows */
+    .btn { height: 52px; justify-content: center; font-size: 16px; }
+    .btn-row {
+      flex-direction: column; align-items: stretch;
+      gap: 12px; width: 100%; max-width: 340px;
+    }
+    .btn-primary { padding: 0 12px 0 24px; justify-content: space-between; }
+    .btn-secondary { padding: 0 20px; }
+    .top-label { padding: 9px 16px; font-size: 13px; }
+
+    /* ---- hero ---- */
+    #hero { padding: 0 20px; }
+    #hero .top-label { margin-bottom: 26px; }
+    #hero h1 { margin-bottom: 20px; }
+    #hero .sub { margin-bottom: 34px; }
+    #hero .btn-row { align-self: center; }
+
+    /* ---- story cards (trail / steep) ---- */
+    .story { padding: 0 14px; }
+    .story .top-label { margin-bottom: 20px; }
+    .story-card {
+      width: 100%;
+      padding: 22px 20px;
+      border-radius: 20px;
+      /* stronger scrim: these cards sit over the bright DNA / tunnel */
+      background: rgba(8,10,18,0.78);
+      border-color: rgba(255,255,255,0.18);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .story-card p { font-size: 16px; line-height: 1.55; }
+
+    /* Question headings: these sections are fixed overlays, so anything taller
+       than the viewport is simply lost. Q2 is the longest answer and sets the
+       budget — everything above the card gets tight so the card always fits. */
+    .q-head { font-size: 24px; margin-bottom: 6px; }
+    .q-prompt { font-size: 15.5px; line-height: 1.4; margin-bottom: 12px; }
+    .story .top-label { margin-bottom: 12px; }
+    .story .btn-row { margin-top: 14px; }
+    /* the closing act carries two buttons; the map is already linked in Q2 */
+    #galaxy .btn-secondary { display: none; }
+
+    /* ---- DNA stat cards: three across won't fit a phone, so stack ---- */
+    #dna-cards { flex-direction: column; gap: 12px; padding: 0 14px; }
+    .dna-card {
+      width: 100%; max-width: 380px;
+      padding: 16px 18px;
+      border-radius: 18px;
+    }
+    .dna-card .kicker { font-size: 12px; margin-bottom: 8px; }
+    .dna-card .stat { font-size: 38px; margin-bottom: 8px; }
+    .dna-card .desc { font-size: 15px; line-height: 1.42; }
+
+    /* (the old #wave / #galaxy mobile rules went with their layouts — both are
+       .story sections now and inherit the pinned-section rules above) */
+
+    /* Scrims: the wave crest and the galaxy core blow out to near-white right
+       behind the copy on a phone. These fade in/out with their own section
+       (they carry .rv) so a later overlay never dims an earlier one. */
+    .scrim { display: block; }
+  }
+
+  @media (max-width: 400px) {
+    .story-card { padding: 20px 18px; }
+    .story-card p { font-size: 17px; line-height: 1.6; }
+    .q-head { font-size: 22px; }
+    .q-prompt { font-size: 15px; margin-bottom: 10px; }
+    .dna-card { padding: 22px 18px; }
+    .dna-card .stat { font-size: 42px; }
+    #galaxy { padding: 4vh 18px; gap: 18px; }
+    #galaxy .sub { font-size: 15.5px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="glow" aria-hidden="true"></div>
+
+<main>
+  <!-- 1. HERO -->
+  <section class="overlay" id="hero" aria-label="Introduction">
+    <span class="top-label rv" data-w="hero"><span class="ring"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      For the Lehi Riding Club
+    </span>
+    <h1 class="display center t-hero rv" data-title data-w="hero">The home stretch of a degree worth finishing</h1>
+    <p class="sub rv" data-w="hero">I'm Khabe &ldquo;Lakota&rdquo; Fox. Salt Lake Community College is closing its Computer Science &amp; Information Systems program &mdash; and I have until Summer 2027 to finish my degree before the trail closes for good.</p>
+    <div class="btn-row rv" data-w="hero">
+      <a class="btn btn-primary" href="https://lakotafox.com" target="_blank" rel="noopener"><span class="ring"></span>See my work
+        <span class="arrow-badge"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+      </a>
+      <button class="btn btn-secondary" id="ride-along">Ride along</button>
+    </div>
+  </section>
+
+  <!-- 2. THE TRAIL SO FAR (funnel window) -->
+  <section class="overlay story" id="trail" aria-label="Academic achievements">
+    <div class="story-inner">
+      <span class="top-label rv" data-w="trail"><span class="ring"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Question 1
+      </span>
+      <h2 class="q-head rv" data-w="trail">Academic achievements</h2>
+      <p class="q-prompt rv" data-w="trail">&ldquo;In paragraph form, outline academic achievements.&rdquo;</p>
+      <div class="story-card rv" data-w="trail">
+        <p>I'm finishing my Associate of Science in Computer Science &amp; Information Systems at Salt Lake Community College, along with two Certificates of Proficiency &mdash; Web Programming &amp; Development and Linux System Administration. I made the Dean's List in my first semester, and Linux is where I do my best work: an A&minus; in both Intro to Linux and Linux System Administration.</p>
+        <p>Outside of class I've built and shipped more than twenty projects. The biggest is AdventureCrafter, a 2D game engine written from scratch where friends build one game world together in real time. I've also made AI tools that identify birds by their songs and turn photos into 3D scans &mdash; running right in the browser, no server behind them.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. DNA STAT CARDS -->
+  <div id="dna-cards" aria-hidden="true">
+    <div class="dna-card"><p class="kicker">Projects shipped</p><p class="stat">20+</p><p class="desc">Designed, built, and launched &mdash; AI tools, client sites, games, and maps, all live at lakotafox.com.</p></div>
+    <div class="dna-card"><p class="kicker">Portland trees mapped</p><p class="stat">19,000+</p><p class="desc">Redwoods, heritage giants, and every public fruit tree &mdash; built from the city's open data for anyone to use.</p></div>
+    <div class="dna-card"><p class="kicker">First semester GPA</p><p class="stat">3.55</p><p class="desc">Dean's List, Summer 2025 &mdash; and two certificates now in the home stretch.</p></div>
+  </div>
+
+  <!-- 4. WAVE (community) -->
+  <section class="overlay story" id="wave" aria-label="Extracurricular activities">
+    <div class="scrim rv" data-w="wave" aria-hidden="true"></div>
+    <div class="story-inner">
+      <span class="top-label rv" data-w="wave"><span class="ring"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Question 2
+      </span>
+      <h2 class="q-head rv" data-w="wave">Extracurricular activities</h2>
+      <p class="q-prompt rv" data-w="wave">&ldquo;In paragraph form, describe extracurricular activities &mdash; community involvement, talents, leadership, hobbies.&rdquo;</p>
+      <div class="story-card rv" data-w="wave">
+        <p>Most of my free time goes to volunteering with Portland's parks and trees. I'm on the Tuesday morning stewardship crew at Hoyt Arboretum, pulling invasive plants, mulching, and planting natives, and I volunteer with the Bird Alliance of Oregon. This fall I'm training with Friends of Trees as a volunteer crew leader so I can help run public tree-planting events.</p>
+        <p>I also like using what I'm learning to help the people around me. Using the city's open data, I mapped every redwood in Portland plus 19,000 other heritage trees (<a href="https://lakotafox.com/redwoods/" target="_blank" rel="noopener">lakotafox.com/redwoods</a>) and every public fruit and nut tree in the city so neighbors can forage respectfully (<a href="https://lakotafox.com/olliesfruitmap/" target="_blank" rel="noopener">lakotafox.com/olliesfruitmap</a>). I've also built websites for a few small local businesses and wrote a program that prints personalized sudoku puzzles for my grandma. When I'm not doing any of that, I make art with code.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. THE STEEP STRETCH (tunnel window) -->
+  <section class="overlay story" id="steep" aria-label="Why this aid matters">
+    <div class="story-inner">
+      <span class="top-label rv" data-w="steep"><span class="ring"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Question 3
+      </span>
+      <h2 class="q-head rv" data-w="steep">Why this financial aid is necessary</h2>
+      <p class="q-prompt rv" data-w="steep">&ldquo;Explain circumstances that would make this financial aid necessary to further your education.&rdquo;</p>
+      <div class="story-card rv" data-w="steep">
+        <p>I pay my own way through dog walking and gig work, and most of what I make goes to rent and food. The hard part is timing: SLCC is discontinuing my degree program, and enrolled students have until Summer 2027 to finish &mdash; after that the degree can't be completed at all. My tuition this fall is $2,324, due in September, and there isn't much room in my budget for a bill that size. This scholarship would go straight to tuition and let me finish before the door closes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. GALAXY (closing) -->
+  <section class="overlay story" id="galaxy" aria-label="Goals and why I should be the recipient">
+    <div class="scrim rv" data-w="galaxy" aria-hidden="true"></div>
+    <div class="story-inner">
+      <span class="top-label rv" data-w="galaxy"><span class="ring"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Question 5
+      </span>
+      <h2 class="q-head rv" data-w="galaxy">My goals &mdash; and why me</h2>
+      <p class="q-prompt rv" data-w="galaxy">&ldquo;Your specific goals for post high school education, and why you should be the recipient of this scholarship.&rdquo;</p>
+      <div class="story-card rv" data-w="galaxy">
+        <p>I want to finish my Computer Science &amp; Information Systems degree at Salt Lake Community College before the program ends in 2027, then keep growing my freelance work building technology that treats people right. I've already started: I helped a salon leave a subscription platform for a system they own outright, and I build AI tools that run in the browser instead of a datacenter. Next I want to help older people avoid getting scammed and help everyday people keep control of their own data. This scholarship gets me to the finish line.</p>
+        <p class="sig">&mdash; Khabe &ldquo;Lakota&rdquo; Fox &middot; thank you for reading.</p>
+      </div>
+      <div class="btn-row rv" data-w="galaxy">
+        <a class="btn btn-primary" href="https://lakotafox.com" target="_blank" rel="noopener"><span class="ring"></span>Explore the portfolio
+          <span class="arrow-badge"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+        </a>
+        <a class="btn btn-secondary" href="https://lakotafox.com/redwoods/" target="_blank" rel="noopener">Redwoods map</a>
+      </div>
+    </div>
+  </section>
+
+  <div aria-hidden="true" style="height:1400vh"></div>
+</main>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import Lenis from 'https://unpkg.com/lenis@1.3.19/dist/lenis.mjs';
+
+// ============ shaders ============
+const backgroundVertexShader = /* glsl */`
+varying vec2 vUv;
+void main() {
+    vUv = uv;
+    gl_Position = vec4(position, 1.0);
+}`;
+
+const backgroundFragmentShader = /* glsl */`
+uniform float uTime;
+uniform float uScroll;
+uniform vec2 uResolution;
+uniform vec3 color1;
+uniform vec3 color2;
+varying vec2 vUv;
+
+float hash(float n) { return fract(sin(n) * 1e4); }
+float hash(vec2 p) { return fract(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x)))); }
+float noise(vec2 x) {
+    vec2 i = floor(x);
+    vec2 f = fract(x);
+    float a = hash(i);
+    float b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0));
+    float d = hash(i + vec2(1.0, 1.0));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+#define OCTAVES 4
+float fbm(vec2 x) {
+    float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100);
+    mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.50));
+    for (int i = 0; i < OCTAVES; ++i) {
+        v += a * noise(x);
+        x = rot * x * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+
+void main() {
+    vec2 st = vUv;
+    st.x *= uResolution.x / uResolution.y;
+
+    float t = uTime * 6.0 + uScroll * 150.0;
+
+    vec2 st1 = st * 1.2;
+    vec2 st2 = st * 1.6;
+
+    float f1 = fbm(st1 + vec2(t * 0.15, t * 0.1));
+    float mask1 = pow(fbm(st1 + f1 * 2.5 - vec2(t * 0.25, 0.0)), 2.0) * 3.5;
+
+    float f2 = fbm(st2 - vec2(t * 0.1, t * 0.2));
+    float mask2 = pow(fbm(st2 + f2 * 2.0 + vec2(0.0, t * 0.2)), 2.5) * 4.0;
+
+    vec3 finalColor = color2 * mask1 + color1 * mask2;
+
+    vec2 aspectUv = vUv - 0.5;
+    aspectUv.x *= uResolution.x / uResolution.y;
+    float centerDist = length(aspectUv);
+
+    float angle = atan(aspectUv.y, aspectUv.x) + uScroll * 15.0;
+    float maskOffset = sin(angle * 3.0 + t * 0.4) * 0.05
+                     + sin(angle * 5.0 - t * 0.6) * 0.03;
+    float dynamicDist = centerDist + maskOffset;
+
+    float cornerFade = smoothstep(0.7, 1.15, dynamicDist);
+    cornerFade = pow(cornerFade, 1.6);
+
+    finalColor *= cornerFade * 0.9;
+
+    vec3 baseBg = vec3(0.012, 0.012, 0.02);
+
+    gl_FragColor = vec4(baseBg + finalColor, 1.0);
+}`;
+
+const particleVertexShader = /* glsl */`
+uniform float uTime;
+uniform float uScroll;
+uniform float uIntro;
+varying float vEdgeFade;
+varying vec3 vColor;
+
+vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
+vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
+float snoise(vec3 v){
+  const vec2 C = vec2(1.0/6.0, 1.0/3.0); const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+  vec3 i = floor(v + dot(v, C.yyy)); vec3 x0 = v - i + dot(i, C.xxx);
+  vec3 g = step(x0.yzx, x0.xyz); vec3 l = 1.0 - g;
+  vec3 i1 = min(g.xyz, l.zxy); vec3 i2 = max(g.xyz, l.zxy);
+  vec3 x1 = x0 - i1 + 1.0 * C.xxx; vec3 x2 = x0 - i2 + 2.0 * C.xxx; vec3 x3 = x0 - 1.0 + 3.0 * C.xxx;
+  i = mod(i, 289.0);
+  vec4 p = permute(permute(permute(i.z + vec4(0.0, i1.z, i2.z, 1.0)) + i.y + vec4(0.0, i1.y, i2.y, 1.0)) + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+  float n_ = 1.0/7.0; vec3 ns = n_ * D.wyz - D.xzx;
+  vec4 j = p - 49.0 * floor(p * ns.z *ns.z);
+  vec4 x_ = floor(j * ns.z); vec4 y_ = floor(j - 7.0 * x_);
+  vec4 x = x_ *ns.x + ns.yyyy; vec4 y = y_ *ns.x + ns.yyyy; vec4 h = 1.0 - abs(x) - abs(y);
+  vec4 b0 = vec4(x.xy, y.xy); vec4 b1 = vec4(x.zw, y.zw);
+  vec4 s0 = floor(b0)*2.0 + 1.0; vec4 s1 = floor(b1)*2.0 + 1.0; vec4 sh = -step(h, vec4(0.0));
+  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy; vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+  vec3 p0 = vec3(a0.xy,h.x); vec3 p1 = vec3(a0.zw,h.y); vec3 p2 = vec3(a1.xy,h.z); vec3 p3 = vec3(a1.zw,h.w);
+  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+  p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+  vec4 m = max(0.5 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0); m = m * m;
+  return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+}
+
+float random(vec3 p) {
+    return fract(sin(dot(p, vec3(12.9898, 78.233, 45.164))) * 43758.5453);
+}
+
+void main() {
+    vec3 normalVec = normalize(position);
+
+    float noiseVal = snoise(position * 0.5 + uTime * 0.8);
+    noiseVal += 0.5 * snoise(position * 1.5 - uTime * 1.2);
+    vec3 spherePos = position + normalVec * (noiseVal * 0.5);
+
+    float stretchedY = position.y * 7.0 - 8.0;
+
+    float funnelRadius = 1.0 + smoothstep(-32.0, 16.0, stretchedY) * 5.0;
+    float angle = atan(position.z, position.x) + stretchedY * 0.3;
+    vec3 funnelPos = vec3(funnelRadius * cos(angle), stretchedY, funnelRadius * sin(angle));
+    funnelPos += normalVec * (snoise(funnelPos * 0.3 + uTime * 3.0) * 1.0);
+
+    float rnd1 = random(position);
+    float rnd2 = random(position + vec3(1.0));
+    float rnd3 = random(position + vec3(2.0));
+
+    float t = stretchedY;
+    float twistMultiplier = 0.65;
+    float twist = t * twistMultiplier;
+    float dnaRadius = 1.0;
+    float strandThickness = 0.35;
+
+    vec3 dnaPos;
+    if (rnd1 < 0.40) {
+        vec3 core = vec3(dnaRadius * cos(twist), t, dnaRadius * sin(twist));
+        vec3 offset = vec3(rnd1 - 0.2, rnd2 - 0.5, rnd3 - 0.5) * 2.0 * strandThickness;
+        dnaPos = core + offset;
+    } else if (rnd1 < 0.80) {
+        vec3 core = vec3(dnaRadius * cos(twist + 3.14159), t, dnaRadius * sin(twist + 3.14159));
+        vec3 offset = vec3(rnd1 - 0.6, rnd2 - 0.5, rnd3 - 0.5) * 2.0 * strandThickness;
+        dnaPos = core + offset;
+    } else {
+        float rungT = (rnd1 - 0.80) * 5.0;
+        float discreteT = floor(t * 2.5) / 2.5;
+        float discreteTwist = discreteT * twistMultiplier;
+        vec3 p1 = vec3(dnaRadius * cos(discreteTwist), discreteT, dnaRadius * sin(discreteTwist));
+        vec3 p2 = vec3(dnaRadius * cos(discreteTwist + 3.14159), discreteT, dnaRadius * sin(discreteTwist + 3.14159));
+
+        vec3 core = mix(p1, p2, rungT);
+        vec3 offset = vec3(rnd1 - 0.9, rnd2 - 0.5, rnd3 - 0.5) * 2.0 * 0.10;
+        dnaPos = core + offset;
+    }
+
+    dnaPos.x += snoise(vec3(0.0, t * 0.2, uTime * 0.2)) * 0.5;
+    dnaPos.z += snoise(vec3(t * 0.2, 0.0, uTime * 0.2)) * 0.5;
+
+    float phase1 = smoothstep(0.0, 0.15, uScroll);
+    float phase2 = smoothstep(0.15, 0.30, uScroll);
+
+    vec3 step1Pos = mix(spherePos, funnelPos, phase1);
+    vec3 step2Pos = mix(step1Pos, dnaPos, phase2);
+
+    float meltProgress = smoothstep(0.30, 0.50, uScroll);
+
+    float meltY = mix(-50.0, 90.0, meltProgress);
+
+    float depthBelowMeltLine = meltY - stretchedY;
+    float localMelt = smoothstep(0.0, 45.0, depthBelowMeltLine);
+
+    vec3 targetWavePos = vec3(position.x * 7.0, -45.0, position.z * 25.0);
+
+    targetWavePos.x += position.y * 6.0;
+
+    float waveNoise = snoise(vec3(targetWavePos.x * 0.08, targetWavePos.z * 0.08, uTime * 0.15)) * 2.0;
+    waveNoise += snoise(vec3(targetWavePos.x * 0.16, targetWavePos.z * 0.16, uTime * 0.3)) * 0.8;
+    targetWavePos.y += waveNoise;
+
+    float tunnelProgress = smoothstep(0.65, 0.80, uScroll);
+
+    float blackHoleLinear = clamp((uScroll - 0.80) / 0.12, 0.0, 1.0);
+    float blackHoleProgress = pow(blackHoleLinear, 2.0);
+
+    float tunnelR = 12.0;
+
+    float pinchFactor = clamp((targetWavePos.z + 80.0) / 100.0, 0.0, 1.0);
+    tunnelR = mix(tunnelR, tunnelR * pinchFactor, blackHoleProgress);
+
+    float tunnelCy = -33.0;
+
+    float currentSliceRadius = sqrt(max(0.0, 17.64 - position.z * position.z));
+    float maxSliceWidth = 9.2195 * currentSliceRadius;
+    float normalizedX = targetWavePos.x / (maxSliceWidth + 0.001);
+    float tunnelAngle = normalizedX * 3.14159265;
+
+    float tunnelLinear = clamp((uScroll - 0.70) / 0.22, 0.0, 1.0);
+    float tunnelEnd = pow(tunnelLinear, 3.0);
+
+    float jitterAngle = snoise(vec3(position.x * 15.0, position.y * 15.0, uTime * 0.1)) * 0.35;
+    float jitterZ = snoise(vec3(position.y * 15.0, position.z * 15.0, uTime * 0.1)) * 4.0;
+
+    float ambientSwirl = snoise(vec3(position.x * 5.0, position.y * 5.0, uTime * 0.2)) * 3.0;
+    float diveTwist = snoise(vec3(position.x * 5.0, position.y * 5.0, 0.0)) * 30.0 * tunnelEnd;
+    float vortexSpeed = (ambientSwirl + diveTwist) * tunnelLinear;
+
+    tunnelAngle += jitterAngle + vortexSpeed;
+    float tunnelZ = targetWavePos.z + jitterZ;
+
+    float dynamicR = tunnelR - waveNoise;
+    vec3 tunnelPos = vec3(dynamicR * sin(tunnelAngle), tunnelCy - dynamicR * cos(tunnelAngle), tunnelZ);
+
+    vec3 morphedWave = mix(targetWavePos, tunnelPos, tunnelProgress);
+
+    vec3 tunnelFinalPos = mix(step2Pos, morphedWave, localMelt);
+
+    float galaxyPhase = step(0.93, uScroll);
+
+    float gRnd1 = fract(sin(dot(position.xyz, vec3(12.989, 78.233, 45.164))) * 43758.545);
+    float gRnd2 = fract(sin(dot(position.xyz, vec3(93.989, 67.345, 54.256))) * 24634.634);
+    float gRnd3 = fract(sin(dot(position.xyz, vec3(43.332, 11.235, 89.234))) * 56475.234);
+    float gRnd4 = fract(sin(dot(position.xyz, vec3(75.321, 32.123, 23.456))) * 35432.123);
+
+    float galaxyR = pow(gRnd1, 2.0) * 60.0 + pow(gRnd2, 3.0) * 30.0;
+
+    float swirl = pow(galaxyR, 1.1) * 0.08;
+
+    float armIndex = floor(gRnd2 * 2.0);
+    float baseAngle = armIndex * 3.14159265;
+
+    float uniformTheta = gRnd3 * 2.0 - 1.0;
+    float dTheta = pow(uniformTheta, 5.0) * 3.14159;
+
+    float theta = baseAngle + swirl + dTheta + (uTime * 0.4);
+
+    float gx = galaxyR * cos(theta);
+    float gz = galaxyR * sin(theta);
+
+    float gyDisc = pow(gRnd4 * 2.0 - 1.0, 3.0) * 1.5;
+    vec3 basePos = vec3(gx, gyDisc, gz);
+
+    float bulgeStrength = smoothstep(25.0, 0.0, galaxyR);
+
+    float gRnd5 = fract(sin(gRnd1 * 44.44 + gRnd2) * 555.55);
+    float gRnd6 = fract(sin(gRnd3 * 66.66 + gRnd4) * 777.77);
+    float gRnd7 = fract(sin(gRnd5 * 88.88 + gRnd6) * 999.99);
+
+    float phi = acos(gRnd5 * 2.0 - 1.0);
+    float thetaSphere = gRnd6 * 6.2831853 + (uTime * 0.8);
+    float rSphere = pow(gRnd7, 2.0) * 18.0;
+
+    vec3 bulgeOffset = vec3(
+        rSphere * sin(phi) * cos(thetaSphere),
+        rSphere * cos(phi),
+        rSphere * sin(phi) * sin(thetaSphere)
+    );
+
+    vec3 galaxyPos = mix(basePos, bulgeOffset, bulgeStrength);
+
+    galaxyPos.y -= 33.0;
+    galaxyPos.z -= 120.0;
+
+    vec3 finalPos = mix(tunnelFinalPos, galaxyPos, galaxyPhase);
+
+    vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
+
+    vec3 viewDir = normalize(-mvPosition.xyz);
+    vec3 worldNormal = normalize(normalMatrix * normalVec);
+
+    float rim = 1.0 - abs(dot(viewDir, worldNormal));
+
+    float edgeFadeSphere = smoothstep(0.4, 0.9, rim);
+    float edgeFadeDNA = 1.0;
+
+    float morph = smoothstep(0.0, 0.30, uScroll);
+
+    float opacityMultiplier = 0.8;
+    float sizeMultiplier = 1.5;
+
+    float dnaPhase = smoothstep(0.15, 0.30, uScroll);
+    opacityMultiplier = mix(opacityMultiplier, 0.25, dnaPhase);
+    sizeMultiplier = mix(sizeMultiplier, 4.0, dnaPhase);
+
+    float wavePhase = smoothstep(0.30, 0.50, uScroll);
+    opacityMultiplier = mix(opacityMultiplier, 0.35, wavePhase);
+    sizeMultiplier = mix(sizeMultiplier, 4.0, wavePhase);
+
+    float tunnelPhase = smoothstep(0.65, 0.80, uScroll);
+    opacityMultiplier = mix(opacityMultiplier, 0.6, tunnelPhase);
+    sizeMultiplier = mix(sizeMultiplier, 10.0, tunnelPhase);
+
+    float isOrb = step(0.98, fract(gRnd1 * 77.77));
+    float starSize = mix(5.0, 16.0, isOrb);
+
+    opacityMultiplier = mix(opacityMultiplier, 0.25, galaxyPhase);
+    sizeMultiplier = mix(sizeMultiplier, starSize, galaxyPhase);
+
+    float introSphere = mix(1.0, edgeFadeSphere, uIntro);
+    vEdgeFade = mix(introSphere, edgeFadeDNA, morph) * opacityMultiplier;
+    vEdgeFade *= smoothstep(0.0, 0.2, uIntro);
+
+    vec3 cBottom = vec3(0.2, 0.4, 1.0);
+    vec3 cTop = vec3(1.0, 0.3, 0.2);
+
+    float baseColorMix = smoothstep(-3.0, 3.0, position.y + position.x * 0.5);
+    vec3 normalColor = mix(cBottom, cTop, clamp(baseColorMix, 0.0, 1.0));
+
+    float orangeMix = smoothstep(80.0, 0.0, galaxyR);
+    vec3 galaxyColor = mix(cBottom, cTop, clamp(orangeMix, 0.0, 1.0));
+
+    vColor = mix(normalColor, galaxyColor, galaxyPhase);
+
+    gl_PointSize = sizeMultiplier * (10.0 / -mvPosition.z);
+
+    gl_PointSize = max(gl_PointSize, 1.5);
+
+    gl_Position = projectionMatrix * mvPosition;
+}`;
+
+const particleFragmentShader = /* glsl */`
+varying float vEdgeFade;
+varying vec3 vColor;
+
+void main() {
+    vec2 xy = gl_PointCoord.xy - vec2(0.5);
+    float ll = length(xy);
+    if(ll > 0.5) discard;
+
+    float pointAlpha = smoothstep(0.5, 0.1, ll);
+
+    gl_FragColor = vec4(vColor, vEdgeFade * pointAlpha * 0.9);
+}`;
+
+// ============ scene setup ============
+const canvas = document.getElementById('scene');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
+const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
+camera.position.z = 8;
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.autoClear = false;
+
+const bgScene = new THREE.Scene();
+const bgCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
+const bgGeometry = new THREE.PlaneGeometry(2, 2);
+const bgMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    uTime: { value: 0 }, uScroll: { value: 0 },
+    uResolution: { value: new THREE.Vector2(innerWidth, innerHeight) },
+    color1: { value: new THREE.Color('#ff4c33') },
+    color2: { value: new THREE.Color('#3366ff') },
+  },
+  vertexShader: backgroundVertexShader,
+  fragmentShader: backgroundFragmentShader,
+  depthWrite: false,
+});
+bgScene.add(new THREE.Mesh(bgGeometry, bgMaterial));
+
+const geometry = new THREE.SphereGeometry(4.2, 200, 600);
+const material = new THREE.ShaderMaterial({
+  uniforms: { uTime: { value: 0 }, uScroll: { value: 0 }, uIntro: { value: 0 } },
+  vertexShader: particleVertexShader,
+  fragmentShader: particleFragmentShader,
+  transparent: true,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+});
+const particles = new THREE.Points(geometry, material);
+particles.frustumCulled = false;
+scene.add(particles);
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(bgScene, bgCamera));
+const renderFg = new RenderPass(scene, camera);
+renderFg.clear = false; renderFg.clearDepth = true;
+composer.addPass(renderFg);
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.5, 0.5, 0.05));
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+  bgMaterial.uniforms.uResolution.value.set(innerWidth, innerHeight);
+});
+
+// ============ letter cascade ============
+document.querySelectorAll('[data-title]').forEach(el => {
+  const words = el.textContent.trim().split(/\s+/);
+  el.textContent = '';
+  let idx = 0;
+  words.forEach((word, wi) => {
+    const w = document.createElement('span');
+    w.className = 'word';
+    for (const ch of word) {
+      const c = document.createElement('span');
+      c.className = 'char';
+      c.textContent = ch;
+      c.style.transitionDelay = (idx * 15) + 'ms';
+      w.appendChild(c);
+      idx++;
+    }
+    el.appendChild(w);
+    if (wi < words.length - 1) el.appendChild(document.createTextNode(' '));
+  });
+});
+
+// ============ overlay windows ============
+// [start, end] in scroll progress; hero has no "before" state.
+const WINDOWS = {
+  hero:   [-1,    0.02 ],
+  trail:  [0.045, 0.135],
+  wave:   [0.48,  0.62 ],
+  steep:  [0.66,  0.79 ],
+  galaxy: [0.93,  2    ],
+};
+const sections = { hero: '#hero', trail: '#trail', wave: '#wave', steep: '#steep', galaxy: '#galaxy' };
+const played = {};
+function applyWindows(cs) {
+  for (const [key, [start, end]] of Object.entries(WINDOWS)) {
+    const state = cs < start ? 'before' : (cs <= end ? 'visible' : 'after');
+    const root = document.querySelector(sections[key]);
+    root.style.pointerEvents = state === 'visible' ? 'none' : 'none';
+    root.querySelectorAll('.rv[data-w="' + key + '"]').forEach(el => {
+      el.classList.toggle('is-visible', state === 'visible');
+      el.classList.toggle('is-leaving', state === 'after');
+    });
+    const title = root.querySelector('[data-title]');
+    if (title && !played[key] && state !== 'before') {
+      title.classList.add('cascade-in');
+      played[key] = true;
+    }
+    // keep links clickable only while their section is on screen
+    root.querySelectorAll('a.btn, button.btn, .story-card a').forEach(a => {
+      a.style.pointerEvents = state === 'visible' ? 'auto' : 'none';
+    });
+    if (root.classList.contains('story')) applyStoryPin(key, cs);
+  }
+}
+
+// ============ pinned story sections ============
+// A section taller than the screen would simply be clipped — its overlay is
+// fixed, so page scroll drives the animation, not the text. Instead: while a
+// section owns the screen, its local scroll progress walks the block upward by
+// exactly its overflow, so scrolling the page reads the card. One gesture.
+const PIN_PAD = 16;
+const storyPins = Array.from(document.querySelectorAll('.story')).map(sec => ({
+  sec, inner: sec.querySelector('.story-inner'), overflow: 0,
+}));
+function measurePins() {
+  for (const p of storyPins) {
+    if (!p.inner) continue;
+    const prev = p.inner.style.transform;
+    p.inner.style.transform = 'none';
+    p.overflow = Math.max(0, p.inner.offsetHeight - (innerHeight - PIN_PAD * 2));
+    p.sec.classList.toggle('is-tall', p.overflow > 0);
+    p.inner.style.transform = prev;
+  }
+}
+// fonts change metrics after they load, so measure again once they settle
+addEventListener('resize', measurePins);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(measurePins);
+setTimeout(measurePins, 600);
+measurePins();
+
+function applyStoryPin(key, cs) {
+  const p = storyPins.find(x => x.sec.id === key);
+  if (!p || !p.inner) return;
+  if (p.overflow <= 0) { p.inner.style.transform = 'translateY(0px)'; return; }
+  // the closing act's window ends at a sentinel past 1 ("runs to the bottom"),
+  // which would stretch the pin over scroll that does not exist
+  const start = Math.max(0, WINDOWS[key][0]);
+  const end = Math.min(1, WINDOWS[key][1]);
+  const t = Math.max(0, Math.min(1, (cs - start) / (end - start)));
+  p.inner.style.transform = `translateY(${-p.overflow * t}px)`;
+}
+
+// ============ DNA stat cards ============
+const dnaContainer = document.getElementById('dna-cards');
+function applyDnaCards(cs) {
+  let dnaOpacity = 0;
+  if (cs > 0.15 && cs < 0.38) {
+    dnaOpacity = Math.min((cs - 0.15) / 0.03, 1);
+    if (cs > 0.35) dnaOpacity = Math.max(1 - (cs - 0.35) / 0.03, 0);
+  }
+  dnaContainer.style.opacity = dnaOpacity;
+  if (dnaOpacity <= 0) return;
+
+  // The template orbits these three cards through a rotateY tilt. That reads as
+  // motion design and nothing else: a card is legible for about a tenth of its
+  // orbit, at an angle, half off-screen. This page is read by people in their
+  // eighties, so the cards hold still, centred, at full opacity for the whole
+  // window — the only thing that animates is the fade in and out above.
+}
+
+// ============ render loop ============
+const glow = document.getElementById('glow');
+const lenis = new Lenis({ smoothWheel: true });
+window.scrollTo(0, 0);
+
+document.getElementById('ride-along').addEventListener('click', () => {
+  const max = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  lenis.scrollTo(max * 0.09, { duration: 2 });
+});
+
+let time = 0;
+const INTRO_MS = 2600;
+let introStart = 0;
+
+function render(now) {
+  time += 0.005;
+
+  if (introStart === 0) introStart = now;
+  const introRaw = Math.min((now - introStart) / INTRO_MS, 1);
+  const introEased = 1 - Math.pow(1 - introRaw, 3);
+  material.uniforms.uIntro.value = introEased;
+
+  const maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+  const currentScroll = maxScroll > 0 ? scrollTop / maxScroll : 0;
+
+  material.uniforms.uTime.value = time;
+  material.uniforms.uScroll.value = currentScroll;
+  bgMaterial.uniforms.uTime.value = time;
+  bgMaterial.uniforms.uScroll.value = currentScroll;
+
+  const panProgress = Math.min(currentScroll / 0.5, 1);
+  const smoothPan = panProgress * panProgress * (3 - 2 * panProgress);
+  const flyPhase = currentScroll < 0.5 ? 0 : Math.min((currentScroll - 0.5) / 0.35, 1);
+  const blackHoleDive = currentScroll < 0.8 ? 0 : Math.min((currentScroll - 0.8) / 0.12, 1);
+
+  camera.position.y = -38 * smoothPan + 5 * Math.pow(blackHoleDive, 2);
+  camera.position.z = 8 - 4 * smoothPan - 55 * flyPhase;
+
+  const galaxyPullback = currentScroll < 0.93 ? 0 : Math.min((currentScroll - 0.93) / 0.07, 1);
+  const smoothPullback = galaxyPullback * galaxyPullback * (3 - 2 * galaxyPullback);
+  camera.position.z += 75 * smoothPullback;
+  camera.position.y += 35 * smoothPullback;
+
+  const lookX = 0;
+  let waveTilt = 0;
+  if (currentScroll > 0.3 && currentScroll < 0.7) {
+    const tiltProgress = (currentScroll - 0.3) / 0.4;
+    waveTilt = Math.sin(tiltProgress * Math.PI) * 15;
+  }
+  const lookY = THREE.MathUtils.lerp(camera.position.y + waveTilt, -33, smoothPullback);
+  const lookZ = THREE.MathUtils.lerp(camera.position.z - 100, -120, smoothPullback);
+
+  const introZoom = (1 - introEased) * -3 * (1 - Math.min(currentScroll / 0.05, 1));
+  camera.position.z += introZoom;
+  camera.lookAt(new THREE.Vector3(lookX, lookY, lookZ));
+
+  particles.rotation.y = smoothPan * Math.PI * 2;
+  particles.rotation.x = Math.sin(smoothPan * Math.PI) * 0.15;
+  camera.rotation.z = 0;
+
+  const glowScaleProgress = currentScroll < 0.9 ? 0 : Math.min((currentScroll - 0.9) / 0.03, 1);
+  const glowScale = Math.pow(glowScaleProgress, 4) * 400;
+  const hideGlow = currentScroll < 0.93 ? 0 : Math.min((currentScroll - 0.93) / 0.02, 1);
+  glow.style.transform = `translate(-50%,-50%) scale(${glowScale})`;
+  glow.style.opacity = 1 - hideGlow;
+
+  applyWindows(currentScroll);
+  applyDnaCards(currentScroll);
+
+  composer.render();
+}
+
+function raf(t) {
+  lenis.raf(t);
+  render(t);
+  requestAnimationFrame(raf);
+}
+requestAnimationFrame(raf);
+</script>
+</body>
+</html>
