@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// Build-time data pipeline for Fruit for Ollie (public/fruitforollie/).
+// Build-time data pipeline for the fruit map (public/olliesfruitmap/).
 //
 // Same shape as fetch-trees.mjs (redwoods): queries the three City of
 // Portland ArcGIS layers, keeps edible fruit and nut trees, normalizes to
 // one schema, dedupes heritage duplicates, and writes
-// public/fruitforollie/data/trees.geojson (the boot-loaded orchard stars)
+// public/olliesfruitmap/data/trees.geojson (the boot-loaded orchard stars)
 // plus data/more/<taxon>.geojson (lazy-loaded groups).
 //
 // Deliberately excluded: ornamental cultivars that don't set real fruit —
@@ -75,7 +75,7 @@ async function queryAll(layerId, where) {
 
 // group 'orchard' ships in the boot-loaded trees.geojson; group 'more'
 // each get their own lazily-fetched file under data/more/.
-// Keep keys/colors in sync with public/fruitforollie/js/taxa.js.
+// Keep keys/colors in sync with public/olliesfruitmap/js/taxa.js.
 const TAXA = {
   apple: { common: 'Apple', scientific: 'Malus domestica', group: 'orchard', match: /malus domestica/ },
   fig: { common: 'Fig', scientific: 'Ficus carica', group: 'orchard', match: /ficus carica/ },

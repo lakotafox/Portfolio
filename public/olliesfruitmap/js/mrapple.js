@@ -19,7 +19,7 @@ const MOUTH = ['talk', 'idle', 'talk2', 'idle'];
 // Floppy's intro shape: greeting → problem → gripe :( → mission!! →
 // the treasure (big number) → question… → "let me show you!"
 const WELCOME_LINES = [
-  { line: "Hi!! I'm MR APPLE — welcome to Ollie's fruit map!!", frame: 'talk2' },
+  { line: "Hi!! I'm MR APPLE — welcome to the fruit map!!", frame: 'talk2' },
   { line: 'Did you know Portland is FULL of fruit trees?', frame: 'idle' },
   { line: 'Apples, figs, plums, cherries… just growing on the street!', frame: 'idle' },
   { line: 'Most people walk right past them every single day :(', frame: 'look' },

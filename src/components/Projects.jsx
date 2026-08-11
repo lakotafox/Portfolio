@@ -30,7 +30,7 @@ const projectsData = [
   },
   {
     id: 'olliesfruitmap',
-    title: "Ollie's Fruit Map <3",
+    title: "Fruit Map <3",
     description: "Every fruit and nut tree in Portland on one cute Win95 map — 30,000+ apples, figs, plums, cherries, pears, persimmons and walnuts from City of Portland open data. Tap 'Near me' to find fruit around you, filter by trunk size and age, and meet the old orchard survivors that predate their neighborhoods. Click sounds included.",
     tag: 'Open Data',
     link: '/olliesfruitmap/',
