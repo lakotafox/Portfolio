@@ -869,7 +869,10 @@ const WINDOWS = {
   trail:  [0.045, 0.135],
   wave:   [0.48,  0.62 ],
   steep:  [0.66,  0.79 ],
-  galaxy: [0.93,  2    ],
+  // The galaxy resolves out of the white flash at 0.93 and the camera keeps
+  // pulling back until 1.0. Opening the closing text at 0.93 covered the reveal
+  // with a paragraph — the payoff of the whole scroll, missed. It waits.
+  galaxy: [0.962, 2    ],
 };
 const sections = { hero: '#hero', trail: '#trail', wave: '#wave', steep: '#steep', galaxy: '#galaxy' };
 const played = {};
@@ -975,8 +978,62 @@ let time = 0;
 const INTRO_MS = 2600;
 let introStart = 0;
 
+// ---- scroll time-warp ----------------------------------------------------
+// Raw scroll drove the morph directly, which spends most of the page's travel
+// grinding through a phase while a paragraph sits on top of it, and blows past
+// the transitions worth watching — the melt, the pinch, the flash — in the gaps
+// where nothing is being read. So the two are decoupled: text still keys off
+// raw scroll position, while the scene reads this curve. Each pair is
+// [raw, animation]; inside a reading window the animation gains less than the
+// scroll spends (slow), and between windows it gains more (fast).
+const TIME_WARP = [
+  [0.000, 0.000],  // hero — nearly still while the intro settles
+  [0.020, 0.010],
+  [0.045, 0.060],  // ↑ gap: sphere collapses into the funnel
+  [0.135, 0.105],  // Q1 on screen — slow
+  [0.150, 0.150],  // ↑ gap
+  [0.380, 0.330],  // stat cards — gentle drift as the helix turns
+  [0.480, 0.500],  // ↑ gap: the helix melts into the ocean
+  [0.620, 0.560],  // Q2 on screen — slowest stretch on the page
+  [0.660, 0.660],  // ↑ gap
+  [0.790, 0.740],  // Q3 on screen — slow
+  [0.930, 0.925],  // ↑ gap: tunnel, black-hole pinch, white flash
+  [0.965, 0.972],  // ↑ still gap: the galaxy, alone, before the closing text
+  [1.000, 1.000],  // Q5 on screen — slow pullback
+];
+function warpScroll(x) {
+  if (x <= 0) return 0;
+  if (x >= 1) return 1;
+  for (let i = 1; i < TIME_WARP.length; i++) {
+    const [x1, y1] = TIME_WARP[i];
+    if (x <= x1) {
+      const [x0, y0] = TIME_WARP[i - 1];
+      return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
+    }
+  }
+  return 1;
+}
+
+// Ambient motion (the noise churn that runs on its own clock) gets the same
+// treatment: hushed under text, free to move in between.
+const READING_WINDOWS = [[0.045, 0.135], [0.15, 0.38], [0.48, 0.62], [0.66, 0.79], [0.965, 1.0]];
+const FADE = 0.02;
+function readingAmount(x) {
+  let m = 0;
+  for (const [a, b] of READING_WINDOWS) {
+    const v = Math.min((x - (a - FADE)) / FADE, 1, ((b + FADE) - x) / FADE);
+    m = Math.max(m, Math.min(1, Math.max(0, v)));
+  }
+  return m;
+}
+
 function render(now) {
-  time += 0.005;
+  {
+    const mScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const raw = mScroll > 0 ? (document.documentElement.scrollTop || document.body.scrollTop) / mScroll : 0;
+    // 0.0022 under text, 0.0085 in the open — the template's 0.005 is the midpoint
+    time += 0.0085 - 0.0063 * readingAmount(raw);
+  }
 
   if (introStart === 0) introStart = now;
   const introRaw = Math.min((now - introStart) / INTRO_MS, 1);
@@ -986,35 +1043,37 @@ function render(now) {
   const maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
   const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
   const currentScroll = maxScroll > 0 ? scrollTop / maxScroll : 0;
+  // Text positions read raw scroll; the scene reads warped scroll.
+  const animScroll = warpScroll(currentScroll);
 
   material.uniforms.uTime.value = time;
-  material.uniforms.uScroll.value = currentScroll;
+  material.uniforms.uScroll.value = animScroll;
   bgMaterial.uniforms.uTime.value = time;
-  bgMaterial.uniforms.uScroll.value = currentScroll;
+  bgMaterial.uniforms.uScroll.value = animScroll;
 
-  const panProgress = Math.min(currentScroll / 0.5, 1);
+  const panProgress = Math.min(animScroll / 0.5, 1);
   const smoothPan = panProgress * panProgress * (3 - 2 * panProgress);
-  const flyPhase = currentScroll < 0.5 ? 0 : Math.min((currentScroll - 0.5) / 0.35, 1);
-  const blackHoleDive = currentScroll < 0.8 ? 0 : Math.min((currentScroll - 0.8) / 0.12, 1);
+  const flyPhase = animScroll < 0.5 ? 0 : Math.min((animScroll - 0.5) / 0.35, 1);
+  const blackHoleDive = animScroll < 0.8 ? 0 : Math.min((animScroll - 0.8) / 0.12, 1);
 
   camera.position.y = -38 * smoothPan + 5 * Math.pow(blackHoleDive, 2);
   camera.position.z = 8 - 4 * smoothPan - 55 * flyPhase;
 
-  const galaxyPullback = currentScroll < 0.93 ? 0 : Math.min((currentScroll - 0.93) / 0.07, 1);
+  const galaxyPullback = animScroll < 0.93 ? 0 : Math.min((animScroll - 0.93) / 0.07, 1);
   const smoothPullback = galaxyPullback * galaxyPullback * (3 - 2 * galaxyPullback);
   camera.position.z += 75 * smoothPullback;
   camera.position.y += 35 * smoothPullback;
 
   const lookX = 0;
   let waveTilt = 0;
-  if (currentScroll > 0.3 && currentScroll < 0.7) {
-    const tiltProgress = (currentScroll - 0.3) / 0.4;
+  if (animScroll > 0.3 && animScroll < 0.7) {
+    const tiltProgress = (animScroll - 0.3) / 0.4;
     waveTilt = Math.sin(tiltProgress * Math.PI) * 15;
   }
   const lookY = THREE.MathUtils.lerp(camera.position.y + waveTilt, -33, smoothPullback);
   const lookZ = THREE.MathUtils.lerp(camera.position.z - 100, -120, smoothPullback);
 
-  const introZoom = (1 - introEased) * -3 * (1 - Math.min(currentScroll / 0.05, 1));
+  const introZoom = (1 - introEased) * -3 * (1 - Math.min(animScroll / 0.05, 1));
   camera.position.z += introZoom;
   camera.lookAt(new THREE.Vector3(lookX, lookY, lookZ));
 
@@ -1022,9 +1081,9 @@ function render(now) {
   particles.rotation.x = Math.sin(smoothPan * Math.PI) * 0.15;
   camera.rotation.z = 0;
 
-  const glowScaleProgress = currentScroll < 0.9 ? 0 : Math.min((currentScroll - 0.9) / 0.03, 1);
+  const glowScaleProgress = animScroll < 0.9 ? 0 : Math.min((animScroll - 0.9) / 0.03, 1);
   const glowScale = Math.pow(glowScaleProgress, 4) * 400;
-  const hideGlow = currentScroll < 0.93 ? 0 : Math.min((currentScroll - 0.93) / 0.02, 1);
+  const hideGlow = animScroll < 0.93 ? 0 : Math.min((animScroll - 0.93) / 0.02, 1);
   glow.style.transform = `translate(-50%,-50%) scale(${glowScale})`;
   glow.style.opacity = 1 - hideGlow;
 
