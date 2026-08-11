@@ -214,6 +214,7 @@
   }
   .dna-card {
     width: min(360px, 31vw);
+    will-change: transform, opacity;
     border-radius: 24px;
     border: 1px solid rgba(255,255,255,0.22);
     background: rgba(6,8,16,0.90);
@@ -933,6 +934,14 @@ function applyStoryPin(key, cs) {
 
 // ============ DNA stat cards ============
 const dnaContainer = document.getElementById('dna-cards');
+const dnaCards = Array.from(dnaContainer.querySelectorAll('.dna-card'));
+// The template orbits these three through a rotateY tilt, which leaves each one
+// legible for about a tenth of its orbit, at an angle, half off-screen. Instead
+// they rise from below the fold in sequence, driven by scroll position rather
+// than a timer — so the reader sets the pace — and then hold still, square to
+// the screen, at full opacity for the rest of the window.
+const DNA_STAGGER = 0.14;   // how far apart the three entrances are
+const DNA_RUN = 0.34;       // how much scroll each card takes to arrive
 function applyDnaCards(cs) {
   let dnaOpacity = 0;
   if (cs > 0.15 && cs < 0.38) {
@@ -942,11 +951,14 @@ function applyDnaCards(cs) {
   dnaContainer.style.opacity = dnaOpacity;
   if (dnaOpacity <= 0) return;
 
-  // The template orbits these three cards through a rotateY tilt. That reads as
-  // motion design and nothing else: a card is legible for about a tenth of its
-  // orbit, at an angle, half off-screen. This page is read by people in their
-  // eighties, so the cards hold still, centred, at full opacity for the whole
-  // window — the only thing that animates is the fade in and out above.
+  const progress = Math.max(0, Math.min(1, (cs - 0.15) / 0.23));
+  const rise = innerHeight * 0.62;
+  dnaCards.forEach((el, i) => {
+    const local = Math.max(0, Math.min(1, (progress - i * DNA_STAGGER) / DNA_RUN));
+    const eased = 1 - Math.pow(1 - local, 3);   // easeOutCubic, settles softly
+    el.style.transform = `translate3d(0, ${(1 - eased) * rise}px, 0)`;
+    el.style.opacity = eased;
+  });
 }
 
 // ============ render loop ============
