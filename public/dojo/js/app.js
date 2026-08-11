@@ -9,7 +9,8 @@ import { BELTS, TERMINAL_BELTS } from './belts.js';
 import * as store from './store.js';
 import { runCheck } from './checks.js';
 import { createSensei, preload } from './sensei.js';
-import { chime, thud, setMuted, isMuted } from './blip.js';
+import { chime, thud, cycleAudio, audioMode, musicAllowed, AUDIO_LABEL } from './blip.js';
+import { startMusic, stopMusic } from './music.js';
 import { stackGame, pipeGame, quiz } from './games.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -287,10 +288,22 @@ function clock() {
 clock();
 setInterval(clock, 20000);
 
-$('#mute').addEventListener('click', (e) => {
-  setMuted(!isMuted());
-  e.currentTarget.textContent = isMuted() ? 'Sound: off' : 'Sound: on';
+/* One button cycles all -> music -> effects -> off. */
+const muteBtn = $('#mute');
+muteBtn.textContent = AUDIO_LABEL[audioMode()];
+muteBtn.addEventListener('click', (e) => {
+  const m = cycleAudio();
+  e.currentTarget.textContent = AUDIO_LABEL[m];
+  if (musicAllowed()) startMusic(0.8); else stopMusic(0.6);
 });
+
+/* Browsers will not start audio before the user has touched the page, so the
+   theme is armed on the first interaction rather than on load. */
+const armMusic = () => {
+  document.removeEventListener('pointerdown', armMusic);
+  if (musicAllowed()) startMusic();
+};
+document.addEventListener('pointerdown', armMusic, { once: true, passive: true });
 
 $('#reset').addEventListener('click', () => {
   if (!confirm('Wipe your progress and start over?')) return;
