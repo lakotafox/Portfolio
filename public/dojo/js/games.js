@@ -1,5 +1,11 @@
-/* The two drag games. Pointer events, no library — SortableJS would be a
-   dependency for eight list items. */
+/* Drag-to-build puzzles.
+
+   Earlier version pre-filled the slots and swapped rows on hover. That was
+   wrong twice over: it read as "the answer is already here, jiggle it", and
+   swap-on-hover feels awful under a finger. Now there is a palette of loose
+   pieces and a column of EMPTY slots, and you actually pick a piece up and put
+   it somewhere. Pointer events only — works with a mouse and a thumb, no
+   library. */
 
 import { chime, thud } from './blip.js';
 
@@ -9,94 +15,207 @@ const shuffle = (a) => {
     const j = Math.floor(Math.random() * (i + 1));
     [r[i], r[j]] = [r[j], r[i]];
   }
-  // never hand back the finished puzzle
-  return r.every((v, i) => v === a[i]) && a.length > 1 ? shuffle(a) : r;
+  return r.every((v, i) => v === a[i]) && a.length > 1 ? shuffle(r) : r;
 };
 
 /**
- * A reorderable list that reports when the order is right.
  * @param {HTMLElement} host
- * @param {string[]} correct  labels in their correct order
- * @param {(msg:string, tone:string)=>void} say
+ * @param {{id:string,label:string}[]} pieces   in CORRECT order
+ * @param {string[]} slotHints                  one per slot, top to bottom
+ * @param {(msg:string)=>void} say
+ * @param {string} winLine
+ * @param {'column'|'row'} layout
  */
-function orderGame(host, correct, say, winLine) {
-  let order = shuffle(correct);
+function buildGame(host, pieces, slotHints, say, winLine, layout = 'column') {
+  const correct = pieces.map((p) => p.id);
   let solved = false;
 
-  const draw = () => {
-    host.innerHTML = '';
-    order.forEach((label, i) => {
-      const row = document.createElement('div');
-      row.className = 'slot';
-      row.dataset.index = String(i);
-      row.innerHTML = `<span class="grip">::</span><span class="slot-label"></span>`;
-      row.querySelector('.slot-label').textContent = label;
-      host.appendChild(row);
-    });
-  };
+  host.innerHTML = '';
+  host.className = `build build-${layout}`;
+
+  const slotWrap = document.createElement('div');
+  slotWrap.className = 'build-slots';
+  slotHints.forEach((hint, i) => {
+    const s = document.createElement('div');
+    s.className = 'build-slot';
+    s.dataset.i = String(i);
+    s.innerHTML = `<span class="slot-hint"></span>`;
+    s.querySelector('.slot-hint').textContent = hint;
+    slotWrap.appendChild(s);
+  });
+
+  const palette = document.createElement('div');
+  palette.className = 'build-palette';
+  const plabel = document.createElement('p');
+  plabel.className = 'palette-label';
+  plabel.textContent = 'Pieces';
+  palette.appendChild(plabel);
+
+  const pieceEls = new Map();
+  for (const p of shuffle(pieces)) {
+    const d = document.createElement('div');
+    d.className = 'piece';
+    d.dataset.id = p.id;
+    d.textContent = p.label;
+    palette.appendChild(d);
+    pieceEls.set(p.id, d);
+  }
+
+  host.append(slotWrap, palette);
 
   const check = () => {
     if (solved) return;
-    if (order.every((v, i) => v === correct[i])) {
+    const got = [...slotWrap.querySelectorAll('.build-slot')].map(
+      (s) => s.querySelector('.piece')?.dataset.id ?? null,
+    );
+    if (got.some((g) => g === null)) return;
+    if (got.every((g, i) => g === correct[i])) {
       solved = true;
+      host.dataset.solved = 'true';
       chime();
-      say(winLine, 'pass');
-      host.querySelectorAll('.slot').forEach((s) => { s.style.cursor = 'default'; });
+      say(winLine);
+    } else {
+      thud();
+      say('Not yet. Look at what has to sit underneath what.');
     }
   };
 
-  // Pointer drag: pick a row up, and swap it with whatever row you are over.
-  let dragging = null;
-  host.addEventListener('pointerdown', (e) => {
-    if (solved) return;
-    const row = e.target.closest('.slot');
-    if (!row) return;
-    dragging = row;
-    row.dataset.dragging = 'true';
-    row.setPointerCapture(e.pointerId);
-  });
-  host.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
-    const rows = [...host.querySelectorAll('.slot')];
-    const over = rows.find((r) => {
-      const b = r.getBoundingClientRect();
-      return e.clientY >= b.top && e.clientY <= b.bottom;
-    });
-    if (!over || over === dragging) return;
-    const from = Number(dragging.dataset.index);
-    const to = Number(over.dataset.index);
-    [order[from], order[to]] = [order[to], order[from]];
-    draw();
-    dragging = host.querySelector(`.slot[data-index="${to}"]`);
-    if (dragging) { dragging.dataset.dragging = 'true'; dragging.setPointerCapture(e.pointerId); }
-  });
-  const drop = () => {
-    if (!dragging) return;
-    delete dragging.dataset.dragging;
-    dragging = null;
+  /* ---- dragging, plus tap-to-place ----
+     Drag is the nice interaction, but on a phone the palette and the slots can
+     be far enough apart that a drag needs a scroll halfway through, which is
+     miserable. So a tap (pointer that barely moved) selects a piece instead,
+     and the next tap on a slot places it. Both paths, same code. */
+  let drag = null;      // { el, home, ghost, dx, dy, x0, y0 }
+  let picked = null;    // tap-selected piece
+
+  const setPicked = (el) => {
+    if (picked) delete picked.dataset.picked;
+    picked = el || null;
+    if (picked) picked.dataset.picked = 'true';
+  };
+
+  const place = (slot, el) => {
+    const sitting = slot.querySelector('.piece');
+    if (sitting && sitting !== el) palette.appendChild(sitting);   // evicted
+    slot.appendChild(el);
+    setPicked(null);
     check();
   };
-  host.addEventListener('pointerup', drop);
-  host.addEventListener('pointercancel', drop);
 
-  draw();
+  const homeOf = (el) => (el.parentElement.classList.contains('build-slot') ? el.parentElement : palette);
+
+  /* The piece is reparented to <body> mid-drag so it can travel anywhere on
+     screen. Moving an element in the DOM RELEASES its pointer capture, so the
+     piece itself stops receiving events — listen on `document`, which sees them
+     regardless of where the node currently lives. A placeholder holds the gap
+     open so the palette does not collapse under the cursor. */
+  const slotUnder = (x, y) => {
+    drag.el.style.visibility = 'hidden';
+    const under = document.elementFromPoint(x, y);
+    drag.el.style.visibility = '';
+    return under?.closest('.build-slot') ?? null;
+  };
+
+  const onMove = (e) => {
+    if (!drag) return;
+    e.preventDefault();
+    drag.el.style.left = `${e.clientX - drag.dx}px`;
+    drag.el.style.top = `${e.clientY - drag.dy}px`;
+    const slot = slotUnder(e.clientX, e.clientY);
+    slotWrap.querySelectorAll('.build-slot').forEach((s) => {
+      s.dataset.over = s === slot ? 'true' : 'false';
+    });
+  };
+
+  const onUp = (e) => {
+    if (!drag) return;
+    const { el, home } = drag;
+    const moved = Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 6;
+    const slot = moved ? slotUnder(e.clientX, e.clientY) : null;
+
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    document.removeEventListener('pointercancel', onUp);
+    drag.ghost?.remove();
+    el.classList.remove('dragging');
+    el.style.cssText = '';
+    slotWrap.querySelectorAll('.build-slot').forEach((s) => { s.dataset.over = 'false'; });
+
+    if (slot) {
+      place(slot, el);
+    } else {
+      home.appendChild(el);
+      if (!moved) setPicked(picked === el ? null : el);   // it was a tap
+    }
+    drag = null;
+    if (slot) return;
+  };
+
+  /* tap a slot while something is selected */
+  slotWrap.addEventListener('click', (e) => {
+    if (solved || !picked) return;
+    const slot = e.target.closest('.build-slot');
+    if (slot) place(slot, picked);
+  });
+
+  host.addEventListener('pointerdown', (e) => {
+    if (solved) return;
+    const piece = e.target.closest('.piece');
+    if (!piece) return;
+    e.preventDefault();
+
+    const r = piece.getBoundingClientRect();
+    const ghost = document.createElement('div');
+    ghost.className = 'piece-ghost';
+    ghost.style.height = `${r.height}px`;
+    piece.parentElement.insertBefore(ghost, piece);
+
+    drag = {
+      el: piece, home: homeOf(piece), ghost,
+      dx: e.clientX - r.left, dy: e.clientY - r.top,
+      x0: e.clientX, y0: e.clientY,
+    };
+    piece.classList.add('dragging');
+    piece.style.width = `${r.width}px`;
+    piece.style.left = `${r.left}px`;
+    piece.style.top = `${r.top}px`;
+    document.body.appendChild(piece);
+
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+    document.addEventListener('pointercancel', onUp);
+  });
 }
 
 export function stackGame(host, say) {
-  orderGame(
+  buildGame(
     host,
-    ['Applications — Chrome, Claude Code', 'Shell — zsh, your terminal', 'macOS — Finder, windows, permissions', 'Kernel — the traffic cop', 'Hardware — chip, memory, disk'],
+    [
+      { id: 'apps',  label: 'Applications — Chrome, Claude Code' },
+      { id: 'shell', label: 'Shell — zsh, your terminal' },
+      { id: 'os',    label: 'macOS — Finder, windows, permissions' },
+      { id: 'kernel',label: 'Kernel — the traffic cop' },
+      { id: 'hw',    label: 'Hardware — chip, memory, disk' },
+    ],
+    ['top', '', '', '', 'bottom'],
     say,
-    'That is the machine. Top to bottom, each layer only speaks to its neighbours.',
+    'That is the machine. Each layer only speaks to the ones it touches.',
+    'column',
   );
 }
 
 export function pipeGame(host, say) {
-  orderGame(
+  buildGame(
     host,
-    ['fortune', '|', 'cowsay'],
+    [
+      { id: 'fortune', label: 'fortune' },
+      { id: 'pipe',    label: '|' },
+      { id: 'cowsay',  label: 'cowsay' },
+    ],
+    ['first', 'then', 'then'],
     say,
-    'Output of the left, into the right. Now go ask for it out loud.',
+    'Output of the left, into the right. Now go and ask for it out loud.',
+    'row',
   );
 }
 
@@ -120,12 +239,12 @@ export function quiz(host, spec, say, onPass) {
         done = true;
         b.dataset.picked = 'right';
         chime();
-        say(opt.why, 'pass');
+        say(opt.why);
         onPass?.();
       } else {
         b.dataset.picked = 'wrong';
         thud();
-        say(opt.why, 'near');
+        say(opt.why);
       }
     });
     host.appendChild(b);

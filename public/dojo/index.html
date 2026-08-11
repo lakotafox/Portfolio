@@ -22,11 +22,11 @@
     <p class="kanji">wax on &middot; wax off</p>
   </div>
 
-  <!-- sensei lives at the top and narrates everything below him -->
-  <section class="win w95-raised">
+  <!-- sticky: sensei follows you down whatever you are reading -->
+  <section class="win w95-raised sensei-win">
     <header class="w95-titlebar">
       <div class="titlebar-name">
-        <span class="titlebar-ico">&#9670;</span><span>Sensei</span>
+        <span class="titlebar-ico">&#9670;</span><span id="step-label">Sensei</span>
       </div>
       <div class="titlebar-btns">
         <button class="w95-btn" id="mute" type="button" style="width:auto;padding:0 8px">Sound: on</button>
@@ -39,10 +39,23 @@
           <div class="sensei-text" id="sensei-text"></div>
         </div>
       </div>
+      <div class="progress">
+        <span class="progress-track"><span class="progress-fill" id="progress-fill"></span></span>
+        <span id="progress-label">0 / 0</span>
+      </div>
     </div>
   </section>
 
-  <section class="win w95-raised">
+  <!-- one step at a time lands here -->
+  <main id="stage"></main>
+
+  <div class="nav-row">
+    <button class="w95-btn" id="back" type="button">&larr; Back</button>
+    <span class="spacer"></span>
+    <button class="w95-btn nav-next" id="next" type="button">Next &rarr;</button>
+  </div>
+
+  <section class="win w95-raised" style="margin-top:16px">
     <header class="w95-titlebar">
       <div class="titlebar-name">
         <span class="titlebar-ico">&#9632;</span><span>Belts</span>
@@ -50,20 +63,7 @@
     </header>
     <div class="win-body">
       <div class="belt-rack" id="rack"></div>
-      <p class="cmd-note" id="rank-line"></p>
-    </div>
-  </section>
-
-  <main id="belts"></main>
-
-  <section class="win w95-raised">
-    <header class="w95-titlebar">
-      <div class="titlebar-name">
-        <span class="titlebar-ico">&#8635;</span><span>Training log</span>
-      </div>
-    </header>
-    <div class="win-body">
-      <p class="cmd-note">Your progress is saved in this browser only. Nobody else can see it.</p>
+      <p class="cmd-note">Progress is saved in this browser only. Nobody else can see it.</p>
       <div class="check-row">
         <button class="w95-btn" id="reset" type="button">Start over</button>
       </div>

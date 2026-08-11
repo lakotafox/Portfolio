@@ -270,6 +270,14 @@ button { font-family: inherit; }
 .verdict[data-tone='fail'] { background: #f6dcda; border: 2px solid #a33; }
 .verdict .mark { font-weight: bold; flex: none; }
 
+/* Sensei follows you down the page. He is the guide; a guide you have to
+   scroll back up to find is just a header. */
+.sensei-win {
+  position: sticky;
+  top: 8px;
+  z-index: 20;
+}
+
 /* ----------------------------------------------------- sensei + bubble ---- */
 /* from gifworkshop panels.css:579-702, adapted: static flow instead of fixed */
 
@@ -381,3 +389,140 @@ button { font-family: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .type-cursor { animation: none; }
 }
+
+/* ---------------------------------------------------------- the stepper -- */
+/* One kata on screen at a time. The whole curriculum as a single scroll read
+   as a manual, not a lesson. */
+
+.progress {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12.5px;
+}
+.progress-track {
+  flex: 1; height: 14px; padding: 2px;
+  background: var(--w95-light);
+  border-top: 2px solid var(--w95-shadow);
+  border-left: 2px solid var(--w95-shadow);
+  border-right: 2px solid var(--w95-light);
+  border-bottom: 2px solid var(--w95-light);
+}
+.progress-fill {
+  height: 100%;
+  background: repeating-linear-gradient(90deg,
+    var(--w95-title) 0 8px, transparent 8px 10px);   /* classic chunky Win95 bar */
+  transition: width 0.4s steps(6);
+}
+
+.nav-row {
+  display: flex; gap: 8px; align-items: center;
+  margin-top: 4px;
+}
+.nav-row .w95-btn { font-size: 15px; padding: 11px 20px; min-height: 46px; }
+.nav-row .spacer { flex: 1; }
+.nav-next { font-weight: bold; }
+
+.belt-intro { text-align: center; padding: 8px 4px 4px; }
+.belt-intro .belt-big {
+  font-family: var(--font-pixel);
+  font-size: clamp(30px, 8vw, 44px);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.belt-intro .belt-motto { font-family: var(--font-pixel); font-size: 21px; color: var(--w95-title); }
+.belt-bar {
+  height: 16px; margin: 12px auto 14px; max-width: 320px;
+  background: var(--belt, #fff);
+  border: 2px solid var(--w95-dark);
+}
+
+/* ------------------------------------------------------- build puzzles --- */
+
+.build { display: flex; flex-direction: column; gap: 12px; }
+.build-slots { display: flex; flex-direction: column; gap: 6px; }
+.build-row .build-slots { flex-direction: row; }
+
+.build-slot {
+  min-height: 46px;
+  display: flex; align-items: center;
+  padding: 3px;
+  background: rgba(0, 0, 0, 0.06);
+  border: 2px dashed var(--w95-shadow);
+}
+.build-row .build-slot { flex: 1; justify-content: center; }
+.build-slot[data-over='true'] { border-color: var(--w95-title); background: rgba(0, 0, 128, 0.12); }
+.build-slot .slot-hint {
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--w95-shadow); padding: 0 10px;
+}
+.build-slot .piece + .slot-hint { display: none; }
+
+.build-palette {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 9px;
+  background: rgba(0, 0, 0, 0.06);
+  border-top: 2px solid var(--w95-shadow);
+  border-left: 2px solid var(--w95-shadow);
+  border-right: 2px solid var(--w95-light);
+  border-bottom: 2px solid var(--w95-light);
+}
+.build-row .build-palette { flex-direction: row; flex-wrap: wrap; }
+.palette-label {
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #444; width: 100%;
+}
+
+.piece {
+  flex: 1;
+  padding: 12px 12px;
+  font-size: 14px;
+  background: var(--w95-face);
+  border-top: 2px solid var(--w95-light);
+  border-left: 2px solid var(--w95-light);
+  border-right: 2px solid var(--w95-dark);
+  border-bottom: 2px solid var(--w95-dark);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.build-slot .piece { width: 100%; margin: 0; }
+.piece.dragging {
+  position: fixed; z-index: 60; cursor: grabbing;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.4);
+  pointer-events: none;
+}
+.build[data-solved='true'] .piece { cursor: default; }
+.build[data-solved='true'] .build-slot { border-style: solid; border-color: #2e7d32; }
+.build[data-solved='true'] .build-palette { display: none; }
+
+/* --------------------------------------------------------------- stats --- */
+
+.stats { display: flex; gap: 8px; }
+.stat {
+  flex: 1; text-align: center; padding: 10px 6px;
+  border-top: 2px solid var(--w95-shadow);
+  border-left: 2px solid var(--w95-shadow);
+  border-right: 2px solid var(--w95-light);
+  border-bottom: 2px solid var(--w95-light);
+  background: var(--w95-light);
+}
+.stat-n { font-family: var(--font-pixel); font-size: 30px; line-height: 1; color: var(--w95-title); }
+.stat-l { font-size: 11.5px; color: #444; margin-top: 3px; }
+
+.log-row { display: flex; gap: 9px; font-size: 13.5px; padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,0.12); }
+.log-when { flex: none; width: 52px; color: #555; }
+
+/* holds the gap open while a piece is in the air */
+.piece-ghost {
+  border: 2px dashed var(--w95-shadow);
+  background: rgba(0,0,0,0.04);
+}
+
+/* tap-selected, waiting for a slot */
+.piece[data-picked='true'] {
+  background: var(--cyber-yellow);
+  border-top-color: var(--w95-light);
+  border-left-color: var(--w95-light);
+  outline: 2px solid var(--w95-title);
+  outline-offset: -4px;
+}
+.build-slot { cursor: pointer; }

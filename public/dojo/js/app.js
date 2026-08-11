@@ -1,4 +1,9 @@
-/* Entry. Renders the belts, wires the checks, keeps sensei talking. */
+/* Entry.
+
+   One kata on screen at a time. The whole curriculum rendered as a single
+   scroll read as a manual — you cannot pace a lesson you can see the end of.
+   Sensei is sticky, so the guide is never something you scroll back up to find.
+*/
 
 import { BELTS, TERMINAL_BELTS } from './belts.js';
 import * as store from './store.js';
@@ -19,81 +24,136 @@ store.load();
 
 const sensei = createSensei($('#sensei-img'), $('#sensei-text'));
 preload();
-
-/* Tapping the bubble fast-forwards the line — same affordance as Gifsmith. */
 $('#sensei-bubble').addEventListener('click', () => sensei.skip());
-
 const say = (line) => sensei.say(line);
 
-/* ------------------------------------------------------------ rendering -- */
+/* ------------------------------------------------------------- position -- */
+/* A flat list of steps, so "next" is just an index. A step is either a belt
+   intro or a kata. */
 
-function beltState(belt) {
-  const done = belt.katas.filter((k) => store.isDone(k.id)).length;
-  if (done === belt.katas.length) return 'earned';
-  if (done > 0) return 'current';
-  return 'locked';
+const STEPS = [];
+BELTS.forEach((belt, bi) => {
+  STEPS.push({ kind: 'intro', belt, bi });
+  belt.katas.forEach((kata, ki) => STEPS.push({ kind: 'kata', belt, kata, bi, ki }));
+});
+STEPS.push({ kind: 'end' });
+
+/** Where to resume: the first unfinished kata — or the belt intro just before
+ *  it, but only when arriving at that belt fresh. Backing up unconditionally
+ *  dumps him on a kata he already finished. */
+function startPos() {
+  const i = STEPS.findIndex((s) => s.kind === 'kata' && !store.isDone(s.kata.id));
+  if (i === -1) return STEPS.length - 1;
+  const prev = STEPS[i - 1];
+  if (prev?.kind === 'intro' && !prev.belt.katas.some((k) => store.isDone(k.id))) return i - 1;
+  return i;
 }
+
+let pos = startPos();
+
+const stepDone = (s) => s.kind !== 'kata' || store.isDone(s.kata.id);
+
+/* -------------------------------------------------------------- chrome ---- */
 
 function renderRack() {
   const rack = $('#rack');
   rack.innerHTML = '';
-  const current = BELTS.find((b) => beltState(b) !== 'earned');
+  const all = [...BELTS, ...TERMINAL_BELTS];
+  const earnedIds = new Set(
+    BELTS.filter((b) => b.katas.every((k) => store.isDone(k.id))).map((b) => b.id),
+  );
+  const current = BELTS.find((b) => !earnedIds.has(b.id)) ?? null;
 
-  for (const belt of BELTS) {
-    const st = beltState(belt);
+  for (const b of all) {
     const chip = el('div', 'belt-chip');
-    chip.dataset.state = st === 'earned' ? 'earned' : (belt === current ? 'current' : 'locked');
+    chip.dataset.state = earnedIds.has(b.id) ? 'earned' : (b === current ? 'current' : 'locked');
     const sw = el('span', 'belt-swatch');
-    sw.style.setProperty('--belt', `var(--belt-${belt.id})`);
-    chip.append(sw, el('span', null, belt.name));
-    if (st === 'earned') chip.append(el('span', 'tick', '✓'));
-    rack.appendChild(chip);
-  }
-  for (const belt of TERMINAL_BELTS) {
-    const chip = el('div', 'belt-chip');
-    chip.dataset.state = 'locked';
-    const sw = el('span', 'belt-swatch');
-    sw.style.setProperty('--belt', `var(--belt-${belt.id})`);
-    chip.append(sw, el('span', null, belt.name));
+    sw.style.setProperty('--belt', `var(--belt-${b.id})`);
+    chip.append(sw, el('span', null, b.name));
+    if (earnedIds.has(b.id)) chip.append(el('span', 'tick', '✓'));
     rack.appendChild(chip);
   }
 
-  const earned = BELTS.filter((b) => beltState(b) === 'earned').length;
-  $('#taskbar-rank').textContent = current
-    ? `${current.name} — ${current.motto}`
-    : 'Ready for the terminal';
-  $('#rank-line').textContent =
-    `${earned} of ${BELTS.length + TERMINAL_BELTS.length} belts · ` +
-    `${store.snapshot().done.length} katas complete`;
+  $('#taskbar-rank').textContent = current ? `${current.name} — ${current.motto}` : 'Ready for the terminal';
+
+  const totalKatas = BELTS.reduce((n, b) => n + b.katas.length, 0);
+  const doneKatas = BELTS.reduce((n, b) => n + b.katas.filter((k) => store.isDone(k.id)).length, 0);
+  $('#progress-fill').style.width = `${Math.round((doneKatas / totalKatas) * 100)}%`;
+  $('#progress-label').textContent = `${doneKatas} / ${totalKatas} katas`;
 }
 
-function renderKata(belt, kata, idx) {
-  const win = el('section', 'win w95-raised');
-  const done = store.isDone(kata.id);
-  if (done) win.classList.add('kata-done');
+/* ---------------------------------------------------------------- steps -- */
 
+function renderIntro(step) {
+  const win = el('section', 'win w95-raised');
   const bar = el('header', 'w95-titlebar');
-  const name = el('div', 'titlebar-name');
-  name.append(el('span', 'titlebar-ico', done ? '✓' : String(idx + 1)), el('span', null, kata.title));
-  bar.append(name);
-  win.appendChild(bar);
+  const nm = el('div', 'titlebar-name');
+  nm.append(el('span', 'titlebar-ico', '◆'), el('span', null, 'New belt'));
+  bar.append(nm);
+  win.append(bar);
 
   const body = el('div', 'win-body');
+  const intro = el('div', 'belt-intro');
+  intro.append(el('div', 'belt-big', step.belt.name));
+  const bar2 = el('div', 'belt-bar');
+  bar2.style.setProperty('--belt', `var(--belt-${step.belt.id})`);
+  intro.append(bar2, el('div', 'belt-motto', step.belt.motto));
+  body.append(intro, el('p', null, step.belt.intro));
+  if (step.belt.handTyped) {
+    body.append(el('p', 'cmd-note',
+      'You type these yourself. There is nobody to ask yet — that is the only reason.'));
+  }
+  win.append(body);
+  say(`${step.belt.name}. ${step.belt.motto}`);
+  return win;
+}
 
-  body.appendChild(el('p', 'concept', kata.concept));
-  if (kata.aside) body.appendChild(el('p', null, kata.aside));
+function renderEnd() {
+  const win = el('section', 'win w95-raised');
+  const bar = el('header', 'w95-titlebar');
+  const nm = el('div', 'titlebar-name');
+  nm.append(el('span', 'titlebar-ico', '❯'), el('span', null, 'The rest is not on this page'));
+  bar.append(nm);
+  win.append(bar);
+  const b = el('div', 'win-body');
+  b.append(el('p', null,
+    'Three belts are left, and they are taught in your own terminal by the same sensei — because there I can check your work instead of taking your word for it.'));
+  for (const t of TERMINAL_BELTS) {
+    const k = el('div', 'kata');
+    const h = el('div', 'kata-head');
+    h.append(el('span', 'kata-num', '◆'), el('span', null, `${t.name} — ${t.motto}`));
+    k.append(h, el('p', 'cmd-note', t.teaser));
+    b.append(k);
+  }
+  win.append(b);
+  say('You have taken this as far as a web page can. The rest is in your terminal.');
+  return win;
+}
+
+function renderKata(step, onDone) {
+  const { belt, kata, ki } = step;
+  const win = el('section', 'win w95-raised');
+  const done = store.isDone(kata.id);
+
+  const bar = el('header', 'w95-titlebar');
+  const nm = el('div', 'titlebar-name');
+  const ico = el('span', 'titlebar-ico', done ? '✓' : String(ki + 1));
+  nm.append(ico, el('span', null, kata.title));
+  bar.append(nm, el('div', 'titlebar-btns', null));
+  win.append(bar);
+
+  const body = el('div', 'win-body');
+  body.append(el('p', 'concept', kata.concept));
+  if (kata.aside) body.append(el('p', null, kata.aside));
 
   if (kata.link) {
     const p = el('p');
     const a = el('a', null, kata.link.label);
-    a.href = kata.link.href;
-    a.target = '_blank';
-    a.rel = 'noopener';
+    a.href = kata.link.href; a.target = '_blank'; a.rel = 'noopener';
     p.append('Instructions: ', a);
-    body.appendChild(p);
+    body.append(p);
   }
 
-  /* the ask — loudest thing in the kata, because it is the point */
   if (kata.ask) {
     const ask = el('div', 'ask');
     ask.append(el('span', 'ask-label', 'Say this'));
@@ -101,129 +161,120 @@ function renderKata(belt, kata, idx) {
     col.append(el('div', 'ask-say', `“${kata.ask}”`));
     if (kata.askNote) col.append(el('div', 'cmd-note', kata.askNote));
     ask.append(col);
-    body.appendChild(ask);
+    body.append(ask);
   }
 
   if (kata.command) {
-    body.appendChild(el('pre', 'cmd', kata.command));
-    if (kata.cmdNote) body.appendChild(el('p', 'cmd-note', kata.cmdNote));
+    body.append(el('pre', 'cmd', kata.command));
+    if (kata.cmdNote) body.append(el('p', 'cmd-note', kata.cmdNote));
   }
 
+  const complete = () => {
+    if (!store.isDone(kata.id)) {
+      store.markDone(kata.id);
+      ico.textContent = '✓';
+      renderRack();
+      const earned = belt.katas.every((k) => store.isDone(k.id));
+      if (earned) {
+        sensei.hold('bow');
+        say(`${belt.name}. ${belt.motto}`).then(() => setTimeout(() => sensei.hold(null), 1300));
+      }
+    }
+    onDone();
+  };
+
   if (kata.game) {
-    const host = el('div', 'game-slots');
-    body.appendChild(host);
-    const report = (msg) => { say(msg); complete(); };
-    if (kata.game === 'stack') stackGame(host, report);
-    if (kata.game === 'pipe') pipeGame(host, report);
+    const host = el('div');
+    body.append(host);
+    const report = (msg) => { say(msg); };
+    if (kata.game === 'stack') stackGame(host, (m) => { report(m); complete(); });
+    if (kata.game === 'pipe') pipeGame(host, (m) => { report(m); complete(); });
   }
 
   if (kata.quiz) {
     const host = el('div');
-    body.appendChild(host);
-    quiz(host, kata.quiz, (msg) => say(msg), complete);
+    body.append(host);
+    quiz(host, kata.quiz, (m) => say(m), complete);
   }
 
   if (kata.check) {
-    body.appendChild(el('p', 'check-label', kata.checkPrompt || 'Paste what it printed.'));
+    body.append(el('p', 'check-label', kata.checkPrompt || 'Paste what it printed.'));
     const ta = el('textarea', 'paste w95-sunken');
     ta.placeholder = 'paste the output here';
     ta.spellcheck = false;
-    body.appendChild(ta);
+    body.append(ta);
 
     const row = el('div', 'check-row');
     const btn = el('button', 'w95-btn', 'Show sensei');
     btn.type = 'button';
-    row.appendChild(btn);
-    body.appendChild(row);
+    row.append(btn);
+    body.append(row);
 
     const verdict = el('div', 'verdict');
     verdict.hidden = true;
-    body.appendChild(verdict);
+    body.append(verdict);
 
     btn.addEventListener('click', () => {
       const r = runCheck(kata.check, ta.value);
       verdict.hidden = false;
       verdict.dataset.tone = r.tone;
       verdict.innerHTML = '';
-      verdict.append(
-        el('span', 'mark', r.tone === 'pass' ? '✓' : r.tone === 'near' ? '!' : '×'),
-        el('span', null, r.line),
-      );
+      verdict.append(el('span', 'mark', r.tone === 'pass' ? '✓' : r.tone === 'near' ? '!' : '×'),
+                     el('span', null, r.line));
       say(r.line);
       if (r.tone === 'pass') { chime(); complete(); } else { thud(); }
     });
   }
 
-  /* katas with nothing to check are marked done by reading them */
   if (!kata.check && !kata.game && !kata.quiz) {
     const row = el('div', 'check-row');
     const btn = el('button', 'w95-btn', done ? 'Done' : 'I have done this');
     btn.type = 'button';
     btn.disabled = done;
     btn.addEventListener('click', () => { chime(); complete(); btn.disabled = true; btn.textContent = 'Done'; });
-    row.appendChild(btn);
-    body.appendChild(row);
+    row.append(btn);
+    body.append(row);
   }
 
-  function complete() {
-    const was = beltState(belt);
-    store.markDone(kata.id);
-    win.classList.add('kata-done');
-    name.querySelector('.titlebar-ico').textContent = '✓';
-    renderRack();
-    if (was !== 'earned' && beltState(belt) === 'earned') {
-      sensei.hold('bow');
-      say(`${belt.name}. ${belt.motto}`).then(() => setTimeout(() => sensei.hold(null), 1200));
-    }
-  }
-
-  win.appendChild(body);
+  win.append(body);
+  if (!done) say(kata.concept.split('. ')[0] + '.');
   return win;
 }
 
-function render() {
-  const main = $('#belts');
-  main.innerHTML = '';
-  for (const belt of BELTS) {
-    const head = el('section', 'win w95-raised');
-    const bar = el('header', 'w95-titlebar');
-    const nm = el('div', 'titlebar-name');
-    nm.append(el('span', 'titlebar-ico', '◆'), el('span', null, `${belt.name} — ${belt.motto}`));
-    bar.append(nm);
-    head.append(bar);
-    const b = el('div', 'win-body');
-    b.appendChild(el('p', null, belt.intro));
-    if (belt.handTyped) {
-      b.appendChild(el('p', 'cmd-note', 'You type these yourself. There is nobody to ask yet — that is the only reason.'));
-    }
-    head.appendChild(b);
-    main.appendChild(head);
+/* ------------------------------------------------------------------ nav -- */
 
-    belt.katas.forEach((k, i) => main.appendChild(renderKata(belt, k, i)));
-  }
+function show() {
+  const stage = $('#stage');
+  stage.innerHTML = '';
+  const step = STEPS[pos];
 
-  /* what waits in the terminal */
-  const next = el('section', 'win w95-raised');
-  const nbar = el('header', 'w95-titlebar');
-  const nnm = el('div', 'titlebar-name');
-  nnm.append(el('span', 'titlebar-ico', '❯'), el('span', null, 'The rest is not on this page'));
-  nbar.append(nnm);
-  next.append(nbar);
-  const nb = el('div', 'win-body');
-  nb.appendChild(el('p', null,
-    'Three belts are left, and they are taught in your terminal by the same sensei — because by then you can be checked properly, not on your word.'));
-  for (const t of TERMINAL_BELTS) {
-    const k = el('div', 'kata');
-    const h = el('div', 'kata-head');
-    h.append(el('span', 'kata-num', '◆'), el('span', null, `${t.name} — ${t.motto}`));
-    k.append(h, el('p', 'cmd-note', t.teaser));
-    nb.appendChild(k);
-  }
-  next.appendChild(nb);
-  main.appendChild(next);
+  let node;
+  if (step.kind === 'intro') node = renderIntro(step);
+  else if (step.kind === 'end') node = renderEnd();
+  else node = renderKata(step, () => refreshNav());
+
+  stage.append(node);
+  refreshNav();
+  renderRack();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* ---------------------------------------------------------------- chrome -- */
+function refreshNav() {
+  const step = STEPS[pos];
+  $('#back').disabled = pos === 0;
+  const next = $('#next');
+  const last = pos >= STEPS.length - 1;
+  next.disabled = last || !stepDone(step);
+  next.textContent = last ? 'Finished' : (stepDone(step) ? 'Next →' : 'Finish this first');
+  $('#step-label').textContent = step.kind === 'kata'
+    ? `${step.belt.name} · kata ${step.ki + 1} of ${step.belt.katas.length}`
+    : step.kind === 'intro' ? step.belt.name : 'The end of the web dojo';
+}
+
+$('#next').addEventListener('click', () => { if (pos < STEPS.length - 1) { pos++; show(); } });
+$('#back').addEventListener('click', () => { if (pos > 0) { pos--; show(); } });
+
+/* ---------------------------------------------------------------- misc --- */
 
 function clock() {
   const d = new Date();
@@ -244,15 +295,12 @@ $('#mute').addEventListener('click', (e) => {
 $('#reset').addEventListener('click', () => {
   if (!confirm('Wipe your progress and start over?')) return;
   store.reset();
-  render();
-  renderRack();
+  pos = 0;
+  show();
   say('We begin again. No shame in it.');
 });
 
-render();
-renderRack();
-
-const earnedAny = store.snapshot().done.length > 0;
-say(earnedAny
-  ? 'Welcome back. Pick up where you left off.'
-  : 'Welcome. I am your sensei. We start with what a computer is — not with typing.');
+show();
+if (store.snapshot().done.length === 0) {
+  say('Welcome. I am your sensei. We start with what a computer is — not with typing.');
+}
