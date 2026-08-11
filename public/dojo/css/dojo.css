@@ -1,0 +1,383 @@
+/* ============================================================================
+   The Dojo — Win95 chrome.
+
+   Tokens and bevels lifted verbatim from ~/gifworkshop/src/styles/{theme,win95}.css
+   so this sits beside Gifsmith rather than near it. The tutor-bubble block comes
+   from that project's panels.css:579-702 — a mentor-with-speech-bubble component
+   that already solves above/below flipping and the CSS-triangle tail.
+
+   Deliberate divergence from Gifsmith's base.css: that app is a fixed-viewport
+   toy and sets `overflow: hidden`. The dojo is a document you scroll through.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'VT323';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/vt323.woff2') format('woff2');
+}
+
+:root {
+  /* Win95 chrome */
+  --w95-face: #c0c0c0;
+  --w95-light: #ffffff;
+  --w95-shadow: #808080;
+  --w95-dark: #000000;
+  --w95-title: #000080;
+  --w95-title2: #1084d0;
+  --w95-title-text: #ffffff;
+
+  /* GeoCities palette */
+  --hot-pink: #ff00ff;
+  --cyber-yellow: #ffff00;
+  --lime: #00ff00;
+  --cyber-teal: #008080;
+  --ink: #000000;
+
+  --desktop-bg: var(--cyber-teal);
+
+  --font-system: 'MS Sans Serif', 'Pixelated MS Sans Serif', Tahoma, 'Segoe UI',
+    sans-serif;
+  --font-pixel: 'VT323', 'Courier New', monospace;
+
+  /* belt colours — the rack, and the titlebar accent per rank */
+  --belt-white: #f4f4f4;
+  --belt-yellow: #ffd800;
+  --belt-orange: #ff8a00;
+  --belt-green: #00a63e;
+  --belt-blue: #1060d0;
+  --belt-brown: #7a4a1e;
+  --belt-black: #14141a;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { height: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: var(--font-system);
+  font-size: 15px;
+  background: var(--desktop-bg);
+  color: var(--ink);
+  -webkit-font-smoothing: none;   /* what makes the pixel fonts crisp — keep it */
+  -webkit-text-size-adjust: 100%;
+  padding: 16px 12px 120px;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+button { font-family: inherit; }
+
+/* ---------------------------------------------------------------- bevels -- */
+
+.w95-raised {
+  background: var(--w95-face);
+  border-top: 2px solid var(--w95-light);
+  border-left: 2px solid var(--w95-light);
+  border-right: 2px solid var(--w95-dark);
+  border-bottom: 2px solid var(--w95-dark);
+  box-shadow: inset 1px 1px 0 var(--w95-face), inset -1px -1px 0 var(--w95-shadow);
+}
+
+.w95-sunken {
+  background: var(--w95-light);
+  border-top: 2px solid var(--w95-shadow);
+  border-left: 2px solid var(--w95-shadow);
+  border-right: 2px solid var(--w95-light);
+  border-bottom: 2px solid var(--w95-light);
+}
+
+.w95-btn {
+  background: var(--w95-face);
+  border-top: 2px solid var(--w95-light);
+  border-left: 2px solid var(--w95-light);
+  border-right: 2px solid var(--w95-dark);
+  border-bottom: 2px solid var(--w95-dark);
+  color: var(--ink);
+  padding: 4px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.w95-btn:active:not(:disabled),
+.w95-btn[data-active='true'] {
+  border-top: 2px solid var(--w95-dark);
+  border-left: 2px solid var(--w95-dark);
+  border-right: 2px solid var(--w95-light);
+  border-bottom: 2px solid var(--w95-light);
+}
+
+.w95-btn:disabled { color: var(--w95-shadow); cursor: not-allowed; }
+
+.w95-titlebar {
+  background: linear-gradient(90deg, var(--w95-title), var(--w95-title2));
+  color: var(--w95-title-text);
+  font-weight: bold;
+  font-size: 13px;
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ---------------------------------------------------------------- layout -- */
+
+.wrap { max-width: 720px; margin: 0 auto; }
+
+.win { margin-bottom: 16px; }
+.win-body { padding: 14px 13px; }
+.win-body > * + * { margin-top: 0.85em; }
+
+.titlebar-ico {
+  width: 16px; height: 16px; flex: none;
+  display: grid; place-items: center;
+  background: var(--w95-face); color: var(--ink);
+  border: 1px solid var(--w95-dark);
+  font-size: 10px; font-weight: bold;
+}
+.titlebar-name { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.titlebar-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.titlebar-btns { display: flex; gap: 3px; flex: none; }
+.titlebar-btns .w95-btn {
+  width: 20px; height: 18px; padding: 0;
+  display: grid; place-items: center; font-size: 11px;
+}
+
+/* -------------------------------------------------------------- the sign -- */
+
+.dojo-sign {
+  text-align: center;
+  padding: 18px 10px 20px;
+}
+.dojo-sign h1 {
+  margin: 0;
+  font-family: var(--font-pixel);
+  font-size: clamp(38px, 11vw, 62px);
+  line-height: 0.95;
+  letter-spacing: 0.04em;
+  color: var(--cyber-yellow);
+  text-shadow: 3px 3px 0 var(--hot-pink), 6px 6px 0 var(--w95-dark);
+}
+.dojo-sign .kanji {
+  font-family: var(--font-pixel);
+  font-size: clamp(15px, 4.2vw, 19px);
+  color: var(--ink);
+  margin-top: 10px;
+}
+
+/* ------------------------------------------------------------ belt rack -- */
+
+.belt-rack { display: flex; flex-wrap: wrap; gap: 6px; }
+.belt-chip {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 10px 6px 7px;
+  font-size: 12px;
+  background: var(--w95-face);
+  border-top: 2px solid var(--w95-light);
+  border-left: 2px solid var(--w95-light);
+  border-right: 2px solid var(--w95-dark);
+  border-bottom: 2px solid var(--w95-dark);
+}
+.belt-chip[data-state='locked'] { color: var(--w95-shadow); }
+.belt-chip[data-state='current'] {
+  background: var(--w95-title); color: var(--w95-title-text); font-weight: bold;
+}
+.belt-swatch {
+  width: 26px; height: 11px; flex: none;
+  border: 1px solid var(--w95-dark);
+  background: var(--belt, #fff);
+}
+.belt-chip[data-state='locked'] .belt-swatch { opacity: 0.35; }
+.belt-chip .tick { font-size: 12px; }
+
+/* ----------------------------------------------------------------- kata -- */
+
+.kata { }
+.kata + .kata { margin-top: 12px; }
+.kata-head {
+  display: flex; align-items: baseline; gap: 8px;
+  font-weight: bold; font-size: 14px;
+}
+.kata-num {
+  font-family: var(--font-pixel); font-size: 19px; line-height: 1;
+  color: var(--w95-title);
+}
+.kata-done .kata-head { color: var(--w95-shadow); }
+
+.concept {
+  border-left: 4px solid var(--w95-title);
+  padding: 2px 0 2px 10px;
+}
+
+/* "here is the command, and you may memorise it if you like" */
+.cmd {
+  font-family: var(--font-pixel);
+  font-size: 19px;
+  line-height: 1.35;
+  padding: 9px 11px;
+  overflow-x: auto;
+  white-space: pre;
+  background: var(--w95-light);
+  border-top: 2px solid var(--w95-shadow);
+  border-left: 2px solid var(--w95-shadow);
+  border-right: 2px solid var(--w95-light);
+  border-bottom: 2px solid var(--w95-light);
+}
+.cmd-note { font-size: 12.5px; color: #444; }
+
+/* the ask — the point of the whole course, so it gets the loudest treatment */
+.ask {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 11px 12px;
+  background: var(--cyber-yellow);
+  border-top: 2px solid var(--w95-light);
+  border-left: 2px solid var(--w95-light);
+  border-right: 2px solid var(--w95-dark);
+  border-bottom: 2px solid var(--w95-dark);
+}
+.ask-label {
+  flex: none; font-size: 11px; font-weight: bold; letter-spacing: 0.08em;
+  text-transform: uppercase; padding-top: 3px;
+}
+.ask-say { font-family: var(--font-pixel); font-size: 21px; line-height: 1.2; }
+
+/* --------------------------------------------------------------- checks -- */
+
+.check-label { font-size: 13px; font-weight: bold; }
+.paste {
+  width: 100%; min-height: 92px; resize: vertical;
+  font-family: var(--font-pixel); font-size: 17px; line-height: 1.3;
+  padding: 8px 9px; border: 0; outline-offset: -3px;
+  background: var(--w95-light); color: var(--ink);
+}
+.check-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.check-row .w95-btn { font-size: 14px; padding: 9px 16px; min-height: 40px; }
+
+.verdict { display: flex; gap: 9px; align-items: flex-start; padding: 10px 11px; font-size: 14px; }
+.verdict[data-tone='pass'] { background: #d7f0d7; border: 2px solid #2e7d32; }
+.verdict[data-tone='near'] { background: #fff4cf; border: 2px solid #b58900; }
+.verdict[data-tone='fail'] { background: #f6dcda; border: 2px solid #a33; }
+.verdict .mark { font-weight: bold; flex: none; }
+
+/* ----------------------------------------------------- sensei + bubble ---- */
+/* from gifworkshop panels.css:579-702, adapted: static flow instead of fixed */
+
+.sensei-pop {
+  display: flex; align-items: flex-end; gap: 8px;
+}
+.sensei-sprite {
+  width: 60px; height: 72px; flex: none;
+  image-rendering: pixelated;
+}
+.sensei-bubble {
+  position: relative;
+  flex: 1;
+  padding: 9px 11px;
+  background: var(--w95-face);
+  border-top: 2px solid var(--w95-light);
+  border-left: 2px solid var(--w95-light);
+  border-right: 2px solid var(--w95-dark);
+  border-bottom: 2px solid var(--w95-dark);
+}
+/* tail pointing back at sensei */
+.sensei-bubble::before {
+  content: '';
+  position: absolute;
+  right: 100%; bottom: 14px;
+  border: 8px solid transparent;
+  border-right-color: var(--w95-face);
+}
+.sensei-text {
+  font-family: var(--font-pixel);
+  font-size: 21px;
+  line-height: 1.22;
+  min-height: 1.9em;
+}
+.type-cursor { animation: cursor-blink 0.7s steps(1) infinite; }
+@keyframes cursor-blink { 50% { opacity: 0; } }
+
+/* ---------------------------------------------------------------- games -- */
+
+.game-slots { display: flex; flex-direction: column; gap: 6px; }
+.slot {
+  display: flex; align-items: center; gap: 9px;
+  padding: 10px 11px; font-size: 14px;
+  background: var(--w95-face);
+  border-top: 2px solid var(--w95-light);
+  border-left: 2px solid var(--w95-light);
+  border-right: 2px solid var(--w95-dark);
+  border-bottom: 2px solid var(--w95-dark);
+  cursor: grab; touch-action: none;
+}
+.slot[data-dragging='true'] { opacity: 0.5; }
+.slot .grip { font-family: var(--font-pixel); font-size: 18px; color: var(--w95-shadow); flex: none; }
+.slot .slot-label { flex: 1; }
+
+.choice { display: block; width: 100%; text-align: left; font-size: 14px; padding: 11px 12px; }
+.choice + .choice { margin-top: 6px; }
+.choice[data-picked='right'] { background: #d7f0d7; }
+.choice[data-picked='wrong'] { background: #f6dcda; }
+
+/* ------------------------------------------------------------- taskbar --- */
+
+.taskbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 6px;
+  background: var(--w95-face);
+  border-top: 2px solid var(--w95-light);
+}
+.start {
+  display: flex; align-items: center; gap: 7px;
+  font-weight: bold; font-size: 14px; padding: 6px 11px;
+  background: var(--w95-face);
+  border-top: 2px solid var(--w95-light);
+  border-left: 2px solid var(--w95-light);
+  border-right: 2px solid var(--w95-dark);
+  border-bottom: 2px solid var(--w95-dark);
+}
+.start .flag {
+  width: 16px; height: 16px; flex: none;
+  background:
+    linear-gradient(135deg, #ff0000 0 50%, #00a300 50% 100%) 0 0/100% 50% no-repeat,
+    linear-gradient(135deg, #0000c0 0 50%, #ffd400 50% 100%) 0 100%/100% 50% no-repeat;
+}
+.taskbar-rank {
+  flex: 1; min-width: 0; font-size: 12.5px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  padding: 6px 9px;
+  border-top: 2px solid var(--w95-shadow);
+  border-left: 2px solid var(--w95-shadow);
+  border-right: 2px solid var(--w95-light);
+  border-bottom: 2px solid var(--w95-light);
+}
+.clock {
+  flex: none; font-size: 12.5px; padding: 6px 10px;
+  border-top: 2px solid var(--w95-shadow);
+  border-left: 2px solid var(--w95-shadow);
+  border-right: 2px solid var(--w95-light);
+  border-bottom: 2px solid var(--w95-light);
+}
+
+@media (max-width: 420px) {
+  body { padding: 10px 8px 110px; }
+  .sensei-sprite { width: 46px; height: 55px; }
+  .sensei-text { font-size: 19px; }
+  .ask-say { font-size: 19px; }
+  .cmd { font-size: 17px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .type-cursor { animation: none; }
+}

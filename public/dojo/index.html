@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#008080">
+<title>The Dojo</title>
+<meta property="og:title" content="The Dojo">
+<meta property="og:description" content="Learn the terminal, Claude Code, skills and MCP. Concepts, not commands.">
+<meta property="og:type" content="website">
+<link rel="icon" href="./sensei/idle.png">
+<link rel="apple-touch-icon" href="./sensei/idle.png">
+<link rel="stylesheet" href="./css/dojo.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="dojo-sign">
+    <h1>THE DOJO</h1>
+    <p class="kanji">wax on &middot; wax off</p>
+  </div>
+
+  <!-- sensei lives at the top and narrates everything below him -->
+  <section class="win w95-raised">
+    <header class="w95-titlebar">
+      <div class="titlebar-name">
+        <span class="titlebar-ico">&#9670;</span><span>Sensei</span>
+      </div>
+      <div class="titlebar-btns">
+        <button class="w95-btn" id="mute" type="button" style="width:auto;padding:0 8px">Sound: on</button>
+      </div>
+    </header>
+    <div class="win-body">
+      <div class="sensei-pop">
+        <img class="sensei-sprite" id="sensei-img" src="./sensei/idle.png" alt="Sensei">
+        <div class="sensei-bubble" id="sensei-bubble">
+          <div class="sensei-text" id="sensei-text"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="win w95-raised">
+    <header class="w95-titlebar">
+      <div class="titlebar-name">
+        <span class="titlebar-ico">&#9632;</span><span>Belts</span>
+      </div>
+    </header>
+    <div class="win-body">
+      <div class="belt-rack" id="rack"></div>
+      <p class="cmd-note" id="rank-line"></p>
+    </div>
+  </section>
+
+  <main id="belts"></main>
+
+  <section class="win w95-raised">
+    <header class="w95-titlebar">
+      <div class="titlebar-name">
+        <span class="titlebar-ico">&#8635;</span><span>Training log</span>
+      </div>
+    </header>
+    <div class="win-body">
+      <p class="cmd-note">Your progress is saved in this browser only. Nobody else can see it.</p>
+      <div class="check-row">
+        <button class="w95-btn" id="reset" type="button">Start over</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="taskbar">
+  <span class="start"><span class="flag" aria-hidden="true"></span>Start</span>
+  <span class="taskbar-rank" id="taskbar-rank">White Belt</span>
+  <span class="clock" id="clock">--:--</span>
+</div>
+
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>
