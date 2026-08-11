@@ -1,2 +1,2 @@
-:HL["/lehiridingclub2/_next/static/chunks/0a2hgu3batx82.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":20,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"6G2N2bPXOsppJcovm3sA3"}
+:HL["/lehiridingclub2/_next/static/chunks/16f_1c7--z9_t.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":20,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"mEHbbhoJjvuLQ_1a3nZOz"}

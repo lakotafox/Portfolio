@@ -170,6 +170,31 @@
   @media (prefers-reduced-motion: reduce) { .scroll-hint::after { animation: none; } }
   .btn-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
 
+  /* Between the answers there are long stretches with nothing but the scene.
+     Beautiful, and indistinguishable from a page that has stopped working if
+     you do not already know that scrolling is what advances it. So the
+     instruction is never off screen: it fades in whenever no answer is up. */
+  .keep-scrolling {
+    position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%);
+    z-index: 12; pointer-events: none;
+    display: flex; align-items: center; gap: 11px;
+    padding: 13px 24px; border-radius: 9999px;
+    background: rgba(6,8,16,0.82);
+    border: 1px solid rgba(255,255,255,0.22);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+    font-size: clamp(15px, 1.15vw, 17px); font-weight: 500; color: #fff;
+    white-space: nowrap;
+    opacity: 0; transition: opacity 0.6s ease;
+  }
+  .keep-scrolling::after {
+    content: ""; width: 10px; height: 10px; flex: none;
+    border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+    animation: hint-bob 2.4s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) { .keep-scrolling::after { animation: none; } }
+  @media (max-width: 480px) { .keep-scrolling { bottom: 22px; padding: 12px 20px; } }
+
   /* story cards (funnel + tunnel windows) */
   .story {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -366,6 +391,7 @@
 
 <canvas id="scene" aria-hidden="true"></canvas>
 <div id="glow" aria-hidden="true"></div>
+<p class="keep-scrolling" id="keep-scrolling">Keep scrolling</p>
 
 <main>
   <!-- 1. HERO -->
@@ -375,7 +401,7 @@
       For the Lehi Riding Club
     </span>
     <h1 class="display center t-hero rv" data-title data-w="hero">The home stretch of a degree worth finishing</h1>
-    <p class="sub rv" data-w="hero">I'm Khabe &ldquo;Lakota&rdquo; Fox. Salt Lake Community College is closing its Computer Science &amp; Information Systems program &mdash; and I have until Summer 2027 to finish my degree before the trail closes for good.</p>
+    <p class="sub rv" data-w="hero">I'm Khabe Lakota Fox. Salt Lake Community College is closing its Computer Science &amp; Information Systems program &mdash; and I have until Summer 2027 to finish my degree before the trail closes for good.</p>
     <!-- No buttons here on purpose. The first screen should ask exactly one
          thing of the reader, and that thing is to scroll. -->
     <p class="scroll-hint rv" data-w="hero">Scroll down to read the application</p>
@@ -448,7 +474,7 @@
       <p class="q-prompt rv" data-w="galaxy">&ldquo;Your specific goals for post high school education, and why you should be the recipient of this scholarship.&rdquo;</p>
       <div class="story-card rv" data-w="galaxy">
         <p>I want to finish my Computer Science &amp; Information Systems degree at Salt Lake Community College before the program ends in 2027, then keep growing my freelance work building technology that treats people right. I've already started: I helped a salon leave a subscription platform for a system they own outright, and I write programs that run in the browser instead of a datacenter. Next I want to help older people avoid getting scammed and help everyday people keep control of their own data. This scholarship gets me to the finish line.</p>
-        <p class="sig">&mdash; Khabe &ldquo;Lakota&rdquo; Fox &middot; thank you for reading.</p>
+        <p class="sig">&mdash; Khabe Lakota Fox &middot; thank you for reading.</p>
       </div>
       <!-- No links anywhere on this page. A reader who taps one and lands on
            another site may not find the way back, and this page is the whole
@@ -983,6 +1009,7 @@ function applyDnaCards(cs) {
 
 // ============ render loop ============
 const glow = document.getElementById('glow');
+const keepScrolling = document.getElementById('keep-scrolling');
 const lenis = new Lenis({ smoothWheel: true });
 window.scrollTo(0, 0);
 
@@ -1032,6 +1059,22 @@ function warpScroll(x) {
 // calm in the open so a held shape reads as still, livelier behind text.
 const READING_WINDOWS = [[0.045, 0.135], [0.15, 0.38], [0.48, 0.62], [0.66, 0.79], [0.975, 1.0]];
 const FADE = 0.02;
+// The long stretches with nothing but the scene — where a reader is most
+// likely to think the page has ended. Listed rather than derived: the short
+// hop between Q1 and the stat cards is 1.5% of the page, and a cue that
+// appears and leaves inside that reads as a flicker, not an instruction.
+// The hero has its own line, and the last window ends before the page does.
+const CUE_WINDOWS = [[0.395, 0.468], [0.626, 0.654], [0.798, 0.968]];
+const CUE_FADE = 0.012;
+function cueAmount(x) {
+  let m = 0;
+  for (const [a, b] of CUE_WINDOWS) {
+    const v = Math.min((x - a) / CUE_FADE, 1, (b - x) / CUE_FADE);
+    m = Math.max(m, Math.min(1, Math.max(0, v)));
+  }
+  return m;
+}
+
 function readingAmount(x) {
   let m = 0;
   for (const [a, b] of READING_WINDOWS) {
@@ -1103,6 +1146,8 @@ function render(now) {
 
   applyWindows(currentScroll);
   applyDnaCards(currentScroll);
+
+  keepScrolling.style.opacity = cueAmount(currentScroll).toFixed(3);
 
   composer.render();
 }
