@@ -885,7 +885,7 @@ const WINDOWS = {
   // The galaxy resolves out of the white flash at 0.93 and the camera keeps
   // pulling back until 1.0. Opening the closing text at 0.93 covered the reveal
   // with a paragraph — the payoff of the whole scroll, missed. It waits.
-  galaxy: [0.962, 2    ],
+  galaxy: [0.975, 2    ],
 };
 const sections = { hero: '#hero', trail: '#trail', wave: '#wave', steep: '#steep', galaxy: '#galaxy' };
 const played = {};
@@ -988,27 +988,28 @@ const INTRO_MS = 2600;
 let introStart = 0;
 
 // ---- scroll time-warp ----------------------------------------------------
-// Raw scroll drove the morph directly, which spends most of the page's travel
-// grinding through a phase while a paragraph sits on top of it, and blows past
-// the transitions worth watching — the melt, the pinch, the flash — in the gaps
-// where nothing is being read. So the two are decoupled: text still keys off
-// raw scroll position, while the scene reads this curve. Each pair is
-// [raw, animation]; inside a reading window the animation gains less than the
-// scroll spends (slow), and between windows it gains more (fast).
+// Text keys off raw scroll; the scene reads this curve. Each pair is
+// [raw, animation]. Between the reading windows the animation gains LESS than
+// the scroll spends, so a transition unfolds gradually and you can stay with
+// it — those stretches are the whole point of the scene and rushing them is
+// how you miss them. Under a paragraph the animation gains MORE, so the scene
+// keeps moving while it is only being glanced at.
+// Slopes: ~0.45 in the open, ~1.30 behind text.
 const TIME_WARP = [
-  [0.000, 0.000],  // hero — nearly still while the intro settles
-  [0.020, 0.010],
-  [0.045, 0.060],  // ↑ gap: sphere collapses into the funnel
-  [0.135, 0.105],  // Q1 on screen — slow
-  [0.150, 0.150],  // ↑ gap
-  [0.380, 0.330],  // stat cards — gentle drift as the helix turns
-  [0.480, 0.500],  // ↑ gap: the helix melts into the ocean
-  [0.620, 0.560],  // Q2 on screen — slowest stretch on the page
-  [0.660, 0.660],  // ↑ gap
-  [0.790, 0.740],  // Q3 on screen — slow
-  [0.930, 0.925],  // ↑ gap: tunnel, black-hole pinch, white flash
-  [0.965, 0.972],  // ↑ still gap: the galaxy, alone, before the closing text
-  [1.000, 1.000],  // Q5 on screen — slow pullback
+  [0.000, 0.000],
+  [0.020, 0.026],  // hero
+  [0.045, 0.037],  // ↑ gap: sphere gives way to the funnel — held, unhurried
+  [0.135, 0.154],  // Q1 on screen
+  [0.150, 0.161],  // ↑ gap
+  [0.380, 0.461],  // stat cards — the helix turns behind them
+  [0.480, 0.506],  // ↑ gap: the helix melts into the ocean, slowly
+  [0.620, 0.688],  // Q2 on screen
+  [0.660, 0.706],  // ↑ gap
+  [0.790, 0.875],  // Q3 on screen
+  [0.870, 0.930],  // ↑ gap: the tunnel pinches shut and the flash goes off
+  [0.895, 0.955],  // ↑ the flash clears at its own pace — not lingering, not rushed
+  [0.975, 0.972],  // ↑ the galaxy, alone, for a long slow stretch of scrolling
+  [1.000, 1.000],  // Q5 on screen
 ];
 function warpScroll(x) {
   if (x <= 0) return 0;
@@ -1023,9 +1024,9 @@ function warpScroll(x) {
   return 1;
 }
 
-// Ambient motion (the noise churn that runs on its own clock) gets the same
-// treatment: hushed under text, free to move in between.
-const READING_WINDOWS = [[0.045, 0.135], [0.15, 0.38], [0.48, 0.62], [0.66, 0.79], [0.965, 1.0]];
+// Ambient motion (the noise churn on its own clock) follows the same rule:
+// calm in the open so a held shape reads as still, livelier behind text.
+const READING_WINDOWS = [[0.045, 0.135], [0.15, 0.38], [0.48, 0.62], [0.66, 0.79], [0.975, 1.0]];
 const FADE = 0.02;
 function readingAmount(x) {
   let m = 0;
@@ -1040,8 +1041,8 @@ function render(now) {
   {
     const mScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     const raw = mScroll > 0 ? (document.documentElement.scrollTop || document.body.scrollTop) / mScroll : 0;
-    // 0.0022 under text, 0.0085 in the open — the template's 0.005 is the midpoint
-    time += 0.0085 - 0.0063 * readingAmount(raw);
+    // 0.0026 in the open, 0.0075 under text — the template's 0.005 is the midpoint
+    time += 0.0026 + 0.0049 * readingAmount(raw);
   }
 
   if (introStart === 0) introStart = now;
