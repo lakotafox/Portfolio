@@ -269,12 +269,24 @@
     color: #ffc7bd; margin-top: 1.1em; font-size: clamp(15px, 1.15vw, 17px);
   }
   .story .btn-row { margin-top: 22px; }
-  .closing-note {
-    margin-top: 18px; text-align: center;
+  .closing-note { margin-top: 20px; text-align: center; }
+  .closing-note a {
+    display: inline-flex; align-items: center; gap: 10px;
     font-family: Assistant, sans-serif; font-weight: 600;
-    font-size: clamp(15px, 1.2vw, 18px); color: #cdcdd8;
-    text-shadow: 0 2px 14px rgba(0,0,0,0.9);
+    font-size: clamp(16px, 1.3vw, 19px);
+    color: #fff; text-decoration: none;
+    padding: 14px 26px; border-radius: 9999px;
+    background: rgba(6,8,16,0.86);
+    border: 1px solid rgba(255,255,255,0.28);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+    pointer-events: auto;
   }
+  .closing-note a::after {
+    content: "\2197";                      /* the arrow says "leaves this page" */
+    font-size: 0.95em; color: #ffa091;
+  }
+  .closing-note a:hover { border-color: rgba(255,255,255,0.5); }
 
   /* DNA stat cards */
   #dna-cards {
@@ -507,7 +519,12 @@
       <!-- No links anywhere on this page. A reader who taps one and lands on
            another site may not find the way back, and this page is the whole
            errand. Addresses appear as plain text, to type if they want them. -->
-      <p class="closing-note rv" data-w="galaxy">My work is at lakotafox.com</p>
+      <!-- The one link on the page, and it is the last thing on it. Opens in a
+           new tab so this stays put behind it — nobody has to find their way
+           back to something they were in the middle of. -->
+      <p class="closing-note rv" data-w="galaxy">
+        <a href="https://lakotafox.com" target="_blank" rel="noopener">Check out my portfolio here</a>
+      </p>
     </div>
   </section>
 
