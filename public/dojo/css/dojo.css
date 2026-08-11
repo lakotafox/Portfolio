@@ -526,3 +526,30 @@ button { font-family: inherit; }
   outline-offset: -4px;
 }
 .build-slot { cursor: pointer; }
+
+/* folded command — one click away, never in the way */
+.cmd-fold summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  padding: 7px 9px;
+  background: var(--w95-face);
+  border-top: 2px solid var(--w95-light);
+  border-left: 2px solid var(--w95-light);
+  border-right: 2px solid var(--w95-dark);
+  border-bottom: 2px solid var(--w95-dark);
+  user-select: none;
+  list-style: none;
+}
+.cmd-fold summary::-webkit-details-marker { display: none; }
+.cmd-fold summary::before { content: '▸ '; }
+.cmd-fold[open] summary::before { content: '▾ '; }
+.cmd-fold[open] summary { margin-bottom: 8px; }
+.cmd-fold .cmd { margin-bottom: 8px; }
+
+/* "you will know it worked when..." — replaces the paste box once Claude exists */
+.you-know {
+  font-size: 13.5px;
+  padding: 9px 11px;
+  background: rgba(255,255,255,0.45);
+  border-left: 4px solid var(--w95-shadow);
+}

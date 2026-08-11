@@ -11,7 +11,7 @@ import { runCheck } from './checks.js';
 import { createSensei, preload } from './sensei.js';
 import { chime, thud, cycleAudio, audioMode, musicAllowed, AUDIO_LABEL } from './blip.js';
 import { startMusic, stopMusic } from './music.js';
-import { stackGame, pipeGame, quiz } from './games.js';
+import { stackGame, quiz } from './games.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const el = (tag, cls, text) => {
@@ -165,10 +165,18 @@ function renderKata(step, onDone) {
     body.append(ask);
   }
 
+  /* The raw command is folded away by default. A beginner does not need a
+     curl-pipe-to-bash line in their face to install Homebrew — but it must be
+     one click away, because "never becomes magic" is the whole promise. */
   if (kata.command) {
-    body.append(el('pre', 'cmd', kata.command));
-    if (kata.cmdNote) body.append(el('p', 'cmd-note', kata.cmdNote));
+    const d = el('details', 'cmd-fold');
+    d.append(el('summary', null, 'Show me the actual command'));
+    d.append(el('pre', 'cmd', kata.command));
+    if (kata.cmdNote) d.append(el('p', 'cmd-note', kata.cmdNote));
+    body.append(d);
   }
+
+  if (kata.youKnow) body.append(el('p', 'you-know', kata.youKnow));
 
   const complete = () => {
     if (!store.isDone(kata.id)) {
@@ -189,7 +197,6 @@ function renderKata(step, onDone) {
     body.append(host);
     const report = (msg) => { say(msg); };
     if (kata.game === 'stack') stackGame(host, (m) => { report(m); complete(); });
-    if (kata.game === 'pipe') pipeGame(host, (m) => { report(m); complete(); });
   }
 
   if (kata.quiz) {

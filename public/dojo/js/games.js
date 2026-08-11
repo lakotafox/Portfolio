@@ -204,21 +204,6 @@ export function stackGame(host, say) {
   );
 }
 
-export function pipeGame(host, say) {
-  buildGame(
-    host,
-    [
-      { id: 'fortune', label: 'fortune' },
-      { id: 'pipe',    label: '|' },
-      { id: 'cowsay',  label: 'cowsay' },
-    ],
-    ['first', 'then', 'then'],
-    say,
-    'Output of the left, into the right. Now go and ask for it out loud.',
-    'row',
-  );
-}
-
 /** Multiple choice. Wrong answers explain themselves and cost nothing. */
 export function quiz(host, spec, say, onPass) {
   let done = false;

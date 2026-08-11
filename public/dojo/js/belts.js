@@ -69,48 +69,29 @@ export const BELTS = [
   {
     id: 'yellow',
     name: 'Yellow Belt',
-    motto: 'Feel the room.',
+    motto: 'Open the door.',
     intro:
-      'Now you open it. You will type a few things by hand today. Not to memorise them — to feel the room in the dark once, so you know its shape.',
+      'Now you open it. You will type a few things by hand today — not to memorise them, but so the window stops being frightening.',
     handTyped: true,
     katas: [
       {
         id: 'y-open',
         title: 'Open the terminal',
         concept:
-          'Applications, then Utilities, then Terminal. Or hold Command and press Space, type "terminal", press return. You get a window with a blinking cursor. That cursor is sitting in a program called zsh, which reads what you type and runs it.',
-        aside: 'Nothing in this window can hurt you today. Everything you type is something you could have clicked.',
-      },
-      {
-        id: 'y-pwd',
-        title: 'Where am I?',
-        concept:
-          'You are always standing somewhere. Commands act on that place unless you tell them otherwise, which is the source of about half of all beginner confusion.',
-        command: 'pwd',
-        cmdNote: 'Print working directory. It answers one question: where am I standing?',
-        check: 'pwd',
-        checkPrompt: 'Type it, press return, and paste what came back.',
-      },
-      {
-        id: 'y-ls',
-        title: 'What is here?',
-        concept:
-          'The same folder Finder shows you, listed as words. Adding -la shows the hidden files too — the ones starting with a dot, which are almost always configuration.',
-        command: 'ls\nls -la',
-        cmdNote: 'ls lists. The -la part is a flag: l for a long detailed listing, a for all, including hidden.',
-        check: 'ls',
-        checkPrompt: 'Run ls and paste the list.',
-      },
-      {
-        id: 'y-move',
-        title: 'Moving around',
-        concept:
-          'cd means change directory. Three of them cover almost everything: into a folder by name, up one level, or home.',
-        command: 'cd Documents\ncd ..\ncd ~',
-        cmdNote:
-          'The .. means the folder above this one. The ~ means your home folder. Start typing a folder name and press Tab — the shell finishes it for you, which also proves the folder exists.',
+          'Applications, then Utilities, then Terminal. Or hold Command, press Space, type "terminal", press return. You get a window with a blinking cursor. That cursor is sitting in a program called zsh, which reads what you type and runs it.',
         aside:
-          'Two more worth knowing forever: Ctrl+C cancels whatever is running, and typing open followed by a dot opens the folder you are standing in, in Finder.',
+          'Nothing you type today can hurt you. Everything here is something you could have done by clicking.',
+      },
+      {
+        id: 'y-around',
+        title: 'Know where you are',
+        concept:
+          'You are always standing in some folder, and commands act on that folder unless told otherwise. That single fact is the source of about half of all beginner confusion. Three words cover it: pwd tells you where you are, ls shows what is here, cd moves you.',
+        command: 'pwd\nls\ncd ~',
+        cmdNote:
+          'Print working directory. List. Change directory. The ~ means home. Press Tab while typing a folder name and the shell finishes it for you — which also proves the folder exists. Ctrl+C cancels anything that is running.',
+        check: 'pwd',
+        checkPrompt: 'Run pwd and paste what came back. That is the last thing I will ask you to paste.',
       },
     ],
   },
@@ -120,28 +101,48 @@ export const BELTS = [
     id: 'orange',
     name: 'Orange Belt',
     motto: 'Get your partner.',
-    intro:
-      'One more thing you install by hand. After this, you stop memorising and start asking.',
+    intro: 'This is the belt that matters. Everything before it was so this would make sense.',
     handTyped: true,
     katas: [
       {
         id: 'o-install',
         title: 'Install Claude Code',
         concept:
-          'Claude Code is the program that lets you say what you want instead of remembering how to ask for it. Install it from the official instructions — use the native installer rather than npm if you are offered the choice; it is self-contained and keeps itself updated.',
+          'One command from the official page. It is self-contained and keeps itself updated — you do not need Homebrew or anything else first.',
         link: { href: 'https://code.claude.com/docs/en/overview', label: 'code.claude.com/docs' },
         aside:
-          'You will need an Anthropic account, which you already have. If the shell says "command not found" afterwards, open a brand new terminal window — the old one does not know the program exists yet.',
+          'You already have an Anthropic account. If the shell says "command not found" afterwards, open a brand new terminal window — the old one does not know the program exists yet.',
         check: 'claude',
         checkPrompt: 'Run claude --version and paste what it says.',
       },
       {
         id: 'o-first',
-        title: 'Say hello',
+        title: 'Run it',
         concept:
-          'Type claude and press return, in any folder. You are now in a session. Ask it something small and harmless — what is in this folder, what does this file do. Watch it ask permission before it does anything real. Read the command it wants to run before you approve it. That habit is the whole safety model.',
+          'Type claude and press return. You are in a session. Ask it something real about the folder you are standing in — what is in here, what does this file do. Talk to it in sentences; there are no commands to learn.',
         command: 'claude',
-        cmdNote: 'That is it. One word. Press Ctrl+C twice, or type /exit, to leave.',
+        cmdNote: 'One word. Ctrl+C twice, or /exit, to leave.',
+        youKnow: 'You will know it worked when it answers you.',
+      },
+      {
+        id: 'o-permission',
+        title: 'The permission prompt',
+        concept:
+          'Ask it to do something that changes a file — make a note, rename something. It will stop and ask before it runs the command. Read what it wants to run before you approve it. That habit is the entire safety model, and it is worth building on day one.',
+        aside:
+          'It has exactly your permissions. Not more. If you could delete something by typing, so can it — which is why it asks.',
+        youKnow: 'You will know it worked when it stops and waits for you.',
+      },
+      {
+        id: 'o-home',
+        title: 'Bring the dojo home',
+        concept:
+          'The rest of your training lives on your machine, in a folder, where your partner can read your work instead of taking your word for it. This is the first thing you ask for rather than type.',
+        ask: 'Clone https://github.com/lakotafox/dojo into a folder called dojo in my home directory.',
+        askNote: 'Say that to Claude. Let it work.',
+        command: 'git clone https://github.com/lakotafox/dojo ~/dojo',
+        cmdNote: 'git is version control. clone means: make me a copy of that.',
+        youKnow: 'You will know it worked when a folder called dojo appears in your home.',
       },
     ],
   },
@@ -152,92 +153,43 @@ export const BELTS = [
     name: 'Green Belt',
     motto: 'Ask, do not type.',
     intro:
-      'Everything changes here. You have a partner now. You will still be shown every command — so it is never magic, and you are never helpless — but you will not be asked to remember one again.',
+      'You have a partner now. From here you describe what you want and let it handle the syntax — while always being shown what it ran, so it never becomes magic and you are never stuck without it.',
     katas: [
-      {
-        id: 'g-brew',
-        title: 'A package manager',
-        concept:
-          'Homebrew fetches command-line software, puts it somewhere sensible, and keeps it updated. macOS does not ship with one, so almost every Mac setup guide you will ever read assumes you have it.',
-        ask: 'I need Homebrew on this machine.',
-        command: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
-        cmdNote:
-          'That is what Claude will run. curl downloads the installer, bash runs it. Afterwards the installer prints two lines about PATH — that is the step everybody skips, and skipping it is why brew says "command not found" forever after. Let Claude finish it.',
-        check: 'brew',
-        checkPrompt: 'Paste what brew --version says.',
-      },
-      {
-        id: 'g-doctor',
-        title: 'Is it healthy?',
-        concept:
-          'Homebrew ships with a self-check. It almost never comes back perfectly clean on a real machine, and that is fine — warnings are notes, not faults.',
-        ask: 'Is my Homebrew set up correctly?',
-        command: 'brew doctor',
-        cmdNote: 'The best case prints "Your system is ready to brew." Anything starting with Warning: is usually something you can ignore. Ask Claude if a particular one matters.',
-        check: 'brewdoctor',
-        checkPrompt: 'Paste what it said, warnings and all.',
-      },
-      {
-        id: 'g-cowsay',
-        title: 'Install something useless',
-        concept:
-          'A cow that repeats what you say. It is a joke program, and it is a genuinely good first install, because you get instant unambiguous proof that the whole chain worked: a package manager fetched software from the internet, it landed on your machine, your shell found it, and it ran.',
-        ask: 'Install cowsay and fortune, then make the cow say hello.',
-        command: 'brew install cowsay fortune\ncowsay hello',
-        cmdNote: 'brew install takes as many names as you like. Try cowsay -l to list the other characters, and cowsay -f dragon rawr to pick one.',
-        check: 'cowsay',
-        checkPrompt: 'Paste the cow.',
-      },
-      {
-        id: 'g-pipe',
-        title: 'The pipe',
-        concept:
-          'fortune prints a random quotation. cowsay prints whatever you hand it. Neither knows the other exists. The shell can take what one prints and feed it straight into the other — and that is why command-line tools are all small and boring on their own. They are built to be joined together.',
-        ask: 'Make the cow say a random fortune.',
-        command: 'fortune | cowsay',
-        cmdNote: 'That vertical bar is the pipe. Output of the left, into the right.',
-        game: 'pipe',
-        check: 'pipe',
-        checkPrompt: 'Paste the cow with its fortune.',
-      },
-      {
-        id: 'g-dojo',
-        title: 'Bring the dojo home',
-        concept:
-          'The rest of your training does not live on a web page. It lives on your machine, in a folder, where your partner can actually read your work instead of taking your word for it.',
-        ask: 'Clone https://github.com/lakotafox/dojo into a folder called dojo in my home directory.',
-        askNote: 'Everything after this belt lives in there.',
-        command: 'git clone https://github.com/lakotafox/dojo ~/dojo',
-        cmdNote: 'git is version control — it will come up again. clone means make me a copy of that.',
-      },
       {
         id: 'g-serve',
         title: 'A server of your own',
         concept:
-          'A server is not a machine in a warehouse. It is a program that hands out files when something asks for them. Run one in the dojo folder and your own browser can ask it for the dashboard.',
+          'A server is not a machine in a warehouse. It is a program that hands out files when something asks for them. Run one inside the dojo folder and your own browser can ask it for your training dashboard.',
         ask: 'Spin up a local server for the dojo on any open port.',
         askNote:
-          'Say "any open port" rather than naming one. Claude will find a free door instead of walking into an occupied one.',
+          'Say "any open port" rather than naming one — it will find a free door instead of walking into an occupied one.',
         command: 'python3 -m http.server 8080',
         cmdNote:
-          'python3 comes with macOS. The 8080 is the port — which door it listens on. The address it gives you back starts with localhost, or 127.0.0.1, and both mean: this machine only. Nothing leaves your Mac. And notice the terminal is now busy holding it open. That is not frozen. That is running.',
-        check: 'server',
-        checkPrompt: 'Paste the address it gave you.',
+          'python3 comes with macOS. The number is the port — which door it listens on. The address it hands back starts with localhost, or 127.0.0.1, and both mean: this machine only, nothing leaves your Mac. Notice the terminal is now busy holding it open. That is not frozen. That is running.',
+        youKnow: 'Open the address it gives you. Your dojo should be looking back at you.',
       },
       {
         id: 'g-hygiene',
         title: 'Put it away',
         concept:
-          'This is the part every tutorial skips. A server keeps running long after you stop thinking about it. Leave a few lying around and your machine slows down, and the next one fails with "address already in use" — a message that means nothing until someone explains it.',
+          'This is the part every tutorial skips. A server keeps running long after you stop thinking about it. Leave a few lying around and the machine drags, and the next one fails with "address already in use" — a message that means nothing until someone explains it.',
         ask: 'What is running on my machine right now? Is anything holding a port open?',
-        askNote: 'Then, when you are finished for the day: "shut down that server for me."',
+        askNote: 'And when you are done for the day: "shut that server down for me."',
         command: 'lsof -i -P | grep LISTEN',
         cmdNote:
-          'You do not need this in your head. You need to know that something can be occupying a port, and that you can ask. That is the durable part.',
-        check: 'ports',
-        checkPrompt: 'Paste what is listening.',
-        aside:
-          'From here on, start every session by asking what is still running from last time.',
+          'You do not need that in your head. You need to know that something can be occupying a port, and that you can ask. That is the part that lasts.',
+        youKnow: 'Start every session from now on by asking what is still running.',
+      },
+      {
+        id: 'g-terminal',
+        title: 'Meet me in the terminal',
+        concept:
+          'That is everything a web page can teach you. The rest happens in the dojo folder, where I can check your work instead of believing you.',
+        ask: 'Open the dojo folder and run claude there, then type /dojo.',
+        askNote: 'Leave the dashboard open in a browser tab while you work. It watches your progress.',
+        command: 'cd ~/dojo\nclaude',
+        cmdNote: 'Then type /dojo and press return.',
+        youKnow: 'You will know it worked when I greet you by rank.',
       },
     ],
   },
