@@ -198,7 +198,14 @@
   /* story cards (funnel + tunnel windows) */
   .story {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 0 20px; z-index: 10; text-align: left;
+    /* foot padding = room for the "Keep scrolling" pill, which is on screen
+       for the whole page and must never sit on top of an answer. A tall
+       section travels upward through the viewport, so text would still pass
+       behind the pill on the way — the mask dissolves it just above instead,
+       and the pin's resting position clears the reserved band entirely. */
+    padding: 0 20px 86px; z-index: 10; text-align: left;
+    -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 92px), transparent calc(100% - 22px));
+    mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 92px), transparent calc(100% - 22px));
   }
   .story .top-label { margin-bottom: 28px; }
   .story-card {
@@ -256,7 +263,9 @@
   #dna-cards {
     position: fixed; inset: 0; z-index: 5; pointer-events: none; opacity: 0;
     display: flex; align-items: center; justify-content: center;
-    gap: clamp(14px, 1.6vw, 22px); padding: 0 20px;
+    gap: clamp(14px, 1.6vw, 22px); padding: 0 20px 86px;
+    -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 92px), transparent calc(100% - 22px));
+    mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 92px), transparent calc(100% - 22px));
     transition: opacity 0.5s ease;
   }
   .dna-card {
@@ -332,7 +341,9 @@
     #hero .btn-row { align-self: center; }
 
     /* ---- story cards (trail / steep) ---- */
-    .story { padding: 0 14px; }
+    /* keeps the foot reserved for the cue — a bare `padding: 0 14px` here
+       silently zeroed it and let answers run under the pill */
+    .story { padding: 0 14px 86px; }
     .story .top-label { margin-bottom: 20px; }
     .story-card {
       width: 100%;
@@ -947,6 +958,8 @@ function applyWindows(cs) {
 // section owns the screen, its local scroll progress walks the block upward by
 // exactly its overflow, so scrolling the page reads the card. One gesture.
 const PIN_PAD = 16;
+// Room kept clear at the foot of every section for the "Keep scrolling" pill.
+const CUE_SPACE = 86;
 const storyPins = Array.from(document.querySelectorAll('.story')).map(sec => ({
   sec, inner: sec.querySelector('.story-inner'), overflow: 0,
 }));
@@ -955,7 +968,7 @@ function measurePins() {
     if (!p.inner) continue;
     const prev = p.inner.style.transform;
     p.inner.style.transform = 'none';
-    p.overflow = Math.max(0, p.inner.offsetHeight - (innerHeight - PIN_PAD * 2));
+    p.overflow = Math.max(0, p.inner.offsetHeight - (innerHeight - PIN_PAD - CUE_SPACE));
     p.sec.classList.toggle('is-tall', p.overflow > 0);
     p.inner.style.transform = prev;
   }
@@ -1059,20 +1072,16 @@ function warpScroll(x) {
 // calm in the open so a held shape reads as still, livelier behind text.
 const READING_WINDOWS = [[0.045, 0.135], [0.15, 0.38], [0.48, 0.62], [0.66, 0.79], [0.975, 1.0]];
 const FADE = 0.02;
-// The long stretches with nothing but the scene — where a reader is most
-// likely to think the page has ended. Listed rather than derived: the short
-// hop between Q1 and the stat cards is 1.5% of the page, and a cue that
-// appears and leaves inside that reads as a flicker, not an instruction.
-// The hero has its own line, and the last window ends before the page does.
-const CUE_WINDOWS = [[0.395, 0.468], [0.626, 0.654], [0.798, 0.968]];
-const CUE_FADE = 0.012;
+// The instruction is on screen for the entire page, under the answers as well
+// as between them. Finishing a paragraph is exactly the moment a reader decides
+// whether there is more, and the reader here is eighty. Two exceptions: the
+// opening screen, which carries its own line, and the very bottom, where there
+// is nothing left to scroll. Every section reserves CUE_SPACE at its foot so
+// the pill never lands on top of the text.
 function cueAmount(x) {
-  let m = 0;
-  for (const [a, b] of CUE_WINDOWS) {
-    const v = Math.min((x - a) / CUE_FADE, 1, (b - x) / CUE_FADE);
-    m = Math.max(m, Math.min(1, Math.max(0, v)));
-  }
-  return m;
+  if (x < 0.035) return 0;                       // hero says it in its own words
+  if (x > 0.995) return Math.max(0, (1 - x) / 0.005);     // out at the finish
+  return Math.min(1, (x - 0.035) / 0.012);
 }
 
 function readingAmount(x) {
