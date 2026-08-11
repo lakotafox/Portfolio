@@ -205,9 +205,9 @@ export const BELTS = [
         title: 'Bring the dojo home',
         concept:
           'The rest of your training does not live on a web page. It lives on your machine, in a folder, where your partner can actually read your work instead of taking your word for it.',
-        ask: 'Clone the dojo from GITHUB_URL into a folder called dojo in my home directory.',
-        askNote: 'Lakota will give you the address to put in place of GITHUB_URL.',
-        command: 'git clone <address> ~/dojo',
+        ask: 'Clone https://github.com/lakotafox/dojo into a folder called dojo in my home directory.',
+        askNote: 'Everything after this belt lives in there.',
+        command: 'git clone https://github.com/lakotafox/dojo ~/dojo',
         cmdNote: 'git is version control — it will come up again. clone means make me a copy of that.',
       },
       {
