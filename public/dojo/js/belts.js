@@ -83,15 +83,37 @@ export const BELTS = [
           'Nothing you type today can hurt you. Everything here is something you could have done by clicking.',
       },
       {
-        id: 'y-around',
-        title: 'Know where you are',
+        id: 'y-where',
+        title: 'Where am I, and what is here',
         concept:
-          'You are always standing in some folder, and commands act on that folder unless told otherwise. That single fact is the source of about half of all beginner confusion. Three words cover it: pwd tells you where you are, ls shows what is here, cd moves you.',
-        command: 'pwd\nls\ncd ~',
+          'You are always standing in some folder. When you open Terminal you start in your home folder — the one with your name on it, written as ~ for short. Commands act on wherever you are standing, and forgetting that causes about half of all beginner confusion.',
+        command: 'pwd\nls',
         cmdNote:
-          'Print working directory. List. Change directory. The ~ means home. Press Tab while typing a folder name and the shell finishes it for you — which also proves the folder exists. Ctrl+C cancels anything that is running.',
+          'pwd is print working directory: where am I. ls is list: what is in here. Try ls -la too — the a shows hidden files, the ones starting with a dot, which are almost always settings.',
         check: 'pwd',
-        checkPrompt: 'Run pwd and paste what came back. That is the last thing I will ask you to paste.',
+        checkPrompt: 'Run pwd and paste what came back.',
+      },
+      {
+        id: 'y-make',
+        title: 'Make a folder and walk into it',
+        concept:
+          'Now do the thing you will do a hundred times. Make a folder, go into it, prove you are there, and come back out. Nothing here is different from making a folder in Finder — it is the same folder, made through the other door.',
+        command: 'mkdir practice\ncd practice\npwd\ncd ..',
+        cmdNote:
+          'mkdir makes a directory. cd changes into it. pwd proves you actually moved — the path now ends in /practice. cd .. climbs one level back up.',
+        aside:
+          'Three ways out, and they are not the same. cd .. goes up one level. cd with nothing after it goes all the way home, from anywhere — the fastest way to un-lose yourself. cd - goes back to wherever you just were, like an undo for walking.',
+        check: 'inside',
+        checkPrompt: 'From inside the practice folder, run pwd and paste it.',
+      },
+      {
+        id: 'y-tab',
+        title: 'Two keys worth keeping',
+        concept:
+          'Tab finishes what you are typing. Start a folder name, press Tab, and the shell completes it — which also proves the folder exists, because it cannot complete something that is not there. Use it constantly; it prevents typos before they happen.',
+        aside:
+          'And Ctrl+C cancels whatever is running. If something is stuck or pouring text down the screen, that is your way out. You will use it again in a minute for something bigger.',
+        youKnow: 'Try Tab now: type cd Doc and press Tab. It should finish Documents for you.',
       },
     ],
   },
@@ -117,12 +139,13 @@ export const BELTS = [
       },
       {
         id: 'o-first',
-        title: 'Run it',
+        title: 'Run it — and notice where',
         concept:
-          'Type claude and press return. You are in a session. Ask it something real about the folder you are standing in — what is in here, what does this file do. Talk to it in sentences; there are no commands to learn.',
-        command: 'claude',
-        cmdNote: 'One word. Ctrl+C twice, or /exit, to leave.',
-        youKnow: 'You will know it worked when it answers you.',
+          'This is why you learned cd first. Claude Code works on the folder you start it in. Walk into your practice folder, start it there, and ask what is in here — it will know about that folder and nothing above it. Start it somewhere else and it sees somewhere else.',
+        command: 'cd ~/practice\nclaude',
+        cmdNote:
+          'One word to start it. Ctrl+C twice, or /exit, to leave. That scoping is not a detail — it is why a project can keep its own notes and its own tools, which is most of what the later belts are about.',
+        youKnow: 'You will know it worked when it answers you, and when it does not know about files outside that folder.',
       },
       {
         id: 'o-stop',

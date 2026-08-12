@@ -62,6 +62,20 @@ export const CHECKS = {
   ),
 
 
+  /** Proves he actually moved, rather than running pwd from where he started. */
+  inside: make(
+    'pwd',
+    (t) => {
+      if (/\/practice\/?\s*$/m.test(t)) return true;
+      if (/(^|\n)\s*\/(Users|home)\/[^\n]*$/m.test(t)) {
+        return 'That is where you started. Run cd practice first, then pwd again — the path should end in /practice.';
+      }
+      return null;
+    },
+    'You moved. That is all cd does, and now you can see it happen.',
+    'Expected a path ending in /practice. Make it with mkdir practice, then cd practice.',
+  ),
+
   /* ---- Orange: the partner ---- */
 
   claude: make(
