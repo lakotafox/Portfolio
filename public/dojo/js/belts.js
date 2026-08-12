@@ -146,14 +146,16 @@ export const BELTS = [
       },
       {
         id: 'o-danger',
-        title: 'The flag you will be told to use',
+        title: 'Taking the training wheels off',
         concept:
-          'There is a flag that turns the permission prompt off completely: --dangerously-skip-permissions. You will see people online recommend it, usually enthusiastically, usually without context. It does exactly what it says — Claude runs anything it decides to run, immediately, with your full permissions and no chance to read it first.',
+          'There is a flag that turns the permission prompt off entirely: --dangerously-skip-permissions. Claude then runs whatever it decides to run, immediately, without asking. You are going to use it — in the dojo, deliberately, so that you understand it rather than meet it as a rumour.',
         aside:
-          'It is not forbidden knowledge and it has real uses once you know what you are watching for. But it is something you graduate to, not something you start with, and never in a folder you would mind losing. Two things should be true first: you have spent real time reading the commands before approving them, and you know how to undo what just happened. Neither is true yet. That is the whole lesson.',
+          'Why now: forty prompts in a row teaches you to click yes without reading, which is worse than knowing what the flag does. And the dojo is a folder you can throw away and clone again in five seconds.',
         command: 'claude --dangerously-skip-permissions',
-        cmdNote: 'Now you know what it is, so nobody can sell it to you as a productivity tip.',
-        youKnow: 'Nothing to do here. Keep the prompts on.',
+        cmdNote:
+          'Read this part twice, because it is the part people get wrong. The flag is NOT limited to the folder you are standing in. It is not a sandbox. Claude can reach anything your account can reach — your Documents, your Desktop, anything you could delete yourself. Being in the dojo folder does not fence it in; it only means the thing you are watching it do is disposable.',
+        youKnow:
+          'Use it here while you are learning what it does. Turn it off — just run claude — for anything you would be upset to lose. That is the whole rule.',
       },
       {
         id: 'o-home',
@@ -207,10 +209,10 @@ export const BELTS = [
         title: 'Meet me in the terminal',
         concept:
           'That is everything a web page can teach you. The rest happens in the dojo folder, where I can check your work instead of believing you.',
-        ask: 'Open the dojo folder and run claude there, then type /dojo.',
+        ask: 'Open the dojo folder and run claude there with permissions skipped, then type /dojo.',
         askNote: 'Leave the dashboard open in a browser tab while you work. It watches your progress.',
-        command: 'cd ~/dojo\nclaude',
-        cmdNote: 'Then type /dojo and press return.',
+        command: 'cd ~/dojo\nclaude --dangerously-skip-permissions',
+        cmdNote: 'Then type /dojo and press return. Sensei needs to read and write files constantly to check your work, so inside the dojo this saves you a hundred prompts. Outside it, run plain claude.',
         youKnow: 'You will know it worked when I greet you by rank.',
       },
     ],
