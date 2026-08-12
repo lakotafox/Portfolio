@@ -190,46 +190,11 @@ export const BELTS = [
         askNote: 'Both halves in one breath. It clones the folder, reads the teaching file inside it, and carries straight on — no restarting, no second terminal.',
         command: 'git clone https://github.com/lakotafox/dojo ~/dojo',
         cmdNote: 'git is version control. clone means: make me a copy of that.',
-        youKnow: 'You will know it worked when sensei greets you — in the same session, without you going anywhere.',
+        youKnow: 'You will know it worked when sensei greets you — in the same session, without you going anywhere. That is the end of this page. Everything else happens with him.',
       },
     ],
   },
 
-  /* ------------------------------------------------------------- GREEN -- */
-  {
-    id: 'green',
-    name: 'Green Belt',
-    motto: 'Ask, do not type.',
-    intro:
-      'You have a partner now. From here you describe what you want and let it handle the syntax — while always being shown what it ran, so it never becomes magic and you are never stuck without it.',
-    katas: [
-      {
-        id: 'g-serve',
-        title: 'A server of your own',
-        concept:
-          'A server is not a machine in a warehouse. It is a program that hands out files when something asks for them. Run one inside the dojo folder and your own browser can ask it for your training dashboard.',
-        ask: 'Spin up a local server for the dojo on any open port.',
-        askNote:
-          'Say "any open port" rather than naming one — it will find a free door instead of walking into an occupied one.',
-        command: 'python3 -m http.server 8080',
-        cmdNote:
-          'python3 comes with macOS. The number is the port — which door it listens on. The address it hands back starts with localhost, or 127.0.0.1, and both mean: this machine only, nothing leaves your Mac. Notice the terminal is now busy holding it open. That is not frozen. That is running.',
-        youKnow: 'Open the address it gives you. Your dojo should be looking back at you.',
-      },
-      {
-        id: 'g-hygiene',
-        title: 'Put it away',
-        concept:
-          'This is the part every tutorial skips. A server keeps running long after you stop thinking about it. Leave a few lying around and the machine drags, and the next one fails with "address already in use" — a message that means nothing until someone explains it.',
-        ask: 'What is running on my machine right now? Is anything holding a port open?',
-        askNote: 'And when you are done for the day: "shut that server down for me."',
-        command: 'lsof -i -P | grep LISTEN',
-        cmdNote:
-          'You do not need that in your head. You need to know that something can be occupying a port, and that you can ask. That is the part that lasts.',
-        youKnow: 'Start every session from now on by asking what is still running.',
-      },
-    ],
-  },
 ];
 
 /** Belts past this point are taught in the terminal, not here. */
