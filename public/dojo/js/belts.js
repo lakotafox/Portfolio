@@ -160,12 +160,13 @@ export const BELTS = [
       },
       {
         id: 'o-permission',
-        title: 'The permission prompt',
+        title: 'Start it back up',
         concept:
-          'Ask it to do something that changes a file — make a note, rename something. It will stop and ask before it runs the command. Read what it wants to run before you approve it. That habit is the entire safety model, and it is worth building on day one.',
+          'You just pressed Ctrl+C, so Claude is closed and you are back at a bare prompt. Type claude and say hello.',
+        command: 'claude',
         aside:
-          'It has exactly your permissions. Not more. If you could delete something by typing, so can it — which is why it asks.',
-        youKnow: 'You will know it worked when it stops and waits for you.',
+          'While you are in there, ask it to make a file. It will stop and ask permission first — read what it wants to run, then approve it. That prompt is the thing the next lesson turns off.',
+        youKnow: 'You will know it worked when it says hello back.',
       },
       {
         id: 'o-danger',
