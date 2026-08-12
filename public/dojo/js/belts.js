@@ -162,11 +162,11 @@ export const BELTS = [
         title: 'Bring the dojo home',
         concept:
           'The rest of your training lives on your machine, in a folder, where your partner can read your work instead of taking your word for it. This is the first thing you ask for rather than type.',
-        ask: 'Clone https://github.com/lakotafox/dojo into a folder called dojo in my home directory, then tell me how to start it.',
-        askNote: 'The second half matters. Ask it what to do next and it will read the folder and tell you, instead of leaving you standing there.',
+        ask: 'Clone https://github.com/lakotafox/dojo into a folder called dojo in my home directory, then read the dojo skill and be my sensei.',
+        askNote: 'Both halves in one breath. It clones the folder, reads the teaching file inside it, and carries straight on — no restarting, no second terminal.',
         command: 'git clone https://github.com/lakotafox/dojo ~/dojo',
         cmdNote: 'git is version control. clone means: make me a copy of that.',
-        youKnow: 'You will know it worked when a folder called dojo appears in your home, and Claude tells you to run /dojo inside it.',
+        youKnow: 'You will know it worked when sensei greets you — in the same session, without you going anywhere.',
       },
     ],
   },
@@ -203,17 +203,6 @@ export const BELTS = [
         cmdNote:
           'You do not need that in your head. You need to know that something can be occupying a port, and that you can ask. That is the part that lasts.',
         youKnow: 'Start every session from now on by asking what is still running.',
-      },
-      {
-        id: 'g-terminal',
-        title: 'Meet me in the terminal',
-        concept:
-          'That is everything a web page can teach you. The rest happens in the dojo folder, where I can check your work instead of believing you.',
-        ask: 'Open the dojo folder and run claude there with permissions skipped, then type /dojo.',
-        askNote: 'Leave the dashboard open in a browser tab while you work. It watches your progress.',
-        command: 'cd ~/dojo\nclaude --dangerously-skip-permissions',
-        cmdNote: 'Then type /dojo and press return. Sensei needs to read and write files constantly to check your work, so inside the dojo this saves you a hundred prompts. Outside it, run plain claude.',
-        youKnow: 'You will know it worked when I greet you by rank.',
       },
     ],
   },
