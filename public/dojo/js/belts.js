@@ -125,6 +125,17 @@ export const BELTS = [
         youKnow: 'You will know it worked when it answers you.',
       },
       {
+        id: 'o-stop',
+        title: 'How to make it stop',
+        concept:
+          'Before you learn anything else about it, learn how to end it. Ctrl+C — hold Control, press C. Once cancels whatever Claude is currently doing. Twice closes the session entirely. It is the same Ctrl+C that stops anything runaway in a terminal, so it is worth having in your hands early.',
+        aside:
+          'Also useful should the machines ever become self-aware. Less flippantly: the reason to know this on day one is that "I could not make it stop" is the thing that actually frightens people, and it takes two keys.',
+        command: 'Ctrl+C        cancel what it is doing\nCtrl+C Ctrl+C  close the session\n/exit         the polite version',
+        cmdNote: 'Nothing is lost by stopping. Start it again with claude and carry on.',
+        youKnow: 'You will know it worked when you are back at your own prompt.',
+      },
+      {
         id: 'o-permission',
         title: 'The permission prompt',
         concept:
@@ -132,6 +143,17 @@ export const BELTS = [
         aside:
           'It has exactly your permissions. Not more. If you could delete something by typing, so can it — which is why it asks.',
         youKnow: 'You will know it worked when it stops and waits for you.',
+      },
+      {
+        id: 'o-danger',
+        title: 'The flag you will be told to use',
+        concept:
+          'There is a flag that turns the permission prompt off completely: --dangerously-skip-permissions. You will see people online recommend it, usually enthusiastically, usually without context. It does exactly what it says — Claude runs anything it decides to run, immediately, with your full permissions and no chance to read it first.',
+        aside:
+          'It is not forbidden knowledge and it has real uses once you know what you are watching for. But it is something you graduate to, not something you start with, and never in a folder you would mind losing. Two things should be true first: you have spent real time reading the commands before approving them, and you know how to undo what just happened. Neither is true yet. That is the whole lesson.',
+        command: 'claude --dangerously-skip-permissions',
+        cmdNote: 'Now you know what it is, so nobody can sell it to you as a productivity tip.',
+        youKnow: 'Nothing to do here. Keep the prompts on.',
       },
       {
         id: 'o-home',
