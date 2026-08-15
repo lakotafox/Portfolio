@@ -28,5 +28,21 @@
 /reallycoolhair/admin/* /reallycoolhair/admin/index.html 200
 /reallycoolhair/app/*   /reallycoolhair/app/index.html   200
 
+
+# --- PUDDL3 P4RTS component library — proxied to its own password-gated
+# Netlify site (puddl3-p4rts.netlify.app). The app is built with base
+# /PUDDL3P4RTS/ so its own assets ride the first rule; the extra namespaces
+# cover hardcoded root-absolute references (iframes, template/scene assets).
+# All non-forced: any real portfolio file on the same path wins.
+/PUDDL3P4RTS/*      https://puddl3-p4rts.netlify.app/PUDDL3P4RTS/:splat  200
+/PUDDL3P4RTS        https://puddl3-p4rts.netlify.app/PUDDL3P4RTS/        200
+/preview.html       https://puddl3-p4rts.netlify.app/preview.html        200
+/template.html      https://puddl3-p4rts.netlify.app/template.html       200
+/scene/*            https://puddl3-p4rts.netlify.app/scene/:splat        200
+/t/*                https://puddl3-p4rts.netlify.app/t/:splat            200
+/three-vendor/*     https://puddl3-p4rts.netlify.app/three-vendor/:splat 200
+/pro-manifest.json  https://puddl3-p4rts.netlify.app/pro-manifest.json   200
+/assets/*           https://puddl3-p4rts.netlify.app/assets/:splat       200
+
 # --- portfolio SPA catch-all (must stay last) ---
 /* /index.html 200
