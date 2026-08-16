@@ -9,7 +9,6 @@
 
 # --- function proxies ---
 /api/identify         /.netlify/functions/identify            200!
-/puddl3-api/*         /.netlify/functions/puddl3-api/:splat   200!
 /gifsmith-api/search  /.netlify/functions/gifcities-search    200!
 
 # NOTE: no clean-URL rules for the static app folders (/gifsmith, /plant-id,

@@ -130,14 +130,6 @@ const projectsData = [
     image: '/project-images/foxbuilt.jpg'
   },
   {
-    id: 'puddl3',
-    title: 'Puddl3',
-    description: 'Real-time payroll — workers watch their pay accrue by the second and cash out instantly, settled in USDC on the Stellar network. Co-founded with two friends. Next.js front end, FastAPI + PostgreSQL back end, on-chain wallets provisioned per employee. Sign in as a demo worker or register your own company.',
-    tag: 'Startup',
-    link: '/puddl3/',
-    image: '/project-images/PUDDLE.png'
-  },
-  {
     id: 'reallycoolhair',
     title: 'Really Cool Hair',
     description: 'A Portland salon moved off GlossGenius onto its own system: a booking flow that reads real availability, an owner dashboard, and a phone app the stylist runs the day from. The salon database is self-hosted on hardware they own, so booking here only works from my own devices — the site and apps are fully browsable.',
