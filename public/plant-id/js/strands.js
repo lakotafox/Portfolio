@@ -1,4 +1,4 @@
-// Vanilla-JS port of the React Bits "Strands" WebGL background (ogl), matching the
+// Vanilla-JS port of the PUDDL3 P4RTS "Strands" WebGL background (ogl), matching the
 // portfolio's animated-background aesthetic. Same shaders as the source component;
 // the React wrapper is replaced with a plain init function.
 //
@@ -132,7 +132,7 @@ function buildPalette(colors) {
 
 // Mounts the animated background into `container`. Returns a cleanup function.
 export function initStrands(container, opts = {}) {
-  // Values tuned by the user on the React Bits playground (2026-07-15).
+  // Values tuned by the user on the PUDDL3 P4RTS playground (2026-07-15).
   const o = {
     colors: GREEN_PALETTE,
     count: 6,

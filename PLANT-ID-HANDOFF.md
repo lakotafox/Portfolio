@@ -22,8 +22,8 @@ verified end-to-end against the real API.
 | Provider abstraction (add 2nd engine later) | `netlify/functions/providers/{index,plantnet}.js` |
 | Frontend app (vanilla ES modules, NO build step) | `public/plant-id/` |
 | App logic | `public/plant-id/js/{app,camera,downscale,api,render}.js` |
-| WebGL background (React Bits "Strands" port) | `public/plant-id/js/strands.js` |
-| Shiny buttons (React Bits "SpecularButton" port) | `public/plant-id/js/specular-button.js` |
+| WebGL background (PUDDL3 P4RTS "Strands" port) | `public/plant-id/js/strands.js` |
+| Shiny buttons (PUDDL3 P4RTS "SpecularButton" port) | `public/plant-id/js/specular-button.js` |
 | Bird chirp on Identify (Web Audio, no asset) | `public/plant-id/js/birdsong.js` |
 | Vendored ogl bundle (esbuild'd from node_modules) | `public/plant-id/js/vendor/ogl.js` |
 | Vine/grass border art (hand-drawn tileable SVGs) | `public/plant-id/img/{vine-side,grass-bottom}.svg` |
@@ -106,7 +106,7 @@ verified end-to-end against the real API.
 
 ## Strands settings (user-tuned 2026-07-15, don't "fix" back to defaults)
 
-The user dialed these in on the React Bits playground; they live as the defaults in
+The user dialed these in on the PUDDL3 P4RTS playground; they live as the defaults in
 `strands.js` `initStrands`: count 6, speed **0.03** (they asked for slow motion —
 playground had 0.1), amplitude 3, waviness 3, thickness 0.2, glow 1.5, taper 0.5,
 spread 0, hueShift 0.78, intensity 0.15, saturation 2, opacity 1, scale 1.35 (kept

@@ -1,4 +1,4 @@
-// Vanilla-JS port of the React Bits "SpecularButton" (ogl): a glass button with a
+// Vanilla-JS port of the PUDDL3 P4RTS "SpecularButton" (ogl): a glass button with a
 // moving specular rim highlight that steers toward the cursor. Same shaders as the
 // source; the React wrapper is replaced by enhanceSpecular(buttonEl, opts), which
 // restructures an existing <button> and mounts the effect. Returns a cleanup fn.

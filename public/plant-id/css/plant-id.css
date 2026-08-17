@@ -527,7 +527,7 @@ body {
 .app-footer a { color: var(--accent); text-decoration: none; }
 .home-link { font-weight: 600; }
 
-/* ---------- Specular button (React Bits port) ---------- */
+/* ---------- Specular button (PUDDL3 P4RTS port) ---------- */
 .specular-button {
   position: relative;
   display: inline-flex;
