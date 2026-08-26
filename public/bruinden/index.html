@@ -8,7 +8,9 @@
   :root {
     --bg: #0e1116; --panel: #161b22; --panel2: #1c232d; --line: #2b3442;
     --text: #d6dde6; --dim: #8b98a8; --accent: #4da3ff; --warn: #ffb454;
-    --danger: #ff6b6b; --ok: #5fd68b; --mono: "SF Mono", Menlo, Consolas, monospace;
+    --danger: #ff6b6b; --ok: #5fd68b; --gold: #ffc800; --gold-dk: #b78d00;
+    --lock: #222a35; --lock-edge: #171d26; --lock-ink: #55606e;
+    --mono: "SF Mono", Menlo, Consolas, monospace;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--bg); color: var(--text); font: 15px/1.55 -apple-system, "Segoe UI", sans-serif; padding: 24px 16px 80px; }
@@ -41,19 +43,56 @@
   .note a, .golink { color: var(--accent); font-family: var(--mono); font-size: 12px; text-decoration: none; }
   .note a:hover, .golink:hover { text-decoration: underline; }
   .golink { margin-left: 8px; white-space: nowrap; }
+  /* ============ PACE ============ */
+  .pace-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+  .pace-name { font-family: var(--mono); font-size: 12px; width: 84px; flex-shrink: 0; }
+  .pace-gauge { flex: 1; height: 18px; background: var(--panel2); border-radius: 9px; position: relative; overflow: hidden; }
+  .pace-zone-behind { position: absolute; left: 0; top: 0; bottom: 0; width: 25%; background: rgba(255,107,107,.12); }
+  .pace-goal { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--ok); opacity: .6; }
+  .pace-marker { position: absolute; top: 2px; bottom: 2px; width: 10px; border-radius: 5px; }
+  .pace-label { font-family: var(--mono); font-size: 12px; width: 150px; flex-shrink: 0; text-align: right; }
+  .pace-overall { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 10px; }
+  /* ============ PATH / TRACKS ============ */
+  .course-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .course-pills button { border: 1px solid var(--line); background: var(--panel2); color: var(--dim); border-radius: 999px; padding: 7px 14px; font-size: 13px; font-family: var(--mono); cursor: pointer; }
+  .course-pills button.active { color: #0b0e13; font-weight: 700; }
+  .unit-head { border-radius: 10px; padding: 10px 14px; margin: 22px 0 6px; color: #0b0e13; font-weight: 700; font-size: 13px; }
+  .unit-head .u-sub { display: block; font-weight: 400; font-size: 11px; opacity: .8; font-family: var(--mono); }
+  .path { position: relative; padding: 10px 0 4px; }
+  .pnode-wrap { display: flex; justify-content: center; margin: 14px 0; }
+  .pnode { position: relative; width: 66px; height: 66px; border-radius: 50%; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #0b0e13;
+    text-decoration: none; transition: transform .06s; }
+  .pnode:active { transform: translateY(4px) !important; box-shadow: 0 0 0 transparent !important; }
+  .pnode.boss { width: 84px; height: 84px; border-radius: 26px; font-size: 26px; }
+  .pnode.locked { background: var(--lock) !important; box-shadow: 0 4px 0 var(--lock-edge) !important; color: var(--lock-ink); }
+  .pnode.done { background: var(--gold) !important; box-shadow: 0 4px 0 var(--gold-dk) !important; color: #5c4700; }
+  .pnode-label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 6px; width: 140px;
+    text-align: center; font-size: 10px; line-height: 1.25; color: var(--dim); font-family: var(--mono); pointer-events: none; }
+  .pnode-label b { color: var(--text); }
+  .pnode-wrap { margin-bottom: 74px; }
+  .active-ring { position: relative; width: 86px; height: 86px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+  .active-ring.boss-ring { width: 104px; height: 104px; }
+  .start-bubble { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+    background: #fff; color: #0b0e13; font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: 1px;
+    padding: 5px 10px; border-radius: 8px; white-space: nowrap; animation: bounce 1.4s infinite; z-index: 2; }
+  .start-bubble::after { content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 7px solid #fff; }
+  @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce) { .start-bubble { animation: none; } }
+  .track-meta { color: var(--dim); font-size: 12px; font-family: var(--mono); margin: 4px 0 0 2px; }
+  /* ============ HEATMAP ============ */
+  .heat-scroll { overflow-x: auto; padding-bottom: 6px; }
+  .heat-grid { display: flex; gap: 4px; }
+  .heat-week { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+  .heat-cell { width: 16px; height: 16px; border-radius: 3px; background: var(--panel2); }
+  .heat-wk-label { font-family: var(--mono); font-size: 9px; color: var(--dim); margin-top: 4px; white-space: nowrap; }
+  .heat-wk-total { font-family: var(--mono); font-size: 10px; color: var(--dim); }
+  .heat-wk-total.hot { color: var(--danger); font-weight: 700; }
+  .heat-wk-total.easy { color: var(--ok); }
+  .heat-legend { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 8px; }
+  /* ============ misc (unchanged) ============ */
   .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; }
-  .course-card h3 { font-size: 14px; }
-  .course-card .fills { color: var(--ok); font-size: 12px; font-family: var(--mono); margin-bottom: 6px; }
-  .course-card ul { list-style: none; margin-top: 8px; }
-  .course-card li { font-size: 13px; color: var(--dim); padding: 3px 0; }
-  .course-card li.hot { color: var(--warn); }
-  .course-card a { color: var(--accent); font-size: 12px; font-family: var(--mono); text-decoration: none; }
-  .course-card a:hover { text-decoration: underline; }
-  .bar { background: var(--panel2); border-radius: 6px; height: 14px; overflow: hidden; margin: 6px 0 2px; }
-  .bar i { display: block; height: 100%; background: var(--accent); }
-  .bar i.g { background: var(--ok); }
-  .bar-label { font-family: var(--mono); font-size: 12px; color: var(--dim); }
-  /* flashcards */
   .deck-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
   .deck-picker button { background: var(--panel2); border: 1px solid var(--line); color: var(--text); border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
   .deck-picker button.active { border-color: var(--ok); }
@@ -70,6 +109,10 @@
   td.k { font-family: var(--mono); white-space: nowrap; }
   .marker { font-family: var(--mono); }
   .m-warn { color: var(--warn); } .m-ok { color: var(--ok); } .m-danger { color: var(--danger); }
+  .bar { background: var(--panel2); border-radius: 6px; height: 14px; overflow: hidden; margin: 6px 0 2px; }
+  .bar i { display: block; height: 100%; background: var(--accent); }
+  .bar i.g { background: var(--ok); }
+  .bar-label { font-family: var(--mono); font-size: 12px; color: var(--dim); }
   footer { color: var(--dim); font-size: 11px; font-family: var(--mono); margin-top: 30px; text-align: center; }
   .links a { color: var(--accent); text-decoration: none; font-family: var(--mono); font-size: 12px; margin-right: 14px; }
   .tw { overflow-x: auto; }
@@ -80,6 +123,8 @@
     .fc { min-height: 150px; font-size: 15px; padding: 18px; }
     nav button { padding: 6px 10px; font-size: 12px; }
     header h1 { font-size: 18px; }
+    .pace-label { width: 110px; font-size: 10px; }
+    .pace-name { width: 64px; font-size: 10px; }
   }
 </style>
 </head>
@@ -99,17 +144,28 @@
 
   <section id="sec-now">
     <div class="card">
+      <h2>PACE <span class="tag">runway to next undone item - goal: stay 7+ days ahead</span></h2>
+      <div id="pace"></div>
+    </div>
+    <div class="card">
+      <h2>THIS WEEK'S PATH <span class="tag">tap a node to open it in Canvas - long-press your way down</span></h2>
+      <div class="path" id="weekpath"></div>
+    </div>
+    <div class="card">
       <h2>DEADLINE QUEUE <span class="tag">check off as you submit - saved locally</span></h2>
       <div id="queue"></div>
     </div>
     <div class="card">
-      <h2>STANDING WATCHES</h2>
-      <div id="watches"></div>
+      <h2>SEMESTER LOAD <span class="tag">remaining effort per day, GitHub-style - plan the light weeks</span></h2>
+      <div class="heat-scroll"><div class="heat-grid" id="heat"></div></div>
+      <div class="heat-legend" id="heatlegend"></div>
     </div>
   </section>
 
   <section id="sec-courses">
-    <div class="course-grid" id="courses"></div>
+    <div class="course-pills" id="pills"></div>
+    <div id="trackmeta"></div>
+    <div class="path" id="track"></div>
   </section>
 
   <section id="sec-study">
@@ -128,6 +184,10 @@
   </section>
 
   <section id="sec-dates">
+    <div class="card">
+      <h2>STANDING WATCHES</h2>
+      <div id="watches"></div>
+    </div>
     <div class="card"><h2>SEMESTER DATES</h2><div class="tw"><table id="dates"></table></div></div>
   </section>
 
@@ -147,12 +207,189 @@
 
 <script>
 // ============================================================
-// HUB_DATA - updated by Claude on every sweep. Do not hand-edit
-// unless you want to; Claude reconciles with the .md files.
+// HUB_DATA - updated by Claude on every sweep.
+// TRACKS node format: [id, title, "MM-DD", kind, link?]
+// kinds: page quiz disc hw sa essay build exam boss setup target
+// done-state: localStorage "slccHub.n.<id>" OR "done:true" pushed by sweep
+// NEVER rename node ids (orphans Lakota's progress).
 // ============================================================
 const HUB_DATA = {
-  updated: "2026-08-26 evening",
+  updated: "2026-08-26 night - path UI v1",
   headline: "Fall 2026 - week 1 of 16. Two semesters to the degree. | (!) PHIL quiz due TONIGHT",
+  year: 2026,
+  weightsByKind: { page:1, quiz:1, disc:1.5, hw:2, sa:3, essay:4, build:5, exam:6, boss:8, setup:2, target:2 },
+  courses: {
+    "PHIL": { color:"#ce82ff", full:"PHIL 1000 - Intro to Philosophy", who:"Greg Spendlove - no exams, essays due Sundays", home:"https://slcc.instructure.com/courses/1274282/modules" },
+    "MATH": { color:"#1cb0f6", full:"MATH 1035 - Quantitative Reasoning", who:"John Nelson - 4 proctored midterms, office hrs TW 7-9pm", home:"https://slcc.instructure.com/courses/1274852/modules" },
+    "CSIS 2470": { color:"#58cc02", full:"CSIS 2470 - Advanced JavaScript", who:"Jeff Stone - big builds, no proctoring", home:"https://slcc.instructure.com/courses/1273912/modules" },
+    "CSIS 2320": { color:"#ff4b4b", full:"CSIS 2320 - Network Security (E-retake)", who:"Rod Buhler - TestOut, all due Dec 10; weekly TARGETS padded to Fridays", home:"https://slcc.instructure.com/courses/1273938" },
+    "GEOG": { color:"#ff9600", full:"GEOG 1000 - Earth's Environments", who:"Kimberly Sowards - chapter quizzes Tuesdays", home:"https://slcc.instructure.com/courses/1273585/modules" },
+  },
+  tracks: {
+    "PHIL": [
+      { unit:"Module 1 - Orientation (gate week)", nodes:[
+        ["ph-syl","Syllabus: read 100% + Acknowledge","08-26","page","https://slcc.instructure.com/courses/1274282/modules"],
+        ["ph-etq","Etiquette + Gen-AI + Schedule pages","08-26","page","https://slcc.instructure.com/courses/1274282/modules"],
+        ["ph-q1","Quiz 1 (needs 100%)","08-26","quiz","https://slcc.instructure.com/courses/1274282/quizzes/4817571"],
+        ["ph-gd1","GD#1 Introduce Yourself (post Fri, comments Mon)","08-28","disc","https://slcc.instructure.com/courses/1274282/assignments/18871118"] ]},
+      { unit:"Module 2 - Philosophy & Logic", nodes:[
+        ["ph-q2","Quiz 2: What is Philosophy","09-02","quiz"],
+        ["ph-gd2","GD#2 Philosophy (post + comments)","09-04","disc"],
+        ["ph-q3","Quiz 3: Logic","09-09","quiz"],
+        ["ph-ua1","Essay: Practicing Logic","09-11","essay"] ]},
+      { unit:"Module 3 - Epistemology", nodes:[
+        ["ph-q4","Quiz 4: Skepticism","09-16","quiz"],
+        ["ph-gd3","GD#3 Skepticism","09-18","disc"],
+        ["ph-q5","Quiz 5: Knowledge","09-23","quiz"],
+        ["ph-ua2","Essay: Nature of Knowledge","09-25","essay"] ]},
+      { unit:"Module 4 - Philosophy of Religion", nodes:[
+        ["ph-q6","Quiz 6: Cosmological","09-30","quiz"],
+        ["ph-gd4","GD#4 Kalam","10-02","disc"],
+        ["ph-q7","Quiz 7: Teleological","10-07","quiz"],
+        ["ph-ua3","Dialogue: Fine-Tuning","10-09","essay"],
+        ["ph-q8","Quiz 8: Problem of Evil","10-14","quiz"],
+        ["ph-gd5","GD#5 Problem of Evil (20pts)","10-16","disc"] ]},
+      { unit:"Module 5 - Metaphysics", nodes:[
+        ["ph-q9","Quiz 9: Mind-Body","10-21","quiz"],
+        ["ph-ua4","Essay: Mind-Body Problem","10-23","essay"],
+        ["ph-q10","Quiz 10: Free Will","10-28","quiz"],
+        ["ph-gd6","GD#6 Free Will","10-30","disc"] ]},
+      { unit:"Module 6 - Ethics", nodes:[
+        ["ph-q11","Quiz 11: Relativism","11-04","quiz"],
+        ["ph-ua5","Essay: Moral Relativism","11-06","essay"],
+        ["ph-q12","Quiz 12: Utilitarianism","11-11","quiz"],
+        ["ph-gd7","GD#7 Ethics","11-13","disc"],
+        ["ph-q13","Quiz 13: Kantianism","11-18","quiz"],
+        ["ph-ua6","Essay: Kantianism","11-20","essay"],
+        ["ph-q14","Quiz 14: Animal Ethics","12-02","quiz"],
+        ["ph-gd8","GD#8 Animal Ethics","12-04","disc"] ]},
+      { unit:"Module 7 - Final Week", nodes:[
+        ["ph-fin","FINAL PAPER: Philosophical Reflection (100pts) + GE Reflection","12-09","boss"] ]},
+    ],
+    "MATH": [
+      { unit:"Orientation + Unit 1 - Rates & Percents", nodes:[
+        ["ma-rc1","Readiness Check (7/10 gate)","08-27","quiz","https://slcc.instructure.com/courses/1274852/assignments/18635541"],
+        ["ma-or","Orientation items x3 + Post-Check","08-28","page","https://slcc.instructure.com/courses/1274852/modules"],
+        ["ma-d1","Discussion: Percentages","08-28","disc","https://slcc.instructure.com/courses/1274852/assignments/18634079"],
+        ["ma-ex1","Exercises x2 + Skills Quiz (RRPP)","09-24","hw"] ]},
+      { unit:"Unit 2 - Measurement & Problem Solving", nodes:[
+        ["ma-rc2","Readiness Check + Post","09-09","quiz"],
+        ["ma-d2","Discussion: Working in the Yard","09-11","disc"],
+        ["ma-yard","Working in the Yard (35pts)","09-17","sa"],
+        ["ma-ex2","Exercises x2 + Skills Quiz (MPS)","09-24","hw"],
+        ["ma-sa1","Signature Assignment 1 + Reflection","09-24","sa"],
+        ["ma-mt1","MIDTERM 1 - Testing Center (proctored)","09-24","boss"] ]},
+      { unit:"Unit 3 - Growth Models", nodes:[
+        ["ma-rc3","Readiness Check + Post","09-25","quiz"],
+        ["ma-d3","Discussion: Linear vs Exponential","09-25","disc"],
+        ["ma-app","Picking Apples (30pts)","10-02","sa"],
+        ["ma-ex3","Exercises x2 + Skills Quiz (Growth)","10-22","hw"] ]},
+      { unit:"Unit 4 - Finance", nodes:[
+        ["ma-rc4","Readiness Check + Post","10-05","quiz"],
+        ["ma-d4","Discussion: American Finances","10-05","disc"],
+        ["ma-mort","Mortgage Project (30pts)","10-13","sa"],
+        ["ma-sa2","Signature Assignment 2 + Reflection","10-20","sa"],
+        ["ma-ex4","Exercises x2 + Skills Quiz (Finance)","10-22","hw"],
+        ["ma-mt2","MIDTERM 2 - Testing Center (proctored)","10-22","boss"] ]},
+      { unit:"Unit 5 - Statistics", nodes:[
+        ["ma-rc5","Readiness Check + Post","10-26","quiz"],
+        ["ma-d5","Discussion: Human Bias","10-26","disc"],
+        ["ma-sa3","Signature Assignment 3 + Reflection (70pts)","11-03","sa"],
+        ["ma-ex5","Exercises x2 + Skills Quiz (Stats)","11-17","hw"] ]},
+      { unit:"Unit 6 - Probability", nodes:[
+        ["ma-rc6","Readiness Check + Post","11-04","quiz"],
+        ["ma-d6","Discussion: Monty Hall","11-04","disc"],
+        ["ma-ex6","Exercises x2 + Skills Quiz (Probability)","11-17","hw"],
+        ["ma-mt3","MIDTERM 3 - Testing Center (proctored)","11-18","boss"] ]},
+      { unit:"Finish line", nodes:[
+        ["ma-mt4","MIDTERM 4 - Testing Center (proctored)","12-10","boss"] ]},
+    ],
+    "CSIS 2470": [
+      { unit:"Module 0 - Orientation (Sun 8/30, NO grace)", nodes:[
+        ["c7-l0","Lecture 1 quiz + Who Are We discussion","08-30","quiz","https://slcc.instructure.com/courses/1273912/modules"],
+        ["c7-env","Local env screenshot (folder is ready on Desktop)","08-30","hw","https://slcc.instructure.com/courses/1273912/assignments/19074889"],
+        ["c7-srv","REMOTE SERVER setup (60pts, the tricky one)","08-30","build","https://slcc.instructure.com/courses/1273912/assignments/19074890"],
+        ["c7-m0q","Module 0 Summary Quiz","08-30","quiz"] ]},
+      { unit:"Module 1 - DOMinating JavaScript", nodes:[
+        ["c7-1l1","Lectures 1-2 (video quizzes)","09-02","quiz","https://slcc.instructure.com/courses/1273912/assignments/19074776"],
+        ["c7-bones","BUILD: Roll Dem Bones (134pts)","09-06","build"],
+        ["c7-1l3","Lectures 3-4 (video quizzes)","09-14","quiz"],
+        ["c7-acey","BUILD: Acey Ducey (106pts)","09-20","build"],
+        ["c7-1w","M1 discussion + summary quiz + survey","09-20","disc"] ]},
+      { unit:"Module 2 - Manipulating CSS", nodes:[
+        ["c7-2l","Lectures 1-2","09-21","quiz"],
+        ["c7-bot","BUILD: Build-A-Bot (150pts)","09-27","build"],
+        ["c7-2w","M2 discussion + summary quiz","10-04","disc"] ]},
+      { unit:"Module 3 - Events & Errors", nodes:[
+        ["c7-3l","Lectures 1-4","10-05","quiz"],
+        ["c7-run","BUILD: Robot Runaway (134pts)","10-04","build"],
+        ["c7-rep","BUILD: Robot Repair (141pts)","10-11","build"],
+        ["c7-3w","M3 discussion + summary quiz","10-11","disc"] ]},
+      { unit:"Module 4 - Validation & UX", nodes:[
+        ["c7-4l","Lectures 1-2","10-12","quiz"],
+        ["c7-con","BUILD: Making Contact (145pts)","10-18","build"],
+        ["c7-4w","M4 discussion + summary quiz","10-18","disc"] ]},
+      { unit:"Module 5 - Midterm", nodes:[
+        ["c7-mid","MIDTERM (200pts, online)","10-25","boss"] ]},
+      { unit:"Module 6 - Objects & OOP", nodes:[
+        ["c7-6l","Lectures 1-4","10-26","quiz"],
+        ["c7-6q","M6 summary quiz","11-01","quiz"],
+        ["c7-chess","BUILD: Chess Bored (175pts)","11-08","build"],
+        ["c7-6w","M6 discussion","11-08","disc"] ]},
+      { unit:"Modules 7-9 - Async, Canvas, Node", nodes:[
+        ["c7-7l","M7 lecture + summary quiz","11-08","quiz"],
+        ["c7-card","BUILD: Pick a Card (100pts)","11-15","build"],
+        ["c7-8l","M8 lectures 1-4","11-11","quiz"],
+        ["c7-9l","M9 lectures 1-3","11-23","quiz"],
+        ["c7-todo","BUILD: To Do List (113pts)","11-29","build"],
+        ["c7-89w","M8+M9 discussions + summary quizzes","12-13","disc"],
+        ["c7-mines","BUILD: Space Mines (190pts)","12-13","build"] ]},
+      { unit:"Module 10 - Final", nodes:[
+        ["c7-fin","FINAL PROJECT (300pts)","12-20","boss"] ]},
+    ],
+    "CSIS 2320": [
+      { unit:"Setup (do NOW - grade sits at F until work lands)", nodes:[
+        ["c3-setup","START HERE -> CompTIA account + SheerID + buy Security Pro 8.0","08-30","setup","https://slcc.instructure.com/courses/1273938"] ]},
+      { unit:"TestOut weeks - PADDED targets (real due = Dec 10)", nodes:[
+        ["c3-w1","Week 1: Security intro + controls + simulator","08-28","target"],
+        ["c3-w2","Week 2: Attacks, social engineering, malware","09-04","target"],
+        ["c3-w3","Week 3: Crypto, hashing, PKI","09-11","target"],
+        ["c3-w4","Week 4: Access control, AD, Linux users, auth","09-18","target"],
+        ["c3-w5","Week 5: Network arch, firewalls, VPNs, switches","09-25","target"],
+        ["c3-w6","Week 6: Monitoring, IDS, attack analysis","10-02","target"],
+        ["c3-w7","Week 7: Vulnerability mgmt + pentesting","10-09","target"],
+        ["c3-w8","Week 8: Hardening, wireless, web app security","10-16","target"],
+        ["c3-w9","Week 9: Incident response, forensics, backups","10-23","target"],
+        ["c3-w10","Week 10: Virtualization, cloud, mobile","10-30","target"],
+        ["c3-w11","Week 11: Policies + change mgmt","11-06","target"],
+        ["c3-w12","Week 12: Risk mgmt + audits","11-13","target"],
+        ["c3-w13","Week 13: Data classification + personnel","11-20","target"] ]},
+      { unit:"Certification", nodes:[
+        ["c3-rev","Security Pro domain review + practice exam","12-04","exam"],
+        ["c3-fin","TestOut Security Pro FINAL EXAM","12-11","boss"] ]},
+    ],
+    "GEOG": [
+      { unit:"Orientation", nodes:[
+        ["ge-intro","Getting to Know You discussion","08-31","disc","https://slcc.instructure.com/courses/1273585/assignments/18482867"] ]},
+      { unit:"Chapters 1-5 - Earth & Tectonics", nodes:[
+        ["ge-c1","Ch 1 quiz + mapping homework","09-08","hw"],
+        ["ge-c2","Ch 2 quiz + solar system reflection","09-15","hw"],
+        ["ge-c3","Ch 3 quiz + rock types homework","09-22","hw"],
+        ["ge-c4","Ch 4 quiz + SLC earthquake map + Spotlight #1","09-29","hw"],
+        ["ge-c5","Ch 5 quiz + landslide map + discussion","10-06","hw"] ]},
+      { unit:"Chapters 6-8 - Water & Atmosphere", nodes:[
+        ["ge-c6","Ch 6 quiz + water footprint reflection","10-13","hw"],
+        ["ge-c7","Ch 7 quiz + ocean processes + Spotlight #2","10-20","hw"],
+        ["ge-c8","Ch 8 quiz + atmosphere mapping","10-27","hw"] ]},
+      { unit:"Signature project ramp", nodes:[
+        ["ge-top","Choose topic + annotated bibliography + research skills","11-03","sa"],
+        ["ge-c9","Ch 9 quiz + severe weather reflection","11-10","hw"],
+        ["ge-c10","Ch 10 quiz + climate map + Spotlight #3","11-17","hw"],
+        ["ge-c11","Ch 11 quiz (Biogeography)","11-24","hw"] ]},
+      { unit:"Finish line", nodes:[
+        ["ge-sig","GE SIGNATURE ASSIGNMENT (100pts) + Reflection","12-08","boss"] ]},
+    ],
+  },
   queue: [
     { id:"phil-q1", due:"2026-08-26", course:"PHIL", txt:"Quiz 1: Syllabus/Plagiarism/Orientation - needs 100%, unlimited retakes, unlocks the course", pts:10,
       link:"https://slcc.instructure.com/courses/1274282/quizzes/4817571",
@@ -187,38 +424,6 @@ const HUB_DATA = {
     { marker:"->", cls:"m-ok", txt:"Nov 3: Spring 2027 registration opens. Register DAY ONE: ENGL 2010, American Institutions, Life Science, 2x CSIS electives (teach-out sections are scarce). That schedule finishes the degree." },
     { marker:"->", cls:"", txt:"Book the Sim Kaur advisor appointment: 801-957-4978. Questions on file in admin/degree-audit.md." },
     { marker:"->", cls:"", txt:"Never drop below 6 credits (Utah Promise dies) or below 12 (aid offer basis). Currently 16." },
-  ],
-  courses: [
-    { name:"CSIS 2470 - Advanced JavaScript", sect:"501 - Jeff Stone", fills:"FINISHES Web Prog & Dev certificate", url:"https://slcc.instructure.com/courses/1273912",
-      items:[
-        {hot:true, t:"Module 0 due Sun 8/30, no grace, gates whole course"},
-        {t:"Big game-builds every ~2 weeks (Roll Dem Bones -> Space Mines)"},
-        {t:"Midterm Oct 25 + Final project Dec 20 - NOT proctored"},
-        {t:"Contact via Canvas Inbox; can reply from Bruinmail"}]},
-    { name:"CSIS 2320 - Computer & Network Security", sect:"501 - Roderick Buhler", fills:"Linux cert elective + CLEARS THE E", url:"https://slcc.instructure.com/courses/1273938",
-      items:[
-        {hot:true, t:"Grade starts at F, rises as TestOut work completes"},
-        {hot:true, t:"Everything due last day of class - self-paced trap, follow the Week 1-14 labels"},
-        {t:"Buy Security Pro 8.0 after SheerID validation (out-of-pocket)"},
-        {t:"Oct 27 withdrawal is NOT an option here - E stays without retake"}]},
-    { name:"MATH 1035 - Quantitative Reasoning", sect:"505 - John Nelson", fills:"GE Quantitative Literacy - the math, done", url:"https://slcc.instructure.com/courses/1274852",
-      items:[
-        {hot:true, t:"4 proctored Testing Center midterms - the ONLY proctored class"},
-        {t:"Readiness Check gates each unit (7/10 to pass, optional practice)"},
-        {t:"Office hours Tue/Wed 7-9pm Zoom; free STEM tutoring"},
-        {t:"OER textbook included in the $35 fee"}]},
-    { name:"PHIL 1000 - Intro to Philosophy", sect:"501 - Greg Spendlove", fills:"GE Humanities", url:"https://slcc.instructure.com/courses/1274282",
-      items:[
-        {hot:true, t:"Quiz 1 gates the course - due TONIGHT 8/26"},
-        {t:"Mon-Wed-Fri rhythm; essays due Sundays; no exams at all"},
-        {t:"Textbook already provided via Kortext (login = Bruinmail address)"},
-        {t:"Has a Gen-AI policy page - read before submitting AI-assisted work"}]},
-    { name:"GEOG 1000 - Earth's Environments", sect:"003 - Kimberly Sowards", fills:"GE Physical Science", url:"https://slcc.instructure.com/courses/1273585",
-      items:[
-        {t:"Chapter quiz + homework most Tuesdays; free OER textbook"},
-        {t:"Signature project: topic + bibliography Nov 3, final Dec 8"},
-        {t:"Some homework uses ArcGIS Online (tutorial video provided)"},
-        {t:"Nothing proctored"}]},
   ],
   decks: {
     "PHIL Quiz 1": [
@@ -301,12 +506,24 @@ const HUB_DATA = {
 const SECTIONS = [["now","NOW"],["courses","COURSES"],["study","STUDY"],["dates","DATES"],["degree","DEGREE"],["money","MONEY"]];
 const $ = id => document.getElementById(id);
 const LS = k => "slccHub." + k;
+const TODAY = (() => { const t = new Date(); t.setHours(0,0,0,0); return t; })();
+const dateOf = mmdd => new Date(HUB_DATA.year + "-" + mmdd + "T00:00:00");
+const daysFromToday = mmdd => Math.round((dateOf(mmdd) - TODAY) / 86400000);
+const nodeDone = n => localStorage.getItem(LS("n." + n[0])) === "1" || n[5] === true;
+const setNodeDone = (n, v) => localStorage.setItem(LS("n." + n[0]), v ? "1" : "0");
+const allNodes = course => HUB_DATA.tracks[course].flatMap(u => u.nodes);
+const KIND_GLYPH = { page:"P", quiz:"Q", disc:"D", hw:"W", sa:"S", essay:"E", build:"B", exam:"!", boss:"*", setup:"+", target:"T" };
+const shade = (hex, f) => { // darker shade for pressed edge
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.round(((n>>16)&255)*f), g = Math.round(((n>>8)&255)*f), b = Math.round((n&255)*f);
+  return `rgb(${r},${g},${b})`;
+};
 
 document.getElementById("headline").innerHTML = HUB_DATA.headline.replace(/\(!\)[^|]*$/, m => "<b>" + m + "</b>");
 $("stamp").textContent = "data updated " + HUB_DATA.updated + " - Claude refreshes this file on every sweep";
 
-// nav
-SECTIONS.forEach(([key, label], i) => {
+// ---------- nav ----------
+SECTIONS.forEach(([key, label]) => {
   const b = document.createElement("button");
   b.textContent = label;
   b.onclick = () => {
@@ -322,11 +539,176 @@ const savedTab = localStorage.getItem(LS("tab")) || "now";
 const idx = Math.max(0, SECTIONS.findIndex(s => s[0] === savedTab));
 $("nav").children[idx].click();
 
-// queue
-function daysLeft(d) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  return Math.round((new Date(d + "T00:00:00") - today) / 86400000);
+// ---------- PACE ----------
+// runway = days until earliest UNDONE node's due date. Behind if negative.
+function runway(course) {
+  const undone = allNodes(course).filter(n => !nodeDone(n)).sort((a,b) => a[2] < b[2] ? -1 : 1);
+  if (!undone.length) return { days: 99, label: "course complete" };
+  return { days: daysFromToday(undone[0][2]), next: undone[0][1] };
 }
+(function renderPace() {
+  const el = $("pace");
+  const MIN = -7, MAX = 21, GOAL = 7;
+  const pct = d => Math.min(100, Math.max(0, ((Math.min(d, MAX) - MIN) / (MAX - MIN)) * 100));
+  let worst = null;
+  const rows = Object.keys(HUB_DATA.courses).map(c => {
+    const r = runway(c);
+    if (!worst || r.days < worst.days) worst = { ...r, course: c };
+    return { c, ...r };
+  });
+  const drawRow = (name, days, colorOverride, extra) => {
+    const col = days < 0 ? "var(--danger)" : days >= GOAL ? "var(--ok)" : "var(--warn)";
+    const lbl = days >= 99 ? "done" : days < 0 ? `${-days}d BEHIND` : days === 0 ? "due TODAY" :
+      days >= GOAL ? `+${days}d ahead (goal hit)` : `+${days}d (${GOAL - days}d short of goal)`;
+    return `<div class="pace-row"><span class="pace-name" style="color:${colorOverride || 'var(--dim)'}">${name}</span>
+      <div class="pace-gauge"><div class="pace-zone-behind"></div>
+        <div class="pace-goal" style="left:${pct(GOAL)}%"></div>
+        <div class="pace-marker" style="left:calc(${pct(days)}% - 5px); background:${col}"></div></div>
+      <span class="pace-label" style="color:${col}">${lbl}${extra || ""}</span></div>`;
+  };
+  el.innerHTML = rows.map(r => drawRow(r.c, r.days, HUB_DATA.courses[r.c].color)).join("") +
+    `<div class="pace-overall">` + drawRow("OVERALL", worst.days, "var(--text)", ` <span style="color:var(--dim)">(${worst.course})</span>`) + `</div>`;
+})();
+
+// ---------- serpentine path renderer ----------
+const OFFSETS = [0, 1, 2, 1, 0, -1, -2, -1]; // x40px, duolingo clone recipe
+function renderPath(el, units, courseOf) {
+  el.innerHTML = "";
+  let i = 0, activeFound = false;
+  units.forEach(u => {
+    if (u.unit) {
+      const color = HUB_DATA.courses[u.course || courseOf].color;
+      const h = document.createElement("div");
+      h.className = "unit-head";
+      h.style.background = color;
+      h.innerHTML = u.unit + (u.sub ? `<span class="u-sub">${u.sub}</span>` : "");
+      el.appendChild(h);
+    }
+    u.nodes.forEach(n => {
+      const course = n.course || u.course || courseOf;
+      const color = HUB_DATA.courses[course].color;
+      const done = nodeDone(n);
+      const overdue = !done && daysFromToday(n[2]) < 0;
+      const isActive = !done && !activeFound && (activeFound = true, true);
+      const off = OFFSETS[i++ % 8] * 40;
+      const wrap = document.createElement("div");
+      wrap.className = "pnode-wrap";
+      const boss = n[3] === "boss" || n[3] === "exam";
+      const glyph = done ? "✓" : KIND_GLYPH[n[3]] || "?";
+      const link = n[4] || HUB_DATA.courses[course].home;
+      const label = `<span class="pnode-label"><b>${n[1]}</b><br>${overdue ? '<span style="color:var(--danger)">was due ' : 'due '}${n[2].replace("-", "/")}${overdue ? "</span>" : ""}</span>`;
+      const nodeHtml = `<a class="pnode ${boss ? "boss" : ""} ${done ? "done" : isActive ? "" : "locked"}"
+        href="${link}" target="_blank"
+        style="${done ? "" : isActive ? `background:${color}; box-shadow:0 4px 0 ${shade(color,.55)}; color:#0b0e13;` : ""} transform:translateX(${off}px)"
+        data-nid="${n[0]}" title="double-tap the label to mark done">${glyph}${label}</a>`;
+      if (isActive && !done) {
+        wrap.innerHTML = `<div class="active-ring ${boss ? "boss-ring" : ""}" style="transform:translateX(${off}px); border:3px solid ${color}55">
+          <span class="start-bubble" style="color:${color}">${overdue ? "LATE - GO" : "NEXT"}</span>
+          ${nodeHtml.replace(`transform:translateX(${off}px)`, "")}</div>`;
+      } else {
+        wrap.innerHTML = nodeHtml;
+      }
+      // double-click label area toggles done (single click follows link)
+      wrap.querySelector(".pnode").addEventListener("dblclick", e => {
+        e.preventDefault();
+        const cur = nodeDone(n);
+        setNodeDone(n, !cur);
+        rerenderAll();
+      });
+      el.appendChild(wrap);
+    });
+  });
+}
+
+// ---------- THIS WEEK'S PATH ----------
+function weekWindow() {
+  const d = new Date(TODAY); const dow = (d.getDay() + 6) % 7; // Mon=0
+  const mon = new Date(d); mon.setDate(d.getDate() - dow);
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  return [mon, sun];
+}
+function renderWeekPath() {
+  const [mon, sun] = weekWindow();
+  const nodes = [];
+  Object.keys(HUB_DATA.tracks).forEach(c => allNodes(c).forEach(n => {
+    const dt = dateOf(n[2]);
+    if (dt <= sun && (!nodeDone(n))) { // include overdue leftovers too
+      if (dt >= mon || daysFromToday(n[2]) < 0) nodes.push(Object.assign([...n], { course: c }));
+    }
+  }));
+  nodes.sort((a,b) => a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : 0);
+  const wrap = nodes.length ? [{ nodes }] : [];
+  if (!nodes.length) { $("weekpath").innerHTML = '<div class="note">Week clear. You are living the dream - go bank next week\'s items on the COURSES tab.</div>'; return; }
+  renderPath($("weekpath"), wrap, null);
+}
+
+// ---------- COURSES tab ----------
+let currentCourse = localStorage.getItem(LS("course")) || "PHIL";
+function renderPills() {
+  $("pills").innerHTML = "";
+  Object.keys(HUB_DATA.courses).forEach(c => {
+    const b = document.createElement("button");
+    b.textContent = c;
+    if (c === currentCourse) { b.classList.add("active"); b.style.background = HUB_DATA.courses[c].color; b.style.borderColor = HUB_DATA.courses[c].color; }
+    b.onclick = () => { currentCourse = c; localStorage.setItem(LS("course"), c); renderPills(); renderTrack(); };
+    $("pills").appendChild(b);
+  });
+}
+function renderTrack() {
+  const info = HUB_DATA.courses[currentCourse];
+  const ns = allNodes(currentCourse);
+  const doneCt = ns.filter(nodeDone).length;
+  const r = runway(currentCourse);
+  const paceTxt = r.days >= 99 ? "complete" : r.days < 0 ? `${-r.days}d BEHIND` : `+${r.days}d runway`;
+  $("trackmeta").innerHTML = `<div class="card" style="border-left:4px solid ${info.color}">
+    <h2>${info.full}</h2>
+    <div class="track-meta">${info.who}</div>
+    <div class="track-meta">${doneCt}/${ns.length} nodes gold - pace: <span style="color:${r.days < 0 ? "var(--danger)" : r.days >= 7 ? "var(--ok)" : "var(--warn)"}">${paceTxt}</span> - single tap opens Canvas, DOUBLE tap marks done</div></div>`;
+  renderPath($("track"), HUB_DATA.tracks[currentCourse], currentCourse);
+}
+
+// ---------- HEATMAP ----------
+(function renderHeat() {
+  const start = new Date(HUB_DATA.year + "-08-24T00:00:00"); // Mon of week 1
+  const weeks = 18; // through Dec 20+
+  const wk = [];
+  for (let w = 0; w < weeks; w++) wk.push({ days: [0,0,0,0,0,0,0], total: 0, mon: new Date(start.getTime() + w * 7 * 86400000) });
+  Object.keys(HUB_DATA.tracks).forEach(c => allNodes(c).forEach(n => {
+    if (nodeDone(n)) return; // remaining load only
+    const dt = dateOf(n[2]);
+    const w = Math.floor((dt - start) / (7 * 86400000));
+    if (w >= 0 && w < weeks) {
+      const dow = (dt.getDay() + 6) % 7;
+      const wt = HUB_DATA.weightsByKind[n[3]] || 2;
+      wk[w].days[dow] += wt; wk[w].total += wt;
+    }
+  }));
+  const maxDay = Math.max(1, ...wk.flatMap(w => w.days));
+  const maxWk = Math.max(1, ...wk.map(w => w.total));
+  const cellColor = v => {
+    if (!v) return "var(--panel2)";
+    const t = Math.min(1, v / maxDay);
+    if (t < .34) return "#1c4a2a"; if (t < .67) return "#2f7d3f"; return "#5fd68b";
+  };
+  $("heat").innerHTML = wk.map((w, i) => {
+    const hot = w.total >= maxWk * .7, easy = w.total > 0 && w.total <= maxWk * .25;
+    const label = (w.mon.getMonth()+1) + "/" + w.mon.getDate();
+    return `<div class="heat-week">
+      ${w.days.map(v => `<div class="heat-cell" style="background:${cellColor(v)}" title="${v ? "load " + v : ""}"></div>`).join("")}
+      <span class="heat-wk-total ${hot ? "hot" : easy ? "easy" : ""}">${w.total ? Math.round(w.total) : ""}</span>
+      <span class="heat-wk-label">${label}</span></div>`;
+  }).join("");
+  const hotWeeks = wk.filter(w => w.total >= maxWk * .7).map(w => (w.mon.getMonth()+1) + "/" + w.mon.getDate());
+  const easyWeeks = wk.filter(w => w.total > 0 && w.total <= maxWk * .25).map(w => (w.mon.getMonth()+1) + "/" + w.mon.getDate());
+  $("heatlegend").innerHTML = `rows = Mon..Sun. (!) heavy weeks: <span class="m-danger">${hotWeeks.join(", ") || "none"}</span> - get-ahead weeks: <span class="m-ok">${easyWeeks.join(", ") || "none"}</span>. Finishing items early drains this map.`;
+})();
+
+// ---------- queue ----------
+const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+function appLink(url) {
+  return /^https:\/\/slcc\.instructure\.com/.test(url) ? url.replace(/^https:\/\//, "canvas-courses://") : null;
+}
+function daysLeft(d) { return Math.round((new Date(d + "T00:00:00") - TODAY) / 86400000); }
 function whenLabel(d) {
   const n = daysLeft(d);
   if (n < 0) return [`${-n}d OVERDUE`, "overdue"];
@@ -334,11 +716,6 @@ function whenLabel(d) {
   if (n === 1) return ["tomorrow", "soon"];
   if (n <= 3) return [`in ${n} days`, "soon"];
   return [new Date(d + "T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"}), "later"];
-}
-const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-function appLink(url) {
-  // Canvas Student app URL scheme - only meaningful for instructure.com links
-  return /^https:\/\/slcc\.instructure\.com/.test(url) ? url.replace(/^https:\/\//, "canvas-courses://") : null;
 }
 HUB_DATA.queue.forEach(item => {
   const row = document.createElement("label");
@@ -363,7 +740,7 @@ HUB_DATA.queue.forEach(item => {
   $("queue").appendChild(row);
 });
 
-// watches
+// ---------- watches ----------
 HUB_DATA.watches.forEach(w => {
   const d = document.createElement("div");
   d.style.padding = "6px 0";
@@ -371,20 +748,7 @@ HUB_DATA.watches.forEach(w => {
   $("watches").appendChild(d);
 });
 
-// courses
-HUB_DATA.courses.forEach(c => {
-  const d = document.createElement("div");
-  d.className = "card course-card";
-  d.innerHTML = `<h3>${c.name}</h3>
-    <div style="color:var(--dim);font-size:12px;font-family:var(--mono)">${c.sect}</div>
-    <div class="fills">-> ${c.fills}</div>
-    <ul>${c.items.map(i => `<li class="${i.hot ? "hot" : ""}">${i.hot ? "(!)" : "-"} ${i.t}</li>`).join("")}</ul>
-    <div style="margin-top:8px"><a href="${c.url}" target="_blank">open in Canvas -></a>
-      ${IS_MOBILE ? `<a href="${c.url.replace(/^https:\/\//, "canvas-courses://")}" style="margin-left:10px">app -></a>` : ""}</div>`;
-  $("courses").appendChild(d);
-});
-
-// flashcards
+// ---------- flashcards ----------
 let deckName = null, order = [], pos = 0, showBack = false;
 function retiredKey() { return LS("retired." + deckName); }
 function getRetired() { try { return new Set(JSON.parse(localStorage.getItem(retiredKey()) || "[]")); } catch { return new Set(); } }
@@ -423,11 +787,9 @@ $("got").onclick = () => {
 $("again").onclick = () => { if (!deckName || !order.length) return; pos++; showBack = false; renderCard(); };
 $("reset").onclick = () => { if (!deckName) return; setRetired(new Set()); buildOrder(); renderCard(); };
 
-// dates
+// ---------- dates / degree / money ----------
 $("dates").innerHTML = "<tr><th>DATE</th><th>WHAT</th></tr>" + HUB_DATA.dates.map(([d, w]) =>
   `<tr><td class="k ${d.startsWith("(!)") ? "m-warn marker" : ""}">${d}</td><td>${w}</td></tr>`).join("");
-
-// degree
 (function () {
   const g = HUB_DATA.degree, el = $("degree");
   [g.total, g.genEd, g.csis].forEach(x => {
@@ -437,9 +799,20 @@ $("dates").innerHTML = "<tr><th>DATE</th><th>WHAT</th></tr>" + HUB_DATA.dates.ma
   });
   el.innerHTML += `<div class="note" style="margin-top:10px"><span class="marker m-ok">-></span> ${g.springPlan}</div>`;
 })();
-
-// money
 $("money").innerHTML = "<table>" + HUB_DATA.money.map(([k, v]) => `<tr><td class="k">${k}</td><td>${v}</td></tr>`).join("") + "</table>";
+
+// ---------- boot / rerender ----------
+function rerenderAll() {
+  renderWeekPath(); renderPills(); renderTrack();
+  // pace + heat rebuild
+  const p = $("pace"); p.innerHTML = ""; // re-run IIFE logic
+  location.hash = ""; // noop
+  // simplest: full reload keeps state via localStorage
+  window.location.reload();
+}
+renderWeekPath();
+renderPills();
+renderTrack();
 </script>
 </body>
 </html>
