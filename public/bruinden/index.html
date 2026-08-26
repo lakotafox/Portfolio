@@ -3,174 +3,328 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SLCC Teach-Out Hub</title>
+<title>bruinden</title>
+<script>
+  (function(){ // theme boot before paint
+    var t = localStorage.getItem("slccHub.theme");
+    if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
 <style>
+  /* ================= THE DEN - tokens ================= */
   :root {
-    --bg: #0e1116; --panel: #161b22; --panel2: #1c232d; --line: #2b3442;
-    --text: #d6dde6; --dim: #8b98a8; --accent: #4da3ff; --warn: #ffb454;
-    --danger: #ff6b6b; --ok: #5fd68b; --gold: #ffc800; --gold-dk: #b78d00;
-    --lock: #222a35; --lock-edge: #171d26; --lock-ink: #55606e;
-    --mono: "SF Mono", Menlo, Consolas, monospace;
+    --bg:#171210; --surface:#211a15; --surface2:#2b221b; --line:#3b2f25;
+    --text:#ede3d5; --dim:#a5937f;
+    --accent:#f0b429; --accent-ink:#241704;
+    --gold:#ffc53d; --gold-ink:#3a2a05;
+    --danger:#f0544c; --ok:#61ba6b; --warn:#f2874a;
+    --node-ink:#241704; --bubble-bg:var(--accent); --bubble-ink:var(--accent-ink);
+    --r-sm:4px; --r-lg:16px;
+    --heat-1:color-mix(in srgb, var(--warn) 22%, var(--surface2));
+    --heat-2:color-mix(in srgb, var(--warn) 55%, var(--surface2));
+    --heat-3:var(--danger);
+    --c-phil:#a488e8; --c-math:#5b9bd9; --c-c2470:#2fb3b3; --c-c2320:#e0566b; --c-geog:#a9b23e;
+    --display:ui-rounded,'SF Pro Rounded','Arial Rounded MT Bold','Segoe UI',system-ui,sans-serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font: 15px/1.55 -apple-system, "Segoe UI", sans-serif; padding: 24px 16px 80px; }
-  .wrap { max-width: 980px; margin: 0 auto; }
-  header { margin-bottom: 20px; }
-  header h1 { font-size: 22px; letter-spacing: .5px; }
-  header .sub { color: var(--dim); font-size: 13px; font-family: var(--mono); }
-  header .sub b { color: var(--warn); font-weight: 600; }
-  nav { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 24px; position: sticky; top: 0; background: var(--bg); padding: 10px 0; z-index: 5; border-bottom: 1px solid var(--line); }
-  nav button { background: var(--panel); color: var(--dim); border: 1px solid var(--line); border-radius: 6px; padding: 7px 14px; cursor: pointer; font-size: 13px; font-family: var(--mono); }
-  nav button.active { color: var(--text); border-color: var(--accent); background: var(--panel2); }
-  section { display: none; }
-  section.active { display: block; }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin-bottom: 14px; }
-  .card h2 { font-size: 15px; margin-bottom: 10px; letter-spacing: .4px; }
-  .card h2 .tag { font-family: var(--mono); font-size: 11px; color: var(--dim); font-weight: 400; margin-left: 8px; }
-  .due-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 6px; border-top: 1px solid var(--line); cursor: pointer; }
-  .due-row:first-of-type { border-top: none; }
-  .due-row input { margin-top: 4px; accent-color: var(--ok); cursor: pointer; }
-  .due-row.done .txt { text-decoration: line-through; color: var(--dim); }
-  .due-when { font-family: var(--mono); font-size: 12px; min-width: 88px; padding-top: 2px; }
-  .due-when.overdue { color: var(--danger); font-weight: 700; }
-  .due-when.today { color: var(--danger); }
-  .due-when.soon { color: var(--warn); }
-  .due-when.later { color: var(--dim); }
-  .due-course { font-family: var(--mono); font-size: 11px; color: var(--accent); }
-  .pts { color: var(--dim); font-size: 12px; font-family: var(--mono); }
-  .note { color: var(--dim); font-size: 13px; margin-top: 4px; }
-  .note.hot { color: var(--warn); }
-  .note a, .golink { color: var(--accent); font-family: var(--mono); font-size: 12px; text-decoration: none; }
-  .note a:hover, .golink:hover { text-decoration: underline; }
-  .golink { margin-left: 8px; white-space: nowrap; }
-  /* ============ PACE ============ */
-  .pace-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
-  .pace-name { font-family: var(--mono); font-size: 12px; width: 84px; flex-shrink: 0; }
-  .pace-gauge { flex: 1; height: 18px; background: var(--panel2); border-radius: 9px; position: relative; overflow: hidden; }
-  .pace-zone-behind { position: absolute; left: 0; top: 0; bottom: 0; width: 25%; background: rgba(255,107,107,.12); }
-  .pace-goal { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--ok); opacity: .6; }
-  .pace-marker { position: absolute; top: 2px; bottom: 2px; width: 10px; border-radius: 5px; }
-  .pace-label { font-family: var(--mono); font-size: 12px; width: 150px; flex-shrink: 0; text-align: right; }
-  .pace-overall { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 10px; }
-  /* ============ PATH / TRACKS ============ */
-  .course-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-  .course-pills button { border: 1px solid var(--line); background: var(--panel2); color: var(--dim); border-radius: 999px; padding: 7px 14px; font-size: 13px; font-family: var(--mono); cursor: pointer; }
-  .course-pills button.active { color: #0b0e13; font-weight: 700; }
-  .unit-head { border-radius: 10px; padding: 10px 14px; margin: 22px 0 6px; color: #0b0e13; font-weight: 700; font-size: 13px; }
-  .unit-head .u-sub { display: block; font-weight: 400; font-size: 11px; opacity: .8; font-family: var(--mono); }
-  .path { position: relative; padding: 10px 0 4px; }
-  .pnode-wrap { display: flex; justify-content: center; margin: 14px 0; }
-  .pnode { position: relative; width: 66px; height: 66px; border-radius: 50%; border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #0b0e13;
-    text-decoration: none; transition: transform .06s; }
-  .pnode:active { transform: translateY(4px) !important; box-shadow: 0 0 0 transparent !important; }
-  .pnode.boss { width: 84px; height: 84px; border-radius: 26px; font-size: 26px; }
-  .pnode.locked { background: var(--lock) !important; box-shadow: 0 4px 0 var(--lock-edge) !important; color: var(--lock-ink); }
-  .pnode.done { background: var(--gold) !important; box-shadow: 0 4px 0 var(--gold-dk) !important; color: #5c4700; }
-  .pnode-label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 6px; width: 140px;
-    text-align: center; font-size: 10px; line-height: 1.25; color: var(--dim); font-family: var(--mono); pointer-events: none; }
-  .pnode-label b { color: var(--text); }
-  .pnode-wrap { margin-bottom: 74px; }
-  .active-ring { position: relative; width: 86px; height: 86px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
-  .active-ring.boss-ring { width: 104px; height: 104px; }
-  .start-bubble { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
-    background: #fff; color: #0b0e13; font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: 1px;
-    padding: 5px 10px; border-radius: 8px; white-space: nowrap; animation: bounce 1.4s infinite; z-index: 2; }
-  .start-bubble::after { content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-    border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 7px solid #fff; }
-  @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-6px); } }
-  @media (prefers-reduced-motion: reduce) { .start-bubble { animation: none; } }
-  .track-meta { color: var(--dim); font-size: 12px; font-family: var(--mono); margin: 4px 0 0 2px; }
-  /* ============ HEATMAP ============ */
-  .heat-scroll { overflow-x: auto; padding-bottom: 6px; }
-  .heat-grid { display: flex; gap: 4px; }
-  .heat-week { display: flex; flex-direction: column; gap: 3px; align-items: center; }
-  .heat-cell { width: 16px; height: 16px; border-radius: 3px; background: var(--panel2); }
-  .heat-wk-label { font-family: var(--mono); font-size: 9px; color: var(--dim); margin-top: 4px; white-space: nowrap; }
-  .heat-wk-total { font-family: var(--mono); font-size: 10px; color: var(--dim); }
-  .heat-wk-total.hot { color: var(--danger); font-weight: 700; }
-  .heat-wk-total.easy { color: var(--ok); }
-  .heat-legend { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 8px; }
-  /* ============ misc (unchanged) ============ */
-  .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; }
-  .deck-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
-  .deck-picker button { background: var(--panel2); border: 1px solid var(--line); color: var(--text); border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
-  .deck-picker button.active { border-color: var(--ok); }
-  .fc { background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; min-height: 190px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 26px; font-size: 17px; cursor: pointer; user-select: none; }
-  .fc .side-label { display: block; font-family: var(--mono); font-size: 11px; color: var(--dim); margin-bottom: 10px; }
-  .fc-controls { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-  .fc-controls button { background: var(--panel); border: 1px solid var(--line); color: var(--text); border-radius: 6px; padding: 8px 16px; cursor: pointer; font-size: 13px; }
-  .fc-controls button.got { border-color: var(--ok); color: var(--ok); }
-  .fc-controls button.again { border-color: var(--warn); color: var(--warn); }
-  .fc-progress { font-family: var(--mono); font-size: 12px; color: var(--dim); margin-top: 8px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { text-align: left; padding: 7px 8px; border-top: 1px solid var(--line); }
-  th { color: var(--dim); font-family: var(--mono); font-size: 11px; font-weight: 400; border-top: none; }
-  td.k { font-family: var(--mono); white-space: nowrap; }
-  .marker { font-family: var(--mono); }
-  .m-warn { color: var(--warn); } .m-ok { color: var(--ok); } .m-danger { color: var(--danger); }
-  .bar { background: var(--panel2); border-radius: 6px; height: 14px; overflow: hidden; margin: 6px 0 2px; }
-  .bar i { display: block; height: 100%; background: var(--accent); }
-  .bar i.g { background: var(--ok); }
-  .bar-label { font-family: var(--mono); font-size: 12px; color: var(--dim); }
-  footer { color: var(--dim); font-size: 11px; font-family: var(--mono); margin-top: 30px; text-align: center; }
-  .links a { color: var(--accent); text-decoration: none; font-family: var(--mono); font-size: 12px; margin-right: 14px; }
-  .tw { overflow-x: auto; }
-  @media (max-width: 560px) {
-    body { padding: 14px 8px 60px; font-size: 14px; }
-    .due-row { flex-wrap: wrap; }
-    .due-when { min-width: 0; }
-    .fc { min-height: 150px; font-size: 15px; padding: 18px; }
-    nav button { padding: 6px 10px; font-size: 12px; }
-    header h1 { font-size: 18px; }
-    .pace-label { width: 110px; font-size: 10px; }
-    .pace-name { width: 64px; font-size: 10px; }
+  [data-theme="light"] {
+    --bg:#f6efe3; --surface:#fffaf1; --surface2:#efe4d2; --line:#dccdb6;
+    --text:#33261a; --dim:#82705a;
+    --accent:#8f6206; --accent-ink:#fffaf1;
+    --gold:#e8a91c; --danger:#bd332e; --ok:#33703e; --warn:#a85512;
+    --c-phil:#7e5ed0; --c-math:#3a7fc0; --c-c2470:#178f8f; --c-c2320:#c43f57; --c-geog:#7f8a20;
+  }
+  [data-course="phil"]  { --course:var(--c-phil); }
+  [data-course="math"]  { --course:var(--c-math); }
+  [data-course="c2470"] { --course:var(--c-c2470); }
+  [data-course="c2320"] { --course:var(--c-c2320); }
+  [data-course="geog"]  { --course:var(--c-geog); }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { background:var(--bg); }
+  body { background:var(--bg); color:var(--text); font:15px/1.55 var(--sans); padding:24px 16px 80px; }
+  .wrap { max-width:980px; margin:0 auto; }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:inherit; }
+  .caps { font:700 11px/1.2 var(--sans); letter-spacing:.08em; text-transform:uppercase; }
+
+  /* ================= masthead ================= */
+  header { margin-bottom:16px; }
+  .wordmark { font:900 clamp(30px,6vw,36px)/1 var(--display); letter-spacing:-.02em; display:flex; align-items:center; gap:10px; }
+  .wordmark svg { width:30px; height:30px; color:var(--gold); flex-shrink:0; }
+  .wordmark .den { color:var(--accent); }
+  .mast-sub { margin-top:6px; color:var(--dim); }
+  .mast-sub .wall { color:var(--danger); }
+  .quick { margin-top:10px; display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+  .quick a { color:var(--accent); text-decoration:none; font:500 13px var(--sans); }
+  .quick a:hover { text-decoration:underline; }
+  .lamp { margin-left:auto; border:none; cursor:pointer; border-radius:999px; padding:7px 16px;
+    background:var(--surface2); color:var(--dim); font:700 11px/1.2 var(--sans); letter-spacing:.08em; text-transform:uppercase;
+    box-shadow:0 3px 0 color-mix(in srgb, var(--line) 70%, black); }
+  .lamp:active { transform:translateY(3px); box-shadow:none; }
+
+  /* ================= signal strip ================= */
+  .signal { display:flex; align-items:center; gap:16px; border-radius:var(--r-lg); padding:14px 18px; margin-bottom:16px;
+    background:color-mix(in srgb, var(--accent) 10%, var(--surface));
+    box-shadow:0 3px 0 color-mix(in srgb, var(--accent) 40%, black); }
+  .signal[data-hot="1"] { background:color-mix(in srgb, var(--danger) 14%, var(--surface));
+    box-shadow:0 3px 0 color-mix(in srgb, var(--danger) 50%, black); }
+  .signal-main { flex:1; min-width:0; }
+  .signal-main .headline { font:800 18px/1.25 var(--display); letter-spacing:-.02em; }
+  .signal-main .headline a { color:inherit; text-decoration:none; }
+  .signal-main .headline a:hover { text-decoration:underline; }
+  .signal-main .sub { color:var(--dim); font-size:12px; margin-top:3px; }
+  .clock { text-align:right; flex-shrink:0; }
+  .clock .num { font:900 clamp(34px,7vw,48px)/1 var(--display); font-variant-numeric:tabular-nums; }
+  .clock .caps { color:var(--dim); display:block; margin-top:2px; }
+
+  /* ================= nav ================= */
+  nav { display:flex; gap:4px; margin:0 0 20px; position:sticky; top:0; z-index:5;
+    background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(8px) saturate(1.2);
+    -webkit-backdrop-filter:blur(8px) saturate(1.2); padding:10px 0; }
+  nav.stuck { box-shadow:0 8px 16px -12px rgb(0 0 0/.35); }
+  nav button { background:none; border:none; color:var(--dim); font:700 13px var(--sans); padding:8px 12px; cursor:pointer; border-radius:0; }
+  nav button.active { color:var(--text); box-shadow:inset 0 -3px 0 var(--accent); }
+  section { display:none; }
+  section.active { display:block; }
+
+  /* ================= cards (ledger register) ================= */
+  .card { background:var(--surface); border:1px solid var(--line); border-top-color:color-mix(in srgb, var(--line) 55%, var(--text));
+    border-radius:var(--r-sm); padding:16px; margin-bottom:16px; box-shadow:0 2px 0 color-mix(in srgb, var(--bg) 60%, black); }
+  .card h2 { display:flex; align-items:center; gap:8px; font:700 12px/1.2 var(--sans); letter-spacing:.08em; text-transform:uppercase; margin-bottom:12px; }
+  .card h2::after { content:''; flex:0 0 16px; height:2px; background:var(--gold); }
+  .card h2 .tag { font:400 12px/1.3 var(--sans); letter-spacing:0; text-transform:none; color:var(--dim); }
+  .plain-section { margin-bottom:16px; }
+  .plain-section > .caps { color:var(--dim); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .plain-section > .caps::after { content:''; flex:0 0 16px; height:2px; background:var(--gold); }
+
+  /* ================= queue ================= */
+  .due-row { display:grid; grid-template-columns:44px 96px 1fr auto; gap:8px; align-items:start; padding:10px 4px 10px 0;
+    border-top:1px solid var(--line); box-shadow:inset 3px 0 0 var(--course, transparent); }
+  .due-row:first-of-type { border-top:none; }
+  .due-row .hit { display:flex; align-items:center; justify-content:center; padding-top:2px; }
+  .due-row input { width:18px; height:18px; accent-color:var(--gold); cursor:pointer; }
+  .due-row.done .txt, .due-row.done .due-when { text-decoration:line-through; color:var(--dim); }
+  .due-when { font:500 12px/1.4 var(--mono); font-variant-numeric:tabular-nums; padding-top:3px; }
+  .due-when .rel { color:var(--dim); font-weight:400; }
+  .due-when.overdue, .due-when.today { color:var(--danger); font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+  .due-when.soon { color:var(--warn); }
+  .due-when.later { color:var(--dim); }
+  .due-course { font:500 12px var(--mono); color:color-mix(in srgb, var(--course, var(--accent)) 70%, var(--text)); }
+  .pts-chip { font:500 11px/1 var(--mono); font-variant-numeric:tabular-nums; color:var(--dim);
+    padding:4px 7px; border-radius:999px; background:var(--surface2); white-space:nowrap; margin-top:2px; }
+  .pts-chip.big { color:var(--warn); background:color-mix(in srgb, var(--warn) 10%, var(--surface2));
+    border:1px solid color-mix(in srgb, var(--warn) 40%, var(--surface2)); }
+  .golink { color:var(--accent); font:500 12px var(--mono); text-decoration:none; margin-left:8px; white-space:nowrap; }
+  .golink:hover { text-decoration:underline; }
+  details.steps { margin-top:4px; }
+  details.steps summary { cursor:pointer; color:var(--accent); font:500 12px var(--mono); list-style:none; }
+  details.steps summary::-webkit-details-marker { display:none; }
+  .note { color:var(--dim); font-size:13px; margin-top:4px; }
+  .note.hot { color:var(--warn); }
+  .note a { color:var(--accent); font:500 12px var(--mono); text-decoration:none; }
+  .note a:hover { text-decoration:underline; }
+
+  /* ================= pace ================= */
+  .pace-row { display:grid; grid-template-columns:92px 1fr 64px; gap:10px; align-items:center; padding:7px 0; }
+  .pace-name { font:700 12px var(--sans); color:var(--dim); display:flex; align-items:center; gap:6px; }
+  .pace-name i { width:3px; height:14px; background:var(--course, var(--dim)); border-radius:2px; display:inline-block; }
+  .pace-gauge { height:18px; background:var(--surface2); border:1px solid var(--line); border-radius:var(--r-sm);
+    position:relative; overflow:hidden; box-shadow:inset 0 2px 3px rgb(0 0 0/.25); }
+  .pace-gauge .behind { position:absolute; inset:0 auto 0 0; width:25%;
+    background:repeating-linear-gradient(-45deg, color-mix(in srgb, var(--danger) 30%, transparent) 0 4px, transparent 4px 9px); }
+  .pace-gauge .goal { position:absolute; top:0; bottom:0; width:2px; background:var(--ok); }
+  .pace-gauge .mk { position:absolute; top:3px; bottom:3px; width:10px; border-radius:5px; outline:1.5px solid var(--bg); }
+  .pace-gauge .wedge { position:absolute; top:50%; transform:translateY(-50%); width:0; height:0;
+    border-top:7px solid transparent; border-bottom:7px solid transparent; border-right:11px solid var(--danger); }
+  .pace-gauge.complete { background:var(--gold); border-color:var(--gold); box-shadow:none; }
+  .pace-days { font:700 13px var(--mono); font-variant-numeric:tabular-nums; text-align:right; }
+  .pace-note { grid-column:2 / 4; color:var(--dim); font-size:12px; margin-top:-4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pace-overall { border-top:1px solid var(--line); margin-top:8px; padding-top:10px; }
+  .pace-overall .pace-name { color:var(--text); }
+
+  /* ================= path ================= */
+  .unit-head { border-radius:var(--r-lg); padding:10px 16px; margin:24px 0 10px; color:var(--node-ink);
+    background:var(--course, var(--accent)); font:800 15px/1.3 var(--display); letter-spacing:-.01em; }
+  .unit-head .u-sub { display:block; font:700 10px/1.4 var(--sans); letter-spacing:.08em; text-transform:uppercase; opacity:.75; }
+  .path { position:relative; padding:8px 0 4px; }
+  .pnode-wrap { display:flex; flex-direction:column; align-items:center; margin:18px 0 26px; }
+  .pnode { position:relative; width:66px; height:66px; border-radius:50%; border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; font:800 22px var(--display); color:var(--node-ink);
+    text-decoration:none; transition:transform .06s; background:var(--course, var(--accent));
+    box-shadow:0 4px 0 color-mix(in srgb, var(--course, var(--accent)) 55%, black); }
+  .pnode:active { transform:translateY(4px) !important; box-shadow:none !important; }
+  .pnode[data-state="boss"] , .pnode.boss { width:84px; height:84px; border-radius:26px; font-size:26px; }
+  .pnode[data-state="upcoming"] { background:color-mix(in srgb, var(--course, var(--accent)) 26%, var(--surface2));
+    color:color-mix(in srgb, var(--course, var(--accent)) 60%, var(--text));
+    box-shadow:0 4px 0 color-mix(in srgb, var(--course, var(--accent)) 20%, black); }
+  .pnode[data-state="done"] { background:var(--gold); color:var(--gold-ink); box-shadow:0 4px 0 color-mix(in srgb, var(--gold) 55%, black); }
+  .pnode[data-state="done"]::after { content:''; position:absolute; inset:5px; border:2px dashed color-mix(in srgb, var(--gold-ink) 50%, var(--gold));
+    border-radius:inherit; transform:rotate(-8deg); }
+  .pnode[data-late="1"] { outline:3px solid var(--danger); outline-offset:2px; }
+  .pnode-label { margin-top:8px; width:150px; text-align:center; font:400 11px/1.3 var(--sans); color:var(--dim); }
+  .pnode-label b { display:block; font-weight:600; color:var(--text); }
+  .pnode-label .mark { display:inline-flex; align-items:center; justify-content:center; min-width:30px; height:24px; margin-top:4px;
+    border-radius:var(--r-sm); background:var(--surface2); color:var(--dim); font:700 11px var(--mono); cursor:pointer; user-select:none; }
+  .pnode-label .mark:hover, .pnode-label .mark:active { background:var(--gold); color:var(--gold-ink); }
+  .active-ring { position:relative; display:flex; align-items:center; justify-content:center; border-radius:50%; padding:8px;
+    border:3px solid color-mix(in srgb, var(--course, var(--accent)) 35%, transparent); }
+  .start-bubble { position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
+    background:var(--bubble-bg); color:var(--bubble-ink); font:800 11px/1 var(--display); letter-spacing:.08em;
+    padding:6px 11px; border-radius:8px; white-space:nowrap; animation:bounce 1.4s infinite; z-index:2; }
+  .start-bubble::after { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    border-left:7px solid transparent; border-right:7px solid transparent; border-top:7px solid var(--bubble-bg); }
+  @keyframes bounce { 0%,100% { transform:translateX(-50%) translateY(0); } 50% { transform:translateX(-50%) translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce) { .start-bubble { animation:none; } }
+  .path-legend { font:500 11px var(--mono); color:var(--dim); text-align:center; margin:8px 0 4px; }
+  .course-pills { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+  .course-pills button { border:none; background:var(--surface2); color:var(--dim); border-radius:999px; padding:8px 16px;
+    font:700 13px var(--sans); cursor:pointer; box-shadow:0 3px 0 color-mix(in srgb, var(--line) 70%, black); }
+  .course-pills button:active { transform:translateY(3px); box-shadow:none; }
+  .course-pills button.active { background:var(--course); color:var(--node-ink);
+    box-shadow:0 3px 0 color-mix(in srgb, var(--course) 55%, black); }
+
+  /* ================= heatmap ================= */
+  .heat-flex { display:flex; gap:8px; }
+  .heat-dayl { display:flex; flex-direction:column; gap:3px; padding-top:0; }
+  .heat-dayl span { height:16px; font:400 11px/16px var(--sans); color:var(--dim); }
+  .heat-scroll { overflow-x:auto; padding-bottom:6px; flex:1; }
+  .heat-grid { display:flex; gap:4px; }
+  .heat-week { display:flex; flex-direction:column; gap:3px; align-items:center; cursor:pointer; }
+  .heat-week.now .heat-wk-label { color:var(--accent); font-weight:700; }
+  .heat-cell { width:16px; height:16px; border-radius:3px; background:var(--surface2); }
+  .heat-cell[data-load="1"] { background:var(--heat-1); }
+  .heat-cell[data-load="2"] { background:var(--heat-2); }
+  .heat-cell[data-load="3"] { background:var(--heat-3); }
+  .heat-week.banked .heat-cell { background:var(--gold); }
+  .heat-week.now { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+  .heat-wk-label { font:400 10px var(--sans); color:var(--dim); margin-top:4px; white-space:nowrap; }
+  .heat-wk-total { font:500 10px var(--mono); font-variant-numeric:tabular-nums; color:var(--dim); }
+  .heat-wk-total.hot { color:var(--danger); font-weight:700; }
+  .heat-wk-total.easy { color:var(--ok); }
+  .heat-pin { margin-top:10px; font-size:13px; color:var(--dim); }
+  .heat-pin b { color:var(--text); }
+
+  /* ================= degree wall ================= */
+  .wall-head { font:900 clamp(26px,5vw,34px)/1.2 var(--display); font-variant-numeric:tabular-nums; margin-bottom:4px; }
+  .wall-head small { font:400 13px var(--sans); color:var(--dim); }
+  .brickrow { margin:10px 0 18px; }
+  .bricks { display:grid; grid-template-columns:repeat(30, minmax(8px, 1fr)); gap:3px; }
+  .brick { height:14px; border-radius:3px; background:var(--surface2); border:1px solid var(--line); }
+  .brick.earned { background:var(--gold); border-color:var(--gold); box-shadow:0 2px 0 color-mix(in srgb, var(--gold) 30%, black); }
+  .brick.prog { border-color:color-mix(in srgb, var(--accent) 50%, var(--line));
+    background:repeating-linear-gradient(-45deg, color-mix(in srgb, var(--accent) 45%, var(--surface2)) 0 4px, var(--surface2) 4px 8px); }
+  .brick.plan { border:1.5px dashed color-mix(in srgb, var(--accent) 60%, var(--line)); background:none; }
+  .wall-mark { display:flex; align-items:center; gap:8px; margin-top:8px; color:var(--danger); }
+  .wall-mark::before { content:''; flex:1; height:1px; background:color-mix(in srgb, var(--danger) 40%, var(--line)); }
+  .brick-label { color:var(--dim); font-size:12px; margin-top:6px; }
+
+  /* ================= tables ================= */
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:8px; border-top:1px solid var(--line); }
+  th { color:var(--dim); font:700 11px/1.2 var(--sans); letter-spacing:.08em; text-transform:uppercase; border-top:none; }
+  td.flag { width:2ch; font-family:var(--mono); color:var(--warn); padding-right:0; }
+  td.k { font:500 13px var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  td.amount { font:500 13px var(--mono); font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap; }
+  .marker { font-family:var(--mono); }
+  .m-warn { color:var(--warn); } .m-ok { color:var(--ok); } .m-danger { color:var(--danger); }
+
+  /* ================= flashcards ================= */
+  .deck-picker { display:flex; gap:18px; flex-wrap:wrap; margin-bottom:14px; }
+  .deck-picker button { background:none; border:none; color:var(--dim); font:700 13px var(--sans); cursor:pointer; padding:2px 0; }
+  .deck-picker button.active { color:var(--text); }
+  .deck-picker button.active::before { content:'-> '; color:var(--gold); font-family:var(--mono); }
+  .fc { background:var(--surface2); border:none; border-radius:var(--r-lg); min-height:190px; display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:26px; font:600 17px/1.5 var(--sans); cursor:pointer; user-select:none;
+    box-shadow:0 4px 0 color-mix(in srgb, var(--line) 70%, black); }
+  .fc:active { transform:translateY(4px); box-shadow:none; }
+  .fc .side-label { display:block; font:700 11px/1.2 var(--sans); letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+  .fc-controls { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+  .fc-controls button { background:var(--surface2); border:none; color:var(--text); border-radius:999px; padding:9px 18px;
+    cursor:pointer; font:700 13px var(--sans); box-shadow:0 3px 0 color-mix(in srgb, var(--line) 70%, black); }
+  .fc-controls button:active { transform:translateY(3px); box-shadow:none; }
+  .fc-controls button.got { background:var(--ok); color:#0d2413; box-shadow:0 3px 0 color-mix(in srgb, var(--ok) 55%, black); }
+  .fc-controls button.again { background:var(--warn); color:#331603; box-shadow:0 3px 0 color-mix(in srgb, var(--warn) 55%, black); }
+  .fc-progress { font-size:12px; color:var(--dim); margin-top:8px; }
+  .fc-progress b { color:var(--gold); }
+
+  footer { color:var(--dim); font-size:11px; font-family:var(--sans); margin-top:30px; text-align:left; }
+  .tw { overflow-x:auto; }
+  .now-grid { display:block; }
+  @media (min-width:860px) {
+    .now-grid { display:grid; grid-template-columns:5fr 4fr; gap:16px; align-items:start; }
+  }
+  @media (max-width:560px) {
+    body { padding:14px 8px 90px; font-size:14px; }
+    nav { position:fixed; top:auto; bottom:0; left:0; right:0; z-index:20; border-top:1px solid var(--line);
+      padding:6px 8px max(6px, env(safe-area-inset-bottom)); justify-content:space-around; background:color-mix(in srgb, var(--bg) 94%, transparent); }
+    nav button { padding:8px 6px; font-size:11px; }
+    .due-row { grid-template-columns:38px 84px 1fr; }
+    .due-row .pts-wrap { grid-column:3; }
+    .fc { min-height:150px; font-size:15px; padding:18px; }
+    .clock .num { font-size:30px; }
+    .pace-row { grid-template-columns:76px 1fr 56px; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>SLCC TEACH-OUT HUB</h1>
-    <div class="sub" id="headline"></div>
-    <div class="links" style="margin-top:8px">
+    <div class="wordmark">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <ellipse cx="12" cy="15.5" rx="5.2" ry="4.6"/>
+        <circle cx="5.4" cy="10.8" r="2.1"/><circle cx="9.4" cy="7.6" r="2.2"/>
+        <circle cx="14.6" cy="7.6" r="2.2"/><circle cx="18.6" cy="10.8" r="2.1"/>
+      </svg>
+      bruin<span class="den">den</span>
+      <button class="lamp" id="lamp" type="button">night</button>
+    </div>
+    <div class="mast-sub caps" id="mastsub"></div>
+    <div class="quick">
       <a href="https://slcc.instructure.com/" target="_blank">-> Canvas</a>
       <a href="https://outlook.office365.com/mail/" target="_blank">-> Bruinmail</a>
       <a href="https://experience.elluciancloud.com/slcc/" target="_blank">-> MySLCC</a>
     </div>
   </header>
 
+  <div class="signal" id="signal"></div>
+
   <nav id="nav"></nav>
 
   <section id="sec-now">
-    <div class="card">
-      <h2>PACE <span class="tag">runway to next undone item - goal: stay 7+ days ahead</span></h2>
-      <div id="pace"></div>
+    <div class="now-grid">
+      <div class="card">
+        <h2>Deadline queue <span class="tag">check off as you submit</span></h2>
+        <div id="queue"></div>
+      </div>
+      <div class="card">
+        <h2>Pace <span class="tag">runway to next undone - goal: +7d</span></h2>
+        <div id="pace"></div>
+      </div>
     </div>
     <div class="card">
-      <h2>THIS WEEK'S PATH <span class="tag">tap a node to open it in Canvas - long-press your way down</span></h2>
+      <h2>This week <span class="tag">overdue + today + tomorrow - tap opens Canvas, [x] banks it</span></h2>
       <div class="path" id="weekpath"></div>
     </div>
-    <div class="card">
-      <h2>DEADLINE QUEUE <span class="tag">check off as you submit - saved locally</span></h2>
-      <div id="queue"></div>
-    </div>
-    <div class="card">
-      <h2>SEMESTER LOAD <span class="tag">remaining effort per day, GitHub-style - plan the light weeks</span></h2>
-      <div class="heat-scroll"><div class="heat-grid" id="heat"></div></div>
-      <div class="heat-legend" id="heatlegend"></div>
+    <div class="plain-section">
+      <div class="caps">Semester load - remaining effort per day, plan the light weeks</div>
+      <div class="heat-flex">
+        <div class="heat-dayl"><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span></span></div>
+        <div class="heat-scroll"><div class="heat-grid" id="heat"></div></div>
+      </div>
+      <div class="heat-pin" id="heatpin">tap a week column to see its items</div>
     </div>
   </section>
 
   <section id="sec-courses">
     <div class="course-pills" id="pills"></div>
-    <div id="trackmeta"></div>
     <div class="path" id="track"></div>
   </section>
 
   <section id="sec-study">
     <div class="card">
-      <h2>FLASHCARDS <span class="tag">click card to flip - "got it" retires a card, "again" recycles it</span></h2>
+      <h2>Flashcards <span class="tag">tap to flip - "got it" banks a card</span></h2>
       <div class="deck-picker" id="decks"></div>
       <div class="fc" id="fc"><span>pick a deck</span></div>
       <div class="fc-controls">
@@ -185,45 +339,46 @@
 
   <section id="sec-dates">
     <div class="card">
-      <h2>STANDING WATCHES</h2>
+      <h2>Standing watches</h2>
       <div id="watches"></div>
     </div>
-    <div class="card"><h2>SEMESTER DATES</h2><div class="tw"><table id="dates"></table></div></div>
+    <div class="card"><h2>Semester dates</h2><div class="tw"><table id="dates"></table></div></div>
   </section>
 
   <section id="sec-degree">
     <div class="card">
-      <h2>DEGREE PROGRESS <span class="tag">per Sim Kaur audit 2026-08-04</span></h2>
+      <h2>Degree progress <span class="tag">per Sim Kaur audit 2026-08-04</span></h2>
       <div id="degree"></div>
     </div>
   </section>
 
   <section id="sec-money">
-    <div class="card"><h2>MONEY</h2><div id="money" class="tw"></div></div>
+    <div class="card"><h2>Money</h2><div id="money" class="tw"></div></div>
   </section>
 
-  <footer id="stamp"></footer>
+  <footer>bruinden - built for the sprint, not for sale. <span id="stamp"></span></footer>
 </div>
 
 <script>
 // ============================================================
 // HUB_DATA - updated by Claude on every sweep.
-// TRACKS node format: [id, title, "MM-DD", kind, link?]
+// TRACKS node format: [id, title, "MM-DD", kind, link?, done?]
 // kinds: page quiz disc hw sa essay build exam boss setup target
-// done-state: localStorage "slccHub.n.<id>" OR "done:true" pushed by sweep
+// done-state: localStorage "slccHub.n.<id>" OR done:true (6th elem) from sweep
 // NEVER rename node ids (orphans Lakota's progress).
 // ============================================================
 const HUB_DATA = {
-  updated: "2026-08-26 night - path UI v1",
-  headline: "Fall 2026 - week 1 of 16. Two semesters to the degree. | (!) PHIL quiz due TONIGHT",
+  updated: "2026-08-26 night - the den v1",
   year: 2026,
+  week: 1, weeksTotal: 16,
+  wallDate: "2027-08-06",
   weightsByKind: { page:1, quiz:1, disc:1.5, hw:2, sa:3, essay:4, build:5, exam:6, boss:8, setup:2, target:2 },
   courses: {
-    "PHIL": { color:"#ce82ff", full:"PHIL 1000 - Intro to Philosophy", who:"Greg Spendlove - no exams, essays due Sundays", home:"https://slcc.instructure.com/courses/1274282/modules" },
-    "MATH": { color:"#1cb0f6", full:"MATH 1035 - Quantitative Reasoning", who:"John Nelson - 4 proctored midterms, office hrs TW 7-9pm", home:"https://slcc.instructure.com/courses/1274852/modules" },
-    "CSIS 2470": { color:"#58cc02", full:"CSIS 2470 - Advanced JavaScript", who:"Jeff Stone - big builds, no proctoring", home:"https://slcc.instructure.com/courses/1273912/modules" },
-    "CSIS 2320": { color:"#ff4b4b", full:"CSIS 2320 - Network Security (E-retake)", who:"Rod Buhler - TestOut, all due Dec 10; weekly TARGETS padded to Fridays", home:"https://slcc.instructure.com/courses/1273938" },
-    "GEOG": { color:"#ff9600", full:"GEOG 1000 - Earth's Environments", who:"Kimberly Sowards - chapter quizzes Tuesdays", home:"https://slcc.instructure.com/courses/1273585/modules" },
+    "PHIL": { slug:"phil", full:"PHIL 1000 - Intro to Philosophy", who:"Greg Spendlove - no exams, essays due Sundays", home:"https://slcc.instructure.com/courses/1274282/modules" },
+    "MATH": { slug:"math", full:"MATH 1035 - Quantitative Reasoning", who:"John Nelson - 4 proctored midterms, office hrs TW 7-9pm", home:"https://slcc.instructure.com/courses/1274852/modules" },
+    "CSIS 2470": { slug:"c2470", full:"CSIS 2470 - Advanced JavaScript", who:"Jeff Stone - big builds, no proctoring", home:"https://slcc.instructure.com/courses/1273912/modules" },
+    "CSIS 2320": { slug:"c2320", full:"CSIS 2320 - Network Security (E-retake)", who:"Rod Buhler - TestOut, real due Dec 10; weekly targets padded to Fridays", home:"https://slcc.instructure.com/courses/1273938" },
+    "GEOG": { slug:"geog", full:"GEOG 1000 - Earth's Environments", who:"Kimberly Sowards - chapter quizzes Tuesdays", home:"https://slcc.instructure.com/courses/1273585/modules" },
   },
   tracks: {
     "PHIL": [
@@ -468,37 +623,39 @@ const HUB_DATA = {
     ],
   },
   dates: [
-    ["Aug 25", "Classes began - all five online, full 16-week term"],
-    ["Sep 1", "Residency deadline"],
-    ["Sep 2", "Last day to ADD"],
-    ["Sep 7", "Labor Day - college closed"],
-    ["(!) Sep 15", "Last day to drop with 100% refund"],
-    ["(!) Sep 18", "TUITION DUE - $2,640 (grants should zero it by here)"],
-    ["Sep 24", "MATH Midterm 1 (Testing Center / remote proctor)"],
-    ["Oct 15-16", "Fall break"],
-    ["Oct 22", "MATH Midterm 2"],
-    ["Oct 25", "CSIS 2470 midterm (online assignment)"],
-    ["(!) Oct 27", "Last day to withdraw - NOT an option for CSIS 2320"],
-    ["(!) Nov 3", "SPRING 2027 REGISTRATION OPENS - register day one"],
-    ["Nov 18", "MATH Midterm 3"],
-    ["Nov 25-28", "Thanksgiving"],
-    ["Dec 8-9", "GEOG + PHIL signature assignments due"],
-    ["Dec 10", "Last day of classes; MATH Midterm 4"],
-    ["Dec 12-17", "Finals window (CSIS 2470 final project Dec 20)"],
+    ["Aug 25", "", "Classes began - all five online, full 16-week term"],
+    ["Sep 1", "", "Residency deadline"],
+    ["Sep 2", "", "Last day to ADD"],
+    ["Sep 7", "", "Labor Day - college closed"],
+    ["Sep 15", "(!)", "Last day to drop with 100% refund"],
+    ["Sep 18", "(!)", "TUITION DUE - $2,640 (grants should zero it by here)"],
+    ["Sep 24", "", "MATH Midterm 1 (Testing Center / remote proctor)"],
+    ["Oct 15-16", "", "Fall break"],
+    ["Oct 22", "", "MATH Midterm 2"],
+    ["Oct 25", "", "CSIS 2470 midterm (online assignment)"],
+    ["Oct 27", "(!)", "Last day to withdraw - NOT an option for CSIS 2320"],
+    ["Nov 3", "(!)", "SPRING 2027 REGISTRATION OPENS - register day one"],
+    ["Nov 18", "", "MATH Midterm 3"],
+    ["Nov 25-28", "", "Thanksgiving"],
+    ["Dec 8-9", "", "GEOG + PHIL signature assignments due"],
+    ["Dec 10", "", "Last day of classes; MATH Midterm 4"],
+    ["Dec 12-17", "", "Finals window (CSIS 2470 final project Dec 20)"],
   ],
   degree: {
-    total: { done: 46, target: 60, label: "46 / 60 credits applied (incl. this fall's 16 in progress)" },
-    genEd: { done: 19, target: 27, label: "Gen Ed 19/27 - spring: ENGL 2010, American Inst., Life Science" },
-    csis:  { done: 27, target: 33, label: "CSIS program 27/33 - spring: any two 3-cr CSIS classes not taken before" },
+    earned: 30, inProgress: 16, planned: 15, target: 60,
+    rows: [
+      { label:"Gen Ed", earned: 9, inProgress: 10, planned: 8, target: 27 },
+      { label:"CSIS program", earned: 21, inProgress: 6, planned: 6, target: 33 },
+    ],
     springPlan: "Spring 2027 (15 cr): ENGL 2010 + AI + LS + CSIS x2 -> 61/60. DONE before the Summer 2027 teach-out wall.",
   },
   money: [
-    ["Balance / due Sep 18", "$2,640.00 (posted; unchanged - correct until aid lands)"],
-    ["Grants (fall)", "$3,096 - Pell $1,238 + Utah Promise $1,086 + Need-Based $772"],
-    ["Bursar email said $630 because", "$2,640 minus anticipated Pell+NBG ($2,010); Utah Promise applies after the Sep 15 drop deadline"],
-    ["Expected refund", "~$456 by direct deposit (eRefund already set up and proven)"],
-    ["Out-of-pocket coming", "CSIS 2320 Security Pro 8.0 courseware (~$80-120 academic w/ SheerID) + ~$100-160 MATH proctoring fees"],
-    ["Rules", "Stay >= 6 cr (Utah Promise) and 12+ cr (offer basis). $75 late fee past Sep 18."],
+    ["Balance / due Sep 18", "$2,640.00", "posted; unchanged - correct until aid lands"],
+    ["Grants (fall)", "$3,096", "Pell $1,238 + Utah Promise $1,086 + Need-Based $772"],
+    ["Bursar email said", "$630", "= $2,640 minus anticipated Pell+NBG ($2,010); Utah Promise applies after Sep 15"],
+    ["Expected refund", "~$456", "direct deposit (eRefund already set up and proven)"],
+    ["Out-of-pocket coming", "~$200-280", "Security Pro 8.0 courseware (SheerID price) + MATH proctoring fees x4"],
+    ["Rules", "", "Stay >= 6 cr (Utah Promise) and 12+ cr (offer basis). $75 late fee past Sep 18."],
   ],
 };
 
@@ -512,15 +669,40 @@ const daysFromToday = mmdd => Math.round((dateOf(mmdd) - TODAY) / 86400000);
 const nodeDone = n => localStorage.getItem(LS("n." + n[0])) === "1" || n[5] === true;
 const setNodeDone = (n, v) => localStorage.setItem(LS("n." + n[0]), v ? "1" : "0");
 const allNodes = course => HUB_DATA.tracks[course].flatMap(u => u.nodes);
-const KIND_GLYPH = { page:"P", quiz:"Q", disc:"D", hw:"W", sa:"S", essay:"E", build:"B", exam:"!", boss:"*", setup:"+", target:"T" };
-const shade = (hex, f) => { // darker shade for pressed edge
-  const n = parseInt(hex.slice(1), 16);
-  const r = Math.round(((n>>16)&255)*f), g = Math.round(((n>>8)&255)*f), b = Math.round((n&255)*f);
-  return `rgb(${r},${g},${b})`;
-};
+const slugOf = course => HUB_DATA.courses[course].slug;
+const KIND_GLYPH = { page:"P", quiz:"Q", disc:"D", hw:"W", sa:"S", essay:"E", build:"B", exam:"E", boss:"F", setup:"+", target:"T" };
+const LEGEND = "Q quiz - D disc - W hwk - S sig - B build - E essay/exam - F final - P pages - T target";
 
-document.getElementById("headline").innerHTML = HUB_DATA.headline.replace(/\(!\)[^|]*$/, m => "<b>" + m + "</b>");
-$("stamp").textContent = "data updated " + HUB_DATA.updated + " - Claude refreshes this file on every sweep";
+// ---------- theme ----------
+const lamp = $("lamp");
+function syncLamp() { lamp.textContent = document.documentElement.dataset.theme === "light" ? "day" : "night"; }
+lamp.onclick = () => {
+  const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem(LS("theme"), next);
+  syncLamp();
+};
+syncLamp();
+
+// ---------- masthead + signal ----------
+$("mastsub").innerHTML = `WK ${HUB_DATA.week} OF ${HUB_DATA.weeksTotal} -> <span class="wall">SUMMER 2027 WALL</span>`;
+(function renderSignal() {
+  const undoneQ = HUB_DATA.queue.filter(q => localStorage.getItem(LS("done." + q.id)) !== "1")
+    .sort((a,b) => a.due < b.due ? -1 : 1);
+  const wallWeeks = Math.max(0, Math.round((new Date(HUB_DATA.wallDate + "T00:00:00") - TODAY) / (7 * 86400000)));
+  let hot = 0, headline = "all clear this second", sub = "";
+  if (undoneQ.length) {
+    const q = undoneQ[0];
+    const d = Math.round((new Date(q.due + "T00:00:00") - TODAY) / 86400000);
+    hot = d <= 0 ? 1 : 0;
+    const when = d < 0 ? `${-d}d OVERDUE` : d === 0 ? "DUE TODAY" : d === 1 ? "due tomorrow" : "next up " + q.due.slice(5).replace("-", "/");
+    headline = `<a href="${q.link || "#"}" target="_blank">${when}: ${q.txt.split(" - ")[0].split(". ")[0]}</a>`;
+    sub = `<span data-course="${slugOf(q.course)}"><span class="due-course">${q.course}</span></span>${q.pts ? " - " + q.pts + " pts" : ""} - updated ${HUB_DATA.updated}`;
+  }
+  $("signal").dataset.hot = hot;
+  $("signal").innerHTML = `<div class="signal-main"><div class="headline">${headline}</div><div class="sub">${sub}</div></div>
+    <div class="clock"><span class="num">${wallWeeks}</span><span class="caps">wks to the wall</span></div>`;
+})();
 
 // ---------- nav ----------
 SECTIONS.forEach(([key, label]) => {
@@ -536,120 +718,120 @@ SECTIONS.forEach(([key, label]) => {
   $("nav").appendChild(b);
 });
 const savedTab = localStorage.getItem(LS("tab")) || "now";
-const idx = Math.max(0, SECTIONS.findIndex(s => s[0] === savedTab));
-$("nav").children[idx].click();
+$("nav").children[Math.max(0, SECTIONS.findIndex(s => s[0] === savedTab))].click();
+addEventListener("scroll", () => $("nav").classList.toggle("stuck", scrollY > 40), { passive:true });
 
-// ---------- PACE ----------
-// runway = days until earliest UNDONE node's due date. Behind if negative.
+// ---------- pace ----------
 function runway(course) {
   const undone = allNodes(course).filter(n => !nodeDone(n)).sort((a,b) => a[2] < b[2] ? -1 : 1);
-  if (!undone.length) return { days: 99, label: "course complete" };
+  if (!undone.length) return { complete: true };
   return { days: daysFromToday(undone[0][2]), next: undone[0][1] };
 }
-(function renderPace() {
-  const el = $("pace");
+function renderPace() {
+  const el = $("pace"); el.innerHTML = "";
   const MIN = -7, MAX = 21, GOAL = 7;
   const pct = d => Math.min(100, Math.max(0, ((Math.min(d, MAX) - MIN) / (MAX - MIN)) * 100));
   let worst = null;
   const rows = Object.keys(HUB_DATA.courses).map(c => {
     const r = runway(c);
-    if (!worst || r.days < worst.days) worst = { ...r, course: c };
+    if (!r.complete && (!worst || r.days < worst.days)) worst = { ...r, course: c };
     return { c, ...r };
   });
-  const drawRow = (name, days, colorOverride, extra) => {
-    const col = days < 0 ? "var(--danger)" : days >= GOAL ? "var(--ok)" : "var(--warn)";
-    const lbl = days >= 99 ? "done" : days < 0 ? `${-days}d BEHIND` : days === 0 ? "due TODAY" :
-      days >= GOAL ? `+${days}d ahead (goal hit)` : `+${days}d (${GOAL - days}d short of goal)`;
-    return `<div class="pace-row"><span class="pace-name" style="color:${colorOverride || 'var(--dim)'}">${name}</span>
-      <div class="pace-gauge"><div class="pace-zone-behind"></div>
-        <div class="pace-goal" style="left:${pct(GOAL)}%"></div>
-        <div class="pace-marker" style="left:calc(${pct(days)}% - 5px); background:${col}"></div></div>
-      <span class="pace-label" style="color:${col}">${lbl}${extra || ""}</span></div>`;
+  const draw = (name, r, slug, isOverall) => {
+    if (r.complete) return `<div class="pace-row"${slug ? ` data-course="${slug}"` : ""}>
+      <span class="pace-name"><i></i>${name}</span><div class="pace-gauge complete"></div>
+      <span class="pace-days" style="color:var(--gold)">[x]</span>
+      <div class="pace-note">COMPLETE - banked</div></div>`;
+    const d = r.days;
+    const col = d < 0 ? "var(--danger)" : d >= GOAL ? "var(--ok)" : "var(--warn)";
+    const daysTxt = d < 0 ? `-${-d}d` : d === 0 ? "today" : `+${d}d`;
+    const note = d < 0 ? `(!) BEHIND - ${r.next || ""}` : d >= GOAL ? "goal hit" : `${GOAL - d}d short of goal - next: ${r.next || ""}`;
+    const marker = d < 0
+      ? `<span class="wedge" style="left:calc(${pct(d)}% - 5px)"></span>`
+      : `<span class="mk" style="left:calc(${pct(d)}% - 5px); background:${col}"></span>`;
+    return `<div class="pace-row"${slug ? ` data-course="${slug}"` : ""}>
+      <span class="pace-name"><i></i>${name}</span>
+      <div class="pace-gauge"><span class="behind"></span><span class="goal" style="left:${pct(GOAL)}%"></span>${marker}</div>
+      <span class="pace-days" style="color:${col}">${daysTxt}</span>
+      <div class="pace-note">${note}</div></div>`;
   };
-  el.innerHTML = rows.map(r => drawRow(r.c, r.days, HUB_DATA.courses[r.c].color)).join("") +
-    `<div class="pace-overall">` + drawRow("OVERALL", worst.days, "var(--text)", ` <span style="color:var(--dim)">(${worst.course})</span>`) + `</div>`;
-})();
+  el.innerHTML = rows.map(r => draw(r.c, r, slugOf(r.c))).join("") +
+    `<div class="pace-overall">${draw("OVERALL" + (worst ? " (" + worst.course + ")" : ""), worst || { complete:true }, worst ? slugOf(worst.course) : null, true)}</div>`;
+}
 
-// ---------- serpentine path renderer ----------
-const OFFSETS = [0, 1, 2, 1, 0, -1, -2, -1]; // x40px, duolingo clone recipe
-function renderPath(el, units, courseOf) {
+// ---------- path renderer ----------
+const OFFSETS = [0, 1, 2, 1, 0, -1, -2, -1];
+function renderPath(el, units, courseOf, opts) {
+  opts = opts || {};
   el.innerHTML = "";
   let i = 0, activeFound = false;
   units.forEach(u => {
     if (u.unit) {
-      const color = HUB_DATA.courses[u.course || courseOf].color;
       const h = document.createElement("div");
       h.className = "unit-head";
-      h.style.background = color;
+      h.dataset.course = slugOf(u.course || courseOf);
       h.innerHTML = u.unit + (u.sub ? `<span class="u-sub">${u.sub}</span>` : "");
       el.appendChild(h);
     }
     u.nodes.forEach(n => {
       const course = n.course || u.course || courseOf;
-      const color = HUB_DATA.courses[course].color;
+      const slug = slugOf(course);
       const done = nodeDone(n);
-      const overdue = !done && daysFromToday(n[2]) < 0;
+      const late = !done && daysFromToday(n[2]) < 0;
       const isActive = !done && !activeFound && (activeFound = true, true);
       const off = OFFSETS[i++ % 8] * 40;
+      const boss = n[3] === "boss" || n[3] === "exam";
+      const state = done ? "done" : (isActive || opts.week) ? "active" : "upcoming";
+      const glyph = done ? "[x]" : KIND_GLYPH[n[3]] || "?";
+      const link = n[4] || HUB_DATA.courses[course].home;
       const wrap = document.createElement("div");
       wrap.className = "pnode-wrap";
-      const boss = n[3] === "boss" || n[3] === "exam";
-      const glyph = done ? "✓" : KIND_GLYPH[n[3]] || "?";
-      const link = n[4] || HUB_DATA.courses[course].home;
-      const label = `<span class="pnode-label"><b>${n[1]}</b><br>${overdue ? '<span style="color:var(--danger)">was due ' : 'due '}${n[2].replace("-", "/")}${overdue ? "</span>" : ""}</span>`;
-      const nodeHtml = `<a class="pnode ${boss ? "boss" : ""} ${done ? "done" : isActive ? "" : "locked"}"
-        href="${link}" target="_blank"
-        style="${done ? "" : isActive ? `background:${color}; box-shadow:0 4px 0 ${shade(color,.55)}; color:#0b0e13;` : ""} transform:translateX(${off}px)"
-        data-nid="${n[0]}" title="double-tap the label to mark done">${glyph}${label}</a>`;
-      if (isActive && !done) {
-        wrap.innerHTML = `<div class="active-ring ${boss ? "boss-ring" : ""}" style="transform:translateX(${off}px); border:3px solid ${color}55">
-          <span class="start-bubble" style="color:${color}">${overdue ? "LATE - GO" : "NEXT"}</span>
-          ${nodeHtml.replace(`transform:translateX(${off}px)`, "")}</div>`;
-      } else {
-        wrap.innerHTML = nodeHtml;
-      }
-      // double-click label area toggles done (single click follows link)
-      wrap.querySelector(".pnode").addEventListener("dblclick", e => {
-        e.preventDefault();
-        const cur = nodeDone(n);
-        setNodeDone(n, !cur);
+      wrap.dataset.course = slug;
+      wrap.style.transform = `translateX(${off}px)`;
+      const nodeHtml = `<a class="pnode ${boss ? "boss" : ""}" data-state="${state === "active" ? "" : state}" ${late ? 'data-late="1"' : ""}
+        href="${link}" target="_blank">${glyph}</a>`;
+      const inner = (isActive && !done)
+        ? `<div class="active-ring"><span class="start-bubble">${late ? "LATE - GO" : "NEXT"}</span>${nodeHtml}</div>`
+        : nodeHtml;
+      wrap.innerHTML = inner + `<div class="pnode-label"><b>${n[1]}</b>
+        <span${late ? ' style="color:var(--danger)"' : ""}>${late ? "was due " : "due "}${n[2].replace("-", "/")}</span>
+        <span class="mark" title="mark done">[${done ? "x" : " "}]</span></div>`;
+      wrap.querySelector(".mark").addEventListener("click", e => {
+        e.preventDefault(); e.stopPropagation();
+        setNodeDone(n, !nodeDone(n));
         rerenderAll();
       });
       el.appendChild(wrap);
     });
   });
+  const leg = document.createElement("div");
+  leg.className = "path-legend";
+  leg.textContent = LEGEND;
+  el.appendChild(leg);
 }
 
-// ---------- THIS WEEK'S PATH ----------
-function weekWindow() {
-  const d = new Date(TODAY); const dow = (d.getDay() + 6) % 7; // Mon=0
-  const mon = new Date(d); mon.setDate(d.getDate() - dow);
-  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-  return [mon, sun];
-}
+// ---------- week path (overdue + today + tomorrow) ----------
 function renderWeekPath() {
-  const [mon, sun] = weekWindow();
   const nodes = [];
   Object.keys(HUB_DATA.tracks).forEach(c => allNodes(c).forEach(n => {
-    const dt = dateOf(n[2]);
-    if (dt <= sun && (!nodeDone(n))) { // include overdue leftovers too
-      if (dt >= mon || daysFromToday(n[2]) < 0) nodes.push(Object.assign([...n], { course: c }));
-    }
+    if (nodeDone(n)) return;
+    const d = daysFromToday(n[2]);
+    if (d <= 1) { const copy = [...n]; copy.course = c; nodes.push(copy); }
   }));
   nodes.sort((a,b) => a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : 0);
-  const wrap = nodes.length ? [{ nodes }] : [];
-  if (!nodes.length) { $("weekpath").innerHTML = '<div class="note">Week clear. You are living the dream - go bank next week\'s items on the COURSES tab.</div>'; return; }
-  renderPath($("weekpath"), wrap, null);
+  if (!nodes.length) { $("weekpath").innerHTML = '<div class="note">Nothing overdue, due today, or due tomorrow. You are AHEAD - bank next week on the COURSES tab.</div>'; return; }
+  renderPath($("weekpath"), [{ nodes }], null, { week: true });
 }
 
-// ---------- COURSES tab ----------
+// ---------- courses tab ----------
 let currentCourse = localStorage.getItem(LS("course")) || "PHIL";
 function renderPills() {
   $("pills").innerHTML = "";
   Object.keys(HUB_DATA.courses).forEach(c => {
     const b = document.createElement("button");
     b.textContent = c;
-    if (c === currentCourse) { b.classList.add("active"); b.style.background = HUB_DATA.courses[c].color; b.style.borderColor = HUB_DATA.courses[c].color; }
+    b.dataset.course = slugOf(c);
+    if (c === currentCourse) b.classList.add("active");
     b.onclick = () => { currentCourse = c; localStorage.setItem(LS("course"), c); renderPills(); renderTrack(); };
     $("pills").appendChild(b);
   });
@@ -659,86 +841,86 @@ function renderTrack() {
   const ns = allNodes(currentCourse);
   const doneCt = ns.filter(nodeDone).length;
   const r = runway(currentCourse);
-  const paceTxt = r.days >= 99 ? "complete" : r.days < 0 ? `${-r.days}d BEHIND` : `+${r.days}d runway`;
-  $("trackmeta").innerHTML = `<div class="card" style="border-left:4px solid ${info.color}">
-    <h2>${info.full}</h2>
-    <div class="track-meta">${info.who}</div>
-    <div class="track-meta">${doneCt}/${ns.length} nodes gold - pace: <span style="color:${r.days < 0 ? "var(--danger)" : r.days >= 7 ? "var(--ok)" : "var(--warn)"}">${paceTxt}</span> - single tap opens Canvas, DOUBLE tap marks done</div></div>`;
-  renderPath($("track"), HUB_DATA.tracks[currentCourse], currentCourse);
+  const paceTxt = r.complete ? "COMPLETE" : r.days < 0 ? `${-r.days}D BEHIND` : `+${r.days}D RUNWAY`;
+  const header = [{ unit: info.full, sub: `${info.who} - ${doneCt}/${ns.length} gold - ${paceTxt}`, course: currentCourse, nodes: [] }];
+  renderPath($("track"), header.concat(HUB_DATA.tracks[currentCourse]), currentCourse);
 }
 
-// ---------- HEATMAP ----------
-(function renderHeat() {
-  const start = new Date(HUB_DATA.year + "-08-24T00:00:00"); // Mon of week 1
-  const weeks = 18; // through Dec 20+
+// ---------- heatmap ----------
+function renderHeat() {
+  const start = new Date(HUB_DATA.year + "-08-24T00:00:00");
+  const weeks = 18;
   const wk = [];
-  for (let w = 0; w < weeks; w++) wk.push({ days: [0,0,0,0,0,0,0], total: 0, mon: new Date(start.getTime() + w * 7 * 86400000) });
+  for (let w = 0; w < weeks; w++) wk.push({ days:[0,0,0,0,0,0,0], total:0, hadAny:false, mon:new Date(start.getTime() + w*7*86400000), items:[] });
   Object.keys(HUB_DATA.tracks).forEach(c => allNodes(c).forEach(n => {
-    if (nodeDone(n)) return; // remaining load only
     const dt = dateOf(n[2]);
-    const w = Math.floor((dt - start) / (7 * 86400000));
-    if (w >= 0 && w < weeks) {
-      const dow = (dt.getDay() + 6) % 7;
-      const wt = HUB_DATA.weightsByKind[n[3]] || 2;
-      wk[w].days[dow] += wt; wk[w].total += wt;
-    }
+    const w = Math.floor((dt - start) / (7*86400000));
+    if (w < 0 || w >= weeks) return;
+    wk[w].hadAny = true;
+    if (nodeDone(n)) return;
+    const dow = (dt.getDay() + 6) % 7;
+    const wt = HUB_DATA.weightsByKind[n[3]] || 2;
+    wk[w].days[dow] += wt; wk[w].total += wt;
+    wk[w].items.push({ c, n });
   }));
   const maxDay = Math.max(1, ...wk.flatMap(w => w.days));
   const maxWk = Math.max(1, ...wk.map(w => w.total));
-  const cellColor = v => {
-    if (!v) return "var(--panel2)";
-    const t = Math.min(1, v / maxDay);
-    if (t < .34) return "#1c4a2a"; if (t < .67) return "#2f7d3f"; return "#5fd68b";
-  };
+  const nowW = Math.floor((TODAY - start) / (7*86400000));
+  const lvl = v => !v ? 0 : v < maxDay*.34 ? 1 : v < maxDay*.67 ? 2 : 3;
   $("heat").innerHTML = wk.map((w, i) => {
-    const hot = w.total >= maxWk * .7, easy = w.total > 0 && w.total <= maxWk * .25;
+    const hot = w.total >= maxWk*.7, easy = w.total > 0 && w.total <= maxWk*.25;
+    const banked = w.hadAny && w.total === 0;
     const label = (w.mon.getMonth()+1) + "/" + w.mon.getDate();
-    return `<div class="heat-week">
-      ${w.days.map(v => `<div class="heat-cell" style="background:${cellColor(v)}" title="${v ? "load " + v : ""}"></div>`).join("")}
-      <span class="heat-wk-total ${hot ? "hot" : easy ? "easy" : ""}">${w.total ? Math.round(w.total) : ""}</span>
-      <span class="heat-wk-label">${label}</span></div>`;
+    return `<div class="heat-week ${i === nowW ? "now" : ""} ${banked ? "banked" : ""}" data-w="${i}">
+      ${w.days.map(v => `<span class="heat-cell" data-load="${lvl(v)}"></span>`).join("")}
+      <span class="heat-wk-total ${hot ? "hot" : easy ? "easy" : ""}">${w.total ? Math.round(w.total) : banked ? "[x]" : ""}</span>
+      <span class="heat-wk-label">${i === nowW ? "NOW" : label}</span></div>`;
   }).join("");
-  const hotWeeks = wk.filter(w => w.total >= maxWk * .7).map(w => (w.mon.getMonth()+1) + "/" + w.mon.getDate());
-  const easyWeeks = wk.filter(w => w.total > 0 && w.total <= maxWk * .25).map(w => (w.mon.getMonth()+1) + "/" + w.mon.getDate());
-  $("heatlegend").innerHTML = `rows = Mon..Sun. (!) heavy weeks: <span class="m-danger">${hotWeeks.join(", ") || "none"}</span> - get-ahead weeks: <span class="m-ok">${easyWeeks.join(", ") || "none"}</span>. Finishing items early drains this map.`;
-})();
+  document.querySelectorAll(".heat-week").forEach(elw => elw.onclick = () => {
+    const w = wk[+elw.dataset.w];
+    const label = (w.mon.getMonth()+1) + "/" + w.mon.getDate();
+    $("heatpin").innerHTML = w.items.length
+      ? `<b>week of ${label}</b> - ` + w.items.map(x => `<span data-course="${slugOf(x.c)}"><span class="due-course">${x.c}</span></span> ${x.n[1]} (${x.n[2].replace("-","/")})`).join(" &nbsp;|&nbsp; ")
+      : `<b>week of ${label}</b> - clear. Banked or empty.`;
+  });
+}
 
 // ---------- queue ----------
+function whenParts(d) {
+  const n = Math.round((new Date(d + "T00:00:00") - TODAY) / 86400000);
+  const abs = new Date(d + "T00:00:00").toLocaleDateString("en-US", { weekday:"short", month:"numeric", day:"numeric" });
+  if (n < 0) return [`${-n}D OVERDUE`, "overdue"];
+  if (n === 0) return ["DUE TODAY", "today"];
+  return [`${abs} <span class="rel">- ${n}d</span>`, n <= 3 ? "soon" : "later"];
+}
+function renderQueue() {
+  const el = $("queue"); el.innerHTML = "";
+  HUB_DATA.queue.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "due-row";
+    row.dataset.course = slugOf(item.course);
+    const done = localStorage.getItem(LS("done." + item.id)) === "1";
+    if (done) row.classList.add("done");
+    const [w, cls] = whenParts(item.due);
+    row.innerHTML = `<label class="hit"><input type="checkbox" ${done ? "checked" : ""}></label>
+      <span class="due-when ${done ? "later" : cls}">${done ? "[x] done" : w}</span>
+      <span class="txt"><span class="due-course">${item.course}</span> ${item.txt}
+        ${item.link ? `<a class="golink" href="${item.link}" target="_blank">open -></a>` : ""}
+        ${item.link && IS_MOBILE && appLink(item.link) ? `<a class="golink" href="${appLink(item.link)}">app -></a>` : ""}
+        ${item.note ? `<details class="steps"><summary>-> steps</summary><div class="note ${item.note.startsWith("(!)") ? "hot" : ""}">${item.note}</div></details>` : ""}
+      </span>
+      <span class="pts-wrap">${item.pts ? `<span class="pts-chip ${item.pts > 50 ? "big" : ""}">${item.pts} pts</span>` : ""}</span>`;
+    row.querySelector("input").onchange = e => {
+      localStorage.setItem(LS("done." + item.id), e.target.checked ? "1" : "0");
+      rerenderAll();
+    };
+    el.appendChild(row);
+  });
+}
 const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 function appLink(url) {
   return /^https:\/\/slcc\.instructure\.com/.test(url) ? url.replace(/^https:\/\//, "canvas-courses://") : null;
 }
-function daysLeft(d) { return Math.round((new Date(d + "T00:00:00") - TODAY) / 86400000); }
-function whenLabel(d) {
-  const n = daysLeft(d);
-  if (n < 0) return [`${-n}d OVERDUE`, "overdue"];
-  if (n === 0) return ["DUE TODAY", "today"];
-  if (n === 1) return ["tomorrow", "soon"];
-  if (n <= 3) return [`in ${n} days`, "soon"];
-  return [new Date(d + "T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"}), "later"];
-}
-HUB_DATA.queue.forEach(item => {
-  const row = document.createElement("label");
-  row.className = "due-row";
-  const done = localStorage.getItem(LS("done." + item.id)) === "1";
-  if (done) row.classList.add("done");
-  const [w, cls] = whenLabel(item.due);
-  row.innerHTML = `<input type="checkbox" ${done ? "checked" : ""}>
-    <span class="due-when ${done ? "later" : cls}">${done ? "[x] done" : w}</span>
-    <span class="txt"><span class="due-course">${item.course}</span> ${item.txt}
-      ${item.pts ? `<span class="pts">(${item.pts} pts)</span>` : ""}
-      ${item.link ? `<a class="golink" href="${item.link}" target="_blank">open -></a>` : ""}
-      ${item.link && IS_MOBILE && appLink(item.link) ? `<a class="golink" href="${appLink(item.link)}">app -></a>` : ""}
-      ${item.note ? `<div class="note ${item.note.startsWith("(!)") ? "hot" : ""}">${item.note}</div>` : ""}
-    </span>`;
-  row.querySelectorAll("a").forEach(a => a.addEventListener("click", e => e.stopPropagation()));
-  row.querySelector("input").onchange = e => {
-    localStorage.setItem(LS("done." + item.id), e.target.checked ? "1" : "0");
-    row.classList.toggle("done", e.target.checked);
-    row.querySelector(".due-when").textContent = e.target.checked ? "[x] done" : whenLabel(item.due)[0];
-  };
-  $("queue").appendChild(row);
-});
 
 // ---------- watches ----------
 HUB_DATA.watches.forEach(w => {
@@ -761,10 +943,10 @@ function buildOrder() {
 }
 function renderCard() {
   const total = HUB_DATA.decks[deckName].length, left = order.length;
-  if (!left) { $("fc").innerHTML = `<span><span class="side-label">DECK CLEAR</span>All ${total} cards retired. Hit "reset deck" to run it again.</span>`; $("fcp").textContent = `${total}/${total} retired`; return; }
+  if (!left) { $("fc").innerHTML = `<span><span class="side-label">Deck clear</span>All ${total} cards banked. "reset deck" runs it again.</span>`; $("fcp").innerHTML = `<b>${total} banked</b> of ${total}`; return; }
   const card = HUB_DATA.decks[deckName][order[pos % order.length]];
-  $("fc").innerHTML = `<span><span class="side-label">${showBack ? "ANSWER" : "QUESTION"}</span>${showBack ? card[1] : card[0]}</span>`;
-  $("fcp").textContent = `${total - left} of ${total} retired - ${left} in rotation`;
+  $("fc").innerHTML = `<span><span class="side-label">${showBack ? "Back" : "Front"}</span>${showBack ? card[1] : card[0]}</span>`;
+  $("fcp").innerHTML = `<b>${total - left} banked</b> - ${left} in rotation`;
 }
 Object.keys(HUB_DATA.decks).forEach((name, i) => {
   const b = document.createElement("button");
@@ -788,31 +970,46 @@ $("again").onclick = () => { if (!deckName || !order.length) return; pos++; show
 $("reset").onclick = () => { if (!deckName) return; setRetired(new Set()); buildOrder(); renderCard(); };
 
 // ---------- dates / degree / money ----------
-$("dates").innerHTML = "<tr><th>DATE</th><th>WHAT</th></tr>" + HUB_DATA.dates.map(([d, w]) =>
-  `<tr><td class="k ${d.startsWith("(!)") ? "m-warn marker" : ""}">${d}</td><td>${w}</td></tr>`).join("");
-(function () {
+$("dates").innerHTML = "<tr><th></th><th>Date</th><th>What</th></tr>" + HUB_DATA.dates.map(([d, flag, w]) =>
+  `<tr><td class="flag ${flag ? "m-warn" : ""}">${flag}</td><td class="k">${d}</td><td>${w}</td></tr>`).join("");
+(function renderDegree() {
   const g = HUB_DATA.degree, el = $("degree");
-  [g.total, g.genEd, g.csis].forEach(x => {
-    const pct = Math.round(100 * x.done / x.target);
-    el.innerHTML += `<div style="margin-bottom:12px"><div class="bar"><i class="${pct >= 75 ? "g" : ""}" style="width:${pct}%"></i></div>
-      <div class="bar-label">${x.label} - ${pct}%</div></div>`;
-  });
-  el.innerHTML += `<div class="note" style="margin-top:10px"><span class="marker m-ok">-></span> ${g.springPlan}</div>`;
+  const wall = (label, earned, prog, plan, target, big) => {
+    const total = Math.max(target, earned + prog + plan);
+    let cells = "";
+    for (let i = 0; i < total; i++) {
+      const cls = i < earned ? "earned" : i < earned + prog ? "prog" : i < earned + prog + plan ? "plan" : "";
+      cells += `<span class="brick ${cls}"></span>`;
+    }
+    return `<div class="brickrow">
+      ${big ? `<div class="wall-head">${earned} <small>earned</small> + ${prog} <small>in progress</small> / ${target}</div>`
+            : `<div class="caps" style="color:var(--dim); margin-bottom:6px">${label} - ${earned}+${prog} of ${target}</div>`}
+      <div class="bricks">${cells}</div>
+      ${big ? `<div class="wall-mark caps">SUMMER 2027 WALL</div>` : ""}
+      <div class="brick-label">gold = earned - hatched = this fall - dashed = Spring 2027 plan</div>
+    </div>`;
+  };
+  el.innerHTML = wall("Total", g.earned, g.inProgress, g.planned, g.target, true) +
+    g.rows.map(r => wall(r.label, r.earned, r.inProgress, r.planned, r.target, false)).join("") +
+    `<div class="note"><span class="marker m-ok">-></span> ${g.springPlan}</div>`;
 })();
-$("money").innerHTML = "<table>" + HUB_DATA.money.map(([k, v]) => `<tr><td class="k">${k}</td><td>${v}</td></tr>`).join("") + "</table>";
+$("money").innerHTML = "<table>" + HUB_DATA.money.map(([k, amt, note]) =>
+  `<tr><td>${k}</td><td class="amount">${amt}</td><td class="note" style="margin:0">${note}</td></tr>`).join("") + "</table>";
 
-// ---------- boot / rerender ----------
+$("stamp").textContent = "data updated " + HUB_DATA.updated + ".";
+
+// ---------- boot / in-place rerender ----------
 function rerenderAll() {
-  renderWeekPath(); renderPills(); renderTrack();
-  // pace + heat rebuild
-  const p = $("pace"); p.innerHTML = ""; // re-run IIFE logic
-  location.hash = ""; // noop
-  // simplest: full reload keeps state via localStorage
-  window.location.reload();
+  const y = scrollY;
+  renderQueue(); renderPace(); renderWeekPath(); renderPills(); renderTrack(); renderHeat();
+  requestAnimationFrame(() => scrollTo(0, y));
 }
+renderQueue();
+renderPace();
 renderWeekPath();
 renderPills();
 renderTrack();
+renderHeat();
 </script>
 </body>
 </html>
