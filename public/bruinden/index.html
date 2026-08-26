@@ -38,6 +38,9 @@
   .pts { color: var(--dim); font-size: 12px; font-family: var(--mono); }
   .note { color: var(--dim); font-size: 13px; margin-top: 4px; }
   .note.hot { color: var(--warn); }
+  .note a, .golink { color: var(--accent); font-family: var(--mono); font-size: 12px; text-decoration: none; }
+  .note a:hover, .golink:hover { text-decoration: underline; }
+  .golink { margin-left: 8px; white-space: nowrap; }
   .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; }
   .course-card h3 { font-size: 14px; }
   .course-card .fills { color: var(--ok); font-size: 12px; font-family: var(--mono); margin-bottom: 6px; }
@@ -152,19 +155,30 @@ const HUB_DATA = {
   headline: "Fall 2026 - week 1 of 16. Two semesters to the degree. | (!) PHIL quiz due TONIGHT",
   queue: [
     { id:"phil-q1", due:"2026-08-26", course:"PHIL", txt:"Quiz 1: Syllabus/Plagiarism/Orientation - needs 100%, unlimited retakes, unlocks the course", pts:10,
+      link:"https://slcc.instructure.com/courses/1274282/modules",
       note:"Path: Module 1 -> read Welcome + Orientation (done, viewed) -> open Syllabus, scroll to 100%, click Acknowledge -> view Etiquette + Gen-AI + Schedule pages -> watch 2 short videos -> quiz. Crib deck in STUDY tab." },
-    { id:"math-rc", due:"2026-08-27", course:"MATH", txt:"Readiness Check: Rounding/Rates/Proportions/Percents - score 7/10+ to unlock unit", pts:10, note:"Retake path = Post-Check on Fri if needed." },
-    { id:"phil-gd1", due:"2026-08-28", course:"PHIL", txt:"Group Discussion #1: Introduce Yourself (initial post)", pts:10 },
-    { id:"math-orient", due:"2026-08-28", course:"MATH", txt:"Orientation items: intro discussion + practice submission + Canvas-settings quiz + Post-Check", pts:30 },
-    { id:"math-disc", due:"2026-08-28", course:"MATH", txt:"Discussion: Percentages", pts:10 },
+    { id:"math-rc", due:"2026-08-27", course:"MATH", txt:"Readiness Check: Rounding/Rates/Proportions/Percents - score 7/10+ to unlock unit", pts:10,
+      link:"https://slcc.instructure.com/courses/1274852/modules", note:"Retake path = Post-Check on Fri if needed." },
+    { id:"phil-gd1", due:"2026-08-28", course:"PHIL", txt:"Group Discussion #1: Introduce Yourself (initial post)", pts:10,
+      link:"https://slcc.instructure.com/courses/1274282/modules" },
+    { id:"math-orient", due:"2026-08-28", course:"MATH", txt:"Orientation items: intro discussion + practice submission + Canvas-settings quiz + Post-Check", pts:30,
+      link:"https://slcc.instructure.com/courses/1274852/modules" },
+    { id:"math-disc", due:"2026-08-28", course:"MATH", txt:"Discussion: Percentages", pts:10,
+      link:"https://slcc.instructure.com/courses/1274852/modules" },
     { id:"csis2470-m0", due:"2026-08-30", course:"CSIS 2470", txt:"ALL of Module 0 - lecture quiz, Who Are We discussion, local env screenshot, REMOTE SERVER (60pts), summary quiz. NO GRACE PERIOD.", pts:130,
-      note:"(!) Local folder + index.html already created at ~/Desktop/csis2470/ - screenshot it for Asg #3. For #4: sign up at infinityfree.net (or HostGator paid), upload index.html to public_html/csis2470/, submit URL then RESUBMIT with FileZilla screenshot." },
+      link:"https://slcc.instructure.com/courses/1273912/modules",
+      note:'(!) Local folder + index.html already created at ~/Desktop/csis2470/ - screenshot it for <a href="https://slcc.instructure.com/courses/1273912/assignments/19074889" target="_blank">Asg #3</a>. For <a href="https://slcc.instructure.com/courses/1273912/assignments/19074890" target="_blank">Asg #4</a>: sign up at infinityfree.net (or HostGator paid), upload index.html to public_html/csis2470/, submit URL then RESUBMIT with FileZilla screenshot.' },
     { id:"csis2320-setup", due:"2026-08-30", course:"CSIS 2320", txt:"START HERE -> CompTIA Store account + SheerID student validation + buy Security Pro 8.0 (self-set deadline; course is due-at-end but grade sits at F until work lands)", pts:0,
+      link:"https://slcc.instructure.com/courses/1273938",
       note:"Do SheerID BEFORE buying or you pay retail. Validation lasts 1 year." },
-    { id:"geog-intro", due:"2026-08-31", course:"GEOG", txt:"Getting to Know You discussion", pts:15, note:"Week-1 login requirement already satisfied 8/25." },
-    { id:"csis2470-m1l1", due:"2026-08-31", course:"CSIS 2470", txt:"Module 1 Lecture #1 quiz: Variables, Operators, Arrays", pts:6 },
-    { id:"phil-gd1c", due:"2026-08-31", course:"PHIL", txt:"Group Discussion #1 comments (reply to group)", pts:0 },
-    { id:"math-proctor", due:"2026-09-10", course:"MATH", txt:"File Remote & Distance Proctoring request (slcc.edu/testing/proctoring) for Midterm 1 - from Portland, approved site ~$25-40/exam", pts:0,
+    { id:"geog-intro", due:"2026-08-31", course:"GEOG", txt:"Getting to Know You discussion", pts:15,
+      link:"https://slcc.instructure.com/courses/1273585/modules", note:"Week-1 login requirement already satisfied 8/25." },
+    { id:"csis2470-m1l1", due:"2026-08-31", course:"CSIS 2470", txt:"Module 1 Lecture #1 quiz: Variables, Operators, Arrays", pts:6,
+      link:"https://slcc.instructure.com/courses/1273912/modules" },
+    { id:"phil-gd1c", due:"2026-08-31", course:"PHIL", txt:"Group Discussion #1 comments (reply to group)", pts:0,
+      link:"https://slcc.instructure.com/courses/1274282/modules" },
+    { id:"math-proctor", due:"2026-09-10", course:"MATH", txt:"File Remote & Distance Proctoring request for Midterm 1 - from Portland, approved site ~$25-40/exam", pts:0,
+      link:"https://www.slcc.edu/testing/proctoring.aspx",
       note:"(!) Only proctored class. Midterms Sep 24 / Oct 22 / Nov 18 / Dec 10. Self-set deadline: file 2 weeks before Midterm 1." },
   ],
   watches: [
@@ -331,8 +345,10 @@ HUB_DATA.queue.forEach(item => {
     <span class="due-when ${done ? "later" : cls}">${done ? "[x] done" : w}</span>
     <span class="txt"><span class="due-course">${item.course}</span> ${item.txt}
       ${item.pts ? `<span class="pts">(${item.pts} pts)</span>` : ""}
+      ${item.link ? `<a class="golink" href="${item.link}" target="_blank">open -></a>` : ""}
       ${item.note ? `<div class="note ${item.note.startsWith("(!)") ? "hot" : ""}">${item.note}</div>` : ""}
     </span>`;
+  row.querySelectorAll("a").forEach(a => a.addEventListener("click", e => e.stopPropagation()));
   row.querySelector("input").onchange = e => {
     localStorage.setItem(LS("done." + item.id), e.target.checked ? "1" : "0");
     row.classList.toggle("done", e.target.checked);
