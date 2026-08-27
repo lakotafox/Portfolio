@@ -177,7 +177,10 @@
     border-left:7px solid transparent; border-right:7px solid transparent; border-top:7px solid var(--bubble-bg); }
   @keyframes bounce { 0%,100% { transform:translateX(-50%) translateY(0); } 50% { transform:translateX(-50%) translateY(-6px); } }
   @media (prefers-reduced-motion: reduce) { .start-bubble { animation:none; } }
-  .path-legend { font:500 11px var(--mono); color:var(--dim); text-align:center; margin:8px 0 4px; }
+  .pnode .nicon { display:block; }
+  .path-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:6px 14px; font:500 11px var(--sans); color:var(--dim); margin:14px 0 4px; }
+  .leg-item { display:inline-flex; align-items:center; gap:4px; }
+  .leg-item .nicon { width:15px; height:15px; }
   .course-pills { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
   .course-pills button { border:none; background:var(--surface2); color:var(--dim); border-radius:999px; padding:8px 16px;
     font:700 13px var(--sans); cursor:pointer; box-shadow:0 3px 0 color-mix(in srgb, var(--line) 70%, black); }
@@ -295,7 +298,7 @@
   <section id="sec-now">
     <div class="now-grid">
       <div class="card">
-        <h2>Deadline queue <span class="tag">check off as you submit</span></h2>
+        <h2>Deadline queue <span class="tag">every graded item, soonest first - status from Canvas</span></h2>
         <div id="queue"></div>
       </div>
       <div class="card">
@@ -631,8 +634,24 @@ const dueLabel = mmdd => { const d = daysFromToday(mmdd);
 const nodeDone = n => n[5] === true;
 const allNodes = course => HUB_DATA.tracks[course].flatMap(u => u.nodes);
 const slugOf = course => HUB_DATA.courses[course].slug;
-const KIND_GLYPH = { page:"P", quiz:"Q", disc:"D", hw:"W", sa:"S", essay:"E", build:"B", exam:"E", boss:"F", setup:"+", target:"T" };
-const LEGEND = "Q quiz - D disc - W hwk - S sig - B build - E essay/exam - F final - P pages - T target";
+// ---------- node icons (line-drawn SVG, inherit node color) ----------
+const ICON_PATHS = {
+  quiz:  '<rect x="5" y="3.5" width="14" height="17" rx="2.2"/><path d="M9 3.5h6v2.6H9z"/><path d="M8.4 12.6l2.3 2.3 4.9-4.9"/>',
+  disc:  '<path d="M4 5.5h16v9H9.5L5.5 18v-3.5H4z"/><path d="M8 9h8M8 11.5h5"/>',
+  hw:    '<path d="M14.5 4.2l5.3 5.3L9 20.3l-5.3.9.9-5.3z"/><path d="M12.8 5.9l5.3 5.3"/>',
+  sa:    '<path d="M12 3.4l2.6 5.4 5.9.9-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.9z"/>',
+  essay: '<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 8h7M8.5 11.5h7M8.5 15h4"/>',
+  exam:  '<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 8h7M8.5 11.5h7M8.5 15h4"/>',
+  build: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/>',
+  boss:  '<path d="M7 4h10v3a5 5 0 0 1-10 0z"/><path d="M7 5H4v1.5a3 3 0 0 0 3 3M17 5h3v1.5a3 3 0 0 1-3 3"/><path d="M12 12v4M9 20h6M10.5 16.5h3"/>',
+  setup: '<circle cx="12" cy="12" r="3.2"/><path d="M12 4v2.6M12 17.4V20M4 12h2.6M17.4 12H20M6.4 6.4l1.9 1.9M15.7 15.7l1.9 1.9M17.6 6.4l-1.9 1.9M8.3 15.7l-1.9 1.9"/>',
+  target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.4"/><circle cx="12" cy="12" r="1.2"/>',
+  page:  '<path d="M12 6c-2-1.4-5-1.4-7.5-.4v11.8c2.5-1 5.5-1 7.5.4 2-1.4 5-1.4 7.5-.4V5.6c-2.5-1-5.5-1-7.5.4z"/><path d="M12 6v11.8"/>',
+  done:  '<path d="M5 12.6l4.6 4.6L19.5 7.3"/>',
+};
+const KINDS = [["quiz","quiz"],["disc","discussion"],["hw","homework"],["sa","signature"],["essay","essay"],["exam","exam"],["build","build"],["boss","final"],["target","target"],["page","reading"]];
+function kindSVG(kind, big) { const p = ICON_PATHS[kind] || ICON_PATHS.essay; const s = big ? 40 : 30;
+  return `<svg class="nicon" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`; }
 
 // ---------- theme ----------
 const lamp = $("lamp");
@@ -743,7 +762,7 @@ function renderPath(el, units, courseOf, opts) {
       const off = OFFSETS[i++ % 8] * 40;
       const boss = n[3] === "boss" || n[3] === "exam";
       const state = done ? "done" : (isActive || opts.week) ? "active" : "upcoming";
-      const glyph = done ? "[x]" : KIND_GLYPH[n[3]] || "?";
+      const glyph = done ? kindSVG("done", boss) : kindSVG(n[3], boss);
       const link = n[4] || HUB_DATA.courses[course].home;
       const wrap = document.createElement("div");
       wrap.className = "pnode-wrap";
@@ -761,7 +780,7 @@ function renderPath(el, units, courseOf, opts) {
   });
   const leg = document.createElement("div");
   leg.className = "path-legend";
-  leg.textContent = LEGEND;
+  leg.innerHTML = KINDS.map(([k, word]) => `<span class="leg-item">${kindSVG(k)}${word}</span>`).join("");
   el.appendChild(leg);
 }
 
