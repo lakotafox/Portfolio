@@ -396,7 +396,7 @@
 // NEVER rename node ids (orphans Lakota's progress).
 // ============================================================
 const HUB_DATA = {
-  updated: "2026-08-27 - sweep",
+  updated: "2026-08-27 - 2320 paced",
   year: 2026,
   week: 1, weeksTotal: 16,
   wallDate: "2027-08-06",
@@ -405,7 +405,7 @@ const HUB_DATA = {
     "PHIL": { slug:"phil", full:"PHIL 1000 - Intro to Philosophy", who:"Greg Spendlove - no exams, essays due Sundays", home:"https://slcc.instructure.com/courses/1274282/modules" },
     "MATH": { slug:"math", full:"MATH 1035 - Quantitative Reasoning", who:"John Nelson - 4 proctored midterms, office hrs TW 7-9pm", home:"https://slcc.instructure.com/courses/1274852/modules" },
     "CSIS 2470": { slug:"c2470", full:"CSIS 2470 - Advanced JavaScript", who:"Jeff Stone - big builds, no proctoring", home:"https://slcc.instructure.com/courses/1273912/modules" },
-    "CSIS 2320": { slug:"c2320", full:"CSIS 2320 - Network Security (E-retake)", who:"Rod Buhler - TestOut, real due Dec 10; weekly targets padded to Fridays", home:"https://slcc.instructure.com/courses/1273938" },
+    "CSIS 2320": { slug:"c2320", full:"CSIS 2320 - Network Security (E-retake)", who:"Rod Buhler - TestOut Security Pro, hard due Dec 17; SELF-SET weekly targets so it can't slide to December (retake - prior E)", home:"https://slcc.instructure.com/courses/1273938" },
     "GEOG": { slug:"geog", full:"GEOG 1000 - Earth's Environments", who:"Kimberly Sowards - chapter quizzes Tuesdays", home:"https://slcc.instructure.com/courses/1273585/modules" },
   },
   tracks: {
@@ -533,23 +533,26 @@ const HUB_DATA = {
     "CSIS 2320": [
       { unit:"Setup (do NOW - grade sits at F until work lands)", nodes:[
         ["c3-setup","START HERE -> CompTIA account + SheerID + buy Security Pro 8.0","08-30","setup","https://slcc.instructure.com/courses/1273938",true] ]},
-      { unit:"TestOut weeks - PADDED targets (real due = Dec 10)", nodes:[
-        ["c3-w1","Week 1: Security intro + controls + simulator","08-28","target"],
-        ["c3-w2","Week 2: Attacks, social engineering, malware","09-04","target"],
-        ["c3-w3","Week 3: Crypto, hashing, PKI","09-11","target"],
-        ["c3-w4","Week 4: Access control, AD, Linux users, auth","09-18","target"],
-        ["c3-w5","Week 5: Network arch, firewalls, VPNs, switches","09-25","target"],
-        ["c3-w6","Week 6: Monitoring, IDS, attack analysis","10-02","target"],
-        ["c3-w7","Week 7: Vulnerability mgmt + pentesting","10-09","target"],
-        ["c3-w8","Week 8: Hardening, wireless, web app security","10-16","target"],
-        ["c3-w9","Week 9: Incident response, forensics, backups","10-23","target"],
-        ["c3-w10","Week 10: Virtualization, cloud, mobile","10-30","target"],
-        ["c3-w11","Week 11: Policies + change mgmt","11-06","target"],
-        ["c3-w12","Week 12: Risk mgmt + audits","11-13","target"],
-        ["c3-w13","Week 13: Data classification + personnel","11-20","target"] ]},
-      { unit:"Certification", nodes:[
-        ["c3-rev","Security Pro domain review + practice exam","12-04","exam"],
-        ["c3-fin","TestOut Security Pro FINAL EXAM","12-11","boss"] ]},
+      { unit:"UNBLOCK the 39% - do this week", nodes:[
+        ["c3-email","EMAIL Rod Buhler: credit/sync my prior TestOut progress (domains 1-5) to the new gradebook","08-29","target","https://slcc.instructure.com/courses/1273938"] ]},
+      { unit:"Sync prior work - domains 1-5 ALREADY DONE in TestOut, get them counting in Canvas", nodes:[
+        ["c3-w1","Domain 1 Security Concepts - confirm it counts in Canvas","09-05","target"],
+        ["c3-w2","Domain 2 Threats/Social Eng/Malware - confirm counts","09-12","target"],
+        ["c3-w3","Domain 3 Crypto/Hashing/PKI - confirm counts","09-19","target"],
+        ["c3-w4","Domain 4 Identity & Access Mgmt - confirm + redo any sub-100% labs","09-26","target"],
+        ["c3-w5","Domain 5 Network Architecture - confirm + redo sub-100% labs","10-03","target"] ]},
+      { unit:"NEW work - domains 6-13 (the real workload, 1 per week)", nodes:[
+        ["c3-w6","Domain 6 Resiliency & Site Security","10-10","target"],
+        ["c3-w7","Domain 7 Vulnerability Management","10-17","target"],
+        ["c3-w8","Domain 8 Network & Endpoint Security (BIG - give it extra)","10-24","target"],
+        ["c3-w9","Domain 9 Incident Response","10-31","target"],
+        ["c3-w10","Domain 10 Protocol, App & Cloud Security","11-07","target"],
+        ["c3-w11","Domain 11 Security Governance","11-14","target"],
+        ["c3-w12","Domain 12 Risk Management","11-21","target"],
+        ["c3-w13","Domain 13 Data Protection & Compliance (skip Thanksgiving wk)","12-05","target"] ]},
+      { unit:"Certification + buffer before the Dec 17 hard deadline", nodes:[
+        ["c3-rev","Security+ + Security Pro domain reviews + practice exams","12-10","exam"],
+        ["c3-fin","EVERYTHING 100% complete - 4-day buffer before Dec 17","12-13","boss"] ]},
     ],
     "GEOG": [
       { unit:"Orientation", nodes:[
