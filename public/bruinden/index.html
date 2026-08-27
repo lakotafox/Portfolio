@@ -103,8 +103,8 @@
   .due-row { display:grid; grid-template-columns:44px 96px 1fr auto; gap:8px; align-items:start; padding:10px 4px 10px 0;
     border-top:1px solid var(--line); box-shadow:inset 3px 0 0 var(--course, transparent); }
   .due-row:first-of-type { border-top:none; }
-  .due-row .hit { display:flex; align-items:center; justify-content:center; padding-top:2px; }
-  .due-row input { width:18px; height:18px; accent-color:var(--gold); cursor:pointer; }
+  .statusdot { font:700 13px/1 var(--mono); color:var(--dim); padding-top:3px; }
+  .statusdot.is-done { color:var(--gold); }
   .due-row.done .txt, .due-row.done .due-when { text-decoration:line-through; color:var(--dim); }
   .due-when { font:500 12px/1.4 var(--mono); font-variant-numeric:tabular-nums; padding-top:3px; }
   .due-when .rel { color:var(--dim); font-weight:400; }
@@ -304,7 +304,7 @@
       </div>
     </div>
     <div class="card">
-      <h2>This week <span class="tag">overdue + today + tomorrow - tap opens Canvas, [x] banks it</span></h2>
+      <h2>Next 2 weeks <span class="tag">overdue -> 14 days out, in order - work a week ahead - status from Canvas</span></h2>
       <div class="path" id="weekpath"></div>
     </div>
     <div class="plain-section">
@@ -626,8 +626,9 @@ const LS = k => "slccHub." + k;
 const TODAY = (() => { const t = new Date(); t.setHours(0,0,0,0); return t; })();
 const dateOf = mmdd => new Date(HUB_DATA.year + "-" + mmdd + "T00:00:00");
 const daysFromToday = mmdd => Math.round((dateOf(mmdd) - TODAY) / 86400000);
-const nodeDone = n => localStorage.getItem(LS("n." + n[0])) === "1" || n[5] === true;
-const setNodeDone = (n, v) => localStorage.setItem(LS("n." + n[0]), v ? "1" : "0");
+const dueLabel = mmdd => { const d = daysFromToday(mmdd);
+  return d < 0 ? `${-d}d late` : d === 0 ? "due today" : d === 1 ? "due tomorrow" : `due in ${d} days`; };
+const nodeDone = n => n[5] === true;
 const allNodes = course => HUB_DATA.tracks[course].flatMap(u => u.nodes);
 const slugOf = course => HUB_DATA.courses[course].slug;
 const KIND_GLYPH = { page:"P", quiz:"Q", disc:"D", hw:"W", sa:"S", essay:"E", build:"B", exam:"E", boss:"F", setup:"+", target:"T" };
@@ -647,7 +648,7 @@ syncLamp();
 // ---------- masthead + signal ----------
 $("mastsub").innerHTML = `WK ${HUB_DATA.week} OF ${HUB_DATA.weeksTotal} -> <span class="wall">SUMMER 2027 WALL</span>`;
 (function renderSignal() {
-  const undoneQ = HUB_DATA.queue.filter(q => q.done !== true && localStorage.getItem(LS("done." + q.id)) !== "1")
+  const undoneQ = HUB_DATA.queue.filter(q => q.done !== true)
     .sort((a,b) => a.due < b.due ? -1 : 1);
   const wallWeeks = Math.max(0, Math.round((new Date(HUB_DATA.wallDate + "T00:00:00") - TODAY) / (7 * 86400000)));
   let hot = 0, headline = "all clear this second", sub = "";
@@ -754,13 +755,7 @@ function renderPath(el, units, courseOf, opts) {
         ? `<div class="active-ring"><span class="start-bubble">${late ? "LATE - GO" : "NEXT"}</span>${nodeHtml}</div>`
         : nodeHtml;
       wrap.innerHTML = inner + `<div class="pnode-label"><b>${n[1]}</b>
-        <span${late ? ' style="color:var(--danger)"' : ""}>${late ? "was due " : "due "}${n[2].replace("-", "/")}</span>
-        <span class="mark" title="mark done">[${done ? "x" : " "}]</span></div>`;
-      wrap.querySelector(".mark").addEventListener("click", e => {
-        e.preventDefault(); e.stopPropagation();
-        setNodeDone(n, !nodeDone(n));
-        rerenderAll();
-      });
+        <span${late ? ' style="color:var(--danger)"' : ""}>${done ? "done" : dueLabel(n[2])}</span></div>`;
       el.appendChild(wrap);
     });
   });
@@ -771,15 +766,16 @@ function renderPath(el, units, courseOf, opts) {
 }
 
 // ---------- week path (overdue + today + tomorrow) ----------
+const WEEKPATH_DAYS = 14;
 function renderWeekPath() {
   const nodes = [];
   Object.keys(HUB_DATA.tracks).forEach(c => allNodes(c).forEach(n => {
     if (nodeDone(n)) return;
     const d = daysFromToday(n[2]);
-    if (d <= 1) { const copy = [...n]; copy.course = c; nodes.push(copy); }
+    if (d <= WEEKPATH_DAYS) { const copy = [...n]; copy.course = c; nodes.push(copy); }
   }));
   nodes.sort((a,b) => a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : 0);
-  if (!nodes.length) { $("weekpath").innerHTML = '<div class="note">Nothing overdue, due today, or due tomorrow. You are AHEAD - bank next week on the COURSES tab.</div>'; return; }
+  if (!nodes.length) { $("weekpath").innerHTML = '<div class="note">Nothing due in the next two weeks. You are AHEAD - look further out on the COURSES tab.</div>'; return; }
   renderPath($("weekpath"), [{ nodes }], null, { week: true });
 }
 
@@ -859,21 +855,17 @@ function renderQueue() {
     const row = document.createElement("div");
     row.className = "due-row";
     row.dataset.course = slugOf(item.course);
-    const done = item.done === true || localStorage.getItem(LS("done." + item.id)) === "1";
+    const done = item.done === true;
     if (done) row.classList.add("done");
     const [w, cls] = whenParts(item.due);
-    row.innerHTML = `<label class="hit"><input type="checkbox" ${done ? "checked" : ""}></label>
-      <span class="due-when ${done ? "later" : cls}">${done ? "[x] done" : w}</span>
+    row.innerHTML = `<span class="statusdot ${done ? "is-done" : ""}" title="${done ? "done (Canvas)" : "open"}">${done ? "[x]" : "[ ]"}</span>
+      <span class="due-when ${done ? "later" : cls}">${done ? "done" : w}</span>
       <span class="txt"><span class="due-course">${item.course}</span> ${item.txt}
         ${item.link ? `<a class="golink" href="${item.link}" target="_blank">open -></a>` : ""}
         ${item.link && IS_MOBILE && appLink(item.link) ? `<a class="golink" href="${appLink(item.link)}">app -></a>` : ""}
         ${item.note ? `<details class="steps"><summary>-> steps</summary><div class="note ${item.note.startsWith("(!)") ? "hot" : ""}">${item.note}</div></details>` : ""}
       </span>
       <span class="pts-wrap">${item.pts ? `<span class="pts-chip ${item.pts > 50 ? "big" : ""}">${item.pts} pts</span>` : ""}</span>`;
-    row.querySelector("input").onchange = e => {
-      localStorage.setItem(LS("done." + item.id), e.target.checked ? "1" : "0");
-      rerenderAll();
-    };
     el.appendChild(row);
   });
 }
