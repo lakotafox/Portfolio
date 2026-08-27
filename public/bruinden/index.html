@@ -383,9 +383,9 @@ const HUB_DATA = {
   tracks: {
     "PHIL": [
       { unit:"Module 1 - Orientation (gate week)", nodes:[
-        ["ph-syl","Syllabus: read 100% + Acknowledge","08-26","page","https://slcc.instructure.com/courses/1274282/modules"],
-        ["ph-etq","Etiquette + Gen-AI + Schedule pages","08-26","page","https://slcc.instructure.com/courses/1274282/modules"],
-        ["ph-q1","Quiz 1 (needs 100%)","08-26","quiz","https://slcc.instructure.com/courses/1274282/quizzes/4817571"],
+        ["ph-syl","Syllabus: read 100% + Acknowledge","08-26","page","https://slcc.instructure.com/courses/1274282/modules",true],
+        ["ph-etq","Etiquette + Gen-AI + Schedule pages","08-26","page","https://slcc.instructure.com/courses/1274282/modules",true],
+        ["ph-q1","Quiz 1 (needs 100%)","08-26","quiz","https://slcc.instructure.com/courses/1274282/quizzes/4817571",true],
         ["ph-gd1","GD#1 Introduce Yourself (post Fri, comments Mon)","08-28","disc","https://slcc.instructure.com/courses/1274282/assignments/18871118"] ]},
       { unit:"Module 2 - Philosophy & Logic", nodes:[
         ["ph-q2","Quiz 2: What is Philosophy","09-02","quiz"],
@@ -546,7 +546,7 @@ const HUB_DATA = {
     ],
   },
   queue: [
-    { id:"phil-q1", due:"2026-08-26", course:"PHIL", txt:"Quiz 1: Syllabus/Plagiarism/Orientation - needs 100%, unlimited retakes, unlocks the course", pts:10,
+    { id:"phil-q1", due:"2026-08-26", course:"PHIL", txt:"Quiz 1: Syllabus/Plagiarism/Orientation - needs 100%, unlimited retakes, unlocks the course", pts:10, done:true,
       link:"https://slcc.instructure.com/courses/1274282/quizzes/4817571",
       note:'(!) The quiz is LOCKED until 4 pages are viewed first (the link will list what\'s left). Unlock path, in order, on the <a href="https://slcc.instructure.com/courses/1274282/modules" target="_blank">Module 1 page</a>: 1. Course Syllabus (scroll to 100% + click Acknowledge) -> 2. Class Discussion Etiquette -> 3. Check Your Work for Gen-AI -> 4. Complete Course Schedule -> watch the 2 videos -> take the quiz. Welcome + Orientation already show Viewed. Crib deck in STUDY tab.' },
     { id:"math-rc", due:"2026-08-27", course:"MATH", txt:"Readiness Check: Rounding/Rates/Proportions/Percents - score 7/10+ to unlock unit", pts:10,
@@ -647,7 +647,7 @@ syncLamp();
 // ---------- masthead + signal ----------
 $("mastsub").innerHTML = `WK ${HUB_DATA.week} OF ${HUB_DATA.weeksTotal} -> <span class="wall">SUMMER 2027 WALL</span>`;
 (function renderSignal() {
-  const undoneQ = HUB_DATA.queue.filter(q => localStorage.getItem(LS("done." + q.id)) !== "1")
+  const undoneQ = HUB_DATA.queue.filter(q => q.done !== true && localStorage.getItem(LS("done." + q.id)) !== "1")
     .sort((a,b) => a.due < b.due ? -1 : 1);
   const wallWeeks = Math.max(0, Math.round((new Date(HUB_DATA.wallDate + "T00:00:00") - TODAY) / (7 * 86400000)));
   let hot = 0, headline = "all clear this second", sub = "";
@@ -859,7 +859,7 @@ function renderQueue() {
     const row = document.createElement("div");
     row.className = "due-row";
     row.dataset.course = slugOf(item.course);
-    const done = localStorage.getItem(LS("done." + item.id)) === "1";
+    const done = item.done === true || localStorage.getItem(LS("done." + item.id)) === "1";
     if (done) row.classList.add("done");
     const [w, cls] = whenParts(item.due);
     row.innerHTML = `<label class="hit"><input type="checkbox" ${done ? "checked" : ""}></label>
