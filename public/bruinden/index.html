@@ -254,10 +254,39 @@
 
   footer { color:var(--dim); font-size:11px; font-family:var(--sans); margin-top:30px; text-align:left; }
   .tw { overflow-x:auto; }
-  .now-grid { display:block; }
-  @media (min-width:860px) {
-    .now-grid { display:grid; grid-template-columns:5fr 4fr; gap:16px; align-items:start; }
+
+  /* NOW = path (main) + pace rail; grid so the rail floats alongside on desktop, stacks below on mobile */
+  #sec-now.active { display:grid; grid-template-columns:1fr; gap:20px; }
+  .now-main { min-width:0; }
+  #pacerail { background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; }
+  .pacerail-head { font:800 12px var(--sans); letter-spacing:.08em; color:var(--text); margin-bottom:10px; }
+  .pacerail-head span { display:block; font-weight:500; letter-spacing:0; color:var(--dim); font-size:11px; margin-top:2px; }
+  #pacerail .pace-row { grid-template-columns:1fr auto; gap:3px 8px; padding:8px 0; }
+  #pacerail .pace-name { grid-row:1; grid-column:1; }
+  #pacerail .pace-days { grid-row:1; grid-column:2; }
+  #pacerail .pace-gauge { grid-row:2; grid-column:1 / 3; }
+  #pacerail .pace-note { grid-row:3; grid-column:1 / 3; white-space:normal; margin-top:0; line-height:1.35; }
+  @media (min-width:1080px) {
+    #sec-now.active { grid-template-columns:minmax(0,1fr) 250px; gap:24px; align-items:start; }
+    #pacerail { position:sticky; top:16px; }
   }
+
+  /* node hover tooltip */
+  .pnode-wrap { position:relative; }
+  .ptip { display:none; position:absolute; left:50%; transform:translateX(-50%); bottom:calc(100% + 8px); width:min(260px, 78vw); z-index:30;
+    background:var(--surface); border:1px solid var(--line); border-top:3px solid var(--course, var(--accent));
+    border-radius:var(--r-sm); padding:11px 13px; text-align:left; box-shadow:0 10px 34px rgba(0,0,0,.4); }
+  .pnode-wrap:hover .ptip { display:block; }
+  .ptip-top { display:flex; align-items:center; gap:7px; margin-bottom:6px; }
+  .ptip-course { font:700 11px var(--sans); color:var(--course, var(--accent)); }
+  .ptip-kind { font:500 11px var(--mono); color:var(--dim); text-transform:uppercase; letter-spacing:.04em; }
+  .ptip-title { font:600 13px/1.4 var(--sans); color:var(--text); margin-bottom:5px; }
+  .ptip-due { font:700 12px var(--mono); color:var(--dim); margin-bottom:6px; }
+  .ptip-due.hot { color:var(--danger); }
+  .ptip-note { font:400 12px/1.5 var(--sans); color:var(--dim); margin-bottom:8px; }
+  .ptip-note.hot { color:var(--text); }
+  .ptip-note a { color:var(--gold); }
+  .ptip-go { font:700 12px var(--sans); color:var(--gold); text-decoration:none; }
   @media (max-width:560px) {
     body { padding:14px 8px 90px; font-size:14px; }
     nav { position:fixed; top:auto; bottom:0; left:0; right:0; z-index:20; border-top:1px solid var(--line);
@@ -296,28 +325,24 @@
   <nav id="nav"></nav>
 
   <section id="sec-now">
-    <div class="now-grid">
+    <div class="now-main">
       <div class="card">
-        <h2>Deadline queue <span class="tag">every graded item, soonest first - status from Canvas</span></h2>
-        <div id="queue"></div>
+        <h2>Next 2 weeks <span class="tag">overdue -> 14 days out, in order - hover a node for details - status from Canvas</span></h2>
+        <div class="path" id="weekpath"></div>
       </div>
-      <div class="card">
-        <h2>Pace <span class="tag">runway to next undone - goal: +7d</span></h2>
-        <div id="pace"></div>
+      <div class="plain-section">
+        <div class="caps">Semester load - remaining effort per day, plan the light weeks</div>
+        <div class="heat-flex">
+          <div class="heat-dayl"><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span></span></div>
+          <div class="heat-scroll"><div class="heat-grid" id="heat"></div></div>
+        </div>
+        <div class="heat-pin" id="heatpin">tap a week column to see its items</div>
       </div>
     </div>
-    <div class="card">
-      <h2>Next 2 weeks <span class="tag">overdue -> 14 days out, in order - work a week ahead - status from Canvas</span></h2>
-      <div class="path" id="weekpath"></div>
-    </div>
-    <div class="plain-section">
-      <div class="caps">Semester load - remaining effort per day, plan the light weeks</div>
-      <div class="heat-flex">
-        <div class="heat-dayl"><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span></span></div>
-        <div class="heat-scroll"><div class="heat-grid" id="heat"></div></div>
-      </div>
-      <div class="heat-pin" id="heatpin">tap a week column to see its items</div>
-    </div>
+    <aside id="pacerail">
+      <div class="pacerail-head">PACE <span>runway to next - goal +7d</span></div>
+      <div id="pace"></div>
+    </aside>
   </section>
 
   <section id="sec-courses">
@@ -773,8 +798,17 @@ function renderPath(el, units, courseOf, opts) {
       const inner = (isActive && !done)
         ? `<div class="active-ring"><span class="start-bubble">${late ? "LATE - GO" : "NEXT"}</span>${nodeHtml}</div>`
         : nodeHtml;
+      const kindWord = (KINDS.find(k => k[0] === n[3]) || [,"item"])[1];
+      const qi = queueByLink[n[4]];
+      const tip = `<div class="ptip" data-course="${slug}">
+        <div class="ptip-top"><span class="ptip-course">${course}</span> <span class="ptip-kind">${kindWord}</span>
+          ${qi && qi.pts ? `<span class="pts-chip ${qi.pts > 50 ? "big" : ""}">${qi.pts} pts</span>` : ""}</div>
+        <div class="ptip-title">${qi ? qi.txt : n[1]}</div>
+        <div class="ptip-due ${late ? "hot" : ""}">${done ? "done (Canvas)" : (late ? "LATE - " : "") + dueLabel(n[2])}</div>
+        ${qi && qi.note ? `<div class="ptip-note ${qi.note.startsWith("(!)") ? "hot" : ""}">${qi.note}</div>` : ""}
+        <a class="ptip-go" href="${link}" target="_blank">open in Canvas -></a></div>`;
       wrap.innerHTML = inner + `<div class="pnode-label"><b>${n[1]}</b>
-        <span${late ? ' style="color:var(--danger)"' : ""}>${done ? "done" : dueLabel(n[2])}</span></div>`;
+        <span${late ? ' style="color:var(--danger)"' : ""}>${done ? "done" : dueLabel(n[2])}</span></div>` + tip;
       el.appendChild(wrap);
     });
   });
@@ -868,26 +902,9 @@ function whenParts(d) {
   if (n === 0) return ["DUE TODAY", "today"];
   return [`${abs} <span class="rel">- ${n}d</span>`, n <= 3 ? "soon" : "later"];
 }
-function renderQueue() {
-  const el = $("queue"); el.innerHTML = "";
-  HUB_DATA.queue.forEach(item => {
-    const row = document.createElement("div");
-    row.className = "due-row";
-    row.dataset.course = slugOf(item.course);
-    const done = item.done === true;
-    if (done) row.classList.add("done");
-    const [w, cls] = whenParts(item.due);
-    row.innerHTML = `<span class="statusdot ${done ? "is-done" : ""}" title="${done ? "done (Canvas)" : "open"}">${done ? "[x]" : "[ ]"}</span>
-      <span class="due-when ${done ? "later" : cls}">${done ? "done" : w}</span>
-      <span class="txt"><span class="due-course">${item.course}</span> ${item.txt}
-        ${item.link ? `<a class="golink" href="${item.link}" target="_blank">open -></a>` : ""}
-        ${item.link && IS_MOBILE && appLink(item.link) ? `<a class="golink" href="${appLink(item.link)}">app -></a>` : ""}
-        ${item.note ? `<details class="steps"><summary>-> steps</summary><div class="note ${item.note.startsWith("(!)") ? "hot" : ""}">${item.note}</div></details>` : ""}
-      </span>
-      <span class="pts-wrap">${item.pts ? `<span class="pts-chip ${item.pts > 50 ? "big" : ""}">${item.pts} pts</span>` : ""}</span>`;
-    el.appendChild(row);
-  });
-}
+// queue is the detail source for node hover tooltips, matched by shared Canvas link
+const queueByLink = {};
+HUB_DATA.queue.forEach(q => { if (q.link) queueByLink[q.link] = q; });
 const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 function appLink(url) {
   return /^https:\/\/slcc\.instructure\.com/.test(url) ? url.replace(/^https:\/\//, "canvas-courses://") : null;
@@ -972,10 +989,9 @@ $("stamp").textContent = "data updated " + HUB_DATA.updated + ".";
 // ---------- boot / in-place rerender ----------
 function rerenderAll() {
   const y = scrollY;
-  renderQueue(); renderPace(); renderWeekPath(); renderPills(); renderTrack(); renderHeat();
+  renderPace(); renderWeekPath(); renderPills(); renderTrack(); renderHeat();
   requestAnimationFrame(() => scrollTo(0, y));
 }
-renderQueue();
 renderPace();
 renderWeekPath();
 renderPills();
