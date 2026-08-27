@@ -619,7 +619,8 @@ const HUB_DATA = {
 };
 
 // ============================================================
-const SECTIONS = [["now","NOW"],["courses","COURSES"],["study","STUDY"],["dates","DATES"],["degree","DEGREE"],["money","MONEY"]];
+const SECTIONS = [["now","NOW"],["courses","COURSES"],["study","STUDY"],["dates","DATES"],["degree","DEGREE"],["money","MONEY"]]
+  .filter(([key]) => key !== "study" || Object.keys(HUB_DATA.decks).length);
 const $ = id => document.getElementById(id);
 const LS = k => "slccHub." + k;
 const TODAY = (() => { const t = new Date(); t.setHours(0,0,0,0); return t; })();
