@@ -1,3 +1,4 @@
+import DiceWordmark from './dice/DiceWordmark';
 const recommendations = [
   {
     id: 1,
@@ -23,7 +24,7 @@ const Recommendations = () => {
   return (
     <section className="recommendations" id="recommendations">
       <div className="container">
-        <h2 className="section-title">Recommendations</h2>
+        <DiceWordmark as="h2" className="section-title" text="Recommendations" />
 
         <div className="recommendations-grid">
           {recommendations.map((rec) => (

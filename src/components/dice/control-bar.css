@@ -1,0 +1,273 @@
+/* Dice control bar. Deliberately unlayered so it keeps its own look no matter
+ * what the roll does to the page around it — it is the one thing that must stay
+ * legible on every palette. Colours come from the rolled palette custom props
+ * (--p4-*), with hard fallbacks so it still renders before the first roll. */
+
+.p4d-bar-wrap {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 900;
+  display: flex;
+  justify-content: center;
+  padding: 0 12px 10px;
+  pointer-events: none;
+}
+
+.p4d-bar {
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  max-width: 100%;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 13px;
+  background: rgba(10, 10, 12, 0.86);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.p4d-knob,
+.p4d-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 6px 0 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #e8e8ea;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.p4d-knob:hover,
+.p4d-btn:hover { border-color: rgba(255, 255, 255, 0.32); background: rgba(255, 255, 255, 0.08); }
+
+.p4d-btn { padding: 0 9px; font-size: 10.5px; gap: 5px; }
+
+kbd {
+  display: inline-block;
+  min-width: 15px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--p4-acc, #a855f7) 22%, transparent);
+  color: var(--p4-acc, #a855f7);
+  font: 600 9.5px/1 ui-monospace, monospace;
+  text-align: center;
+}
+
+.p4d-label {
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8b8b93;
+}
+
+.p4d-value {
+  max-width: 11ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: #f2f2f4;
+}
+
+.p4d-swatches { display: inline-flex; gap: 2px; margin-left: 2px; }
+.p4d-swatches i { width: 8px; height: 8px; border-radius: 2px; }
+
+.p4d-count {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.p4d-sep { width: 1px; height: 20px; background: rgba(255, 255, 255, 0.12); margin: 0 2px; }
+
+.p4d-seg {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+.p4d-seg button {
+  padding: 5px 8px;
+  border: 0;
+  background: transparent;
+  color: #8b8b93;
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+.p4d-seg button:hover:not(:disabled) { color: #e8e8ea; }
+.p4d-seg button:disabled { opacity: 0.35; cursor: default; }
+.p4d-seg button.on {
+  background: color-mix(in srgb, var(--p4-acc, #a855f7) 22%, transparent);
+  color: var(--p4-acc, #a855f7);
+  font-weight: 600;
+}
+
+.p4d-dice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 28px;
+  border: 1px solid color-mix(in srgb, var(--p4-acc, #a855f7) 45%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--p4-acc, #a855f7) 15%, transparent);
+  color: var(--p4-acc, #a855f7);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.15s ease;
+}
+.p4d-dice:hover { transform: scale(1.1); }
+.p4d-dice:active { transform: rotate(180deg) scale(1.05); }
+
+@media (prefers-reduced-motion: reduce) {
+  .p4d-dice, .p4d-knob, .p4d-btn { transition: none; }
+  .p4d-dice:active { transform: none; }
+}
+
+/* Each knob now carries two arrows, so the row is much wider than it was.
+ * Below a very wide viewport the ALL-CAPS labels are the first thing to go —
+ * the hotkey badge, the value and the n/total already identify each knob, and
+ * the tooltip spells it out. Keeps everything on one line. */
+@media (max-width: 1700px) {
+  .p4d-group .p4d-label { display: none; }
+}
+
+@media (max-width: 1280px) {
+  .p4d-label { display: none; }
+  .p4d-pos { display: none; }
+}
+
+/* Tight screens: the bar is a nice-to-have, not a requirement. */
+@media (max-width: 640px) {
+  .p4d-bar { gap: 2px; padding: 5px 6px; }
+  .p4d-value { max-width: 8ch; }
+}
+
+/* "where am I in this list" — 17/83. Kept quiet so it reads as metadata, not
+ * as part of the value. */
+.p4d-pos {
+    margin-left: 1px;
+    color: #6f6f79;
+    font-size: 9.5px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.p4d-pos i {
+    font-style: normal;
+    opacity: 0.5;
+    padding: 0 1px;
+}
+
+/* ---- knob groups: ‹ [knob ▾] › ------------------------------------------ */
+.p4d-group {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.p4d-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #9a9aa4;
+  font: 600 14px/1 ui-monospace, monospace;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.p4d-step:hover:not(:disabled) { color: var(--p4-acc, #fff); border-color: rgba(255, 255, 255, 0.3); }
+.p4d-step:disabled { opacity: 0.28; cursor: default; }
+.p4d-step--lg { width: 24px; height: 30px; font-size: 16px; }
+
+.p4d-group .p4d-knob { border-radius: 7px; }
+.p4d-group.is-open .p4d-knob { border-color: var(--p4-acc, #a855f7); }
+
+.p4d-caret { color: #6f6f79; font-size: 8px; margin-left: 1px; }
+
+/* ---- the dropdown ------------------------------------------------------- */
+.p4d-menu {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: 232px;
+  max-height: 320px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 11px;
+  background: rgba(14, 14, 18, 0.97);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 16px 44px -10px rgba(0, 0, 0, 0.85);
+}
+
+.p4d-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #d5d5dc;
+  font: inherit;
+  font-size: 11.5px;
+  text-align: left;
+  cursor: pointer;
+}
+.p4d-menu-item:hover { background: rgba(255, 255, 255, 0.07); }
+.p4d-menu-item.is-on {
+  border-color: color-mix(in srgb, var(--p4-acc, #a855f7) 55%, transparent);
+  background: color-mix(in srgb, var(--p4-acc, #a855f7) 13%, transparent);
+  color: #fff;
+}
+
+.p4d-menu-dot {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+}
+.p4d-menu-item.is-on .p4d-menu-dot { background: var(--p4-acc, #a855f7); }
+
+.p4d-menu-name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p4d-menu-num { flex: 0 0 auto; color: #63636d; font-size: 9.5px; font-variant-numeric: tabular-nums; }
+.p4d-menu-empty { padding: 10px; color: #7a7a84; font-size: 11px; }
+
+/* ---- whole-look nav ----------------------------------------------------- */
+.p4d-nav { display: inline-flex; align-items: center; gap: 3px; }
+
+.p4d-favpos {
+  min-width: 34px;
+  text-align: center;
+  color: var(--p4-acc, #a855f7);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.p4d-favpos i { font-style: normal; opacity: 0.45; padding: 0 1px; }
+
+.p4d-btn.is-saved { color: var(--p4-acc, #a855f7); opacity: 1; cursor: default; }
+.p4d-btn:disabled { cursor: default; }

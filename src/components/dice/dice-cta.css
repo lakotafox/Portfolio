@@ -1,0 +1,26 @@
+/* The press target is identical across all six treatments, so the button never
+ * changes size or moves as the dice rolls — only its treatment changes. */
+.p4d-cta {
+    display: inline-flex;
+    margin-top: 2rem;
+}
+
+.p4d-press {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.75rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    background: none;
+    border: 0;
+}
+
+.p4d-cta-inline { display: inline-flex; }
+.p4d-cta-rel { position: relative; display: inline-block; }
+.p4d-cta-beacon { border-radius: 999px; }

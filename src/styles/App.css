@@ -24,22 +24,37 @@
     --accent-hover: #2563eb;
 }
 
+/* Dark theme colours.
+ *
+ * Each one defers to the rolled PUDDL3 P4RTS palette (--p4-*) and falls back to
+ * the original hard-coded value. That fallback is the safety net: if the dice
+ * never runs — JS disabled, an error, or the engine removed — the portfolio
+ * renders exactly as it always did. Theming the whole site is these 8 lines. */
 .dark-theme {
-    /* Dark theme colors */
-    --bg-primary: #0a0a0a;
-    --bg-secondary: #111111;
-    --text-primary: #ffffff;
-    --text-secondary: #a1a1aa;
-    --border-color: #27272a;
-    --card-bg: #18181b;
+    --bg-primary: var(--p4-bg, #0a0a0a);
+    --bg-secondary: var(--p4-bg-alt, #111111);
+    --text-primary: var(--p4-ink, #ffffff);
+    --text-secondary: var(--p4-muted, #a1a1aa);
+    --border-color: var(--p4-border, #27272a);
+    --card-bg: var(--p4-card, #18181b);
     --card-bg-rgb: 24, 24, 27;
-    --card-hover: #1f1f23;
+    --card-hover: var(--p4-card-hover, #1f1f23);
+    --accent: var(--p4-acc, #3b82f6);
+    --accent-hover: var(--p4-b, #2563eb);
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* This reset lives in @layer base ON PURPOSE. Unlayered CSS beats layered CSS,
+ * so as a plain `* { padding: 0 }` it silently zeroed out every Tailwind
+ * padding/margin utility used by the PUDDL3 P4RTS deep-tier components —
+ * they mounted with correct markup and no spacing at all. Inside @layer base
+ * the utilities layer can override it, while every other (unlayered) rule in
+ * this file still wins as before. Don't unwrap this. See styles/p4rts.css. */
+@layer base {
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 }
 
 body {
@@ -332,18 +347,6 @@ body:not(.dark-theme) .moon-icon {
     font-size: 0.85rem;
     line-height: 1.6;
     padding: 0.25rem 0;
-}
-
-.ai-proficiency {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(59, 130, 246, 0.08));
-    border: 1px solid rgba(139, 92, 246, 0.2);
-    border-radius: 8px;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.ai-proficiency h4 {
-    color: #a78bfa;
 }
 
 .cert-link {
@@ -1201,3 +1204,48 @@ body:not(.dark-theme) .moon-icon {
 .popup button:hover {
     background: var(--accent-hover);
 }
+
+/* The page rides above BOTH rolled layers — backdrop (0) and cursor (1) — so
+ * the copy is never competing with an effect painted on top of it. */
+.page {
+    position: relative;
+    z-index: 2;
+}
+
+/* Leave room for the dice control bar so it never covers the footer. */
+.footer {
+    padding-bottom: 72px;
+}
+
+/* The nav's dropdown now holds the dice controls, so it needs room for a panel
+ * rather than a short colour list. */
+.color-picker-menu.p4m-menu {
+    min-width: 0;
+    width: auto;
+    padding: 0;
+    max-height: min(78vh, 660px);
+    overflow: hidden;
+}
+
+/* The bottom control bar is gone; the footer no longer needs to clear it. */
+.footer {
+    padding-bottom: 3rem;
+}
+
+/* On phones the dice panel is a bottom sheet, not a corner dropdown. */
+@media (max-width: 768px) {
+    .color-picker-menu.p4m-menu {
+        position: fixed;
+        inset: auto 0 0 0;
+        top: auto;
+        width: 100vw;
+        max-width: 100vw;
+        border-radius: 16px 16px 0 0;
+        border-bottom: 0;
+        max-height: 80vh;
+    }
+}
+
+/* A cursor effect is mounted: the system arrow gives way to the effect plus
+ * DiceCursor's zero-lag precise dot, so clicking is never blind. */
+.cursor-none, .cursor-none * { cursor: none !important; }

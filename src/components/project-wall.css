@@ -1,0 +1,235 @@
+/* The project wall (PUDDL3 P4RTS TileStream) — this IS the project cards.
+ *
+ * TileStream fills its parent, so it needs an explicit height; with none it
+ * collapses and renders blank. Since it replaced the grid it gets real estate
+ * to match — it is the whole Selected Work section now. It masks its own
+ * edges, so it dissolves into the page without needing a frame. */
+.project-wall {
+    position: relative;
+    height: 78vh;
+    min-height: 520px;
+    margin: 0 0 2rem;
+    /* Full-bleed: it lives outside .container, so it spans the viewport. */
+    width: 100vw;
+    max-width: 100%;
+    contain: layout paint;
+}
+
+@media (max-width: 900px) {
+    .project-wall { height: 62vh; min-height: 420px; }
+}
+
+/* Reduced motion: TileStream stops drifting on its own, but a static wall
+   doesn't need to fill the viewport either. */
+@media (prefers-reduced-motion: reduce) {
+    .project-wall { height: 52vh; min-height: 360px; }
+}
+
+/* TileStream ships a 0.42-opacity colour wash over every resting tile and
+ * desaturates them slightly. That reads well for a decorative wall, but these
+ * are the project cards — they need to be legible before you hover. */
+.project-wall .tile-stream__overlay {
+    opacity: 0;
+}
+
+.project-wall .tile-stream__tile img {
+    filter: none;
+}
+
+/* Give the cards an edge so they read as cards against the rolled backdrop. */
+.project-wall .tile-stream__inner {
+    background: var(--p4-card, #12121a);
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.75);
+}
+
+/* TileStream's own edge mask is a radial vignette (ellipse 78% x 82%)
+ * INTERSECTED with a bottom-up linear fade — that pinches the corners and
+ * clips cards at the sides. The wall should run edge to edge horizontally
+ * (the plane is wider than the viewport, so its real edge is off-screen) and
+ * only dissolve at top and bottom, where the drift carries tiles in and out. */
+.project-wall .tile-stream {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+    mask-composite: add;
+}
+
+/* ---- hover preview (desktop) ---------------------------------------------
+ * Follows the pointer, never intercepts it — the tile underneath must stay
+ * clickable, so this is pointer-events:none. */
+.project-wall__hover {
+    position: absolute;
+    z-index: 5;
+    transform: translateY(-115%);
+    pointer-events: none;
+    padding: 0.9rem 1rem 0.95rem;
+    border: 1px solid var(--p4-border, #2a2a33);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--p4-card, #14141c) 92%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 18px 44px -14px rgba(0, 0, 0, 0.8);
+    animation: p4d-pop 0.14s ease-out;
+}
+
+@keyframes p4d-pop {
+    from { opacity: 0; transform: translateY(-108%); }
+    to   { opacity: 1; transform: translateY(-115%); }
+}
+
+.project-wall__hover-head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.project-wall__hover h3,
+.project-wall__sheet h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--p4-ink, #fff);
+}
+
+.project-wall__tag {
+    padding: 0.15rem 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--p4-acc, #a855f7) 45%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--p4-acc, #a855f7) 15%, transparent);
+    color: var(--p4-acc, #a855f7);
+    font-size: 0.68rem;
+    white-space: nowrap;
+}
+
+.project-wall__hover p,
+.project-wall__sheet p {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--p4-muted, #a1a1aa);
+    /* the wall is a browse surface — keep the preview short */
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.project-wall__cue {
+    display: inline-block;
+    margin-top: 0.6rem;
+    color: var(--p4-acc, #a855f7);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+}
+
+/* ---- tap sheet (touch) --------------------------------------------------- */
+.project-wall__sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 960;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.62);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+.project-wall__sheet {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    max-height: 88vh;
+    overflow-y: auto;
+    border-radius: 18px 18px 0 0;
+    border: 1px solid var(--p4-border, #2a2a33);
+    border-bottom: 0;
+    background: var(--p4-card, #14141c);
+    animation: p4d-sheet-up 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes p4d-sheet-up {
+    from { transform: translateY(14%); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+}
+
+.project-wall__sheet-img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 17px 17px 0 0;
+}
+
+.project-wall__sheet-body { padding: 1.1rem 1.15rem 1.4rem; }
+.project-wall__sheet p { -webkit-line-clamp: 8; margin-top: 0.15rem; }
+
+.project-wall__close {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.7rem;
+    z-index: 1;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.project-wall__open {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1.3rem;
+    border-radius: 999px;
+    background: var(--p4-acc, #a855f7);
+    color: #0a0a0a;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.project-wall__open:active { transform: translateY(1px); }
+
+/* Tiles are buttons now (no href), so give them a real focus ring. */
+.project-wall .tile-stream__tile:focus-visible {
+    outline: 2px solid var(--p4-acc, #a855f7);
+    outline-offset: 3px;
+    border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .project-wall__hover { animation: none; }
+    .project-wall__sheet { animation: none; }
+}
+
+/* TileStream sets .tile-stream__inner to pointer-events:none — fine when the
+ * tile itself is an <a>, but our tiles are buttons we hit-test ourselves, and
+ * the inner covers the whole tile, so every pointer fell through to the plane
+ * and closest('[data-tile-id]') found nothing (no hover card, no tap sheet).
+ * Making the content hit-testable puts the tile back in the event path. */
+.project-wall .tile-stream__inner {
+    pointer-events: auto;
+}
+
+.project-wall .tile-stream__tile {
+    cursor: pointer;
+}
+
+/* Flipped below the pointer when there is no room above it. */
+.project-wall__hover.is-below {
+    transform: translateY(22px);
+    animation-name: p4d-pop-below;
+}
+
+@keyframes p4d-pop-below {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(22px); }
+}

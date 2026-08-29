@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import ProjectWall from './ProjectWall';
+import DiceWordmark from './dice/DiceWordmark';
 
 const projectsData = [
   {
@@ -155,14 +157,6 @@ const projectsData = [
     image: '/project-images/mincoins.jpg'
   },
   {
-    id: 'aiscalpel',
-    title: 'AI: A Scalpel Not A Hammer',
-    description: 'Philosophy paper on precision AI development, prompt engineering, and thoughtful tool usage. Includes interactive code comparison demos.',
-    tag: 'Writing',
-    link: '/projects/road-network/index.html',
-    image: '/project-images/AI2.png'
-  },
-  {
     id: 'samwatts',
     title: 'Sam Watts Fitness',
     description: 'Professional fitness coaching website with booking and program information.',
@@ -213,33 +207,13 @@ const Projects = () => {
   return (
     <main className="main" id="work">
       <div className="container">
-        <h2 className="section-title">Selected Work</h2>
-        <div className="projects-grid">
-          {projectsData.map(project => (
-            <a
-              key={project.id}
-              href={project.link}
-              className={`project-card ${project.featured ? 'featured' : ''}`}
-              target={project.link.startsWith('http') ? '_blank' : '_self'}
-              rel={project.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-              onClick={(e) => handleCardClick(e, project)}
-            >
-              <div className="project-image">
-                {project.image ? (
-                  <img src={project.image} alt={project.title} />
-                ) : (
-                  <div className="project-placeholder">{project.placeholder}</div>
-                )}
-              </div>
-              <div className="project-content">
-                <h3 className="project-title">{project.title}</h3>
-                <p className="project-desc">{project.description}</p>
-                <span className="project-tag">{project.tag}</span>
-              </div>
-            </a>
-          ))}
-        </div>
+        <DiceWordmark as="h2" className="section-title" text="Selected Work" />
       </div>
+
+      {/* The wall IS the project cards now — image + title, each tile a real
+        * link. Deliberately OUTSIDE .container so it runs the full width of
+        * the viewport instead of stopping at the 1200px content column. */}
+      <ProjectWall projects={projectsData} />
 
       {/* Project Modal */}
       {modalProject && (

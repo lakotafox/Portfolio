@@ -1,0 +1,107 @@
+/* The rolled text effect sits exactly on top of the real <h1>.
+ *
+ * The <h1> stays visible and keeps its own styling — many vault text effects
+ * animate IN from nothing, so hiding the real title would leave the hero blank
+ * for the first second (or forever, if the effect fails to paint). Layering
+ * instead means the worst case is "no fancy animation", never "no name". */
+.p4d-wordmark {
+  position: relative;
+  isolation: isolate;
+}
+
+/* The real title inherits the wrapper's type (the wrapper now carries
+ * .hero-title), so it and the effect overlay are the same size in the same
+ * place — otherwise you see the wordmark twice. */
+.p4d-wordmark-text {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  margin: 0;
+}
+
+/* An effect is mounted and will draw the wordmark itself — hide the real one's
+ * ink (not the element) so the title isn't rendered twice. If the effect ever
+ * fails, P4rtsSlot quarantines it and the roll drops back to the plain <h1>. */
+.p4d-wordmark.has-fx .p4d-wordmark-text {
+  color: transparent;
+}
+
+.p4d-wordmark-fx {
+  position: absolute;
+  /* Headroom, not inset:0. The box was exactly the text box, so `contain: paint`
+   * clipped anything drawn past it — descenders, blur spread, motion trails —
+   * and titles looked sliced off along the bottom. The extra room is invisible
+   * (nothing paints there unless the effect needs it) and stays click-through. */
+  /* Vertical headroom only. A negative HORIZONTAL inset dragged the layer out
+   * to the viewport edge, past the container's padding — extruded-type then
+   * started drawing at x=0 and lost its first letter off-screen. */
+  inset: -0.3em 0 -0.45em 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+  /* same containment as the stage slots: a text effect that positions itself
+     fixed must resolve against the wordmark box, not the viewport */
+  transform: translateZ(0);
+  contain: layout paint;
+  /* let the effect inherit the wordmark's type so it lands in the same place */
+  font: inherit;
+  line-height: inherit;
+}
+
+.p4d-wordmark-fx .p4rts-slot {
+  width: 100%;
+  height: 100%;
+  font: inherit;
+}
+
+/* Effects that paint to a canvas should fill the wordmark box, not overflow it. */
+.p4d-wordmark-fx canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The effect is hidden here — so the real text MUST become visible again.
+   * Hiding one while the other is still painted transparent left the title
+   * completely invisible for anyone with Reduce Motion turned on. */
+  .p4d-wordmark-fx { display: none; }
+  .p4d-wordmark.has-fx .p4d-wordmark-text { color: inherit; }
+}
+
+/* Several effects centre themselves (they are built to be a page's hero on
+ * their own). In this hero everything is left-aligned, so a centred wordmark
+ * both misaligns with the subtitle and — at extruded-type's size — overflows
+ * off the left edge and loses its first letter. Pull the effect's own layout
+ * back to the left and stop it escaping horizontally; the vertical headroom
+ * from `inset` stays, since that is what keeps descenders from being clipped. */
+.p4d-wordmark-fx {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  clip-path: inset(-40% 0 -40% 0);
+}
+
+.p4d-wordmark-fx > *,
+.p4d-wordmark-fx .p4rts-slot,
+.p4d-wordmark-fx .p4rts-slot > * {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+/* extruded-type reads the pointer and tilts around ITS OWN box centre. Forcing
+ * it to width:100% put that pivot at the container's midpoint while the text
+ * sat at the left edge — so the tilt tracked the mouse "wrong". Centered at its
+ * natural width, the pivot and the visible letters coincide and the parallax
+ * feels attached to the word. (Also what was asked for: centered, big.) */
+.p4d-wordmark-fx[data-fx="extruded-type"] {
+  justify-content: center;
+}
+.p4d-wordmark-fx[data-fx="extruded-type"] > *,
+.p4d-wordmark-fx[data-fx="extruded-type"] .p4rts-slot,
+.p4d-wordmark-fx[data-fx="extruded-type"] .p4rts-slot > * {
+  width: auto;
+  text-align: center;
+}

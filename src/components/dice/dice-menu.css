@@ -1,0 +1,299 @@
+/* The dice panel, hung off the nav's top-right button.
+ *
+ * Deliberately unlayered and self-coloured: it has to stay legible on top of
+ * whatever the roll does to the page behind it, so it does not inherit the
+ * rolled palette for its own surfaces — only for the accent.
+ */
+.p4m {
+    width: 344px;
+    max-height: min(72vh, 620px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.p4m-row + .p4m-row { margin-top: 2px; }
+
+.p4m-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 4px 4px 5px;
+    border-radius: 8px;
+}
+.p4m-row:hover > .p4m-line,
+.p4m-row.is-open > .p4m-line { background: rgba(255, 255, 255, 0.05); }
+
+.p4m-key {
+    flex: 0 0 auto;
+    min-width: 22px;
+    padding: 4px 5px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--p4-acc, #a855f7) 22%, transparent);
+    color: var(--p4-acc, #a855f7);
+    font: 700 12px/1 ui-monospace, monospace;
+    text-align: center;
+}
+
+.p4m-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #a3a3ad;
+    white-space: nowrap;
+}
+
+.p4m-arrow {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    color: #9a9aa4;
+    font: 700 18px/1 ui-monospace, monospace;
+    cursor: pointer;
+}
+.p4m-arrow:hover { color: var(--p4-acc, #fff); border-color: rgba(255, 255, 255, 0.3); }
+
+.p4m-value {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 138px;
+    height: 32px;
+    padding: 0 9px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #f5f5f8;
+    font: inherit;
+    font-size: 13.5px;
+    cursor: pointer;
+}
+.p4m-value:hover { border-color: rgba(255, 255, 255, 0.3); }
+
+.p4m-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p4m-num { flex: 0 0 auto; color: #8a8a94; font-size: 11px; font-variant-numeric: tabular-nums; }
+
+.p4m-swatches { display: inline-flex; gap: 2px; }
+.p4m-swatches i { width: 11px; height: 11px; border-radius: 2px; }
+
+/* ---- the expanded option list -------------------------------------------- */
+.p4m-list {
+    max-height: 280px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    margin: 3px 0 5px;
+    padding: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 9px;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.p4m-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 10px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: transparent;
+    color: #d5d5dc;
+    font: inherit;
+    font-size: 13.5px;
+    text-align: left;
+    cursor: pointer;
+}
+.p4m-item:hover { background: rgba(255, 255, 255, 0.07); }
+.p4m-item.is-on {
+    border-color: color-mix(in srgb, var(--p4-acc, #a855f7) 55%, transparent);
+    background: color-mix(in srgb, var(--p4-acc, #a855f7) 13%, transparent);
+    color: #fff;
+}
+
+.p4m-dot {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+}
+.p4m-item.is-on .p4m-dot { background: var(--p4-acc, #a855f7); }
+
+.p4m-item-name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p4m-item-num { flex: 0 0 auto; color: #83838d; font-size: 11px; font-variant-numeric: tabular-nums; }
+.p4m-empty { padding: 9px; color: #7a7a84; font-size: 11px; }
+
+/* ---- footer -------------------------------------------------------------- */
+.p4m-foot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.p4m-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #eeeef1;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+.p4m-save:hover:not(:disabled) { border-color: rgba(255, 255, 255, 0.32); }
+.p4m-save.is-saved { color: var(--p4-acc, #a855f7); cursor: default; }
+.p4m-save:disabled { cursor: default; }
+
+.p4m-count {
+    padding: 1px 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.12);
+    font-size: 9px;
+    font-variant-numeric: tabular-nums;
+}
+
+.p4m-seg {
+    display: inline-flex;
+    margin-left: auto;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 7px;
+}
+.p4m-seg button {
+    padding: 9px 13px;
+    border: 0;
+    background: transparent;
+    color: #9a9aa4;
+    font: inherit;
+    font-size: 12.5px;
+    cursor: pointer;
+}
+.p4m-seg button:hover:not(:disabled) { color: #e8e8ea; }
+.p4m-seg button:disabled { opacity: 0.35; cursor: default; }
+.p4m-seg button.on {
+    background: color-mix(in srgb, var(--p4-acc, #a855f7) 22%, transparent);
+    color: var(--p4-acc, #a855f7);
+    font-weight: 600;
+}
+
+/* ---- whole-look nav ------------------------------------------------------ */
+.p4m-nav {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+}
+
+.p4m-navbtn {
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #c6c6ce;
+    font: 700 20px/1 ui-monospace, monospace;
+    cursor: pointer;
+}
+.p4m-navbtn:hover:not(:disabled) { color: var(--p4-acc, #fff); border-color: rgba(255, 255, 255, 0.3); }
+.p4m-navbtn:disabled { opacity: 0.28; cursor: default; }
+
+.p4m-dice {
+    flex: 1 1 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 44px;
+    border: 1px solid color-mix(in srgb, var(--p4-acc, #a855f7) 45%, transparent);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--p4-acc, #a855f7) 15%, transparent);
+    color: var(--p4-acc, #a855f7);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: transform 0.18s ease;
+}
+.p4m-dice:hover { transform: scale(1.02); }
+.p4m-dice:active { transform: scale(0.98); }
+
+.p4m-favpos {
+    flex: 1 1 auto;
+    text-align: center;
+    color: var(--p4-acc, #a855f7);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .p4m-dice { transition: none; }
+    .p4m-dice:hover, .p4m-dice:active { transform: none; }
+}
+
+
+/* ---- mobile ---------------------------------------------------------------
+ * On a phone the anchored dropdown is unusable: it hangs off the top-right
+ * corner, is far too narrow, and its 30px arrows are below the ~44px minimum
+ * touch target. So below 768px it becomes a full-width sheet at the bottom of
+ * the screen — thumb-reachable, one big row per category. */
+@media (max-width: 768px) {
+    .p4m {
+        width: 100vw;
+        max-height: 76vh;
+        padding: 10px 12px calc(14px + env(safe-area-inset-bottom));
+    }
+
+    /* Two lines per row: the name gets the full width instead of competing
+     * with the label for it, so "phantom pointer" stops truncating — and the
+     * arrows line up in a column instead of shifting with each label. */
+    .p4m-line {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas:
+            "key   label label"
+            "prev  value next";
+        align-items: center;
+        gap: 8px;
+        padding: 9px 4px 11px;
+    }
+    .p4m-key          { grid-area: key; }
+    .p4m-label        { grid-area: label; }
+    .p4m-arrow--prev  { grid-area: prev; }
+    .p4m-value        { grid-area: value; }
+    .p4m-arrow--next  { grid-area: next; }
+
+    .p4m-row + .p4m-row { margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.06); }
+
+    .p4m-key { min-width: 26px; padding: 6px 6px; font-size: 13px; }
+    .p4m-label { font-size: 12.5px; letter-spacing: 0.08em; color: #9494a0; }
+
+    /* comfortable, standards-sized touch targets */
+    .p4m-arrow { width: 46px; height: 46px; font-size: 22px; border-radius: 10px; }
+    .p4m-value { width: auto; min-width: 0; height: 48px; font-size: 16px; justify-content: space-between; }
+
+    .p4m-item { padding: 14px 12px; font-size: 15px; }
+    .p4m-list { max-height: 44vh; }
+    .p4m-dot { width: 16px; height: 16px; }
+
+    .p4m-save { height: 44px; font-size: 14px; }
+    .p4m-seg button { padding: 12px 16px; font-size: 14px; }
+    .p4m-navbtn { width: 52px; height: 52px; font-size: 24px; }
+    .p4m-dice { height: 52px; font-size: 15px; }
+}
