@@ -62,20 +62,43 @@ function tintFor(slug, bgPalette) {
  * content it is simply invisible. Layering is per-cursor, not global. */
 const CURSOR_ON_TOP = new Set(['lock-on-pointer']);
 
+/* Tint via CSS when props can't recolour the ART: components with no
+ * FOREGROUND colour props at all. jelly-field only exposes backgroundColor —
+ * its purple jelly is hardcoded, so without the filter it ignores the
+ * customizer entirely. */
 const STATIC_BACKDROPS = new Set(
   Object.entries(P4RTS_PROPS)
-    .filter(([, v]) => !(v.color?.length || v.colorBg?.length || v.colorArray?.length))
+    .filter(([, v]) => !(v.color?.length || v.colorArray?.length))
     .map(([k]) => k),
 );
+
+/** hex -> shader-style [r,g,b] in 0..1 */
+const hex01 = (hex) => {
+  const n = parseInt(String(hex).replace('#', ''), 16);
+  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+};
+
+/* Props whose vault type says "array" but which are really WebGL RGB
+ * TRIPLETS, not lists of hex colours. loom's is `color = [1, 1, 1]` — handing
+ * it the palette trio of hex strings garbles the uniform and it renders black. */
+const RGB_TRIPLET = { loom: 'color' };
+
+/* Per-backdrop extras that aren't colours. molten-pane's imageSrc defaults to
+ * a random Unsplash portrait — it should be Lakota. Drop the real photo at
+ * public/images/lakota.jpg and it appears here with no code change. */
+const BACKDROP_EXTRAS = {
+  'molten-pane': { imageSrc: '/images/lakota.jpg' },
+};
 
 function colourPropsFor(slug, pal) {
   const meta = P4RTS_PROPS[slug];
   if (!meta) return {};
   const out = {};
+  if (RGB_TRIPLET[slug]) out[RGB_TRIPLET[slug]] = hex01(pal.acc);
   // props the vault labels color-bg take the palette's ground
   for (const n of meta.colorBg ?? []) out[n] = pal.bg;
-  // array-valued colour props take the whole trio
-  for (const n of meta.colorArray ?? []) out[n] = pal.trio;
+  // array-valued colour props take the whole trio (unless they're RGB triplets)
+  for (const n of meta.colorArray ?? []) if (out[n] === undefined) out[n] = pal.trio;
   /* The rest walk a ramp so a component asking for six colours gets six
    * DIFFERENT ones rather than the same accent repeated. */
   const ramp = [pal.acc, pal.b, pal.a, pal.c, pal.trio[0], pal.trio[1], pal.trio[2]];
@@ -94,7 +117,7 @@ export default function DiceStage() {
   // ignore these, which is why they can be passed blindly.
   // the backdrop's own palette — see the note in dice.js roll()
   const bp = look.bgPalette ?? look.palette;
-  const bgProps = { ...colourPropsFor(look.background, bp), speed: look.motion, amplitude: look.motion };
+  const bgProps = { ...colourPropsFor(look.background, bp), ...BACKDROP_EXTRAS[look.background], speed: look.motion, amplitude: look.motion };
 
   return (
     <>

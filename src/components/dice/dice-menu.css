@@ -257,7 +257,7 @@
     .p4m {
         width: 100vw;
         /* ~two sections tall; the rest scrolls. A grab-notch hints at it. */
-        max-height: min(36vh, 300px);
+        max-height: min(21vh, 180px);
         padding: 14px 12px calc(14px + env(safe-area-inset-bottom));
     }
     .p4m::before {

@@ -162,7 +162,12 @@ export const ROLES = {
     (c.painted ?? 0) >= BACKGROUND_MIN_FILL &&
     !BLANK_SET.has(c.slug) &&
     // Lakota: reads as a title effect, not a backdrop (vault says `backdrop`)
-    c.slug !== 'dust-type',
+    c.slug !== 'dust-type' &&
+    // Lakota: cut on sight 2026-08-28
+    c.slug !== 'hue-tiles' &&
+    // renders "Item 1..Item N" demo tiles; the only text-leaking backdrop
+    // (verified by sweeping all 99 for rendered innerText)
+    c.slug !== 'mesh-drift',
   cursor: (c) => CURSOR_SET.has(c.slug),  // pool membership pass-through
   /* Verified IN THE HERO, not just in the lab. The hero gives a short wide box
    * where several effects that render fine full-screen paint nothing at all —

@@ -105,3 +105,34 @@
   width: auto;
   text-align: center;
 }
+
+/* ---- mobile: readable beats fancy -----------------------------------------
+ * Some effects size their own type (riffle-type has no size prop at all) and
+ * on a phone that overflowed the title box and bled under the subtitle. On
+ * small screens the wordmark is always centered at the top, effect type is
+ * forced down to the title's own size so it wraps exactly like the real
+ * heading, and the box clips hard — no more overlap, whatever the effect. */
+@media (max-width: 768px) {
+  .p4d-wordmark,
+  .p4d-wordmark-text {
+    text-align: center;
+  }
+  .p4d-wordmark-fx {
+    justify-content: center;
+    inset: -0.15em 0 0 0;
+    overflow: hidden;
+    clip-path: inset(0);
+  }
+  .p4d-wordmark-fx > *,
+  .p4d-wordmark-fx .p4rts-slot,
+  .p4d-wordmark-fx .p4rts-slot > * {
+    justify-content: center;
+    text-align: center;
+    max-width: 100%;
+  }
+  .p4d-wordmark-fx :not(canvas):not(svg) {
+    font-size: inherit !important;
+    line-height: inherit !important;
+    white-space: normal !important;
+  }
+}

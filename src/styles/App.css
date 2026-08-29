@@ -1244,7 +1244,7 @@ body:not(.dark-theme) .moon-icon {
         max-width: 100vw;
         border-radius: 16px 16px 0 0;
         border-bottom: 0;
-        max-height: min(36vh, 300px);
+        max-height: min(21vh, 180px);
         overflow: hidden;
     }
 }
