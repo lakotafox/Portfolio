@@ -58,7 +58,7 @@ export const OWNS_BACKDROP = new Set(['phantom-pointer', 'photo-wake']);
 function PointerBridge() {
   useEffect(() => {
     let bridging = false;
-    const forward = (e) => {
+    const forwardAt = (clientX, clientY, alsoDown = false) => {
       if (bridging) return;
       const layer = document.querySelector('.p4d-cursor');
       if (!layer) return;
@@ -73,20 +73,49 @@ function PointerBridge() {
         for (let el = layer.firstElementChild; el; el = el.firstElementChild) targets.add(el);
         for (const target of targets) {
           const init = {
-            clientX: e.clientX, clientY: e.clientY,
-            screenX: e.screenX, screenY: e.screenY,
+            clientX, clientY, screenX: clientX, screenY: clientY,
             bubbles: true, cancelable: true,
             pointerId: 1, pointerType: 'mouse', isPrimary: true,
           };
           target.dispatchEvent(new PointerEvent('pointermove', init));
           target.dispatchEvent(new MouseEvent('mousemove', init));
+          if (alsoDown) target.dispatchEvent(new PointerEvent('pointerdown', init));
         }
       } finally {
         bridging = false;
       }
     };
+    const forward = (e) => forwardAt(e.clientX, e.clientY);
+
+    /* TOUCH: there is no hover on a phone, so a cursor effect would just sit
+     * dead. A tap plays a short spiral of synthetic moves out from the finger
+     * (~350ms) — trail effects get motion to draw, splat effects get a down —
+     * so every cursor "works" on tap without any per-effect code. */
+    let rafId = 0;
+    const tapBurst = (e) => {
+      if (e.pointerType && e.pointerType !== 'touch') return;
+      const x = e.clientX, y = e.clientY;
+      forwardAt(x, y, true);
+      let i = 0;
+      cancelAnimationFrame(rafId);
+      const spin = () => {
+        i += 1;
+        if (i > 14) return;
+        const a = i * 0.85;
+        const r = 4 + i * 4.5;
+        forwardAt(x + Math.cos(a) * r, y + Math.sin(a) * r);
+        rafId = requestAnimationFrame(spin);
+      };
+      rafId = requestAnimationFrame(spin);
+    };
+
     window.addEventListener('pointermove', forward, { passive: true });
-    return () => window.removeEventListener('pointermove', forward);
+    window.addEventListener('pointerdown', tapBurst, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', forward);
+      window.removeEventListener('pointerdown', tapBurst);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
   return null;
 }
@@ -250,11 +279,13 @@ export default function DiceCursor({ choice, palette }) {
 
   // EDI's trick, requested here too: hide the system arrow, and PrecisePoint
   // puts an exact dot at the true pointer for anything that trails.
+  const touchOnly = typeof matchMedia === 'function' && !matchMedia('(hover: hover)').matches;
+
   useEffect(() => {
-    if (!render) return undefined;
+    if (!render || touchOnly) return undefined; // no system cursor to hide on touch
     document.documentElement.classList.add('cursor-none');
     return () => document.documentElement.classList.remove('cursor-none');
-  }, [render]);
+  }, [render, touchOnly]);
 
   if (!render) return null;
 
@@ -283,7 +314,7 @@ export default function DiceCursor({ choice, palette }) {
         {render(palette)}
       </div>
       <PointerBridge />
-      {!PRECISE.has(choice) && <PrecisePoint color={palette.acc} />}
+      {!touchOnly && !PRECISE.has(choice) && <PrecisePoint color={palette.acc} />}
     </Suspense>
   );
 }
