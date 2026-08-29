@@ -1234,6 +1234,8 @@ body:not(.dark-theme) .moon-icon {
 
 /* On phones the dice panel is a bottom sheet, not a corner dropdown. */
 @media (max-width: 768px) {
+    /* A short sheet, not a takeover: opens tall enough for about two sections
+     * and scrolls for the rest, so the page stays visible behind it. */
     .color-picker-menu.p4m-menu {
         position: fixed;
         inset: auto 0 0 0;
@@ -1242,10 +1244,37 @@ body:not(.dark-theme) .moon-icon {
         max-width: 100vw;
         border-radius: 16px 16px 0 0;
         border-bottom: 0;
-        max-height: 80vh;
+        max-height: min(36vh, 300px);
+        overflow: hidden;
     }
 }
 
 /* A cursor effect is mounted: the system arrow gives way to the effect plus
  * DiceCursor's zero-lag precise dot, so clicking is never blind. */
 .cursor-none, .cursor-none * { cursor: none !important; }
+
+/* ---- mobile: the dice + customize buttons tuck into the true corner --------
+ * On a phone the fixed nav rode over content mid-scroll (they sat on top of
+ * card buttons). Smaller, tighter, translucent until touched. */
+@media (max-width: 768px) {
+    .nav {
+        padding: 0.5rem 0.6rem;
+        pointer-events: none; /* the bar itself never blocks content */
+    }
+    .theme-controls {
+        pointer-events: auto;
+        gap: 0.35rem;
+    }
+    .color-picker-toggle,
+    .theme-toggle {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        opacity: 0.72;
+        background: rgba(10, 10, 14, 0.55);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+    .color-picker-toggle:active,
+    .theme-toggle:active { opacity: 1; }
+}

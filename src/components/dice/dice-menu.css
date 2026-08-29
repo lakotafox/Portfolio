@@ -256,8 +256,18 @@
 @media (max-width: 768px) {
     .p4m {
         width: 100vw;
-        max-height: 76vh;
-        padding: 10px 12px calc(14px + env(safe-area-inset-bottom));
+        /* ~two sections tall; the rest scrolls. A grab-notch hints at it. */
+        max-height: min(36vh, 300px);
+        padding: 14px 12px calc(14px + env(safe-area-inset-bottom));
+    }
+    .p4m::before {
+        content: '';
+        display: block;
+        width: 44px;
+        height: 4px;
+        margin: -6px auto 10px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.22);
     }
 
     /* Two lines per row: the name gets the full width instead of competing
