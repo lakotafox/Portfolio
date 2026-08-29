@@ -1,0 +1,10 @@
+.gateway-container {
+  position: absolute;
+  inset: 0;
+}
+
+.gateway-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

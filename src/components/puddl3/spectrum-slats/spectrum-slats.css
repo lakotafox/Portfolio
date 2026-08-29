@@ -1,0 +1,14 @@
+.spectrum-slats-root {
+  position: relative;
+  overflow: hidden;
+}
+
+.spectrum-slats-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.spectrum-slats-content {
+  position: relative;
+  z-index: 10;
+}

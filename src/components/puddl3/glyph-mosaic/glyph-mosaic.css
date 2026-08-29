@@ -1,0 +1,14 @@
+.glyph-mosaic-root {
+  position: relative;
+  overflow: hidden;
+}
+
+.glyph-mosaic-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.glyph-mosaic-content {
+  position: relative;
+  z-index: 10;
+}

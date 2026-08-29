@@ -1,0 +1,14 @@
+.inkwell-spiral-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.inkwell-spiral-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.inkwell-spiral-content {
+  position: relative;
+  z-index: 1;
+}

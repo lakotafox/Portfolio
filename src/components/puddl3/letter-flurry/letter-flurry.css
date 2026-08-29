@@ -1,0 +1,17 @@
+.letter-flurry {
+  position: relative;
+  display: inline-block;
+  cursor: default;
+  user-select: none;
+}
+
+.letter-flurry__letter {
+  display: inline-block;
+  position: relative;
+  white-space: pre;
+}
+
+.letter-flurry__space {
+  display: inline-block;
+  white-space: pre;
+}

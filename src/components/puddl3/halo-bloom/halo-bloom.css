@@ -1,0 +1,16 @@
+.halo-bloom {
+  position: relative;
+  overflow: hidden;
+}
+
+.halo-bloom-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.halo-bloom-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

@@ -1,0 +1,20 @@
+.path-marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.path-marquee-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.path-marquee-text {
+  user-select: none;
+}
+
+.path-marquee-measure {
+  visibility: hidden;
+  pointer-events: none;
+}

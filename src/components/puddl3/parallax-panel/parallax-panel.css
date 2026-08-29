@@ -1,0 +1,79 @@
+.parallax-panel-wrapper {
+  position: relative;
+  cursor: pointer;
+  outline: none;
+}
+
+.parallax-panel-clickable {
+  cursor: pointer;
+}
+
+.parallax-panel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #333;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease-out;
+}
+
+.parallax-panel-bg {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  pointer-events: none;
+}
+
+.parallax-panel-info {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.parallax-panel-info-p-4 {
+  padding: 24px;
+}
+
+.parallax-panel-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.4) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+.parallax-panel-content {
+  position: relative;
+  z-index: 10;
+}
+
+.parallax-panel-content-pb-4 {
+  padding-bottom: 0;
+}
+
+.parallax-panel-title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.parallax-panel-description {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}

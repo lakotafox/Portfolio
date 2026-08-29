@@ -1,0 +1,14 @@
+.mist-orb-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.mist-orb-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.mist-orb-content {
+  position: relative;
+  z-index: 1;
+}

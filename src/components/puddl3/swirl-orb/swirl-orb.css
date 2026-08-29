@@ -1,0 +1,17 @@
+.swirl-orb-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.swirl-orb-canvas {
+  position: absolute !important;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.swirl-orb-overlay {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}

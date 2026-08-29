@@ -1,0 +1,16 @@
+.polar-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.polar-sweep-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.polar-sweep-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

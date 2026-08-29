@@ -1,0 +1,14 @@
+.photo-dust-root {
+  position: relative;
+  overflow: hidden;
+}
+
+.photo-dust-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.photo-dust-content {
+  position: relative;
+  z-index: 10;
+}

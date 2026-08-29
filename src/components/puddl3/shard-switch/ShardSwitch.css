@@ -1,0 +1,36 @@
+.shard-switch {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  outline: none;
+}
+
+.shard-switch__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.shard-switch__layer[data-visible='false'] {
+  visibility: hidden;
+}
+
+.shard-switch__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.shard-switch__pixel {
+  position: absolute;
+  overflow: hidden;
+  opacity: 0;
+  contain: paint;
+}
+
+.shard-switch__pixel-content {
+  position: absolute;
+}

@@ -1,0 +1,16 @@
+.ember-drift {
+  position: relative;
+  overflow: hidden;
+}
+
+.ember-drift-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.ember-drift-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

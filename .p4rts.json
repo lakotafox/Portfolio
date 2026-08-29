@@ -1,0 +1,13 @@
+{
+  "installed": [
+    {
+      "id": "deep/block/404-1",
+      "variant": "default",
+      "hash": "79776db5888365906e9a1a63c745bb49f4e6f37e9af1bd521c77427e7978543a",
+      "files": [
+        "src/components/blocks/404-1.tsx"
+      ],
+      "addedAt": "2026-08-17T18:35:58.235Z"
+    }
+  ]
+}

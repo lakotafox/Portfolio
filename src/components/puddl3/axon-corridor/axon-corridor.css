@@ -1,0 +1,16 @@
+.axon-corridor {
+  position: relative;
+  overflow: hidden;
+}
+
+.axon-corridor-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.axon-corridor-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

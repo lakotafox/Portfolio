@@ -1,0 +1,16 @@
+.pixel-pulse {
+  position: relative;
+  overflow: hidden;
+}
+
+.pixel-pulse-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.pixel-pulse-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

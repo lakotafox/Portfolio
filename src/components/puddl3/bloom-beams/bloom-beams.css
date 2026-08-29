@@ -1,0 +1,14 @@
+.bloom-beams-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.bloom-beams-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.bloom-beams-content {
+  position: relative;
+  z-index: 1;
+}

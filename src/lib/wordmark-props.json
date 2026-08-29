@@ -1,0 +1,179 @@
+{
+ "afterimage-type": {
+  "colors": [
+   "tint",
+   "color"
+  ],
+  "size": {
+   "css": true,
+   "name": "fontSize"
+  },
+  "text": [
+   "text"
+  ]
+ },
+ "blur-relay": {
+  "colors": [
+   "borderColor",
+   "glowColor"
+  ],
+  "size": null,
+  "text": [
+   "sentence"
+  ]
+ },
+ "cascade-type": {
+  "colors": [],
+  "size": null,
+  "text": [
+   "text"
+  ]
+ },
+ "cipher-reveal": {
+  "colors": [],
+  "size": null,
+  "text": [
+   "text"
+  ]
+ },
+ "departure-board": {
+  "colors": [
+   "tileColor",
+   "textColor"
+  ],
+  "size": {
+   "css": false,
+   "name": "fontSize"
+  },
+  "text": [
+   "words"
+  ]
+ },
+ "extruded-type": {
+  "colors": [
+   "faceColor",
+   "depthColor"
+  ],
+  "size": {
+   "css": true,
+   "name": "fontSize"
+  },
+  "text": [
+   "text"
+  ]
+ },
+ "flip-cascade": {
+  "colors": [],
+  "size": null,
+  "text": []
+ },
+ "into-focus": {
+  "colors": [],
+  "size": null,
+  "text": []
+ },
+ "keystroke-reveal": {
+  "colors": [],
+  "size": null,
+  "text": [
+   "text"
+  ]
+ },
+ "letter-break": {
+  "colors": [],
+  "size": null,
+  "text": [
+   "text"
+  ]
+ },
+ "letter-flurry": {
+  "colors": [],
+  "size": null,
+  "text": [
+   "text"
+  ]
+ },
+ "marker-reveal": {
+  "colors": [
+   "highlightColor"
+  ],
+  "size": null,
+  "text": []
+ },
+ "origami-type": {
+  "colors": [
+   "color"
+  ],
+  "size": {
+   "css": false,
+   "name": "fontSize"
+  },
+  "text": [
+   "text"
+  ]
+ },
+ "outline-ink": {
+  "colors": [
+   "strokeColor",
+   "fillColor"
+  ],
+  "size": {
+   "css": false,
+   "name": "fontSize"
+  },
+  "text": [
+   "text"
+  ]
+ },
+ "rainbow-type": {
+  "colors": [],
+  "size": null,
+  "text": []
+ },
+ "riffle-type": {
+  "colors": [
+   "colorFrom",
+   "colorTo"
+  ],
+  "size": null,
+  "text": [
+   "text"
+  ]
+ },
+ "sharpen-type": {
+  "colors": [],
+  "size": null,
+  "text": [
+   "text"
+  ]
+ },
+ "sheen-sweep": {
+  "colors": [
+   "color",
+   "shineColor"
+  ],
+  "size": null,
+  "text": [
+   "text"
+  ]
+ },
+ "terminal-type": {
+  "colors": [
+   "textColor"
+  ],
+  "size": null,
+  "text": [
+   "text"
+  ]
+ },
+ "tremor-type": {
+  "colors": [
+   "color"
+  ],
+  "size": {
+   "css": true,
+   "name": "fontSize"
+  },
+  "text": []
+ }
+}

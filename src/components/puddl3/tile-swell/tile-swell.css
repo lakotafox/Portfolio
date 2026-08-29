@@ -1,0 +1,16 @@
+.tile-swell {
+  position: relative;
+  overflow: hidden;
+}
+
+.tile-swell-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.tile-swell-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

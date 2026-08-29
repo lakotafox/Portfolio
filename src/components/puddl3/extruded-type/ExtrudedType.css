@@ -1,0 +1,60 @@
+.extruded-type {
+  display: inline-block;
+  perspective: var(--extruded-type-perspective);
+  perspective-origin: 50% 48%;
+  isolation: isolate;
+}
+
+.extruded-type__stage {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  transform-style: preserve-3d;
+  transform: rotateX(-2.4deg) rotateY(3.15deg);
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.extruded-type__layer,
+.extruded-type__face {
+  grid-area: 1 / 1;
+  display: inline-block;
+  font-size: var(--extruded-type-font-size);
+  font-weight: var(--extruded-type-font-weight);
+  line-height: 0.86;
+  letter-spacing: -0.065em;
+  white-space: nowrap;
+  user-select: none;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  font-kerning: normal;
+  text-rendering: geometricPrecision;
+}
+
+.extruded-type__layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  filter: saturate(0.95) brightness(0.92);
+  pointer-events: none;
+}
+
+.extruded-type__face {
+  position: relative;
+  z-index: 1;
+  color: var(--extruded-type-face-color);
+  text-shadow: var(--extruded-type-shadow);
+  transform: translateZ(0.6px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .extruded-type {
+    cursor: default;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .extruded-type__stage {
+    will-change: auto;
+  }
+}

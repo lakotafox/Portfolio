@@ -1,0 +1,53 @@
+{
+ "afterimage-type": [
+  "text"
+ ],
+ "blur-relay": [
+  "sentence"
+ ],
+ "cascade-type": [
+  "text"
+ ],
+ "cipher-reveal": [
+  "text"
+ ],
+ "departure-board": [
+  "words",
+  "text"
+ ],
+ "extruded-type": [
+  "text"
+ ],
+ "flip-cascade": [],
+ "into-focus": [],
+ "keystroke-reveal": [
+  "text"
+ ],
+ "letter-break": [
+  "text"
+ ],
+ "letter-flurry": [
+  "text"
+ ],
+ "marker-reveal": [],
+ "origami-type": [
+  "text"
+ ],
+ "outline-ink": [
+  "text"
+ ],
+ "rainbow-type": [],
+ "riffle-type": [
+  "text"
+ ],
+ "sharpen-type": [
+  "text"
+ ],
+ "sheen-sweep": [
+  "text"
+ ],
+ "terminal-type": [
+  "text"
+ ],
+ "tremor-type": []
+}

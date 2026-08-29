@@ -1,0 +1,29 @@
+.slanted-lanes {
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.slanted-lanes-grab {
+  cursor: grab;
+}
+
+.slanted-lanes-grab:active {
+  cursor: grabbing;
+}
+
+.slanted-lanes-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.slanted-lanes-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+}

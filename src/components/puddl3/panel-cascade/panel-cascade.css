@@ -1,0 +1,16 @@
+.panel-cascade {
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-cascade-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.panel-cascade-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

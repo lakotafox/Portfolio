@@ -1,0 +1,13 @@
+.cascade-type {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.cascade-type.cascade-type--block {
+  display: block;
+}
+
+.cascade-type.cascade-type--flex {
+  display: flex;
+  flex-wrap: wrap;
+}

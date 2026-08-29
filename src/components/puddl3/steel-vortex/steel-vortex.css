@@ -1,0 +1,17 @@
+.steel-vortex-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.steel-vortex-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.steel-vortex-content {
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+}

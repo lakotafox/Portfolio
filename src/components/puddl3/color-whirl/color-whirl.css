@@ -1,0 +1,17 @@
+.color-whirl-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.color-whirl-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.color-whirl-content {
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+}

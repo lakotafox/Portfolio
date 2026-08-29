@@ -1,0 +1,235 @@
+.bank-card-wrapper-animated {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bank-card-container-wrapper {
+  position: relative;
+  display: inline-block;
+  touch-action: none;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+.bank-card-main {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-style: preserve-3d;
+}
+
+.bank-card-shadow {
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  background: transparent;
+  transition: all 0.2s ease-out;
+  box-shadow: 0 8px 30px rgba(14, 21, 47, 0.6);
+}
+
+.bank-card-shadow.active {
+  box-shadow:
+    0 45px 100px rgba(14, 21, 47, 0.4),
+    0 16px 40px rgba(14, 21, 47, 0.4);
+}
+
+.bank-card-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.bank-card-background-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bank-card-content-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bank-card-back-content {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.bank-card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.bank-card-chip-container {
+  display: flex;
+  align-items: center;
+}
+
+.bank-card-chip-image,
+.bank-card-logo-image {
+  object-fit: contain;
+}
+
+.bank-card-number-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-family: monospace;
+  font-weight: 500;
+}
+
+.bank-card-number-group {
+  display: inline-flex;
+  letter-spacing: 0.1em;
+}
+
+.bank-card-number-char {
+  display: inline-block;
+}
+
+.bank-card-expiry-container {
+  display: inline-flex;
+}
+
+.bank-card-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.bank-card-info-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.bank-card-info-column-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.bank-card-label {
+  opacity: 0.7;
+}
+
+.bank-card-cardholder-name {
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.bank-card-expiry-char {
+  display: inline-block;
+}
+
+.bank-card-magnetic-stripe {
+  width: 100%;
+  background: #000;
+}
+
+.bank-card-cvv-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.bank-card-cvv-box {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.bank-card-cvv-label {
+  color: #6b7280;
+}
+
+.bank-card-cvv-value {
+  color: #111827;
+  font-family: monospace;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.bank-card-glow-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bank-card-glow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bank-card-action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.bank-card-action-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition:
+    box-shadow 0.2s,
+    opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+
+.bank-card-action-button:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.bank-card-action-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bank-card-action-button.disabled:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.bank-card-button-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #374151;
+}
+
+.bank-card-button-icon.success {
+  color: #16a34a;
+}

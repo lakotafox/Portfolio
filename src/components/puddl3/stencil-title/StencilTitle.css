@@ -1,0 +1,63 @@
+.stencil-title {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stencil-title__measure {
+  color: transparent;
+}
+
+.stencil-title__word {
+  display: inline-block;
+  white-space: pre;
+}
+
+.stencil-title__word:not(:last-child)::after {
+  content: ' ';
+}
+
+.stencil-title__baseline {
+  display: inline-block;
+  width: 0;
+  height: 0;
+}
+
+.stencil-title__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.stencil-title__reveal {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+.stencil-title__clip {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.stencil-title__media {
+  position: absolute;
+  inset: 0;
+  display: block;
+  will-change: transform, filter;
+}
+
+.stencil-title__source {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}

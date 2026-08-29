@@ -1,0 +1,208 @@
+.screen-mockup-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.screen-mockup-body {
+  position: relative;
+  flex-shrink: 0;
+  width: 35.6rem;
+  height: 72.2rem;
+  border-radius: 6rem;
+  display: flex;
+  justify-content: center;
+  background-color: #000000;
+  user-select: none;
+  transition: box-shadow 300ms ease;
+}
+
+.screen-mockup-body.screen-mockup-hover:hover {
+  box-shadow: none;
+  transform: scale(0.95);
+}
+
+.screen-mockup-content {
+  position: absolute;
+  inset: 1.9rem;
+  overflow: hidden;
+  border-radius: 5rem;
+}
+
+.screen-mockup-content-scrollable {
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.screen-mockup-content-scrollable::-webkit-scrollbar {
+  display: none;
+}
+
+.screen-mockup-screen-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  user-select: none;
+}
+
+.screen-mockup-screen-image-scrollable {
+  height: auto;
+  min-height: 100%;
+}
+
+.screen-mockup-dynamic-island {
+  position: absolute;
+  top: 2.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12.6rem;
+  height: 3.7rem;
+  background-color: #000000;
+  border-radius: 3rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.4rem;
+}
+
+.screen-mockup-camera {
+  width: 1.1rem;
+  height: 1.1rem;
+  background-color: #1a1a2e;
+  border-radius: 50%;
+  border: 0.15rem solid #0a0a15;
+  box-shadow: inset 0 0 0.3rem rgba(0, 100, 200, 0.5);
+  flex-shrink: 0;
+}
+
+.screen-mockup-speaker-grill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  margin: 0 1.2rem;
+}
+
+.screen-mockup-speaker-grill-line {
+  width: 0.15rem;
+  height: 1.2rem;
+  background-color: #0a0a15;
+  border-radius: 999px;
+  opacity: 0.6;
+}
+
+.screen-mockup-sensors {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.screen-mockup-sensor {
+  width: 0.4rem;
+  height: 0.4rem;
+  background-color: #1a1a2e;
+  border-radius: 50%;
+  border: 0.1rem solid #0a0a15;
+}
+
+.screen-mockup-button {
+  position: absolute;
+  width: 0.3rem;
+  background-color: #484848;
+  border-top-left-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+  border: 0.1rem solid rgba(0, 0, 0, 0.1);
+  border-right: none;
+}
+
+.screen-mockup-button-silent {
+  top: 9.8rem;
+  left: -0.2rem;
+  height: 2.5rem;
+}
+
+.screen-mockup-button-volume-up {
+  top: 15rem;
+  left: -0.2rem;
+  height: 5rem;
+}
+
+.screen-mockup-button-volume-down {
+  top: 21.6rem;
+  left: -0.2rem;
+  height: 5rem;
+}
+
+.screen-mockup-button-power {
+  top: 16.9rem;
+  right: -0.3rem;
+  height: 5rem;
+  transform: rotate(180deg);
+}
+
+.screen-mockup-layer {
+  position: absolute;
+  pointer-events: none;
+}
+
+.screen-mockup-layer-1 {
+  inset: 0;
+  border: 0.4rem solid #484848;
+  border-radius: 6rem;
+}
+
+.screen-mockup-layer-2 {
+  inset: 0.3rem;
+  border: 1.6rem solid #000000;
+  border-radius: 5.6rem;
+}
+
+.screen-mockup-layer-gradient-1 {
+  inset: 1.1rem;
+  border: 0.3rem solid #484848;
+  border-radius: 5rem;
+  filter: blur(1px);
+  opacity: 0.5;
+}
+
+.screen-mockup-layer-gradient-2 {
+  inset: 0.7rem;
+  border: 0.4rem solid #bcbcbc;
+  border-radius: 5.6rem;
+  opacity: 0.5;
+  filter: blur(1px);
+}
+
+@media (max-width: 600px) {
+  .screen-mockup-body {
+    transform: scale(0.65);
+  }
+
+  .screen-mockup-body.screen-mockup-hover:hover {
+    transform: scale(0.6);
+  }
+}
+
+@media (max-height: 800px) {
+  .screen-mockup-body {
+    transform: scale(0.77);
+  }
+
+  .screen-mockup-body.screen-mockup-hover:hover {
+    transform: scale(0.68);
+  }
+}
+
+@media (max-height: 630px) {
+  .screen-mockup-body {
+    transform: scale(0.53);
+  }
+
+  .screen-mockup-body.screen-mockup-hover:hover {
+    transform: scale(0.48);
+  }
+}

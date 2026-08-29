@@ -1,0 +1,17 @@
+.block-bloom {
+  position: relative;
+  overflow: hidden;
+}
+
+.block-bloom-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.block-bloom-content {
+  pointer-events: none;
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

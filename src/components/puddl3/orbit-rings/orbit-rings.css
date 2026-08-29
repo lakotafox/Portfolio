@@ -1,0 +1,119 @@
+.orbit-rings-container {
+  position: relative;
+}
+
+.orbit-rings-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.orbit-rings-paths {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.orbit-rings-path-ring {
+  stroke: #d1d5db;
+}
+
+@media (prefers-color-scheme: dark) {
+  .orbit-rings-path-ring {
+    stroke: #374151;
+  }
+}
+
+.orbit-rings-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.circle-item {
+  position: absolute;
+  display: block;
+  left: 50%;
+  top: 50%;
+}
+
+.circle-content {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 2px solid #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .circle-content {
+    border-color: #1f2937;
+  }
+}
+
+.circle-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@keyframes orbit-rings-orbit {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes orbit-rings-counter-orbit {
+  0% {
+    transform: rotate(calc(-1 * var(--item-angle))) scale(1);
+    opacity: var(--target-opacity);
+    filter: blur(var(--target-blur));
+  }
+  100% {
+    transform: rotate(calc(-1 * var(--item-angle) - 360deg)) scale(1);
+    opacity: var(--target-opacity);
+    filter: blur(var(--target-blur));
+  }
+}
+
+@keyframes orbit-rings-entrance {
+  0% {
+    opacity: 0;
+    transform: rotate(calc(-1 * var(--item-angle))) scale(0.6);
+    filter: blur(calc(10px + var(--target-blur)));
+  }
+  60% {
+    filter: blur(var(--target-blur));
+  }
+  100% {
+    opacity: var(--target-opacity);
+    transform: rotate(calc(-1 * var(--item-angle))) scale(1);
+    filter: blur(var(--target-blur));
+  }
+}
+
+@keyframes orbit-rings-path-entrance {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 100;
+  }
+  100% {
+    opacity: 0.5;
+    stroke-dashoffset: 0;
+  }
+}

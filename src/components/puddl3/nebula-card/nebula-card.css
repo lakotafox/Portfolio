@@ -1,0 +1,32 @@
+.nebula-card {
+  position: relative;
+  overflow: hidden;
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-radius: 0.75rem;
+}
+
+.nebula-card-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.nebula-card-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.nebula-card canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

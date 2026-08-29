@@ -1,0 +1,116 @@
+.aura-deck-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #f0f0f0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+
+.dark .aura-deck-container {
+  background: #0a0a0a;
+}
+
+.aura-deck-container.dragging {
+  cursor: grabbing;
+}
+
+.aura-deck-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dark .aura-deck-loader {
+  background: #0a0a0a;
+}
+
+.aura-deck-loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.aura-deck-loader-spinner {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid #e5e5e5;
+  border-top-color: #171717;
+  animation: aura-deck-spin 1s linear infinite;
+}
+
+.dark .aura-deck-loader-spinner {
+  border-color: #404040;
+  border-top-color: #e5e5e5;
+}
+
+@keyframes aura-deck-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.aura-deck-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.aura-deck-cards {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  transform-style: preserve-3d;
+}
+
+.aura-deck-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(26vw, 360px);
+  aspect-ratio: 4/5;
+  isolation: isolate;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, filter;
+  transform-origin: 90% center;
+  contain: layout paint;
+}
+
+.aura-deck-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 15px;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aura-deck-card {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .aura-deck-loader-spinner {
+    animation: none !important;
+  }
+}

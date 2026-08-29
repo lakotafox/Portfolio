@@ -1,0 +1,30 @@
+.sticky-specks {
+  position: relative;
+  overflow: hidden;
+}
+
+.sticky-specks-backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.sticky-specks-canvas {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.sticky-specks-defs {
+  pointer-events: none;
+  position: absolute;
+  height: 0;
+  width: 0;
+}
+
+.sticky-specks-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

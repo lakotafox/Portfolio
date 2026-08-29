@@ -1,0 +1,88 @@
+.pan-board-container {
+  overflow: hidden;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.pan-board-container.fixed-mode {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+}
+
+.pan-board-container.absolute-mode {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pan-board {
+  position: absolute;
+  width: max-content;
+  height: max-content;
+  display: flex;
+  will-change: transform;
+}
+
+.pan-board.draggable {
+  cursor: grab;
+}
+
+.pan-board.dragging {
+  cursor: grabbing;
+}
+
+.pan-board-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.pan-board-column.offset {
+  margin-top: 10vw;
+}
+
+.product {
+  position: relative;
+  aspect-ratio: 1 / 1;
+}
+
+.product-inner {
+  aspect-ratio: 1 / 1;
+  will-change: transform;
+}
+
+.product-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  will-change: transform;
+  transition: transform 300ms ease-in-out;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  pointer-events: none;
+}
+
+.product:hover .product-image {
+  transform: scale(1.05);
+}
+
+.pan-board.dragging * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pan-board,
+  .product-inner,
+  .product-image {
+    transition: none !important;
+  }
+}

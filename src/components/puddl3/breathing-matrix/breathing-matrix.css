@@ -1,0 +1,16 @@
+.breathing-matrix {
+  position: relative;
+  overflow: hidden;
+}
+
+.breathing-matrix-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.breathing-matrix-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

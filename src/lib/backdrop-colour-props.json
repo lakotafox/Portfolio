@@ -1,0 +1,406 @@
+{
+ "aura-sphere": [
+  "backgroundColor"
+ ],
+ "axon-corridor": [
+  "backgroundColor",
+  "color",
+  "hotColor"
+ ],
+ "axon-pulse": [
+  "color"
+ ],
+ "bit-board": [
+  "backgroundColor",
+  "color"
+ ],
+ "bit-drizzle": [
+  "backgroundColor",
+  "color",
+  "hotColor"
+ ],
+ "block-bloom": [
+  "accent",
+  "color"
+ ],
+ "bloom-beams": [
+  "backgroundColor"
+ ],
+ "breathing-matrix": [
+  "accentColor",
+  "accentEnd",
+  "accentStart",
+  "backgroundColor",
+  "color"
+ ],
+ "chroma-columns": [
+  "backgroundColor",
+  "color"
+ ],
+ "cipher-rain": [
+  "color",
+  "glitchColors",
+  "targetColor"
+ ],
+ "color-whirl": [
+  "backgroundColor"
+ ],
+ "comet-streak": [
+  "backgroundColor",
+  "color"
+ ],
+ "console-mosaic": [
+  "backgroundColor",
+  "color"
+ ],
+ "contour-field": [
+  "highColor",
+  "lowColor",
+  "midColor"
+ ],
+ "cosmos": [],
+ "crossing-bands": [
+  "color",
+  "lightColor"
+ ],
+ "crt-flicker": [
+  "tint"
+ ],
+ "crystal-corridor": [
+  "color1",
+  "color2",
+  "color3"
+ ],
+ "dendrite-drift": [
+  "backgroundColor",
+  "colorCold",
+  "colorHot"
+ ],
+ "dew-sparks": [
+  "color"
+ ],
+ "drifting-wires": [],
+ "dust-type": [
+  "color",
+  "highlightColor"
+ ],
+ "edge-beams": [
+  "rayColor1",
+  "rayColor2"
+ ],
+ "ember-drift": [
+  "backgroundColor",
+  "color",
+  "farColor"
+ ],
+ "ember-filaments": [
+  "backgroundColor",
+  "lineColor",
+  "pulseColor"
+ ],
+ "ember-streams": [
+  "backgroundColor"
+ ],
+ "event-horizon": [
+  "backgroundColor"
+ ],
+ "fiber-rush": [
+  "cableColor",
+  "colorVariance",
+  "pulseColor",
+  "tunnelColor"
+ ],
+ "fluid-columns": [
+  "color"
+ ],
+ "fluid-halo": [
+  "backgroundColor",
+  "color1",
+  "color2",
+  "color3"
+ ],
+ "flux-pool": [
+  "colors"
+ ],
+ "focal-fibers": [
+  "color1",
+  "color2",
+  "color3"
+ ],
+ "forge-swirl": [
+  "color1",
+  "color2",
+  "color3"
+ ],
+ "geo-lattice": [
+  "borderColor",
+  "hoverFillColor"
+ ],
+ "ghost-nimbus": [
+  "backgroundColor",
+  "color",
+  "colorWave",
+  "highlightColor"
+ ],
+ "glow-column": [
+  "bottomColor",
+  "topColor"
+ ],
+ "glow-sweep": [
+  "color"
+ ],
+ "glyph-mosaic": [
+  "backgroundColor",
+  "glyphColor",
+  "recessColor"
+ ],
+ "glyph-tide": [
+  "color"
+ ],
+ "halo-bloom": [
+  "backgroundColor",
+  "color",
+  "deepColor",
+  "midColor"
+ ],
+ "horizon-swells": [
+  "crestColor",
+  "horizonColor",
+  "waveColor"
+ ],
+ "hue-tiles": [],
+ "ink-wash": [
+  "color1",
+  "color2"
+ ],
+ "ion-swell": [],
+ "jelly-field": [
+  "backgroundColor",
+  "tintB",
+  "tintG",
+  "tintR"
+ ],
+ "lattice-sphere": [
+  "backgroundColor",
+  "depthColor",
+  "depthTint",
+  "edgeColor",
+  "vertexColor"
+ ],
+ "loom": [
+  "color"
+ ],
+ "louver-sweep": [
+  "backgroundColor",
+  "color",
+  "hotColor"
+ ],
+ "luminous-rain": [
+  "color1",
+  "color2"
+ ],
+ "mercury-flow": [
+  "baseColor"
+ ],
+ "mesh-drift": [
+  "gradientColor"
+ ],
+ "midnight-haze": [],
+ "mist-orb": [
+  "backgroundColor",
+  "coreColor",
+  "glowColor"
+ ],
+ "molten-pane": [],
+ "mote-field": [
+  "particleColors"
+ ],
+ "mural-grid": [
+  "color1",
+  "color2",
+  "color3"
+ ],
+ "nebula-drift": [
+  "color"
+ ],
+ "neon-downpour": [
+  "backgroundColor",
+  "colors"
+ ],
+ "neon-swell": [
+  "backgroundColor",
+  "color",
+  "hotColor"
+ ],
+ "newsreel-ripple": [
+  "backgroundColor",
+  "colorA",
+  "colorB"
+ ],
+ "noise-swells": [
+  "backgroundColor",
+  "color"
+ ],
+ "panel-cascade": [
+  "accentColor",
+  "backgroundColor",
+  "color",
+  "edgeColor"
+ ],
+ "particle-maelstrom": [
+  "discColor",
+  "particleColor"
+ ],
+ "pixel-pulse": [
+  "backgroundColor",
+  "colorFrom",
+  "colorTo"
+ ],
+ "plasma-tide": [
+  "backgroundColor",
+  "color1",
+  "color2"
+ ],
+ "pointer-ripple": [
+  "backgroundColor",
+  "color",
+  "colors"
+ ],
+ "polar-glow": [],
+ "polar-haze": [
+  "u_layer1Color",
+  "u_layer2Color",
+  "u_layer3Color",
+  "u_layer4Color",
+  "u_skyColor1",
+  "u_skyColor2"
+ ],
+ "polar-sweep": [
+  "backgroundColor",
+  "color",
+  "deepColor",
+  "midColor"
+ ],
+ "prism-grid": [
+  "backgroundColor",
+  "colorA",
+  "colorB"
+ ],
+ "quiet-rings": [
+  "backgroundColor",
+  "color",
+  "hotColor"
+ ],
+ "rainbow-drift": [
+  "colors"
+ ],
+ "retro-static": [
+  "colorNum",
+  "waveColor"
+ ],
+ "ridgeline": [
+  "backgroundColor",
+  "color",
+  "farColor",
+  "midColor",
+  "rimColor",
+  "ringColor"
+ ],
+ "ripple-lines": [
+  "backgroundColor",
+  "lineColor"
+ ],
+ "satin-flow": [
+  "color"
+ ],
+ "satin-ripples": [
+  "colors"
+ ],
+ "shutter-glow": [
+  "gradientColors"
+ ],
+ "signal-bands": [
+  "color1",
+  "color2",
+  "color3",
+  "colorSpread"
+ ],
+ "slat-ripple": [
+  "color1",
+  "color2",
+  "color3"
+ ],
+ "soft-eddy": [
+  "backgroundColor",
+  "swirlColor"
+ ],
+ "speck-drift": [
+  "color"
+ ],
+ "speckle-wash": [
+  "color1",
+  "color2",
+  "color3",
+  "colorBalance"
+ ],
+ "spectrum-slats": [
+  "backgroundColor",
+  "colorA",
+  "colorB",
+  "colorC"
+ ],
+ "sphere-pool": [],
+ "square-burst": [
+  "color"
+ ],
+ "star-wheel": [
+  "color"
+ ],
+ "stardust-swirl": [
+  "color"
+ ],
+ "steel-vortex": [
+  "backgroundColor",
+  "colorBias",
+  "colorRange"
+ ],
+ "sticky-specks": [
+  "backgroundColor",
+  "color"
+ ],
+ "storm-bolts": [],
+ "sun-shafts": [
+  "raysColor"
+ ],
+ "synth-horizon": [
+  "backgroundColor",
+  "color1",
+  "color2"
+ ],
+ "tile-swell": [
+  "backgroundColor",
+  "color",
+  "hotColor"
+ ],
+ "twinkle-tiles": [
+  "backgroundColor",
+  "squareColor"
+ ],
+ "vanishing-lattice": [
+  "color"
+ ],
+ "vivid-coils": [
+  "baseColor"
+ ],
+ "wave-lattice": [
+  "gridColor"
+ ],
+ "wisp-sphere": [
+  "backgroundColor",
+  "colorA",
+  "colorB",
+  "colorC",
+  "specularColorA",
+  "specularColorB"
+ ]
+}

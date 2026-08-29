@@ -1,0 +1,53 @@
+.orbit-deck-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbit-deck-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.rotating-card {
+  position: absolute;
+  border-radius: 0.75rem;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.rotating-card-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .rotating-card {
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.3),
+      0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-deck-wrapper {
+    animation: none !important;
+  }
+
+  .rotating-card {
+    transition: none !important;
+  }
+}

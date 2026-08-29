@@ -1,0 +1,14 @@
+.event-horizon-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.event-horizon-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.event-horizon-content {
+  position: relative;
+  z-index: 1;
+}

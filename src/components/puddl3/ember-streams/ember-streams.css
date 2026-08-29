@@ -1,0 +1,14 @@
+.ember-streams-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.ember-streams-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.ember-streams-content {
+  position: relative;
+  z-index: 1;
+}

@@ -1,0 +1,16 @@
+.ghost-nimbus {
+  position: relative;
+  overflow: hidden;
+}
+
+.ghost-nimbus-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.ghost-nimbus-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

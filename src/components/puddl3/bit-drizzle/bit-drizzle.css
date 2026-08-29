@@ -1,0 +1,16 @@
+.bit-drizzle {
+  position: relative;
+  overflow: hidden;
+}
+
+.bit-drizzle-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.bit-drizzle-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

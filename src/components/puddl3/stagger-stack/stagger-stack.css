@@ -1,0 +1,108 @@
+.stagger-stack-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.stagger-stack-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.stagger-stack-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.stagger-stack-items {
+  list-style: none;
+  margin: 0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.stagger-stack-items-center {
+  padding-top: 50%;
+}
+
+.stagger-stack-items-bottom {
+  padding-top: 100%;
+}
+
+.stagger-stack-items li {
+  margin: 0;
+  padding: 0;
+}
+
+.stagger-stack-fade-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.stagger-stack-fade-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.stagger-stack-item-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .stagger-stack-item-card {
+    background-color: #0a0a0a;
+    border-color: #262626;
+  }
+}
+
+.stagger-stack-item-text {
+  color: #111827;
+}
+
+@media (prefers-color-scheme: dark) {
+  .stagger-stack-item-text {
+    color: #fff;
+  }
+}
+
+.stagger-stack-item-clickable {
+  cursor: pointer;
+}
+
+.stagger-stack-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+}
+
+.stagger-stack-swipe-indicator {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.stagger-stack-swipe-indicator span {
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 0.875rem;
+}

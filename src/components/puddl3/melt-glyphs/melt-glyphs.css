@@ -1,0 +1,21 @@
+.melt-glyphs-container {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.melt-glyphs-pre {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  user-select: none;
+  white-space: pre;
+}
+
+.melt-glyphs-content {
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+}

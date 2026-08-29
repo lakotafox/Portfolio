@@ -1,0 +1,32 @@
+.tagged-pointer-root {
+  position: relative;
+}
+
+.tagged-pointer-root--full {
+  display: contents;
+}
+
+.tagged-pointer-follower {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.tagged-pointer-arrow {
+  display: block;
+}
+
+.tagged-pointer-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+}

@@ -1,0 +1,12 @@
+.endless-wall-container {
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.endless-wall-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}

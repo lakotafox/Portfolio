@@ -1,0 +1,128 @@
+:root {
+  --dossier-color: #70a1ff;
+  --dossier-back-color: #4785ff;
+  --paper-1: #e6e6e6;
+  --paper-2: #f2f2f2;
+  --paper-3: #ffffff;
+}
+
+.dossier {
+  transition: all 0.2s ease-in;
+  cursor: pointer;
+}
+
+.dossier:not(.dossier--click):hover {
+  transform: translateY(-8px);
+}
+
+.dossier:not(.dossier--click):hover .paper {
+  transform: translate(-50%, 0%);
+}
+
+.dossier:not(.dossier--click):hover .dossier__front {
+  transform: skew(15deg) scaleY(0.6);
+}
+
+.dossier:not(.dossier--click):hover .right {
+  transform: skew(-15deg) scaleY(0.6);
+}
+
+.dossier.open {
+  transform: translateY(-8px);
+}
+
+.dossier.open .paper:nth-child(1) {
+  transform: translate(-120%, -70%) rotateZ(-15deg);
+}
+
+.dossier.open .paper:nth-child(1):hover {
+  transform: translate(-120%, -70%) rotateZ(-15deg) scale(1.1);
+}
+
+.dossier.open .paper:nth-child(2) {
+  transform: translate(10%, -70%) rotateZ(15deg);
+  height: 80%;
+}
+
+.dossier.open .paper:nth-child(2):hover {
+  transform: translate(10%, -70%) rotateZ(15deg) scale(1.1);
+}
+
+.dossier.open .paper:nth-child(3) {
+  transform: translate(-50%, -100%) rotateZ(5deg);
+  height: 80%;
+}
+
+.dossier.open .paper:nth-child(3):hover {
+  transform: translate(-50%, -100%) rotateZ(5deg) scale(1.1);
+}
+
+.dossier.open .dossier__front {
+  transform: skew(15deg) scaleY(0.6);
+}
+
+.dossier.open .right {
+  transform: skew(-15deg) scaleY(0.6);
+}
+
+.dossier__back {
+  position: relative;
+  width: 100px;
+  height: 80px;
+  background: var(--dossier-back-color);
+  border-radius: 0px 10px 10px 10px;
+}
+
+.dossier__back::after {
+  position: absolute;
+  z-index: 0;
+  bottom: 98%;
+  left: 0;
+  content: '';
+  width: 30px;
+  height: 10px;
+  background: var(--dossier-back-color);
+  border-radius: 5px 5px 0 0;
+}
+
+.paper {
+  position: absolute;
+  z-index: 2;
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%, 10%);
+  width: 70%;
+  height: 80%;
+  background: var(--paper-1);
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.paper:nth-child(2) {
+  background: var(--paper-2);
+  width: 80%;
+  height: 70%;
+}
+
+.paper:nth-child(3) {
+  background: var(--paper-3);
+  width: 90%;
+  height: 60%;
+}
+
+.dossier__front {
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  background: var(--dossier-color);
+  border-radius: 5px 10px 10px 10px;
+  transform-origin: bottom;
+  transition: all 0.3s ease-in-out;
+}
+
+.dossier:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 4px;
+  border-radius: 10px;
+}

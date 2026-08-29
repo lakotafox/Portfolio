@@ -1,0 +1,7260 @@
+{
+ "404-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "404-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "404-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "404-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "404-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "404-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "404-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "404-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "about-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "afterimage-type": {
+  "color": [
+   "tint",
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": "text-effect"
+ },
+ "agent-activity-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-activity-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-activity-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-activity-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-activity-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "agent-activity-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-activity-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "block"
+ },
+ "agent-approval-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-approval-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-approval-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-approval-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-approval-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-approval-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-plan-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-plan-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-plan-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-plan-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-plan-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "agent-plan-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ai-chat-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "ai-chat-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "ai-chat-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "ai-chat-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "ai-chat-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "ai-chat-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "ai-chat-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "ai-chat-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ai-chat-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "ai-usage-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "ai-usage-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ai-usage-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ai-usage-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ai-usage-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ai-usage-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ai-usage-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ai-usage-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-13": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-14": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-15": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-16": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "analytics-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "app-dialog-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "app-dialog-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "app-dialog-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "app-dialog-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "app-dialog-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "app-dialog-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "app-dialog-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "app-shell-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "app-shell-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "app-shell-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "app-shell-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "app-shell-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "app-shell-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "app-shell-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "app-shell-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "app-shell-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "block"
+ },
+ "app-sidebar-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "app-sidebar-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "app-sidebar-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "app-sidebar-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "app-sidebar-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "app-sidebar-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "app-sidebar-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "arc-field": {
+  "color": [
+   "textColor",
+   "placeholderColor",
+   "borderColor",
+   "buttonColor",
+   "buttonTextColor",
+   "iconColor",
+   "shadowColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "arc-type": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "text-effect"
+ },
+ "arcane-halos": {
+  "color": [
+   "color",
+   "colorTwo"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "atlas": {
+  "color": [
+   "primaryColor",
+   "neutralColor",
+   "atmosphereColor",
+   "globeColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "aura-deck": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "aura-sphere": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "auth-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "auth-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "auth-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "auth-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "auth-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-13": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-14": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "authentication-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "axon-corridor": {
+  "color": [
+   "color",
+   "hotColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "axon-pulse": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "badge-swing": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "bank-card": {
+  "color": [
+   "textColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "beacon-tile": {
+  "color": [
+   "spotlightColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": null
+ },
+ "beam-ascent": {
+  "color": [
+   "color",
+   "horizonColor",
+   "haloColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "beam-cascade": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "before-after-slider": {
+  "color": [
+   "dividerColor",
+   "handleColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "billboard-stream": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": null
+ },
+ "billing-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "billing-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "billing-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "block"
+ },
+ "billing-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "billing-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "billing-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "billing-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "billing-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "bit-board": {
+  "color": [
+   "colorRgb",
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "bit-drizzle": {
+  "color": [
+   "color",
+   "hotColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "bitmap-panel": {
+  "color": [
+   "colors"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": null
+ },
+ "blob-fusion": {
+  "color": [
+   "color",
+   "cursorBallColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "block-bloom": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "block-wipe": {
+  "color": [
+   "transitionColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "blog-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "blog-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "blog-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "blog-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "blog-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "blog-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "blog-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "blog-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "blog-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "blog-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "blog-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "bloom-beams": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "bloom-nav": {
+  "color": [
+   "menuContentColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "blur-relay": {
+  "color": [
+   "borderColor",
+   "glowColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "borealis-glow": {
+  "color": [
+   "color1",
+   "color2"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "brand-marquee": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "breathing-matrix": {
+  "color": [
+   "color",
+   "accentColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "bulge-tile": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": null
+ },
+ "card-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "card-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "card-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "card-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "card-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "card-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "card-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "card-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "card-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "card-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "card-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "cascade-type": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "text-effect"
+ },
+ "chat-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "chat-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "chat-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "chat-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "chat-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "chat-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "checker-dissolve": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "choice-dial": {
+  "color": [
+   "textColor",
+   "activeColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "chroma-columns": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "chrome-ink": {
+  "color": [
+   "lightColor",
+   "darkColor",
+   "tintColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "cipher-rain": {
+  "color": [],
+  "colorArray": [
+   "glitchColors"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "text-effect"
+ },
+ "cipher-reveal": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "text-effect"
+ },
+ "coarse-focus": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "color-shift-card": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": null
+ },
+ "color-whirl": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "comet-streak": {
+  "color": [
+   "tintRgb",
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "command-menu-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "block"
+ },
+ "command-menu-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "block"
+ },
+ "command-menu-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "block"
+ },
+ "command-menu-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "block"
+ },
+ "command-menu-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "block"
+ },
+ "command-menu-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "block"
+ },
+ "comments-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "comments-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "comments-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "comments-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "comments-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "comments-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "comparison-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "comparison-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "comparison-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "comparison-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "comparison-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "comparison-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "comparison-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "comparison-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "compass-field": {
+  "color": [
+   "lineColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": null
+ },
+ "concertina-panels": {
+  "color": [
+   "accentColor",
+   "overlayColor",
+   "textColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "console-mosaic": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "contact-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contact-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contact-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contact-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contact-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contact-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contact-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contact-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contact-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contact-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contact-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contact-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "contour-field": {
+  "color": [
+   "lowColor",
+   "midColor",
+   "highColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "corrupted-type": {
+  "color": [
+   "textColor"
+  ],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "text-effect"
+ },
+ "cosmos": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "crossing-bands": {
+  "color": [
+   "lightColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "crt-flicker": {
+  "color": [
+   "tint"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "crystal-corridor": {
+  "color": [
+   "color1",
+   "color2",
+   "color3"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "crystal-panel": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "crystal-spin": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": null
+ },
+ "cta-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "cta-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "cta-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "cta-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "cta-13": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "cta-14": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "cta-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "cta-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "cta-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "cta-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "cta-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "cta-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "cta-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "cta-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "curved-ticker": {
+  "color": [
+   "color",
+   "bandColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "text-effect"
+ },
+ "dashboard-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "dashboard-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "dashboard-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "dashboard-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "dashboard-13": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "dashboard-14": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "dashboard-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "dashboard-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "block"
+ },
+ "dashboard-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "dashboard-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "dashboard-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "dashboard-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "dashboard-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "dashboard-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "data-alchemy": {
+  "color": [
+   "axisColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "data-table-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "data-table-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "data-table-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "data-table-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "data-table-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "data-table-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "data-table-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "data-table-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "decal-lift": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "deck-cycle": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": null
+ },
+ "deck-pileup": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "dendrite-drift": {
+  "color": [
+   "colorCold",
+   "colorHot"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "departure-board": {
+  "color": [
+   "tileColor",
+   "textColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "text-effect"
+ },
+ "depth-deck": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "depth-rise": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "text-effect"
+ },
+ "dew-sparks": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "digit-roll": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "disc-cycle": {
+  "color": [
+   "surfaceColor",
+   "borderColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "dissolve-panel": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "window",
+  "role": null
+ },
+ "dossier": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "download-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "download-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "download-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "download-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "download-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "download-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "download-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "download-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "drifting-wires": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "dust-type": {
+  "color": [
+   "color",
+   "highlightColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "ecommerce-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ecommerce-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ecommerce-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ecommerce-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ecommerce-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ecommerce-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ecommerce-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ecommerce-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ecommerce-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ecommerce-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ecommerce-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "edge-beams": {
+  "color": [
+   "rayColor1",
+   "rayColor2"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "editor-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "editor-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "editor-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "editor-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "ember-drift": {
+  "color": [
+   "color",
+   "farColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "ember-filaments": {
+  "color": [
+   "lineColor",
+   "pulseColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "ember-gaze": {
+  "color": [
+   "eyeColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "ember-streams": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "empty-state-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "empty-state-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "empty-state-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "empty-state-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "empty-state-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "endless-rail": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "endless-wall": {
+  "color": [
+   "fogColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": "window",
+  "role": null
+ },
+ "event-horizon": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "extruded-type": {
+  "color": [
+   "faceColor",
+   "depthColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": "text-effect"
+ },
+ "fan-deck": {
+  "color": [
+   "cardColor",
+   "borderColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "faq-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "faq-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "faq-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "faq-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "faq-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "faq-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "faq-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "faq-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "faq-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-13": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "features-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "features-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "feedback-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "feedback-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "feedback-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "feedback-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "feedback-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "feedback-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "fiber-rush": {
+  "color": [
+   "cableColor",
+   "pulseColor",
+   "tunnelColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "filament-weave": {
+  "color": [],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "file-manager-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "file-manager-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "file-manager-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "file-manager-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "film-grain": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "filmstrip": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "filtering-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "block"
+ },
+ "filtering-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "block"
+ },
+ "filtering-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "filtering-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "filtering-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "block"
+ },
+ "filtering-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "block"
+ },
+ "filtering-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "filtering-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "block"
+ },
+ "filtering-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "flip-cascade": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "text-effect"
+ },
+ "flipbook": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "flock-pointer": {
+  "color": [
+   "color",
+   "accentColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "fluid-columns": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "fluid-halo": {
+  "color": [
+   "color1",
+   "color2",
+   "color3"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "flux-pool": {
+  "color": [],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "focal-fibers": {
+  "color": [
+   "color1",
+   "color2",
+   "color3"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "focus-pull": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "footer-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "footer-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "footer-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "footer-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "footer-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "footer-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "footer-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "footer-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "footer-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "footer-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "footer-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "footer-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "forge-swirl": {
+  "color": [
+   "color1",
+   "color2",
+   "color3"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "forms-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "block"
+ },
+ "forms-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "forms-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "forms-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "block"
+ },
+ "forms-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "block"
+ },
+ "forms-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "forms-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "forms-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "forms-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "forms-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "forms-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "forms-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "frame-bloom": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "frosted-glyphs": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "gateway": {
+  "color": [
+   "primaryColor",
+   "secondaryColor",
+   "centerColor",
+   "ballBgColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "geo-lattice": {
+  "color": [
+   "borderColor",
+   "hoverFillColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "ghost-nimbus": {
+  "color": [
+   "color",
+   "highlightColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "glass-orb-wipe": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "glide-pointer": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": "overlay"
+ },
+ "gloss-glide": {
+  "color": [
+   "borderColor",
+   "glareColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": null
+ },
+ "glow-column": {
+  "color": [
+   "topColor",
+   "bottomColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "glow-sweep": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "glyph-mosaic": {
+  "color": [
+   "glyphColor",
+   "recessColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "glyph-swarm": {
+  "color": [],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": "self",
+  "role": "text-effect"
+ },
+ "glyph-tide": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "backdrop"
+ },
+ "glyph-trail": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": "window",
+  "role": "overlay"
+ },
+ "goo-pointer": {
+  "color": [
+   "fillColor",
+   "innerColor",
+   "shadowColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "overlay"
+ },
+ "grain-trail": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": "overlay"
+ },
+ "gravity-letters": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "text-effect"
+ },
+ "halo-bloom": {
+  "color": [
+   "color",
+   "midColor",
+   "deepColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "halo-edge": {
+  "color": [],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": null
+ },
+ "hazy-morph": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "hemisphere-gallery": {
+  "color": [
+   "overlayBlurColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "hero-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "hero-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "hero-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "hero-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "hero-13": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "hero-14": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "hero-15": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "hero-16": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "hero-17": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "hero-18": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "block"
+ },
+ "hero-19": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "hero-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "block"
+ },
+ "hero-20": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "hero-21": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "hero-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "hero-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "hero-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "hero-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "hero-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "hero-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "hero-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "holo-badge": {
+  "color": [
+   "behindGlowColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "holo-flip": {
+  "color": [
+   "labelColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "horizon-swells": {
+  "color": [
+   "horizonColor",
+   "waveColor",
+   "crestColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "how-it-works-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "how-it-works-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "how-it-works-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "how-it-works-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "how-it-works-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "how-it-works-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "how-it-works-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "how-it-works-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "how-it-works-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "hue-tiles": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "backdrop"
+ },
+ "ink-currents": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "ink-wash": {
+  "color": [
+   "color1",
+   "color2"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "inkwell-spiral": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "integrations-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "integrations-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "integrations-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "integrations-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "integrations-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "integrations-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "into-focus": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "ion-swell": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "iron-filings": {
+  "color": [
+   "color",
+   "hotColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "jelly-field": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "kanban-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "kanban-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "kanban-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "kanban-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "kanban-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "kanban-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "keystroke-reveal": {
+  "color": [],
+  "colorArray": [
+   "textColors"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "text-effect"
+ },
+ "lattice-bend": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "lattice-sphere": {
+  "color": [
+   "depthColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "lava-lamp": {
+  "color": [
+   "primaryColor",
+   "secondaryColor",
+   "accentColor",
+   "baseColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": null
+ },
+ "leaf-turn": {
+  "color": [
+   "pageColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "lens-pointer": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "letter-break": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "text-effect"
+ },
+ "letter-flurry": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "text-effect"
+ },
+ "liquid-letters": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "text-effect"
+ },
+ "liquid-nav": {
+  "color": [
+   "textColor",
+   "marqueeBgColor",
+   "marqueeTextColor",
+   "borderColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "bgColor"
+  ],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "liquid-pane": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "list-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "list-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "list-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "block"
+ },
+ "list-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "list-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "list-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "list-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "list-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "list-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "list-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "list-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "list-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "lock-on-pointer": {
+  "color": [
+   "cursorColor",
+   "cursorColorOnTarget"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": "overlay"
+ },
+ "loom": {
+  "color": [],
+  "colorArray": [
+   "color"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "louver-sweep": {
+  "color": [
+   "color",
+   "hotColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "luminous-rain": {
+  "color": [
+   "color1",
+   "color2"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "magnetic-ink": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": null
+ },
+ "marker-reveal": {
+  "color": [
+   "highlightColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "text-effect"
+ },
+ "melt-glyphs": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "melt-reel": {
+  "color": [
+   "overlayColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "mercury-flow": {
+  "color": [],
+  "colorArray": [
+   "baseColor"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "mesh-drift": {
+  "color": [
+   "gradientColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": "backdrop"
+ },
+ "midnight-haze": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "mirror-pane": {
+  "color": [
+   "color",
+   "overlayColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "mist-orb": {
+  "color": [
+   "coreColor",
+   "glowColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "mobile-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "mobile-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "mobile-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "mobile-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "mobile-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "molten-pane": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "momentum-marquee": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "monitoring-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "monitoring-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "monitoring-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "monitoring-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "monitoring-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "monitoring-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "monitoring-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "monitoring-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "monitoring-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "monitoring-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "morph-pointer": {
+  "color": [
+   "circleColor",
+   "dotColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "window",
+  "role": "wrapper"
+ },
+ "mote-field": {
+  "color": [
+   "particleColors"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "motion-wrap": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "mural-grid": {
+  "color": [
+   "color1",
+   "color2",
+   "color3"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "navbar-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "navbar-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "navbar-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "navbar-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "navbar-13": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "navbar-14": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "navbar-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "navbar-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "navbar-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "navbar-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "navbar-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "navbar-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "navbar-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "navbar-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "navigation-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "navigation-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "navigation-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "navigation-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "navigation-13": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "navigation-14": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "navigation-15": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "navigation-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "navigation-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "navigation-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "navigation-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "navigation-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "navigation-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "navigation-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "navigation-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "nebula-card": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "nebula-drift": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "neon-downpour": {
+  "color": [],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "neon-swell": {
+  "color": [
+   "color",
+   "hotColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "newsprint-lens": {
+  "color": [
+   "inkColor",
+   "paperColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "newsreel-ripple": {
+  "color": [
+   "colorARgb",
+   "colorBRgb",
+   "colorA",
+   "colorB"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "noise-rim": {
+  "color": [
+   "colorRgb",
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "noise-swells": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "notifications-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "notifications-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "block"
+ },
+ "notifications-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "notifications-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "notifications-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "notifications-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "nova-pop": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "oblique-columns": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "oil-slick": {
+  "color": [],
+  "colorArray": [
+   "color"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "onboarding-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "onboarding-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "onboarding-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "onboarding-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "onboarding-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "onboarding-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "onboarding-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "orbit-deck": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "orbit-rings": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "orbit-stage": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": null
+ },
+ "origami-type": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "text-effect"
+ },
+ "outline-ink": {
+  "color": [
+   "strokeColor",
+   "fillColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "text-effect"
+ },
+ "paint-vortex": {
+  "color": [
+   "color1",
+   "color2",
+   "color3"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "pan-board": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "panel-cascade": {
+  "color": [
+   "color",
+   "accentColor",
+   "edgeColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "panel-nav": {
+  "color": [
+   "baseColor",
+   "menuColor",
+   "buttonBgColor",
+   "buttonTextColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "panel-unfold": {
+  "color": [
+   "gradientColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "parallax-lift": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "parallax-panel": {
+  "color": [
+   "spotlightColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "particle-maelstrom": {
+  "color": [
+   "particleColor",
+   "discColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "patchwork-grid": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "path-marquee": {
+  "color": [
+   "color",
+   "ribbonColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "text-effect"
+ },
+ "paywall-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "paywall-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "paywall-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "paywall-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "paywall-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "paywall-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "paywall-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "peek-links": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "perspective-rail": {
+  "color": [
+   "tint"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "phantom-pointer": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "overlay"
+ },
+ "photo-dust": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": null
+ },
+ "photo-satellites": {
+  "color": [
+   "pathColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "photo-wake": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "phrase-flip": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "text-effect"
+ },
+ "pin-deck": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "pivot-panel": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "pixel-pulse": {
+  "color": [
+   "colorFrom",
+   "colorTo"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "plasma-morph": {
+  "color": [],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "plasma-tide": {
+  "color": [
+   "color1",
+   "color2"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "point-lattice": {
+  "color": [
+   "baseColor",
+   "activeColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": "backdrop"
+ },
+ "pointer-cells": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "pointer-pull": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "window",
+  "role": null
+ },
+ "pointer-ripple": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "polar-glow": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "polar-haze": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "polar-sweep": {
+  "color": [
+   "color",
+   "midColor",
+   "deepColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "pricing-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-13": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-14": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-15": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "pricing-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "prism-grid": {
+  "color": [
+   "colorA",
+   "colorB"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "profile-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "profile-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "profile-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "profile-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "profile-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "profile-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "prompt-input-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "prompt-input-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "prompt-input-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "prompt-input-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "prompt-input-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "prompt-input-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "prompt-input-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "proximity-nav": {
+  "color": [
+   "accentColor",
+   "textColor",
+   "markerColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "pulse-chart": {
+  "color": [
+   "lineColor",
+   "dotColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "quiet-rings": {
+  "color": [
+   "color",
+   "hotColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "rainbow-drift": {
+  "color": [],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "rainbow-type": {
+  "color": [],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "text-effect"
+ },
+ "repel-field": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "reticle": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "retro-flurry": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "retro-static": {
+  "color": [],
+  "colorArray": [
+   "waveColor"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "backdrop"
+ },
+ "retro-tide": {
+  "color": [
+   "primaryColor",
+   "secondaryColor",
+   "tertiaryColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "reveal-list": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": null
+ },
+ "ribbon-marquee": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "ridgeline": {
+  "color": [
+   "color",
+   "midColor",
+   "farColor",
+   "rimColor",
+   "ringColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "riffle-type": {
+  "color": [
+   "colorFrom",
+   "colorTo"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "rimlight-button": {
+  "color": [
+   "tint",
+   "textColor",
+   "lineColor",
+   "baseColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "window",
+  "role": null
+ },
+ "ring-reel": {
+  "color": [
+   "textColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": null
+ },
+ "ripple-lines": {
+  "color": [
+   "lineColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": "window",
+  "role": "backdrop"
+ },
+ "ripple-pointer": {
+  "color": [
+   "COLOR"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": "overlay"
+ },
+ "satin-flow": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "satin-ripples": {
+  "color": [],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "scheduling-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "scheduling-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "scheduling-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "scheduling-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "scheduling-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "scheduling-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "scheduling-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "screen-mockup": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": null
+ },
+ "settings-form-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "block"
+ },
+ "settings-form-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "block"
+ },
+ "settings-form-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "block"
+ },
+ "settings-form-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "settings-form-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "settings-form-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "block"
+ },
+ "shard-switch": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "sharpen-type": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "text-effect"
+ },
+ "sheen-sweep": {
+  "color": [
+   "color",
+   "shineColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "text-effect"
+ },
+ "showcase-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "showcase-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "showcase-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "showcase-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "showcase-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "showcase-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "showcase-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "showcase-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "shutter-glow": {
+  "color": [
+   "gradientColors"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "shutter-reveal": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "signal-bands": {
+  "color": [
+   "color1",
+   "color2",
+   "color3"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "slant-reel": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "slanted-lanes": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": null
+ },
+ "slat-ripple": {
+  "color": [
+   "color1",
+   "color2",
+   "color3"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "smudge-type": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "text-effect"
+ },
+ "social-proof-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-13": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-14": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-15": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "social-proof-16": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "social-proof-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "social-proof-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "soft-eddy": {
+  "color": [
+   "swirlColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "soft-entrance": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "somersault-deck": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "sonar-sweep": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "spark-tiles": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "speck-drift": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "speckle-wash": {
+  "color": [
+   "color1",
+   "color2",
+   "color3"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "spectrum-flare": {
+  "color": [
+   "colors"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "spectrum-slats": {
+  "color": [
+   "colorA",
+   "colorB",
+   "colorC"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "sphere-pool": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "spin-reel": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "splash-kit": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "bgColor"
+  ],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "spring-capsules": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "overlay"
+ },
+ "spring-deck": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "spring-fabric": {
+  "color": [
+   "color1",
+   "color2",
+   "gridColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "square-burst": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "square-wake": {
+  "color": [
+   "pixelColor",
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "squish-type": {
+  "color": [
+   "textColor",
+   "strokeColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": "text-effect"
+ },
+ "stage-tracker": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "stagger-stack": {
+  "color": [
+   "fadeColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "star-rush": {
+  "color": [
+   "primaryColor",
+   "secondaryColor",
+   "tertiaryColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "star-wheel": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "stardust-swirl": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "static-type": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "text-effect"
+ },
+ "stats-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-10": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-11": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-12": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-13": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-14": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-15": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": "block"
+ },
+ "stats-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-8": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "stats-9": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "steel-vortex": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "stencil-title": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "sticky-specks": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "stipple-surface": {
+  "color": [
+   "glowColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": null
+ },
+ "storm-bolts": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "streamers": {
+  "color": [],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "sun-shafts": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": null
+ },
+ "support-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "support-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "support-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "support-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "support-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "swipe-deck": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": null
+ },
+ "swipe-reel": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "swirl-orb": {
+  "color": [
+   "tintRgb",
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "synth-horizon": {
+  "color": [
+   "color1",
+   "color2"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "taffy-tabs": {
+  "color": [],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "tagged-pointer": {
+  "color": [
+   "color",
+   "textColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "window",
+  "role": "wrapper"
+ },
+ "tally-climb": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "tap-burst": {
+  "color": [
+   "sparkColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "tap-deck": {
+  "color": [
+   "cardColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "terminal-type": {
+  "color": [
+   "textColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "text-effect"
+ },
+ "tile-stream": {
+  "color": [
+   "overlayColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "react-props",
+  "role": null
+ },
+ "tile-swell": {
+  "color": [
+   "color",
+   "hotColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "tool-calls-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "block"
+ },
+ "tool-calls-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "tool-calls-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "tool-calls-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "tool-calls-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "tool-calls-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "tremor-type": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "text-effect"
+ },
+ "twinkle-field": {
+  "color": [
+   "color",
+   "colorPalette",
+   "glowColor",
+   "overlayColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "twinkle-frame": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": null
+ },
+ "twinkle-tiles": {
+  "color": [
+   "squareColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "type-block": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "self",
+  "role": "wrapper"
+ },
+ "type-route": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "text-effect"
+ },
+ "vanishing-lattice": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": "wrapper"
+ },
+ "veil-lift": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "velocity-type": {
+  "color": [
+   "textColor"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "standalone",
+  "input": null,
+  "role": "text-effect"
+ },
+ "vivid-coils": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "backdrop"
+ },
+ "voltage-frame": {
+  "color": [
+   "color"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": null,
+  "role": null
+ },
+ "voxel-cluster": {
+  "color": [
+   "faceColor",
+   "rippleColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "waitlist-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "waitlist-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "waitlist-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "waitlist-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "waitlist-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "waitlist-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "warp-drive": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "warp-strings": {
+  "color": [
+   "color1",
+   "color2",
+   "color3"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "water-warp": {
+  "color": [
+   "tint",
+   "highlightColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "window",
+  "role": null
+ },
+ "waterfall-nav": {
+  "color": [
+   "menuButtonColor",
+   "openMenuButtonColor",
+   "accentColor"
+  ],
+  "colorArray": [
+   "colors"
+  ],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": null
+ },
+ "wave-lattice": {
+  "color": [
+   "gridColor"
+  ],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "backdrop"
+ },
+ "wisp-sphere": {
+  "color": [
+   "colorA",
+   "colorB",
+   "colorC",
+   "specularColorA",
+   "specularColorB"
+  ],
+  "colorArray": [],
+  "colorBg": [
+   "backgroundColor"
+  ],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": "wrapper"
+ },
+ "wizard-1": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "wizard-2": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "wizard-3": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "wizard-4": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "wizard-5": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "wizard-6": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "wizard-7": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": null,
+  "role": "block"
+ },
+ "word-trail": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "standalone",
+  "input": "self",
+  "role": "overlay"
+ },
+ "zoom-shelf": {
+  "color": [],
+  "colorArray": [],
+  "colorBg": [],
+  "composition": "wraps-children",
+  "input": "react-props",
+  "role": null
+ }
+}

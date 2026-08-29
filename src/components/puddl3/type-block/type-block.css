@@ -1,0 +1,15 @@
+.type-block-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.type-block-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.type-block-content {
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+}

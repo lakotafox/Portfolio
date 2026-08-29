@@ -1,0 +1,109 @@
+.holo-flip {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  user-select: none;
+  outline: none;
+  color: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  .holo-flip {
+    color: #f5f5f5;
+  }
+}
+
+.holo-flip-stage {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 0%;
+  touch-action: pan-y;
+}
+
+.holo-flip-stage.is-draggable {
+  cursor: grab;
+}
+
+.holo-flip-stage.is-draggable:active {
+  cursor: grabbing;
+}
+
+.holo-flip-controls {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 1rem;
+}
+
+.holo-flip-rail {
+  display: flex;
+  width: 11rem;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+@media (min-width: 640px) {
+  .holo-flip-rail {
+    width: 14rem;
+  }
+}
+
+.holo-flip-tick {
+  position: relative;
+  height: 2px;
+  flex: 1 1 0%;
+  overflow: hidden;
+  cursor: pointer;
+  appearance: none;
+  border: 0;
+  padding: 0;
+  border-radius: 9999px;
+  background: color-mix(in srgb, currentColor 20%, transparent);
+  transition: background-color 200ms ease;
+}
+
+.holo-flip-tick::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -0.625rem;
+  bottom: -0.625rem;
+}
+
+.holo-flip-tick:hover {
+  background: color-mix(in srgb, currentColor 45%, transparent);
+}
+
+.holo-flip-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  border-radius: 9999px;
+  background: currentColor;
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.holo-flip-arrow {
+  cursor: pointer;
+  appearance: none;
+  border: 0;
+  background: none;
+  color: inherit;
+  padding: 0.25rem;
+  opacity: 0.4;
+  transition: opacity 200ms ease;
+}
+
+.holo-flip-arrow:hover {
+  opacity: 1;
+}
+
+.holo-flip-arrow:disabled {
+  pointer-events: none;
+  opacity: 0.15;
+}

@@ -1,0 +1,35 @@
+.oblique-columns {
+  position: relative;
+  overflow: hidden;
+}
+
+.oblique-columns-plane {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+}
+
+.oblique-columns-strip {
+  overflow: hidden;
+}
+
+.oblique-columns-track {
+  display: flex;
+  flex-direction: column;
+}
+
+.oblique-columns-tile {
+  width: 100%;
+  flex-shrink: 0;
+  background-color: #e5e5e5;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .oblique-columns-tile {
+    background-color: #262626;
+  }
+}

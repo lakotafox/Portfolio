@@ -1,0 +1,11 @@
+.marker-reveal-container {
+  will-change: filter, opacity;
+}
+
+.highlight-text-wrapper {
+  display: inline;
+}
+
+.highlight-text-content {
+  display: inline;
+}

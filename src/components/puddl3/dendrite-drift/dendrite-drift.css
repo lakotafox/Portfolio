@@ -1,0 +1,16 @@
+.dendrite-drift {
+  position: relative;
+  overflow: hidden;
+}
+
+.dendrite-drift-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.dendrite-drift-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

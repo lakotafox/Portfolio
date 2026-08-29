@@ -1,0 +1,11413 @@
+[
+ {
+  "slug": "404-1",
+  "category": "404",
+  "tags": [
+   "404",
+   "error",
+   "page"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "404-1/404-1.tsx",
+  "painted": 0.40009,
+  "canvases": 0
+ },
+ {
+  "slug": "404-2",
+  "category": "404",
+  "tags": [
+   "404",
+   "error",
+   "page"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "404-2/404-2.tsx",
+  "painted": 0.03914,
+  "canvases": 0
+ },
+ {
+  "slug": "404-3",
+  "category": "404",
+  "tags": [
+   "404",
+   "error",
+   "page"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "404-3/404-3.tsx",
+  "painted": 0.12244,
+  "canvases": 0
+ },
+ {
+  "slug": "404-4",
+  "category": "404",
+  "tags": [
+   "404",
+   "error",
+   "page"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "404-4/404-4.tsx",
+  "painted": 0.32027,
+  "canvases": 0
+ },
+ {
+  "slug": "404-5",
+  "category": "404",
+  "tags": [
+   "404",
+   "error",
+   "page"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "404-5/404-5.tsx",
+  "painted": 0.14414,
+  "canvases": 0
+ },
+ {
+  "slug": "404-6",
+  "category": "404",
+  "tags": [
+   "404",
+   "error",
+   "page"
+  ],
+  "tier": "deep",
+  "webgl": true,
+  "entry": "404-6/404-6.tsx",
+  "painted": 0.05809,
+  "canvases": 1
+ },
+ {
+  "slug": "404-7",
+  "category": "404",
+  "tags": [
+   "404",
+   "error",
+   "page"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "404-7/404-7.tsx",
+  "painted": 0.09318,
+  "canvases": 0
+ },
+ {
+  "slug": "404-8",
+  "category": "404",
+  "tags": [
+   "404",
+   "error",
+   "page"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "404-8/404-8.tsx",
+  "painted": 0.36854,
+  "canvases": 0
+ },
+ {
+  "slug": "about-1",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-1/about-1.tsx",
+  "painted": 0.29262,
+  "canvases": 0
+ },
+ {
+  "slug": "about-10",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-10/about-10.tsx",
+  "painted": 0.28865,
+  "canvases": 0
+ },
+ {
+  "slug": "about-11",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-11/about-11.tsx",
+  "painted": 0.28626,
+  "canvases": 0
+ },
+ {
+  "slug": "about-12",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-12/about-12.tsx",
+  "painted": 0.21273,
+  "canvases": 0
+ },
+ {
+  "slug": "about-2",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-2/about-2.tsx",
+  "painted": 0.12822,
+  "canvases": 0
+ },
+ {
+  "slug": "about-3",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-3/about-3.tsx",
+  "painted": 0.8587,
+  "canvases": 0
+ },
+ {
+  "slug": "about-4",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-4/about-4.tsx",
+  "painted": 0.25656,
+  "canvases": 0
+ },
+ {
+  "slug": "about-5",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-5/about-5.tsx",
+  "painted": 0.57326,
+  "canvases": 0
+ },
+ {
+  "slug": "about-6",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-6/about-6.tsx",
+  "painted": 0.26795,
+  "canvases": 0
+ },
+ {
+  "slug": "about-7",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-7/about-7.tsx",
+  "painted": 0.31153,
+  "canvases": 0
+ },
+ {
+  "slug": "about-8",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-8/about-8.tsx",
+  "painted": 0.06819,
+  "canvases": 0
+ },
+ {
+  "slug": "about-9",
+  "category": "about",
+  "tags": [
+   "about",
+   "company",
+   "team",
+   "mission"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "about-9/about-9.tsx",
+  "painted": 0.43522,
+  "canvases": 0
+ },
+ {
+  "slug": "afterimage-type",
+  "category": "Text Animations",
+  "tags": [
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "afterimage-type/AfterimageType.jsx",
+  "painted": 0.03864,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-activity-1",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "activity",
+   "timeline",
+   "logs"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-activity-1/agent-activity-1.tsx",
+  "painted": 0.21514,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-activity-2",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "activity",
+   "timeline",
+   "logs"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-activity-2/agent-activity-2.tsx",
+  "painted": 0.17537,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-activity-3",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "activity",
+   "timeline",
+   "logs"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-activity-3/agent-activity-3.tsx",
+  "painted": 0.37354,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-activity-4",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "activity",
+   "timeline",
+   "logs"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-activity-4/agent-activity-4.tsx",
+  "painted": 0.09123,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-activity-5",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "activity",
+   "timeline",
+   "logs"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-activity-5/agent-activity-5.tsx",
+  "painted": 0.1072,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-activity-6",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "activity",
+   "timeline",
+   "logs"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-activity-6/agent-activity-6.tsx",
+  "painted": 0.299,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-activity-7",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "activity",
+   "timeline",
+   "logs"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-activity-7/agent-activity-7.tsx",
+  "painted": 0.04375,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-approval-1",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "approval",
+   "permissions",
+   "confirmation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-approval-1/agent-approval-1.tsx",
+  "painted": 0.38234,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-approval-2",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "approval",
+   "permissions",
+   "confirmation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-approval-2/agent-approval-2.tsx",
+  "painted": 0.33329,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-approval-3",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "approval",
+   "permissions",
+   "confirmation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-approval-3/agent-approval-3.tsx",
+  "painted": 0.05905,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-approval-4",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "approval",
+   "permissions",
+   "confirmation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-approval-4/agent-approval-4.tsx",
+  "painted": 0.34032,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-approval-5",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "approval",
+   "permissions",
+   "confirmation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-approval-5/agent-approval-5.tsx",
+  "painted": 0.27508,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-approval-6",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "approval",
+   "permissions",
+   "confirmation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-approval-6/agent-approval-6.tsx",
+  "painted": 0.0468,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-plan-1",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "plan",
+   "tasks",
+   "checklist"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-plan-1/agent-plan-1.tsx",
+  "painted": 0.2822,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-plan-2",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "plan",
+   "tasks",
+   "checklist"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-plan-2/agent-plan-2.tsx",
+  "painted": 0.06295,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-plan-3",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "plan",
+   "tasks",
+   "checklist"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-plan-3/agent-plan-3.tsx",
+  "painted": 0.03516,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-plan-4",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "plan",
+   "tasks",
+   "checklist"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-plan-4/agent-plan-4.tsx",
+  "painted": 0.38566,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-plan-5",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "plan",
+   "tasks",
+   "checklist"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-plan-5/agent-plan-5.tsx",
+  "painted": 0.0563,
+  "canvases": 0
+ },
+ {
+  "slug": "agent-plan-6",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "plan",
+   "tasks",
+   "checklist"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "agent-plan-6/agent-plan-6.tsx",
+  "painted": 0.07997,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-chat-1",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "chat",
+   "assistant",
+   "streaming"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-chat-1/ai-chat-1.tsx",
+  "painted": 0.19432,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-chat-2",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "chat",
+   "assistant",
+   "streaming"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-chat-2/ai-chat-2.tsx",
+  "painted": 0.20385,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-chat-3",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "chat",
+   "assistant",
+   "streaming"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-chat-3/ai-chat-3.tsx",
+  "painted": 0.28483,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-chat-4",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "chat",
+   "assistant",
+   "streaming"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-chat-4/ai-chat-4.tsx",
+  "painted": 0.176,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-chat-5",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "chat",
+   "assistant",
+   "streaming"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-chat-5/ai-chat-5.tsx",
+  "painted": 0.21596,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-chat-6",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "chat",
+   "assistant",
+   "streaming"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-chat-6/ai-chat-6.tsx",
+  "painted": 0.08713,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-chat-7",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "chat",
+   "assistant",
+   "streaming"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-chat-7/ai-chat-7.tsx",
+  "painted": 0.11532,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-chat-8",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "chat",
+   "assistant",
+   "streaming"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-chat-8/ai-chat-8.tsx",
+  "painted": 0.36389,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-chat-9",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "chat",
+   "assistant",
+   "streaming"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-chat-9/ai-chat-9.tsx",
+  "painted": 0.11143,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-usage-1",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "usage",
+   "tokens",
+   "billing",
+   "quota",
+   "cost"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-usage-1/ai-usage-1.tsx",
+  "painted": 0.36011,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-usage-2",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "usage",
+   "tokens",
+   "billing",
+   "quota",
+   "cost"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-usage-2/ai-usage-2.tsx",
+  "painted": 0.13766,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-usage-3",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "usage",
+   "tokens",
+   "billing",
+   "quota",
+   "cost"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-usage-3/ai-usage-3.tsx",
+  "painted": 0.18891,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-usage-4",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "usage",
+   "tokens",
+   "billing",
+   "quota",
+   "cost"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-usage-4/ai-usage-4.tsx",
+  "painted": 0.04531,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-usage-5",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "usage",
+   "tokens",
+   "billing",
+   "quota",
+   "cost"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-usage-5/ai-usage-5.tsx",
+  "painted": 0.25901,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-usage-6",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "usage",
+   "tokens",
+   "billing",
+   "quota",
+   "cost"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-usage-6/ai-usage-6.tsx",
+  "painted": 0.27641,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-usage-7",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "usage",
+   "tokens",
+   "billing",
+   "quota",
+   "cost"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-usage-7/ai-usage-7.tsx",
+  "painted": 0.17043,
+  "canvases": 0
+ },
+ {
+  "slug": "ai-usage-8",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "usage",
+   "tokens",
+   "billing",
+   "quota",
+   "cost"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ai-usage-8/ai-usage-8.tsx",
+  "painted": 0.21251,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-1",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-1/analytics-1.tsx",
+  "painted": 0.37677,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-10",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-10/analytics-10.tsx",
+  "painted": 0.25465,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-11",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-11/analytics-11.tsx",
+  "painted": 0.36222,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-12",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-12/analytics-12.tsx",
+  "painted": 0.27436,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-13",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-13/analytics-13.tsx",
+  "painted": 0.1413,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-14",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-14/analytics-14.tsx",
+  "painted": 0.15431,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-15",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-15/analytics-15.tsx",
+  "painted": 0.26738,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-16",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-16/analytics-16.tsx",
+  "painted": 0.12932,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-2",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-2/analytics-2.tsx",
+  "painted": 0.19553,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-3",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-3/analytics-3.tsx",
+  "painted": 0.22039,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-4",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-4/analytics-4.tsx",
+  "painted": 0.1318,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-5",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-5/analytics-5.tsx",
+  "painted": 0.26955,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-6",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-6/analytics-6.tsx",
+  "painted": 0.19148,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-7",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-7/analytics-7.tsx",
+  "painted": 0.0851,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-8",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-8/analytics-8.tsx",
+  "painted": 0.25176,
+  "canvases": 0
+ },
+ {
+  "slug": "analytics-9",
+  "category": "analytics",
+  "tags": [
+   "analytics",
+   "charts",
+   "metrics",
+   "reporting",
+   "dashboard"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "analytics-9/analytics-9.tsx",
+  "painted": 0.38371,
+  "canvases": 0
+ },
+ {
+  "slug": "app-dialog-1",
+  "category": "overlay",
+  "tags": [
+   "overlay",
+   "dialog",
+   "modal",
+   "drawer",
+   "popover"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-dialog-1/app-dialog-1.tsx",
+  "painted": 0.4724,
+  "canvases": 0
+ },
+ {
+  "slug": "app-dialog-2",
+  "category": "overlay",
+  "tags": [
+   "overlay",
+   "dialog",
+   "modal",
+   "drawer",
+   "popover"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-dialog-2/app-dialog-2.tsx",
+  "painted": 0.53718,
+  "canvases": 0
+ },
+ {
+  "slug": "app-dialog-3",
+  "category": "overlay",
+  "tags": [
+   "overlay",
+   "dialog",
+   "modal",
+   "drawer",
+   "popover"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-dialog-3/app-dialog-3.tsx",
+  "painted": 0.39768,
+  "canvases": 0
+ },
+ {
+  "slug": "app-dialog-4",
+  "category": "overlay",
+  "tags": [
+   "overlay",
+   "dialog",
+   "modal",
+   "drawer",
+   "popover"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-dialog-4/app-dialog-4.tsx",
+  "painted": 0.44529,
+  "canvases": 0
+ },
+ {
+  "slug": "app-dialog-5",
+  "category": "overlay",
+  "tags": [
+   "overlay",
+   "dialog",
+   "modal",
+   "drawer",
+   "popover"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-dialog-5/app-dialog-5.tsx",
+  "painted": 0.42057,
+  "canvases": 0
+ },
+ {
+  "slug": "app-dialog-6",
+  "category": "overlay",
+  "tags": [
+   "overlay",
+   "dialog",
+   "modal",
+   "drawer",
+   "popover"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-dialog-6/app-dialog-6.tsx",
+  "painted": 0.42118,
+  "canvases": 0
+ },
+ {
+  "slug": "app-dialog-7",
+  "category": "overlay",
+  "tags": [
+   "overlay",
+   "dialog",
+   "modal",
+   "drawer",
+   "popover"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-dialog-7/app-dialog-7.tsx",
+  "painted": 0.29904,
+  "canvases": 0
+ },
+ {
+  "slug": "app-shell-1",
+  "category": "shell",
+  "tags": [
+   "shell",
+   "layout",
+   "navigation",
+   "sidebar",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-shell-1/app-shell-1.tsx",
+  "painted": 0.0882,
+  "canvases": 0
+ },
+ {
+  "slug": "app-shell-2",
+  "category": "shell",
+  "tags": [
+   "shell",
+   "layout",
+   "navigation",
+   "sidebar",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-shell-2/app-shell-2.tsx",
+  "painted": 0.0864,
+  "canvases": 0
+ },
+ {
+  "slug": "app-shell-3",
+  "category": "shell",
+  "tags": [
+   "shell",
+   "layout",
+   "navigation",
+   "sidebar",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-shell-3/app-shell-3.tsx",
+  "painted": 0.0839,
+  "canvases": 0
+ },
+ {
+  "slug": "app-shell-4",
+  "category": "shell",
+  "tags": [
+   "shell",
+   "layout",
+   "navigation",
+   "sidebar",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-shell-4/app-shell-4.tsx",
+  "painted": 0.11374,
+  "canvases": 0
+ },
+ {
+  "slug": "app-shell-5",
+  "category": "shell",
+  "tags": [
+   "shell",
+   "layout",
+   "navigation",
+   "sidebar",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-shell-5/app-shell-5.tsx",
+  "painted": 0.18707,
+  "canvases": 0
+ },
+ {
+  "slug": "app-shell-6",
+  "category": "shell",
+  "tags": [
+   "shell",
+   "layout",
+   "navigation",
+   "sidebar",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-shell-6/app-shell-6.tsx",
+  "painted": 0.10548,
+  "canvases": 0
+ },
+ {
+  "slug": "app-shell-7",
+  "category": "shell",
+  "tags": [
+   "shell",
+   "layout",
+   "navigation",
+   "sidebar",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-shell-7/app-shell-7.tsx",
+  "painted": 0.0924,
+  "canvases": 0
+ },
+ {
+  "slug": "app-shell-8",
+  "category": "shell",
+  "tags": [
+   "shell",
+   "layout",
+   "navigation",
+   "sidebar",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-shell-8/app-shell-8.tsx",
+  "painted": 0.08783,
+  "canvases": 0
+ },
+ {
+  "slug": "app-shell-9",
+  "category": "shell",
+  "tags": [
+   "shell",
+   "layout",
+   "navigation",
+   "sidebar",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-shell-9/app-shell-9.tsx",
+  "painted": 0.07101,
+  "canvases": 0
+ },
+ {
+  "slug": "app-sidebar-1",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "sidebar",
+   "shell",
+   "layout",
+   "app"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-sidebar-1/app-sidebar-1.tsx",
+  "painted": 0.19428,
+  "canvases": 0
+ },
+ {
+  "slug": "app-sidebar-2",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "sidebar",
+   "shell",
+   "layout",
+   "app"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-sidebar-2/app-sidebar-2.tsx",
+  "painted": 0.15241,
+  "canvases": 0
+ },
+ {
+  "slug": "app-sidebar-3",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "sidebar",
+   "shell",
+   "layout",
+   "app"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-sidebar-3/app-sidebar-3.tsx",
+  "painted": 0.18252,
+  "canvases": 0
+ },
+ {
+  "slug": "app-sidebar-4",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "sidebar",
+   "shell",
+   "layout",
+   "app"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-sidebar-4/app-sidebar-4.tsx",
+  "painted": 0.22506,
+  "canvases": 0
+ },
+ {
+  "slug": "app-sidebar-5",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "sidebar",
+   "shell",
+   "layout",
+   "app"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-sidebar-5/app-sidebar-5.tsx",
+  "painted": 0.1136,
+  "canvases": 0
+ },
+ {
+  "slug": "app-sidebar-6",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "sidebar",
+   "shell",
+   "layout",
+   "app"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-sidebar-6/app-sidebar-6.tsx",
+  "painted": 0.23135,
+  "canvases": 0
+ },
+ {
+  "slug": "app-sidebar-7",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "sidebar",
+   "shell",
+   "layout",
+   "app"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "app-sidebar-7/app-sidebar-7.tsx",
+  "painted": 0.05917,
+  "canvases": 0
+ },
+ {
+  "slug": "arc-field",
+  "category": "Components",
+  "tags": [
+   "misc"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "arc-field/ArcField.jsx",
+  "painted": 0.03467,
+  "canvases": 0
+ },
+ {
+  "slug": "arc-type",
+  "category": "Text Animations",
+  "tags": [
+   "motion",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "arc-type/ArcType.jsx",
+  "painted": 0.00276,
+  "canvases": 0
+ },
+ {
+  "slug": "arcane-halos",
+  "category": "Animations",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "arcane-halos/ArcaneHalos.jsx",
+  "painted": 0.56482,
+  "canvases": 1
+ },
+ {
+  "slug": "atlas",
+  "category": "3d",
+  "tags": [
+   "3d",
+   "visualization"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "atlas/atlas.tsx",
+  "painted": 0.71196,
+  "canvases": 1
+ },
+ {
+  "slug": "aura-sphere",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "aura-sphere/AuraSphere.jsx",
+  "painted": 0.0075,
+  "canvases": 1
+ },
+ {
+  "slug": "auth-2",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "authentication"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "auth-2/auth-2.tsx",
+  "painted": 0.47767,
+  "canvases": 0
+ },
+ {
+  "slug": "auth-3",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "authentication"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "auth-3/auth-3.tsx",
+  "painted": 0.73753,
+  "canvases": 0
+ },
+ {
+  "slug": "auth-4",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "authentication"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "auth-4/auth-4.tsx",
+  "painted": 0.09669,
+  "canvases": 0
+ },
+ {
+  "slug": "auth-5",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "authentication"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "auth-5/auth-5.tsx",
+  "painted": 0.04678,
+  "canvases": 0
+ },
+ {
+  "slug": "auth-6",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "authentication"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "auth-6/auth-6.tsx",
+  "painted": 0.03104,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-1",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-1/authentication-1.tsx",
+  "painted": 0.13492,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-10",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-10/authentication-10.tsx",
+  "painted": 0.04869,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-11",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-11/authentication-11.tsx",
+  "painted": 0.17802,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-12",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-12/authentication-12.tsx",
+  "painted": 0.24054,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-13",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-13/authentication-13.tsx",
+  "painted": 0.05346,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-14",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-14/authentication-14.tsx",
+  "painted": 0.04978,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-2",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-2/authentication-2.tsx",
+  "painted": 0.19779,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-3",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-3/authentication-3.tsx",
+  "painted": 0.26782,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-4",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-4/authentication-4.tsx",
+  "painted": 0.23275,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-5",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-5/authentication-5.tsx",
+  "painted": 0.15092,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-6",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-6/authentication-6.tsx",
+  "painted": 0.23136,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-7",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-7/authentication-7.tsx",
+  "painted": 0.04258,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-8",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-8/authentication-8.tsx",
+  "painted": 0.27648,
+  "canvases": 0
+ },
+ {
+  "slug": "authentication-9",
+  "category": "auth",
+  "tags": [
+   "auth",
+   "login",
+   "signup",
+   "sso",
+   "passkey",
+   "onboarding"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "authentication-9/authentication-9.tsx",
+  "painted": 0.14935,
+  "canvases": 0
+ },
+ {
+  "slug": "axon-corridor",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "tunnel",
+   "webgl",
+   "3d",
+   "abstract"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "axon-corridor/axon-corridor.tsx",
+  "painted": 0.03158,
+  "canvases": 1
+ },
+ {
+  "slug": "axon-pulse",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "particles",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "axon-pulse/axon-pulse.tsx",
+  "painted": 0.09511,
+  "canvases": 1
+ },
+ {
+  "slug": "bank-card",
+  "category": "ui",
+  "tags": [
+   "ui",
+   "card"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "bank-card/bank-card.tsx",
+  "painted": 0.09308,
+  "canvases": 0
+ },
+ {
+  "slug": "beacon-tile",
+  "category": "Components",
+  "tags": [
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "beacon-tile/BeaconTile.jsx",
+  "painted": 0.57358,
+  "canvases": 0
+ },
+ {
+  "slug": "beam-cascade",
+  "category": "Animations",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "beam-cascade/BeamCascade.jsx",
+  "painted": 0.10875,
+  "canvases": 1
+ },
+ {
+  "slug": "billing-1",
+  "category": "billing",
+  "tags": [
+   "billing",
+   "invoices",
+   "subscriptions",
+   "plans",
+   "payments",
+   "usage"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "billing-1/billing-1.tsx",
+  "painted": 0.08098,
+  "canvases": 0
+ },
+ {
+  "slug": "billing-2",
+  "category": "billing",
+  "tags": [
+   "billing",
+   "invoices",
+   "subscriptions",
+   "plans",
+   "payments",
+   "usage"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "billing-2/billing-2.tsx",
+  "painted": 0.08535,
+  "canvases": 0
+ },
+ {
+  "slug": "billing-3",
+  "category": "billing",
+  "tags": [
+   "billing",
+   "invoices",
+   "subscriptions",
+   "plans",
+   "payments",
+   "usage"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "billing-3/billing-3.tsx",
+  "painted": 0.0513,
+  "canvases": 0
+ },
+ {
+  "slug": "billing-4",
+  "category": "billing",
+  "tags": [
+   "billing",
+   "invoices",
+   "subscriptions",
+   "plans",
+   "payments",
+   "usage"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "billing-4/billing-4.tsx",
+  "painted": 0.07272,
+  "canvases": 0
+ },
+ {
+  "slug": "billing-5",
+  "category": "billing",
+  "tags": [
+   "billing",
+   "invoices",
+   "subscriptions",
+   "plans",
+   "payments",
+   "usage"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "billing-5/billing-5.tsx",
+  "painted": 0.05967,
+  "canvases": 0
+ },
+ {
+  "slug": "billing-6",
+  "category": "billing",
+  "tags": [
+   "billing",
+   "invoices",
+   "subscriptions",
+   "plans",
+   "payments",
+   "usage"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "billing-6/billing-6.tsx",
+  "painted": 0.07162,
+  "canvases": 0
+ },
+ {
+  "slug": "billing-7",
+  "category": "billing",
+  "tags": [
+   "billing",
+   "invoices",
+   "subscriptions",
+   "plans",
+   "payments",
+   "usage"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "billing-7/billing-7.tsx",
+  "painted": 0.08718,
+  "canvases": 0
+ },
+ {
+  "slug": "billing-8",
+  "category": "billing",
+  "tags": [
+   "billing",
+   "invoices",
+   "subscriptions",
+   "plans",
+   "payments",
+   "usage"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "billing-8/billing-8.tsx",
+  "painted": 0.0752,
+  "canvases": 0
+ },
+ {
+  "slug": "bit-board",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "3d",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "bit-board/bit-board.tsx",
+  "painted": 0.21044,
+  "canvases": 1
+ },
+ {
+  "slug": "bit-drizzle",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "rain",
+   "pixel",
+   "webgl",
+   "ambient"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "bit-drizzle/bit-drizzle.tsx",
+  "painted": 0.19136,
+  "canvases": 1
+ },
+ {
+  "slug": "blob-fusion",
+  "category": "Animations",
+  "tags": [
+   "ui",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "blob-fusion/BlobFusion.jsx",
+  "painted": 0.00376,
+  "canvases": 1
+ },
+ {
+  "slug": "block-bloom",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "grid",
+   "cursor",
+   "webgl",
+   "interactive"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "block-bloom/block-bloom.tsx",
+  "painted": 0.0074,
+  "canvases": 1
+ },
+ {
+  "slug": "block-wipe",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "image",
+   "reveal",
+   "pixels",
+   "scroll",
+   "webgl"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "block-wipe/block-wipe.tsx",
+  "painted": 0.00109,
+  "canvases": 1
+ },
+ {
+  "slug": "blog-1",
+  "category": "blog",
+  "tags": [
+   "blog",
+   "articles",
+   "posts",
+   "content"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "blog-1/blog-1.tsx",
+  "painted": 0.3147,
+  "canvases": 0
+ },
+ {
+  "slug": "blog-10",
+  "category": "blog",
+  "tags": [
+   "blog",
+   "articles",
+   "posts",
+   "content"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "blog-10/blog-10.tsx",
+  "painted": 0.29218,
+  "canvases": 0
+ },
+ {
+  "slug": "blog-11",
+  "category": "blog",
+  "tags": [
+   "blog",
+   "articles",
+   "posts",
+   "content"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "blog-11/blog-11.tsx",
+  "painted": 0.31158,
+  "canvases": 0
+ },
+ {
+  "slug": "blog-2",
+  "category": "blog",
+  "tags": [
+   "blog",
+   "articles",
+   "posts",
+   "content"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "blog-2/blog-2.tsx",
+  "painted": 0.12634,
+  "canvases": 0
+ },
+ {
+  "slug": "blog-3",
+  "category": "blog",
+  "tags": [
+   "blog",
+   "articles",
+   "posts",
+   "content"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "blog-3/blog-3.tsx",
+  "painted": 0.51074,
+  "canvases": 0
+ },
+ {
+  "slug": "blog-4",
+  "category": "blog",
+  "tags": [
+   "blog",
+   "articles",
+   "posts",
+   "content"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "blog-4/blog-4.tsx",
+  "painted": 0.24463,
+  "canvases": 0
+ },
+ {
+  "slug": "blog-5",
+  "category": "blog",
+  "tags": [
+   "blog",
+   "articles",
+   "posts",
+   "content"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "blog-5/blog-5.tsx",
+  "painted": 0.58669,
+  "canvases": 0
+ },
+ {
+  "slug": "blog-6",
+  "category": "blog",
+  "tags": [
+   "blog",
+   "articles",
+   "posts",
+   "content"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "blog-6/blog-6.tsx",
+  "painted": 0.38221,
+  "canvases": 0
+ },
+ {
+  "slug": "blog-7",
+  "category": "blog",
+  "tags": [
+   "blog",
+   "articles",
+   "posts",
+   "content"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "blog-7/blog-7.tsx",
+  "painted": 0.39636,
+  "canvases": 0
+ },
+ {
+  "slug": "blog-8",
+  "category": "blog",
+  "tags": [
+   "blog",
+   "articles",
+   "posts",
+   "content"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "blog-8/blog-8.tsx",
+  "painted": 0.35078,
+  "canvases": 0
+ },
+ {
+  "slug": "blog-9",
+  "category": "blog",
+  "tags": [
+   "blog",
+   "articles",
+   "posts",
+   "content"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "blog-9/blog-9.tsx",
+  "painted": 0.48539,
+  "canvases": 0
+ },
+ {
+  "slug": "bloom-beams",
+  "category": "3d",
+  "tags": [
+   "3d",
+   "shader",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "bloom-beams/bloom-beams.tsx",
+  "painted": 0.18879,
+  "canvases": 1
+ },
+ {
+  "slug": "bloom-nav",
+  "category": "Components",
+  "tags": [
+   "gsap",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "bloom-nav/BloomNav.jsx",
+  "painted": 0.01252,
+  "canvases": 0
+ },
+ {
+  "slug": "blur-relay",
+  "category": "Text Animations",
+  "tags": [
+   "motion"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "blur-relay/BlurRelay.jsx",
+  "painted": 0.00965,
+  "canvases": 0
+ },
+ {
+  "slug": "breathing-matrix",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "dots",
+   "grid",
+   "webgl",
+   "ai"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "breathing-matrix/breathing-matrix.tsx",
+  "painted": 0.00131,
+  "canvases": 1
+ },
+ {
+  "slug": "bulge-tile",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "3d",
+   "card",
+   "hover"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "bulge-tile/bulge-tile.tsx",
+  "painted": 0.17429,
+  "canvases": 1
+ },
+ {
+  "slug": "card-1",
+  "category": "card",
+  "tags": [
+   "card",
+   "grid",
+   "gallery",
+   "profile",
+   "metric"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "card-1/card-1.tsx",
+  "painted": 0.32459,
+  "canvases": 0
+ },
+ {
+  "slug": "card-10",
+  "category": "card",
+  "tags": [
+   "card",
+   "grid",
+   "gallery",
+   "profile",
+   "metric"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "card-10/card-10.tsx",
+  "painted": 0.13373,
+  "canvases": 0
+ },
+ {
+  "slug": "card-11",
+  "category": "card",
+  "tags": [
+   "card",
+   "grid",
+   "gallery",
+   "profile",
+   "metric"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "card-11/card-11.tsx",
+  "painted": 0.12589,
+  "canvases": 0
+ },
+ {
+  "slug": "card-2",
+  "category": "card",
+  "tags": [
+   "card",
+   "grid",
+   "gallery",
+   "profile",
+   "metric"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "card-2/card-2.tsx",
+  "painted": 0.05459,
+  "canvases": 0
+ },
+ {
+  "slug": "card-3",
+  "category": "card",
+  "tags": [
+   "card",
+   "grid",
+   "gallery",
+   "profile",
+   "metric"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "card-3/card-3.tsx",
+  "painted": 0.39207,
+  "canvases": 0
+ },
+ {
+  "slug": "card-4",
+  "category": "card",
+  "tags": [
+   "card",
+   "grid",
+   "gallery",
+   "profile",
+   "metric"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "card-4/card-4.tsx",
+  "painted": 0.29726,
+  "canvases": 0
+ },
+ {
+  "slug": "card-5",
+  "category": "card",
+  "tags": [
+   "card",
+   "grid",
+   "gallery",
+   "profile",
+   "metric"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "card-5/card-5.tsx",
+  "painted": 0.31549,
+  "canvases": 0
+ },
+ {
+  "slug": "card-6",
+  "category": "card",
+  "tags": [
+   "card",
+   "grid",
+   "gallery",
+   "profile",
+   "metric"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "card-6/card-6.tsx",
+  "painted": 0.38475,
+  "canvases": 0
+ },
+ {
+  "slug": "card-7",
+  "category": "card",
+  "tags": [
+   "card",
+   "grid",
+   "gallery",
+   "profile",
+   "metric"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "card-7/card-7.tsx",
+  "painted": 0.0638,
+  "canvases": 0
+ },
+ {
+  "slug": "card-8",
+  "category": "card",
+  "tags": [
+   "card",
+   "grid",
+   "gallery",
+   "profile",
+   "metric"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "card-8/card-8.tsx",
+  "painted": 0.29662,
+  "canvases": 0
+ },
+ {
+  "slug": "card-9",
+  "category": "card",
+  "tags": [
+   "card",
+   "grid",
+   "gallery",
+   "profile",
+   "metric"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "card-9/card-9.tsx",
+  "painted": 0.32895,
+  "canvases": 0
+ },
+ {
+  "slug": "cascade-type",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "text"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "cascade-type/cascade-type.tsx",
+  "painted": 0.00101,
+  "canvases": 0
+ },
+ {
+  "slug": "chat-1",
+  "category": "chat",
+  "tags": [
+   "chat",
+   "messaging",
+   "conversation",
+   "inbox",
+   "social",
+   "support"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "chat-1/chat-1.tsx",
+  "painted": 0.10511,
+  "canvases": 0
+ },
+ {
+  "slug": "chat-2",
+  "category": "chat",
+  "tags": [
+   "chat",
+   "messaging",
+   "conversation",
+   "inbox",
+   "social",
+   "support"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "chat-2/chat-2.tsx",
+  "painted": 0.26029,
+  "canvases": 0
+ },
+ {
+  "slug": "chat-3",
+  "category": "chat",
+  "tags": [
+   "chat",
+   "messaging",
+   "conversation",
+   "inbox",
+   "social",
+   "support"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "chat-3/chat-3.tsx",
+  "painted": 0.05889,
+  "canvases": 0
+ },
+ {
+  "slug": "chat-4",
+  "category": "chat",
+  "tags": [
+   "chat",
+   "messaging",
+   "conversation",
+   "inbox",
+   "social",
+   "support"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "chat-4/chat-4.tsx",
+  "painted": 0.20547,
+  "canvases": 0
+ },
+ {
+  "slug": "chat-5",
+  "category": "chat",
+  "tags": [
+   "chat",
+   "messaging",
+   "conversation",
+   "inbox",
+   "social",
+   "support"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "chat-5/chat-5.tsx",
+  "painted": 0.09759,
+  "canvases": 0
+ },
+ {
+  "slug": "chat-6",
+  "category": "chat",
+  "tags": [
+   "chat",
+   "messaging",
+   "conversation",
+   "inbox",
+   "social",
+   "support"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "chat-6/chat-6.tsx",
+  "painted": 0.16803,
+  "canvases": 0
+ },
+ {
+  "slug": "checker-dissolve",
+  "category": "Animations",
+  "tags": [
+   "gsap"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "checker-dissolve/CheckerDissolve.jsx",
+  "painted": 0.09332,
+  "canvases": 0
+ },
+ {
+  "slug": "chroma-columns",
+  "category": "3d",
+  "tags": [
+   "3d",
+   "shader",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "chroma-columns/chroma-columns.tsx",
+  "painted": 0.19225,
+  "canvases": 1
+ },
+ {
+  "slug": "cipher-rain",
+  "category": "Backgrounds",
+  "tags": [
+   "effect",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "cipher-rain/CipherRain.jsx",
+  "painted": 0.66135,
+  "canvases": 1
+ },
+ {
+  "slug": "cipher-reveal",
+  "category": "Text Animations",
+  "tags": [
+   "motion",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "cipher-reveal/CipherReveal.jsx",
+  "painted": 0.00109,
+  "canvases": 0
+ },
+ {
+  "slug": "color-shift-card",
+  "category": "card",
+  "tags": [
+   "card",
+   "effect"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "color-shift-card/color-shift-card.tsx",
+  "painted": 0.01705,
+  "canvases": 1
+ },
+ {
+  "slug": "color-whirl",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "3d",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "color-whirl/color-whirl.tsx",
+  "painted": 0.21051,
+  "canvases": 1
+ },
+ {
+  "slug": "comet-streak",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "3d",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "comet-streak/comet-streak.tsx",
+  "painted": 0.21025,
+  "canvases": 1
+ },
+ {
+  "slug": "command-menu-1",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "command",
+   "palette",
+   "search",
+   "shortcuts"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "command-menu-1/command-menu-1.tsx",
+  "painted": 0.52504,
+  "canvases": 0
+ },
+ {
+  "slug": "command-menu-2",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "command",
+   "palette",
+   "search",
+   "shortcuts"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "command-menu-2/command-menu-2.tsx",
+  "painted": 0.55167,
+  "canvases": 0
+ },
+ {
+  "slug": "command-menu-3",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "command",
+   "palette",
+   "search",
+   "shortcuts"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "command-menu-3/command-menu-3.tsx",
+  "painted": 0.51053,
+  "canvases": 0
+ },
+ {
+  "slug": "command-menu-4",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "command",
+   "palette",
+   "search",
+   "shortcuts"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "command-menu-4/command-menu-4.tsx",
+  "painted": 0.56356,
+  "canvases": 0
+ },
+ {
+  "slug": "command-menu-5",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "command",
+   "palette",
+   "search",
+   "shortcuts"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "command-menu-5/command-menu-5.tsx",
+  "painted": 0.50935,
+  "canvases": 0
+ },
+ {
+  "slug": "command-menu-6",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "command",
+   "palette",
+   "search",
+   "shortcuts"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "command-menu-6/command-menu-6.tsx",
+  "painted": 0.50657,
+  "canvases": 0
+ },
+ {
+  "slug": "comments-1",
+  "category": "comments",
+  "tags": [
+   "comments",
+   "collaboration",
+   "threads",
+   "review",
+   "annotations"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comments-1/comments-1.tsx",
+  "painted": 0.17163,
+  "canvases": 0
+ },
+ {
+  "slug": "comments-2",
+  "category": "comments",
+  "tags": [
+   "comments",
+   "collaboration",
+   "threads",
+   "review",
+   "annotations"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comments-2/comments-2.tsx",
+  "painted": 0.1422,
+  "canvases": 0
+ },
+ {
+  "slug": "comments-3",
+  "category": "comments",
+  "tags": [
+   "comments",
+   "collaboration",
+   "threads",
+   "review",
+   "annotations"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comments-3/comments-3.tsx",
+  "painted": 0.18748,
+  "canvases": 0
+ },
+ {
+  "slug": "comments-4",
+  "category": "comments",
+  "tags": [
+   "comments",
+   "collaboration",
+   "threads",
+   "review",
+   "annotations"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comments-4/comments-4.tsx",
+  "painted": 0.17466,
+  "canvases": 0
+ },
+ {
+  "slug": "comments-5",
+  "category": "comments",
+  "tags": [
+   "comments",
+   "collaboration",
+   "threads",
+   "review",
+   "annotations"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comments-5/comments-5.tsx",
+  "painted": 0.0526,
+  "canvases": 0
+ },
+ {
+  "slug": "comments-6",
+  "category": "comments",
+  "tags": [
+   "comments",
+   "collaboration",
+   "threads",
+   "review",
+   "annotations"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comments-6/comments-6.tsx",
+  "painted": 0.10293,
+  "canvases": 0
+ },
+ {
+  "slug": "comparison-1",
+  "category": "comparison",
+  "tags": [
+   "comparison",
+   "features",
+   "pricing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comparison-1/comparison-1.tsx",
+  "painted": 0.42486,
+  "canvases": 0
+ },
+ {
+  "slug": "comparison-2",
+  "category": "comparison",
+  "tags": [
+   "comparison",
+   "features",
+   "pricing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comparison-2/comparison-2.tsx",
+  "painted": 0.07024,
+  "canvases": 0
+ },
+ {
+  "slug": "comparison-3",
+  "category": "comparison",
+  "tags": [
+   "comparison",
+   "features",
+   "pricing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comparison-3/comparison-3.tsx",
+  "painted": 0.31211,
+  "canvases": 0
+ },
+ {
+  "slug": "comparison-4",
+  "category": "comparison",
+  "tags": [
+   "comparison",
+   "features",
+   "pricing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comparison-4/comparison-4.tsx",
+  "painted": 0.05523,
+  "canvases": 0
+ },
+ {
+  "slug": "comparison-5",
+  "category": "comparison",
+  "tags": [
+   "comparison",
+   "features",
+   "pricing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comparison-5/comparison-5.tsx",
+  "painted": 0.12927,
+  "canvases": 0
+ },
+ {
+  "slug": "comparison-6",
+  "category": "comparison",
+  "tags": [
+   "comparison",
+   "features",
+   "pricing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comparison-6/comparison-6.tsx",
+  "painted": 0.07664,
+  "canvases": 0
+ },
+ {
+  "slug": "comparison-7",
+  "category": "comparison",
+  "tags": [
+   "comparison",
+   "features",
+   "pricing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comparison-7/comparison-7.tsx",
+  "painted": 0.28165,
+  "canvases": 0
+ },
+ {
+  "slug": "comparison-8",
+  "category": "comparison",
+  "tags": [
+   "comparison",
+   "features",
+   "pricing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "comparison-8/comparison-8.tsx",
+  "painted": 0.07768,
+  "canvases": 0
+ },
+ {
+  "slug": "compass-field",
+  "category": "Animations",
+  "tags": [
+   "animation"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "compass-field/CompassField.jsx",
+  "painted": 0.066,
+  "canvases": 0
+ },
+ {
+  "slug": "concertina-panels",
+  "category": "Components",
+  "tags": [
+   "gsap",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "concertina-panels/ConcertinaPanels.jsx",
+  "painted": 0.57291,
+  "canvases": 0
+ },
+ {
+  "slug": "console-mosaic",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "grid",
+   "terminal",
+   "retro",
+   "webgl"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "console-mosaic/console-mosaic.tsx",
+  "painted": 0.16953,
+  "canvases": 1
+ },
+ {
+  "slug": "contact-1",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-1/contact-1.tsx",
+  "painted": 0.50627,
+  "canvases": 0
+ },
+ {
+  "slug": "contact-10",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-10/contact-10.tsx",
+  "painted": 0.49539,
+  "canvases": 0
+ },
+ {
+  "slug": "contact-11",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-11/contact-11.tsx",
+  "painted": 0.09015,
+  "canvases": 0
+ },
+ {
+  "slug": "contact-12",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-12/contact-12.tsx",
+  "painted": 0.05906,
+  "canvases": 0
+ },
+ {
+  "slug": "contact-2",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-2/contact-2.tsx",
+  "painted": 0.11043,
+  "canvases": 0
+ },
+ {
+  "slug": "contact-3",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-3/contact-3.tsx",
+  "painted": 0.1955,
+  "canvases": 0
+ },
+ {
+  "slug": "contact-4",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-4/contact-4.tsx",
+  "painted": 0.42125,
+  "canvases": 0
+ },
+ {
+  "slug": "contact-5",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-5/contact-5.tsx",
+  "painted": 0.42888,
+  "canvases": 0
+ },
+ {
+  "slug": "contact-6",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-6/contact-6.tsx",
+  "painted": 0.02973,
+  "canvases": 0
+ },
+ {
+  "slug": "contact-7",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-7/contact-7.tsx",
+  "painted": 0.05939,
+  "canvases": 0
+ },
+ {
+  "slug": "contact-8",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-8/contact-8.tsx",
+  "painted": 0.37778,
+  "canvases": 0
+ },
+ {
+  "slug": "contact-9",
+  "category": "contact",
+  "tags": [
+   "contact",
+   "form"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "contact-9/contact-9.tsx",
+  "painted": 0.52553,
+  "canvases": 0
+ },
+ {
+  "slug": "contour-field",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "contour-field/ContourField.jsx",
+  "painted": 0.48015,
+  "canvases": 1
+ },
+ {
+  "slug": "corrupted-type",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "text"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "corrupted-type/corrupted-type.tsx",
+  "painted": 0.00694,
+  "canvases": 1
+ },
+ {
+  "slug": "cosmos",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "cosmos/Cosmos.jsx",
+  "painted": 0.00371,
+  "canvases": 1
+ },
+ {
+  "slug": "crossing-bands",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "crossing-bands/CrossingBands.jsx",
+  "painted": 0.18564,
+  "canvases": 1
+ },
+ {
+  "slug": "crt-flicker",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "crt-flicker/CRTFlicker.jsx",
+  "painted": 0.02228,
+  "canvases": 1
+ },
+ {
+  "slug": "crystal-corridor",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "crystal-corridor/CrystalCorridor.jsx",
+  "painted": 0.68981,
+  "canvases": 1
+ },
+ {
+  "slug": "crystal-panel",
+  "category": "Components",
+  "tags": [
+   "misc"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "crystal-panel/CrystalPanel.jsx",
+  "painted": 0.00107,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-1",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-1/cta-1.tsx",
+  "painted": 0.18845,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-10",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-10/cta-10.tsx",
+  "painted": 0.2177,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-11",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-11/cta-11.tsx",
+  "painted": 0.51265,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-12",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-12/cta-12.tsx",
+  "painted": 0.04806,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-13",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-13/cta-13.tsx",
+  "painted": 0.2555,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-14",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-14/cta-14.tsx",
+  "painted": 0.51447,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-2",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-2/cta-2.tsx",
+  "painted": 0.04628,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-3",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-3/cta-3.tsx",
+  "painted": 0.08516,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-4",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-4/cta-4.tsx",
+  "painted": 0.31517,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-5",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-5/cta-5.tsx",
+  "painted": 0.37339,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-6",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-6/cta-6.tsx",
+  "painted": 0.27474,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-7",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-7/cta-7.tsx",
+  "painted": 0.11931,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-8",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-8/cta-8.tsx",
+  "painted": 0.06126,
+  "canvases": 0
+ },
+ {
+  "slug": "cta-9",
+  "category": "cta",
+  "tags": [
+   "cta",
+   "conversion",
+   "action",
+   "button"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "cta-9/cta-9.tsx",
+  "painted": 0.08075,
+  "canvases": 0
+ },
+ {
+  "slug": "curved-ticker",
+  "category": "marquee",
+  "tags": [
+   "marquee",
+   "curve",
+   "scroll",
+   "text",
+   "motion",
+   "kinetic"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "curved-ticker/curved-ticker.tsx",
+  "painted": 0.08274,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-1",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-1/dashboard-1.tsx",
+  "painted": 0.30808,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-10",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-10/dashboard-10.tsx",
+  "painted": 0.13304,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-11",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-11/dashboard-11.tsx",
+  "painted": 0.07686,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-12",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-12/dashboard-12.tsx",
+  "painted": 0.16506,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-13",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-13/dashboard-13.tsx",
+  "painted": 0.1054,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-14",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-14/dashboard-14.tsx",
+  "painted": 0.13018,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-2",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-2/dashboard-2.tsx",
+  "painted": 0.23855,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-3",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-3/dashboard-3.tsx",
+  "painted": 0.1171,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-4",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-4/dashboard-4.tsx",
+  "painted": 0.06775,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-5",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-5/dashboard-5.tsx",
+  "painted": 0.14573,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-6",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-6/dashboard-6.tsx",
+  "painted": 0.03459,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-7",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-7/dashboard-7.tsx",
+  "painted": 0.36454,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-8",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-8/dashboard-8.tsx",
+  "painted": 0.07261,
+  "canvases": 0
+ },
+ {
+  "slug": "dashboard-9",
+  "category": "data",
+  "tags": [
+   "data",
+   "dashboard",
+   "metrics",
+   "charts",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "dashboard-9/dashboard-9.tsx",
+  "painted": 0.07717,
+  "canvases": 0
+ },
+ {
+  "slug": "data-alchemy",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "pipeline",
+   "data",
+   "transform",
+   "marketing",
+   "motion",
+   "ui"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "data-alchemy/data-alchemy.tsx",
+  "painted": 0.16601,
+  "canvases": 0
+ },
+ {
+  "slug": "data-table-1",
+  "category": "data",
+  "tags": [
+   "data",
+   "table",
+   "grid",
+   "filters",
+   "pagination"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "data-table-1/data-table-1.tsx",
+  "painted": 0.26925,
+  "canvases": 0
+ },
+ {
+  "slug": "data-table-2",
+  "category": "data",
+  "tags": [
+   "data",
+   "table",
+   "grid",
+   "filters",
+   "pagination"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "data-table-2/data-table-2.tsx",
+  "painted": 0.42077,
+  "canvases": 0
+ },
+ {
+  "slug": "data-table-3",
+  "category": "data",
+  "tags": [
+   "data",
+   "table",
+   "grid",
+   "filters",
+   "pagination"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "data-table-3/data-table-3.tsx",
+  "painted": 0.28006,
+  "canvases": 0
+ },
+ {
+  "slug": "data-table-4",
+  "category": "data",
+  "tags": [
+   "data",
+   "table",
+   "grid",
+   "filters",
+   "pagination"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "data-table-4/data-table-4.tsx",
+  "painted": 0.26336,
+  "canvases": 0
+ },
+ {
+  "slug": "data-table-5",
+  "category": "data",
+  "tags": [
+   "data",
+   "table",
+   "grid",
+   "filters",
+   "pagination"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "data-table-5/data-table-5.tsx",
+  "painted": 0.14949,
+  "canvases": 0
+ },
+ {
+  "slug": "data-table-6",
+  "category": "data",
+  "tags": [
+   "data",
+   "table",
+   "grid",
+   "filters",
+   "pagination"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "data-table-6/data-table-6.tsx",
+  "painted": 0.04621,
+  "canvases": 0
+ },
+ {
+  "slug": "data-table-7",
+  "category": "data",
+  "tags": [
+   "data",
+   "table",
+   "grid",
+   "filters",
+   "pagination"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "data-table-7/data-table-7.tsx",
+  "painted": 0.26102,
+  "canvases": 0
+ },
+ {
+  "slug": "data-table-8",
+  "category": "data",
+  "tags": [
+   "data",
+   "table",
+   "grid",
+   "filters",
+   "pagination"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "data-table-8/data-table-8.tsx",
+  "painted": 0.25965,
+  "canvases": 0
+ },
+ {
+  "slug": "deck-cycle",
+  "category": "Components",
+  "tags": [
+   "gsap",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "deck-cycle/DeckCycle.jsx",
+  "painted": 0.00122,
+  "canvases": 0
+ },
+ {
+  "slug": "deck-pileup",
+  "category": "scroll",
+  "tags": [
+   "scroll",
+   "cards",
+   "stack",
+   "sticky",
+   "storytelling",
+   "interactive"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "deck-pileup/deck-pileup.tsx",
+  "painted": 0.47145,
+  "canvases": 0
+ },
+ {
+  "slug": "dendrite-drift",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "webgl",
+   "organic",
+   "abstract",
+   "ambient"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "dendrite-drift/dendrite-drift.tsx",
+  "painted": 0.03174,
+  "canvases": 1
+ },
+ {
+  "slug": "departure-board",
+  "category": "Text Animations",
+  "tags": [
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "departure-board/DepartureBoard.jsx",
+  "painted": 0.03271,
+  "canvases": 0
+ },
+ {
+  "slug": "dew-sparks",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "dew-sparks/dew-sparks.tsx",
+  "painted": 0.00572,
+  "canvases": 1
+ },
+ {
+  "slug": "disc-cycle",
+  "category": "carousel",
+  "tags": [
+   "carousel",
+   "stack",
+   "3d",
+   "motion",
+   "rotating",
+   "showcase"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "disc-cycle/disc-cycle.tsx",
+  "painted": 0.07496,
+  "canvases": 0
+ },
+ {
+  "slug": "dissolve-panel",
+  "category": "Components",
+  "tags": [
+   "gsap",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "dissolve-panel/DissolvePanel.jsx",
+  "painted": 0.08957,
+  "canvases": 0
+ },
+ {
+  "slug": "dossier",
+  "category": "Components",
+  "tags": [
+   "misc"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "dossier/Dossier.jsx",
+  "painted": 0.0089,
+  "canvases": 0
+ },
+ {
+  "slug": "download-1",
+  "category": "download",
+  "tags": [
+   "download",
+   "app",
+   "cta",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "download-1/download-1.tsx",
+  "painted": 0.05997,
+  "canvases": 0
+ },
+ {
+  "slug": "download-2",
+  "category": "download",
+  "tags": [
+   "download",
+   "app",
+   "cta",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "download-2/download-2.tsx",
+  "painted": 0.27783,
+  "canvases": 0
+ },
+ {
+  "slug": "download-3",
+  "category": "download",
+  "tags": [
+   "download",
+   "app",
+   "cta",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": true,
+  "entry": "download-3/download-3.tsx",
+  "painted": 0.64096,
+  "canvases": 1
+ },
+ {
+  "slug": "download-4",
+  "category": "download",
+  "tags": [
+   "download",
+   "app",
+   "cta",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "download-4/download-4.tsx",
+  "painted": 0.40026,
+  "canvases": 0
+ },
+ {
+  "slug": "download-5",
+  "category": "download",
+  "tags": [
+   "download",
+   "app",
+   "cta",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "download-5/download-5.tsx",
+  "painted": 0.08693,
+  "canvases": 0
+ },
+ {
+  "slug": "download-6",
+  "category": "download",
+  "tags": [
+   "download",
+   "app",
+   "cta",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "download-6/download-6.tsx",
+  "painted": 0.1073,
+  "canvases": 0
+ },
+ {
+  "slug": "download-7",
+  "category": "download",
+  "tags": [
+   "download",
+   "app",
+   "cta",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "download-7/download-7.tsx",
+  "painted": 0.07966,
+  "canvases": 0
+ },
+ {
+  "slug": "download-8",
+  "category": "download",
+  "tags": [
+   "download",
+   "app",
+   "cta",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "download-8/download-8.tsx",
+  "painted": 0.27979,
+  "canvases": 0
+ },
+ {
+  "slug": "drifting-wires",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "drifting-wires/DriftingWires.jsx",
+  "painted": 0.71577,
+  "canvases": 1
+ },
+ {
+  "slug": "dust-type",
+  "category": "Text Animations",
+  "tags": [
+   "background",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "dust-type/DustType.jsx",
+  "painted": 0.05474,
+  "canvases": 1
+ },
+ {
+  "slug": "ecommerce-1",
+  "category": "ecommerce",
+  "tags": [
+   "ecommerce",
+   "shop",
+   "product",
+   "store"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ecommerce-1/ecommerce-1.tsx",
+  "painted": 0.69794,
+  "canvases": 0
+ },
+ {
+  "slug": "ecommerce-10",
+  "category": "ecommerce",
+  "tags": [
+   "ecommerce",
+   "shop",
+   "product",
+   "store"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ecommerce-10/ecommerce-10.tsx",
+  "painted": 0.27039,
+  "canvases": 0
+ },
+ {
+  "slug": "ecommerce-11",
+  "category": "ecommerce",
+  "tags": [
+   "ecommerce",
+   "shop",
+   "product",
+   "store"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ecommerce-11/ecommerce-11.tsx",
+  "painted": 0.08203,
+  "canvases": 0
+ },
+ {
+  "slug": "ecommerce-2",
+  "category": "ecommerce",
+  "tags": [
+   "ecommerce",
+   "shop",
+   "product",
+   "store"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ecommerce-2/ecommerce-2.tsx",
+  "painted": 0.50859,
+  "canvases": 0
+ },
+ {
+  "slug": "ecommerce-3",
+  "category": "ecommerce",
+  "tags": [
+   "ecommerce",
+   "shop",
+   "product",
+   "store"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ecommerce-3/ecommerce-3.tsx",
+  "painted": 0.64399,
+  "canvases": 0
+ },
+ {
+  "slug": "ecommerce-4",
+  "category": "ecommerce",
+  "tags": [
+   "ecommerce",
+   "shop",
+   "product",
+   "store"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ecommerce-4/ecommerce-4.tsx",
+  "painted": 0.55071,
+  "canvases": 0
+ },
+ {
+  "slug": "ecommerce-5",
+  "category": "ecommerce",
+  "tags": [
+   "ecommerce",
+   "shop",
+   "product",
+   "store"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ecommerce-5/ecommerce-5.tsx",
+  "painted": 0.23231,
+  "canvases": 0
+ },
+ {
+  "slug": "ecommerce-6",
+  "category": "ecommerce",
+  "tags": [
+   "ecommerce",
+   "shop",
+   "product",
+   "store"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ecommerce-6/ecommerce-6.tsx",
+  "painted": 0.61087,
+  "canvases": 0
+ },
+ {
+  "slug": "ecommerce-7",
+  "category": "ecommerce",
+  "tags": [
+   "ecommerce",
+   "shop",
+   "product",
+   "store"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ecommerce-7/ecommerce-7.tsx",
+  "painted": 0.47808,
+  "canvases": 0
+ },
+ {
+  "slug": "ecommerce-8",
+  "category": "ecommerce",
+  "tags": [
+   "ecommerce",
+   "shop",
+   "product",
+   "store"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ecommerce-8/ecommerce-8.tsx",
+  "painted": 0.48875,
+  "canvases": 0
+ },
+ {
+  "slug": "ecommerce-9",
+  "category": "ecommerce",
+  "tags": [
+   "ecommerce",
+   "shop",
+   "product",
+   "store"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "ecommerce-9/ecommerce-9.tsx",
+  "painted": 0.42708,
+  "canvases": 0
+ },
+ {
+  "slug": "edge-beams",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "edge-beams/EdgeBeams.jsx",
+  "painted": 0.17157,
+  "canvases": 1
+ },
+ {
+  "slug": "editor-1",
+  "category": "editor",
+  "tags": [
+   "editor",
+   "writing",
+   "markdown",
+   "code",
+   "document"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "editor-1/editor-1.tsx",
+  "painted": 0.1928,
+  "canvases": 0
+ },
+ {
+  "slug": "editor-2",
+  "category": "editor",
+  "tags": [
+   "editor",
+   "writing",
+   "markdown",
+   "code",
+   "document"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "editor-2/editor-2.tsx",
+  "painted": 0.25997,
+  "canvases": 0
+ },
+ {
+  "slug": "editor-4",
+  "category": "editor",
+  "tags": [
+   "editor",
+   "writing",
+   "markdown",
+   "code",
+   "document"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "editor-4/editor-4.tsx",
+  "painted": 0.24165,
+  "canvases": 0
+ },
+ {
+  "slug": "editor-5",
+  "category": "editor",
+  "tags": [
+   "editor",
+   "writing",
+   "markdown",
+   "code",
+   "document"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "editor-5/editor-5.tsx",
+  "painted": 0.07833,
+  "canvases": 0
+ },
+ {
+  "slug": "ember-drift",
+  "category": "background",
+  "tags": [
+   "background",
+   "particles",
+   "shader",
+   "webgl",
+   "ambient",
+   "glow"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "ember-drift/ember-drift.tsx",
+  "painted": 0.00155,
+  "canvases": 1
+ },
+ {
+  "slug": "ember-filaments",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "background",
+   "lines",
+   "glow",
+   "webgl"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "ember-filaments/ember-filaments.tsx",
+  "painted": 0.19146,
+  "canvases": 1
+ },
+ {
+  "slug": "ember-streams",
+  "category": "3d",
+  "tags": [
+   "3d",
+   "shader",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "ember-streams/ember-streams.tsx",
+  "painted": 0.18914,
+  "canvases": 1
+ },
+ {
+  "slug": "empty-state-1",
+  "category": "empty",
+  "tags": [
+   "empty",
+   "zero state",
+   "onboarding",
+   "no results",
+   "error",
+   "upload"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "empty-state-1/empty-state-1.tsx",
+  "painted": 0.18265,
+  "canvases": 0
+ },
+ {
+  "slug": "empty-state-2",
+  "category": "empty",
+  "tags": [
+   "empty",
+   "zero state",
+   "onboarding",
+   "no results",
+   "error",
+   "upload"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "empty-state-2/empty-state-2.tsx",
+  "painted": 0.26626,
+  "canvases": 0
+ },
+ {
+  "slug": "empty-state-3",
+  "category": "empty",
+  "tags": [
+   "empty",
+   "zero state",
+   "onboarding",
+   "no results",
+   "error",
+   "upload"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "empty-state-3/empty-state-3.tsx",
+  "painted": 0.25176,
+  "canvases": 0
+ },
+ {
+  "slug": "empty-state-4",
+  "category": "empty",
+  "tags": [
+   "empty",
+   "zero state",
+   "onboarding",
+   "no results",
+   "error",
+   "upload"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "empty-state-4/empty-state-4.tsx",
+  "painted": 0.37672,
+  "canvases": 0
+ },
+ {
+  "slug": "empty-state-5",
+  "category": "empty",
+  "tags": [
+   "empty",
+   "zero state",
+   "onboarding",
+   "no results",
+   "error",
+   "upload"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "empty-state-5/empty-state-5.tsx",
+  "painted": 0.2742,
+  "canvases": 0
+ },
+ {
+  "slug": "endless-rail",
+  "category": "Components",
+  "tags": [
+   "scroll",
+   "ui",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "endless-rail/EndlessRail.jsx",
+  "painted": 0.38127,
+  "canvases": 1
+ },
+ {
+  "slug": "endless-wall",
+  "category": "3d",
+  "tags": [
+   "3d",
+   "gallery",
+   "interactive"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "endless-wall/endless-wall.tsx",
+  "painted": 0.18703,
+  "canvases": 1
+ },
+ {
+  "slug": "event-horizon",
+  "category": "3d",
+  "tags": [
+   "3d",
+   "shader",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "event-horizon/event-horizon.tsx",
+  "painted": 0.1697,
+  "canvases": 1
+ },
+ {
+  "slug": "extruded-type",
+  "category": "Text Animations",
+  "tags": [
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "extruded-type/ExtrudedType.jsx",
+  "painted": 0.03308,
+  "canvases": 0
+ },
+ {
+  "slug": "fan-deck",
+  "category": "cards",
+  "tags": [
+   "cards",
+   "hover",
+   "fan",
+   "stack",
+   "gallery",
+   "motion"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "fan-deck/fan-deck.tsx",
+  "painted": 0.17166,
+  "canvases": 0
+ },
+ {
+  "slug": "faq-1",
+  "category": "faq",
+  "tags": [
+   "faq",
+   "questions",
+   "accordion",
+   "help"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "faq-1/faq-1.tsx",
+  "painted": 0.03671,
+  "canvases": 0
+ },
+ {
+  "slug": "faq-2",
+  "category": "faq",
+  "tags": [
+   "faq",
+   "questions",
+   "accordion",
+   "help"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "faq-2/faq-2.tsx",
+  "painted": 0.17028,
+  "canvases": 0
+ },
+ {
+  "slug": "faq-3",
+  "category": "faq",
+  "tags": [
+   "faq",
+   "questions",
+   "accordion",
+   "help"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "faq-3/faq-3.tsx",
+  "painted": 0.40929,
+  "canvases": 0
+ },
+ {
+  "slug": "faq-4",
+  "category": "faq",
+  "tags": [
+   "faq",
+   "questions",
+   "accordion",
+   "help"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "faq-4/faq-4.tsx",
+  "painted": 0.05932,
+  "canvases": 0
+ },
+ {
+  "slug": "faq-5",
+  "category": "faq",
+  "tags": [
+   "faq",
+   "questions",
+   "accordion",
+   "help"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "faq-5/faq-5.tsx",
+  "painted": 0.26244,
+  "canvases": 0
+ },
+ {
+  "slug": "faq-6",
+  "category": "faq",
+  "tags": [
+   "faq",
+   "questions",
+   "accordion",
+   "help"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "faq-6/faq-6.tsx",
+  "painted": 0.10844,
+  "canvases": 0
+ },
+ {
+  "slug": "faq-7",
+  "category": "faq",
+  "tags": [
+   "faq",
+   "questions",
+   "accordion",
+   "help"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "faq-7/faq-7.tsx",
+  "painted": 0.05553,
+  "canvases": 0
+ },
+ {
+  "slug": "faq-8",
+  "category": "faq",
+  "tags": [
+   "faq",
+   "questions",
+   "accordion",
+   "help"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "faq-8/faq-8.tsx",
+  "painted": 0.07558,
+  "canvases": 0
+ },
+ {
+  "slug": "faq-9",
+  "category": "faq",
+  "tags": [
+   "faq",
+   "questions",
+   "accordion",
+   "help"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "faq-9/faq-9.tsx",
+  "painted": 0.37784,
+  "canvases": 0
+ },
+ {
+  "slug": "features-1",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-1/features-1.tsx",
+  "painted": 0.09752,
+  "canvases": 0
+ },
+ {
+  "slug": "features-10",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-10/features-10.tsx",
+  "painted": 0.13933,
+  "canvases": 0
+ },
+ {
+  "slug": "features-11",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-11/features-11.tsx",
+  "painted": 0.08339,
+  "canvases": 0
+ },
+ {
+  "slug": "features-12",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-12/features-12.tsx",
+  "painted": 0.56485,
+  "canvases": 0
+ },
+ {
+  "slug": "features-13",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-13/features-13.tsx",
+  "painted": 0.07115,
+  "canvases": 0
+ },
+ {
+  "slug": "features-2",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-2/features-2.tsx",
+  "painted": 0.33145,
+  "canvases": 0
+ },
+ {
+  "slug": "features-3",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-3/features-3.tsx",
+  "painted": 0.2579,
+  "canvases": 0
+ },
+ {
+  "slug": "features-4",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-4/features-4.tsx",
+  "painted": 0.11484,
+  "canvases": 0
+ },
+ {
+  "slug": "features-5",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-5/features-5.tsx",
+  "painted": 0.07621,
+  "canvases": 0
+ },
+ {
+  "slug": "features-6",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-6/features-6.tsx",
+  "painted": 0.48788,
+  "canvases": 0
+ },
+ {
+  "slug": "features-7",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-7/features-7.tsx",
+  "painted": 0.38752,
+  "canvases": 0
+ },
+ {
+  "slug": "features-8",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-8/features-8.tsx",
+  "painted": 0.02874,
+  "canvases": 0
+ },
+ {
+  "slug": "features-9",
+  "category": "features",
+  "tags": [
+   "features",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "features-9/features-9.tsx",
+  "painted": 0.05726,
+  "canvases": 0
+ },
+ {
+  "slug": "feedback-1",
+  "category": "feedback",
+  "tags": [
+   "feedback",
+   "survey",
+   "nps",
+   "rating",
+   "requests",
+   "voting"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "feedback-1/feedback-1.tsx",
+  "painted": 0.42591,
+  "canvases": 0
+ },
+ {
+  "slug": "feedback-2",
+  "category": "feedback",
+  "tags": [
+   "feedback",
+   "survey",
+   "nps",
+   "rating",
+   "requests",
+   "voting"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "feedback-2/feedback-2.tsx",
+  "painted": 0.24846,
+  "canvases": 0
+ },
+ {
+  "slug": "feedback-3",
+  "category": "feedback",
+  "tags": [
+   "feedback",
+   "survey",
+   "nps",
+   "rating",
+   "requests",
+   "voting"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "feedback-3/feedback-3.tsx",
+  "painted": 0.24498,
+  "canvases": 0
+ },
+ {
+  "slug": "feedback-4",
+  "category": "feedback",
+  "tags": [
+   "feedback",
+   "survey",
+   "nps",
+   "rating",
+   "requests",
+   "voting"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "feedback-4/feedback-4.tsx",
+  "painted": 0.08009,
+  "canvases": 0
+ },
+ {
+  "slug": "feedback-5",
+  "category": "feedback",
+  "tags": [
+   "feedback",
+   "survey",
+   "nps",
+   "rating",
+   "requests",
+   "voting"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "feedback-5/feedback-5.tsx",
+  "painted": 0.23508,
+  "canvases": 0
+ },
+ {
+  "slug": "feedback-6",
+  "category": "feedback",
+  "tags": [
+   "feedback",
+   "survey",
+   "nps",
+   "rating",
+   "requests",
+   "voting"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "feedback-6/feedback-6.tsx",
+  "painted": 0.2381,
+  "canvases": 0
+ },
+ {
+  "slug": "fiber-rush",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "fiber-rush/FiberRush.jsx",
+  "painted": 0.23648,
+  "canvases": 1
+ },
+ {
+  "slug": "filament-weave",
+  "category": "Animations",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "filament-weave/FilamentWeave.jsx",
+  "painted": 0.03589,
+  "canvases": 1
+ },
+ {
+  "slug": "file-manager-1",
+  "category": "files",
+  "tags": [
+   "files",
+   "drive",
+   "folders",
+   "storage",
+   "upload",
+   "assets"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "file-manager-1/file-manager-1.tsx",
+  "painted": 0.08541,
+  "canvases": 0
+ },
+ {
+  "slug": "file-manager-2",
+  "category": "files",
+  "tags": [
+   "files",
+   "drive",
+   "folders",
+   "storage",
+   "upload",
+   "assets"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "file-manager-2/file-manager-2.tsx",
+  "painted": 0.50878,
+  "canvases": 0
+ },
+ {
+  "slug": "file-manager-3",
+  "category": "files",
+  "tags": [
+   "files",
+   "drive",
+   "folders",
+   "storage",
+   "upload",
+   "assets"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "file-manager-3/file-manager-3.tsx",
+  "painted": 0.15108,
+  "canvases": 0
+ },
+ {
+  "slug": "file-manager-4",
+  "category": "files",
+  "tags": [
+   "files",
+   "drive",
+   "folders",
+   "storage",
+   "upload",
+   "assets"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "file-manager-4/file-manager-4.tsx",
+  "painted": 0.04678,
+  "canvases": 0
+ },
+ {
+  "slug": "filtering-1",
+  "category": "filter",
+  "tags": [
+   "filter",
+   "facet",
+   "refine",
+   "search",
+   "query",
+   "sort"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "filtering-1/filtering-1.tsx",
+  "painted": 0.36306,
+  "canvases": 0
+ },
+ {
+  "slug": "filtering-2",
+  "category": "filter",
+  "tags": [
+   "filter",
+   "facet",
+   "refine",
+   "search",
+   "query",
+   "sort"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "filtering-2/filtering-2.tsx",
+  "painted": 0.04651,
+  "canvases": 0
+ },
+ {
+  "slug": "filtering-3",
+  "category": "filter",
+  "tags": [
+   "filter",
+   "facet",
+   "refine",
+   "search",
+   "query",
+   "sort"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "filtering-3/filtering-3.tsx",
+  "painted": 0.08445,
+  "canvases": 0
+ },
+ {
+  "slug": "filtering-4",
+  "category": "filter",
+  "tags": [
+   "filter",
+   "facet",
+   "refine",
+   "search",
+   "query",
+   "sort"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "filtering-4/filtering-4.tsx",
+  "painted": 0.08964,
+  "canvases": 0
+ },
+ {
+  "slug": "filtering-5",
+  "category": "filter",
+  "tags": [
+   "filter",
+   "facet",
+   "refine",
+   "search",
+   "query",
+   "sort"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "filtering-5/filtering-5.tsx",
+  "painted": 0.06994,
+  "canvases": 0
+ },
+ {
+  "slug": "filtering-6",
+  "category": "filter",
+  "tags": [
+   "filter",
+   "facet",
+   "refine",
+   "search",
+   "query",
+   "sort"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "filtering-6/filtering-6.tsx",
+  "painted": 0.08242,
+  "canvases": 0
+ },
+ {
+  "slug": "filtering-7",
+  "category": "filter",
+  "tags": [
+   "filter",
+   "facet",
+   "refine",
+   "search",
+   "query",
+   "sort"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "filtering-7/filtering-7.tsx",
+  "painted": 0.31549,
+  "canvases": 0
+ },
+ {
+  "slug": "filtering-8",
+  "category": "filter",
+  "tags": [
+   "filter",
+   "facet",
+   "refine",
+   "search",
+   "query",
+   "sort"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "filtering-8/filtering-8.tsx",
+  "painted": 0.0636,
+  "canvases": 0
+ },
+ {
+  "slug": "filtering-9",
+  "category": "filter",
+  "tags": [
+   "filter",
+   "facet",
+   "refine",
+   "search",
+   "query",
+   "sort"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "filtering-9/filtering-9.tsx",
+  "painted": 0.39002,
+  "canvases": 0
+ },
+ {
+  "slug": "flip-cascade",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "text",
+   "3d"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "flip-cascade/flip-cascade.tsx",
+  "painted": 0.00101,
+  "canvases": 0
+ },
+ {
+  "slug": "flipbook",
+  "category": "scroll",
+  "tags": [
+   "scroll",
+   "canvas",
+   "sequence",
+   "sticky",
+   "cinematic",
+   "interactive"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "flipbook/flipbook.tsx",
+  "painted": 0.4969,
+  "canvases": 1
+ },
+ {
+  "slug": "flock-pointer",
+  "category": "Animations",
+  "tags": [
+   "cursor",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "flock-pointer/FlockPointer.jsx",
+  "painted": 0.00154,
+  "canvases": 1
+ },
+ {
+  "slug": "fluid-columns",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "fluid-columns/fluid-columns.tsx",
+  "painted": 0.19283,
+  "canvases": 1
+ },
+ {
+  "slug": "fluid-halo",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "fluid-halo/fluid-halo.tsx",
+  "painted": 0.02629,
+  "canvases": 1
+ },
+ {
+  "slug": "flux-pool",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "flux-pool/FluxPool.jsx",
+  "painted": 0.06752,
+  "canvases": 1
+ },
+ {
+  "slug": "focal-fibers",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "focal-fibers/FocalFibers.jsx",
+  "painted": 0.68852,
+  "canvases": 1
+ },
+ {
+  "slug": "footer-1",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-1/footer-1.tsx",
+  "painted": 0.17839,
+  "canvases": 0
+ },
+ {
+  "slug": "footer-10",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-10/footer-10.tsx",
+  "painted": 0.237,
+  "canvases": 0
+ },
+ {
+  "slug": "footer-11",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-11/footer-11.tsx",
+  "painted": 0.1949,
+  "canvases": 0
+ },
+ {
+  "slug": "footer-12",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-12/footer-12.tsx",
+  "painted": 0.54888,
+  "canvases": 0
+ },
+ {
+  "slug": "footer-2",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-2/footer-2.tsx",
+  "painted": 0.259,
+  "canvases": 0
+ },
+ {
+  "slug": "footer-3",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-3/footer-3.tsx",
+  "painted": 0.1862,
+  "canvases": 0
+ },
+ {
+  "slug": "footer-4",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-4/footer-4.tsx",
+  "painted": 0.06265,
+  "canvases": 0
+ },
+ {
+  "slug": "footer-5",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-5/footer-5.tsx",
+  "painted": 0.70288,
+  "canvases": 0
+ },
+ {
+  "slug": "footer-6",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-6/footer-6.tsx",
+  "painted": 0.56911,
+  "canvases": 0
+ },
+ {
+  "slug": "footer-7",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-7/footer-7.tsx",
+  "painted": 0.3543,
+  "canvases": 0
+ },
+ {
+  "slug": "footer-8",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-8/footer-8.tsx",
+  "painted": 0.29645,
+  "canvases": 0
+ },
+ {
+  "slug": "footer-9",
+  "category": "footer",
+  "tags": [
+   "footer",
+   "navigation"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "footer-9/footer-9.tsx",
+  "painted": 0.19507,
+  "canvases": 0
+ },
+ {
+  "slug": "forge-swirl",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "forge-swirl/ForgeSwirl.jsx",
+  "painted": 0.47219,
+  "canvases": 1
+ },
+ {
+  "slug": "forms-1",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-1/forms-1.tsx",
+  "painted": 0.05198,
+  "canvases": 0
+ },
+ {
+  "slug": "forms-10",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-10/forms-10.tsx",
+  "painted": 0.04281,
+  "canvases": 0
+ },
+ {
+  "slug": "forms-11",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-11/forms-11.tsx",
+  "painted": 0.1051,
+  "canvases": 0
+ },
+ {
+  "slug": "forms-12",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-12/forms-12.tsx",
+  "painted": 0.06254,
+  "canvases": 0
+ },
+ {
+  "slug": "forms-2",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-2/forms-2.tsx",
+  "painted": 0.07102,
+  "canvases": 0
+ },
+ {
+  "slug": "forms-3",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-3/forms-3.tsx",
+  "painted": 0.0579,
+  "canvases": 0
+ },
+ {
+  "slug": "forms-4",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-4/forms-4.tsx",
+  "painted": 0.03925,
+  "canvases": 0
+ },
+ {
+  "slug": "forms-5",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-5/forms-5.tsx",
+  "painted": 0.06986,
+  "canvases": 0
+ },
+ {
+  "slug": "forms-6",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-6/forms-6.tsx",
+  "painted": 0.06089,
+  "canvases": 0
+ },
+ {
+  "slug": "forms-7",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-7/forms-7.tsx",
+  "painted": 0.05886,
+  "canvases": 0
+ },
+ {
+  "slug": "forms-8",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-8/forms-8.tsx",
+  "painted": 0.06918,
+  "canvases": 0
+ },
+ {
+  "slug": "forms-9",
+  "category": "form",
+  "tags": [
+   "form",
+   "input",
+   "validation",
+   "fields",
+   "submit",
+   "record"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "forms-9/forms-9.tsx",
+  "painted": 0.05686,
+  "canvases": 0
+ },
+ {
+  "slug": "frosted-glyphs",
+  "category": "Components",
+  "tags": [
+   "misc"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "frosted-glyphs/FrostedGlyphs.jsx",
+  "painted": 0.01582,
+  "canvases": 0
+ },
+ {
+  "slug": "gateway",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "shader"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "gateway/gateway.tsx",
+  "painted": 0.04409,
+  "canvases": 1
+ },
+ {
+  "slug": "geo-lattice",
+  "category": "Backgrounds",
+  "tags": [
+   "background"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "geo-lattice/GeoLattice.jsx",
+  "painted": 0.07104,
+  "canvases": 1
+ },
+ {
+  "slug": "ghost-nimbus",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "clouds",
+   "volumetric",
+   "webgl",
+   "ambient"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "ghost-nimbus/ghost-nimbus.tsx",
+  "painted": 0.02911,
+  "canvases": 1
+ },
+ {
+  "slug": "glass-orb-wipe",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "transition",
+   "ui"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "glass-orb-wipe/glass-orb-wipe.tsx",
+  "painted": 0.19993,
+  "canvases": 1
+ },
+ {
+  "slug": "gloss-glide",
+  "category": "Animations",
+  "tags": [
+   "animation",
+   "effect"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "gloss-glide/GlossGlide.jsx",
+  "painted": 0.24322,
+  "canvases": 0
+ },
+ {
+  "slug": "glow-column",
+  "category": "Backgrounds",
+  "tags": [
+   "ui",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "glow-column/GlowColumn.jsx",
+  "painted": 0.86705,
+  "canvases": 1
+ },
+ {
+  "slug": "glow-sweep",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "glow-sweep/glow-sweep.tsx",
+  "painted": 0.31175,
+  "canvases": 1
+ },
+ {
+  "slug": "glyph-mosaic",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "3d",
+   "background",
+   "ascii",
+   "effect"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "glyph-mosaic/glyph-mosaic.tsx",
+  "painted": 0.18196,
+  "canvases": 1
+ },
+ {
+  "slug": "glyph-swarm",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "text",
+   "particles"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "glyph-swarm/glyph-swarm.tsx",
+  "painted": 0.06965,
+  "canvases": 1
+ },
+ {
+  "slug": "glyph-tide",
+  "category": "background",
+  "tags": [
+   "background",
+   "animation",
+   "ascii"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "glyph-tide/glyph-tide.tsx",
+  "painted": 0.14267,
+  "canvases": 1
+ },
+ {
+  "slug": "gravity-letters",
+  "category": "Text Animations",
+  "tags": [
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "gravity-letters/GravityLetters.jsx",
+  "painted": 0.00101,
+  "canvases": 1
+ },
+ {
+  "slug": "halo-bloom",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "blob",
+   "glow",
+   "webgl",
+   "ambient"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "halo-bloom/halo-bloom.tsx",
+  "painted": 0.00169,
+  "canvases": 1
+ },
+ {
+  "slug": "halo-edge",
+  "category": "Components",
+  "tags": [
+   "effect"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "halo-edge/HaloEdge.jsx",
+  "painted": 0.0302,
+  "canvases": 0
+ },
+ {
+  "slug": "hazy-morph",
+  "category": "Animations",
+  "tags": [
+   "effect",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "hazy-morph/HazyMorph.jsx",
+  "painted": 0.0036,
+  "canvases": 1
+ },
+ {
+  "slug": "hero-1",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-1/hero-1.tsx",
+  "painted": 0.58477,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-10",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-10/hero-10.tsx",
+  "painted": 0.14569,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-11",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-11/hero-11.tsx",
+  "painted": 0.24529,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-12",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-12/hero-12.tsx",
+  "painted": 0.66513,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-13",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": true,
+  "entry": "hero-13/hero-13.tsx",
+  "painted": 0.19494,
+  "canvases": 1
+ },
+ {
+  "slug": "hero-14",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-14/hero-14.tsx",
+  "painted": 0.45986,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-15",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-15/hero-15.tsx",
+  "painted": 0.10896,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-16",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-16/hero-16.tsx",
+  "painted": 0.05683,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-17",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-17/hero-17.tsx",
+  "painted": 0.34385,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-18",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-18/hero-18.tsx",
+  "painted": 0.09263,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-19",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-19/hero-19.tsx",
+  "painted": 0.12143,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-2",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-2/hero-2.tsx",
+  "painted": 0.41586,
+  "canvases": 1
+ },
+ {
+  "slug": "hero-20",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-20/hero-20.tsx",
+  "painted": 0.12183,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-21",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": true,
+  "entry": "hero-21/hero-21.tsx",
+  "painted": 0.56537,
+  "canvases": 1
+ },
+ {
+  "slug": "hero-3",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": true,
+  "entry": "hero-3/hero-3.tsx",
+  "painted": 0.71153,
+  "canvases": 1
+ },
+ {
+  "slug": "hero-4",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-4/hero-4.tsx",
+  "painted": 0.24174,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-5",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-5/hero-5.tsx",
+  "painted": 0.70903,
+  "canvases": 1
+ },
+ {
+  "slug": "hero-6",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-6/hero-6.tsx",
+  "painted": 0.42727,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-7",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": true,
+  "entry": "hero-7/hero-7.tsx",
+  "painted": 0.25991,
+  "canvases": 1
+ },
+ {
+  "slug": "hero-8",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-8/hero-8.tsx",
+  "painted": 0.4718,
+  "canvases": 0
+ },
+ {
+  "slug": "hero-9",
+  "category": "hero",
+  "tags": [
+   "hero",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "hero-9/hero-9.tsx",
+  "painted": 0.96482,
+  "canvases": 0
+ },
+ {
+  "slug": "holo-badge",
+  "category": "Components",
+  "tags": [
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "holo-badge/HoloBadge.jsx",
+  "painted": 0.21123,
+  "canvases": 0
+ },
+ {
+  "slug": "horizon-swells",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "effect",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "horizon-swells/HorizonSwells.jsx",
+  "painted": 0.5968,
+  "canvases": 1
+ },
+ {
+  "slug": "how-it-works-1",
+  "category": "how-it-works",
+  "tags": [
+   "how-it-works",
+   "process",
+   "steps",
+   "workflow"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "how-it-works-1/how-it-works-1.tsx",
+  "painted": 0.32844,
+  "canvases": 0
+ },
+ {
+  "slug": "how-it-works-2",
+  "category": "how-it-works",
+  "tags": [
+   "how-it-works",
+   "process",
+   "steps",
+   "workflow"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "how-it-works-2/how-it-works-2.tsx",
+  "painted": 0.45426,
+  "canvases": 0
+ },
+ {
+  "slug": "how-it-works-3",
+  "category": "how-it-works",
+  "tags": [
+   "how-it-works",
+   "process",
+   "steps",
+   "workflow"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "how-it-works-3/how-it-works-3.tsx",
+  "painted": 0.43267,
+  "canvases": 0
+ },
+ {
+  "slug": "how-it-works-4",
+  "category": "how-it-works",
+  "tags": [
+   "how-it-works",
+   "process",
+   "steps",
+   "workflow"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "how-it-works-4/how-it-works-4.tsx",
+  "painted": 0.07832,
+  "canvases": 0
+ },
+ {
+  "slug": "how-it-works-5",
+  "category": "how-it-works",
+  "tags": [
+   "how-it-works",
+   "process",
+   "steps",
+   "workflow"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "how-it-works-5/how-it-works-5.tsx",
+  "painted": 0.06472,
+  "canvases": 0
+ },
+ {
+  "slug": "how-it-works-6",
+  "category": "how-it-works",
+  "tags": [
+   "how-it-works",
+   "process",
+   "steps",
+   "workflow"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "how-it-works-6/how-it-works-6.tsx",
+  "painted": 0.06196,
+  "canvases": 0
+ },
+ {
+  "slug": "how-it-works-7",
+  "category": "how-it-works",
+  "tags": [
+   "how-it-works",
+   "process",
+   "steps",
+   "workflow"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "how-it-works-7/how-it-works-7.tsx",
+  "painted": 0.50346,
+  "canvases": 0
+ },
+ {
+  "slug": "how-it-works-8",
+  "category": "how-it-works",
+  "tags": [
+   "how-it-works",
+   "process",
+   "steps",
+   "workflow"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "how-it-works-8/how-it-works-8.tsx",
+  "painted": 0.09083,
+  "canvases": 0
+ },
+ {
+  "slug": "how-it-works-9",
+  "category": "how-it-works",
+  "tags": [
+   "how-it-works",
+   "process",
+   "steps",
+   "workflow"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "how-it-works-9/how-it-works-9.tsx",
+  "painted": 0.11912,
+  "canvases": 0
+ },
+ {
+  "slug": "hue-tiles",
+  "category": "Components",
+  "tags": [
+   "background",
+   "gsap"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "hue-tiles/HueTiles.jsx",
+  "painted": 0.71975,
+  "canvases": 0
+ },
+ {
+  "slug": "ink-wash",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "3d",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "ink-wash/ink-wash.tsx",
+  "painted": 0.18913,
+  "canvases": 1
+ },
+ {
+  "slug": "inkwell-spiral",
+  "category": "3d",
+  "tags": [
+   "3d",
+   "shader",
+   "cursor"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "inkwell-spiral/inkwell-spiral.tsx",
+  "painted": 0.19624,
+  "canvases": 1
+ },
+ {
+  "slug": "integrations-1",
+  "category": "integrations",
+  "tags": [
+   "integrations",
+   "api keys",
+   "webhooks",
+   "oauth",
+   "connections"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "integrations-1/integrations-1.tsx",
+  "painted": 0.17387,
+  "canvases": 0
+ },
+ {
+  "slug": "integrations-2",
+  "category": "integrations",
+  "tags": [
+   "integrations",
+   "api keys",
+   "webhooks",
+   "oauth",
+   "connections"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "integrations-2/integrations-2.tsx",
+  "painted": 0.20158,
+  "canvases": 0
+ },
+ {
+  "slug": "integrations-3",
+  "category": "integrations",
+  "tags": [
+   "integrations",
+   "api keys",
+   "webhooks",
+   "oauth",
+   "connections"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "integrations-3/integrations-3.tsx",
+  "painted": 0.18849,
+  "canvases": 0
+ },
+ {
+  "slug": "integrations-4",
+  "category": "integrations",
+  "tags": [
+   "integrations",
+   "api keys",
+   "webhooks",
+   "oauth",
+   "connections"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "integrations-4/integrations-4.tsx",
+  "painted": 0.20111,
+  "canvases": 0
+ },
+ {
+  "slug": "integrations-5",
+  "category": "integrations",
+  "tags": [
+   "integrations",
+   "api keys",
+   "webhooks",
+   "oauth",
+   "connections"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "integrations-5/integrations-5.tsx",
+  "painted": 0.10332,
+  "canvases": 0
+ },
+ {
+  "slug": "integrations-6",
+  "category": "integrations",
+  "tags": [
+   "integrations",
+   "api keys",
+   "webhooks",
+   "oauth",
+   "connections"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "integrations-6/integrations-6.tsx",
+  "painted": 0.11787,
+  "canvases": 0
+ },
+ {
+  "slug": "into-focus",
+  "category": "Text Animations",
+  "tags": [
+   "gsap",
+   "scroll"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "into-focus/IntoFocus.jsx",
+  "painted": 0.00671,
+  "canvases": 0
+ },
+ {
+  "slug": "ion-swell",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "ion-swell/IonSwell.jsx",
+  "painted": 0.01062,
+  "canvases": 1
+ },
+ {
+  "slug": "iron-filings",
+  "category": "cursor",
+  "tags": [
+   "cursor",
+   "pixel",
+   "interactive",
+   "shader",
+   "webgl",
+   "trail"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "iron-filings/iron-filings.tsx",
+  "painted": 0.00119,
+  "canvases": 1
+ },
+ {
+  "slug": "jelly-field",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "3d",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "jelly-field/jelly-field.tsx",
+  "painted": 0.21046,
+  "canvases": 1
+ },
+ {
+  "slug": "kanban-1",
+  "category": "kanban",
+  "tags": [
+   "kanban",
+   "board",
+   "drag and drop",
+   "sortable",
+   "columns",
+   "swimlane",
+   "backlog",
+   "sprint",
+   "task",
+   "project"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "kanban-1/kanban-1.tsx",
+  "painted": 0.20798,
+  "canvases": 0
+ },
+ {
+  "slug": "kanban-2",
+  "category": "kanban",
+  "tags": [
+   "kanban",
+   "board",
+   "drag and drop",
+   "sortable",
+   "columns",
+   "swimlane",
+   "backlog",
+   "sprint",
+   "task",
+   "project"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "kanban-2/kanban-2.tsx",
+  "painted": 0.06654,
+  "canvases": 0
+ },
+ {
+  "slug": "kanban-3",
+  "category": "kanban",
+  "tags": [
+   "kanban",
+   "board",
+   "drag and drop",
+   "sortable",
+   "columns",
+   "swimlane",
+   "backlog",
+   "sprint",
+   "task",
+   "project"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "kanban-3/kanban-3.tsx",
+  "painted": 0.20985,
+  "canvases": 0
+ },
+ {
+  "slug": "kanban-4",
+  "category": "kanban",
+  "tags": [
+   "kanban",
+   "board",
+   "drag and drop",
+   "sortable",
+   "columns",
+   "swimlane",
+   "backlog",
+   "sprint",
+   "task",
+   "project"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "kanban-4/kanban-4.tsx",
+  "painted": 0.13106,
+  "canvases": 0
+ },
+ {
+  "slug": "kanban-5",
+  "category": "kanban",
+  "tags": [
+   "kanban",
+   "board",
+   "drag and drop",
+   "sortable",
+   "columns",
+   "swimlane",
+   "backlog",
+   "sprint",
+   "task",
+   "project"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "kanban-5/kanban-5.tsx",
+  "painted": 0.22278,
+  "canvases": 0
+ },
+ {
+  "slug": "kanban-6",
+  "category": "kanban",
+  "tags": [
+   "kanban",
+   "board",
+   "drag and drop",
+   "sortable",
+   "columns",
+   "swimlane",
+   "backlog",
+   "sprint",
+   "task",
+   "project"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "kanban-6/kanban-6.tsx",
+  "painted": 0.21061,
+  "canvases": 0
+ },
+ {
+  "slug": "keystroke-reveal",
+  "category": "Text Animations",
+  "tags": [
+   "gsap",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "keystroke-reveal/KeystrokeReveal.jsx",
+  "painted": 0.00119,
+  "canvases": 0
+ },
+ {
+  "slug": "lattice-sphere",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "webgl",
+   "3d",
+   "wireframe",
+   "geometric"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "lattice-sphere/lattice-sphere.tsx",
+  "painted": 0.00109,
+  "canvases": 1
+ },
+ {
+  "slug": "lava-lamp",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "3d"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "lava-lamp/lava-lamp.tsx",
+  "painted": 0.0308,
+  "canvases": 1
+ },
+ {
+  "slug": "leaf-turn",
+  "category": "book",
+  "tags": [
+   "book",
+   "flip",
+   "3d",
+   "drag",
+   "pages",
+   "interactive"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "leaf-turn/leaf-turn.tsx",
+  "painted": 0.07217,
+  "canvases": 0
+ },
+ {
+  "slug": "lens-pointer",
+  "category": "cursor",
+  "tags": [
+   "cursor",
+   "effect",
+   "3d"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "lens-pointer/lens-pointer.tsx",
+  "painted": 0.2105,
+  "canvases": 1
+ },
+ {
+  "slug": "letter-break",
+  "category": "Text Animations",
+  "tags": [
+   "gsap",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "letter-break/LetterBreak.jsx",
+  "painted": 0.00103,
+  "canvases": 0
+ },
+ {
+  "slug": "letter-flurry",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "text"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "letter-flurry/letter-flurry.tsx",
+  "painted": 0.00149,
+  "canvases": 0
+ },
+ {
+  "slug": "liquid-letters",
+  "category": "Text Animations",
+  "tags": [
+   "text",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "liquid-letters/LiquidLetters.jsx",
+  "painted": 0.05568,
+  "canvases": 1
+ },
+ {
+  "slug": "liquid-nav",
+  "category": "Components",
+  "tags": [
+   "gsap",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "liquid-nav/LiquidNav.jsx",
+  "painted": 0.00752,
+  "canvases": 0
+ },
+ {
+  "slug": "list-1",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-1/list-1.tsx",
+  "painted": 0.23397,
+  "canvases": 0
+ },
+ {
+  "slug": "list-10",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-10/list-10.tsx",
+  "painted": 0.16503,
+  "canvases": 0
+ },
+ {
+  "slug": "list-11",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-11/list-11.tsx",
+  "painted": 0.50837,
+  "canvases": 0
+ },
+ {
+  "slug": "list-12",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-12/list-12.tsx",
+  "painted": 0.02876,
+  "canvases": 0
+ },
+ {
+  "slug": "list-2",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-2/list-2.tsx",
+  "painted": 0.1377,
+  "canvases": 0
+ },
+ {
+  "slug": "list-3",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-3/list-3.tsx",
+  "painted": 0.17016,
+  "canvases": 0
+ },
+ {
+  "slug": "list-4",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-4/list-4.tsx",
+  "painted": 0.16491,
+  "canvases": 0
+ },
+ {
+  "slug": "list-5",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-5/list-5.tsx",
+  "painted": 0.20167,
+  "canvases": 0
+ },
+ {
+  "slug": "list-6",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-6/list-6.tsx",
+  "painted": 0.16587,
+  "canvases": 0
+ },
+ {
+  "slug": "list-7",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-7/list-7.tsx",
+  "painted": 0.10334,
+  "canvases": 0
+ },
+ {
+  "slug": "list-8",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-8/list-8.tsx",
+  "painted": 0.10671,
+  "canvases": 0
+ },
+ {
+  "slug": "list-9",
+  "category": "list",
+  "tags": [
+   "list",
+   "rows",
+   "feed",
+   "queue",
+   "leaderboard",
+   "tree"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "list-9/list-9.tsx",
+  "painted": 0.06455,
+  "canvases": 0
+ },
+ {
+  "slug": "lock-on-pointer",
+  "category": "Animations",
+  "tags": [
+   "cursor",
+   "gsap"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "lock-on-pointer/LockOnPointer.jsx",
+  "painted": 0.00128,
+  "canvases": 0
+ },
+ {
+  "slug": "loom",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "loom/Loom.jsx",
+  "painted": 0.01333,
+  "canvases": 1
+ },
+ {
+  "slug": "louver-sweep",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "blinds",
+   "stripes",
+   "webgl",
+   "motion"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "louver-sweep/louver-sweep.tsx",
+  "painted": 0.02266,
+  "canvases": 1
+ },
+ {
+  "slug": "luminous-rain",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "particles",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "luminous-rain/luminous-rain.tsx",
+  "painted": 0.06884,
+  "canvases": 1
+ },
+ {
+  "slug": "marker-reveal",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "text"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "marker-reveal/marker-reveal.tsx",
+  "painted": 0.00135,
+  "canvases": 0
+ },
+ {
+  "slug": "mercury-flow",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "mercury-flow/MercuryFlow.jsx",
+  "painted": 0.02367,
+  "canvases": 1
+ },
+ {
+  "slug": "mesh-drift",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "gsap"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "mesh-drift/MeshDrift.jsx",
+  "painted": 0.141,
+  "canvases": 0
+ },
+ {
+  "slug": "midnight-haze",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "midnight-haze/MidnightHaze.jsx",
+  "painted": 0.3324,
+  "canvases": 1
+ },
+ {
+  "slug": "mirror-pane",
+  "category": "Components",
+  "tags": [
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "mirror-pane/MirrorPane.jsx",
+  "painted": 0.16384,
+  "canvases": 0
+ },
+ {
+  "slug": "mist-orb",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "3d",
+   "background",
+   "effect"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "mist-orb/mist-orb.tsx",
+  "painted": 0.03263,
+  "canvases": 1
+ },
+ {
+  "slug": "mobile-1",
+  "category": "mobile",
+  "tags": [
+   "mobile",
+   "navigation",
+   "tab bar",
+   "bottom bar",
+   "bottom sheet",
+   "floating action button",
+   "dock",
+   "drawer",
+   "touch"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "mobile-1/mobile-1.tsx",
+  "painted": 0.13642,
+  "canvases": 0
+ },
+ {
+  "slug": "mobile-2",
+  "category": "mobile",
+  "tags": [
+   "mobile",
+   "navigation",
+   "tab bar",
+   "bottom bar",
+   "bottom sheet",
+   "floating action button",
+   "dock",
+   "drawer",
+   "touch"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "mobile-2/mobile-2.tsx",
+  "painted": 0.13245,
+  "canvases": 0
+ },
+ {
+  "slug": "mobile-3",
+  "category": "mobile",
+  "tags": [
+   "mobile",
+   "navigation",
+   "tab bar",
+   "bottom bar",
+   "bottom sheet",
+   "floating action button",
+   "dock",
+   "drawer",
+   "touch"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "mobile-3/mobile-3.tsx",
+  "painted": 0.0306,
+  "canvases": 0
+ },
+ {
+  "slug": "mobile-4",
+  "category": "mobile",
+  "tags": [
+   "mobile",
+   "navigation",
+   "tab bar",
+   "bottom bar",
+   "bottom sheet",
+   "floating action button",
+   "dock",
+   "drawer",
+   "touch"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "mobile-4/mobile-4.tsx",
+  "painted": 0.13496,
+  "canvases": 0
+ },
+ {
+  "slug": "mobile-5",
+  "category": "mobile",
+  "tags": [
+   "mobile",
+   "navigation",
+   "tab bar",
+   "bottom bar",
+   "bottom sheet",
+   "floating action button",
+   "dock",
+   "drawer",
+   "touch"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "mobile-5/mobile-5.tsx",
+  "painted": 0.15633,
+  "canvases": 0
+ },
+ {
+  "slug": "molten-pane",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "molten-pane/molten-pane.tsx",
+  "painted": 0.1903,
+  "canvases": 1
+ },
+ {
+  "slug": "monitoring-1",
+  "category": "monitoring",
+  "tags": [
+   "monitoring",
+   "observability",
+   "metrics",
+   "charts",
+   "alerts",
+   "incidents",
+   "uptime",
+   "logs",
+   "slo"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "monitoring-1/monitoring-1.tsx",
+  "painted": 0.09924,
+  "canvases": 0
+ },
+ {
+  "slug": "monitoring-10",
+  "category": "monitoring",
+  "tags": [
+   "monitoring",
+   "observability",
+   "metrics",
+   "charts",
+   "alerts",
+   "incidents",
+   "uptime",
+   "logs",
+   "slo"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "monitoring-10/monitoring-10.tsx",
+  "painted": 0.18911,
+  "canvases": 0
+ },
+ {
+  "slug": "monitoring-2",
+  "category": "monitoring",
+  "tags": [
+   "monitoring",
+   "observability",
+   "metrics",
+   "charts",
+   "alerts",
+   "incidents",
+   "uptime",
+   "logs",
+   "slo"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "monitoring-2/monitoring-2.tsx",
+  "painted": 0.22828,
+  "canvases": 0
+ },
+ {
+  "slug": "monitoring-3",
+  "category": "monitoring",
+  "tags": [
+   "monitoring",
+   "observability",
+   "metrics",
+   "charts",
+   "alerts",
+   "incidents",
+   "uptime",
+   "logs",
+   "slo"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "monitoring-3/monitoring-3.tsx",
+  "painted": 0.1272,
+  "canvases": 0
+ },
+ {
+  "slug": "monitoring-4",
+  "category": "monitoring",
+  "tags": [
+   "monitoring",
+   "observability",
+   "metrics",
+   "charts",
+   "alerts",
+   "incidents",
+   "uptime",
+   "logs",
+   "slo"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "monitoring-4/monitoring-4.tsx",
+  "painted": 0.10036,
+  "canvases": 0
+ },
+ {
+  "slug": "monitoring-5",
+  "category": "monitoring",
+  "tags": [
+   "monitoring",
+   "observability",
+   "metrics",
+   "charts",
+   "alerts",
+   "incidents",
+   "uptime",
+   "logs",
+   "slo"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "monitoring-5/monitoring-5.tsx",
+  "painted": 0.12987,
+  "canvases": 0
+ },
+ {
+  "slug": "monitoring-6",
+  "category": "monitoring",
+  "tags": [
+   "monitoring",
+   "observability",
+   "metrics",
+   "charts",
+   "alerts",
+   "incidents",
+   "uptime",
+   "logs",
+   "slo"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "monitoring-6/monitoring-6.tsx",
+  "painted": 0.19739,
+  "canvases": 0
+ },
+ {
+  "slug": "monitoring-7",
+  "category": "monitoring",
+  "tags": [
+   "monitoring",
+   "observability",
+   "metrics",
+   "charts",
+   "alerts",
+   "incidents",
+   "uptime",
+   "logs",
+   "slo"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "monitoring-7/monitoring-7.tsx",
+  "painted": 0.12866,
+  "canvases": 0
+ },
+ {
+  "slug": "monitoring-8",
+  "category": "monitoring",
+  "tags": [
+   "monitoring",
+   "observability",
+   "metrics",
+   "charts",
+   "alerts",
+   "incidents",
+   "uptime",
+   "logs",
+   "slo"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "monitoring-8/monitoring-8.tsx",
+  "painted": 0.11727,
+  "canvases": 0
+ },
+ {
+  "slug": "monitoring-9",
+  "category": "monitoring",
+  "tags": [
+   "monitoring",
+   "observability",
+   "metrics",
+   "charts",
+   "alerts",
+   "incidents",
+   "uptime",
+   "logs",
+   "slo"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "monitoring-9/monitoring-9.tsx",
+  "painted": 0.07176,
+  "canvases": 0
+ },
+ {
+  "slug": "mote-field",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "mote-field/MoteField.jsx",
+  "painted": 0.00432,
+  "canvases": 1
+ },
+ {
+  "slug": "motion-wrap",
+  "category": "Animations",
+  "tags": [
+   "animation",
+   "gsap"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "motion-wrap/MotionWrap.jsx",
+  "painted": 0.00109,
+  "canvases": 0
+ },
+ {
+  "slug": "mural-grid",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "mural-grid/mural-grid.tsx",
+  "painted": 0.00109,
+  "canvases": 1
+ },
+ {
+  "slug": "navbar-1",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-1/navbar-1.tsx",
+  "painted": 0.41872,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-10",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-10/navbar-10.tsx",
+  "painted": 0.3915,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-11",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-11/navbar-11.tsx",
+  "painted": 0.42559,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-12",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-12/navbar-12.tsx",
+  "painted": 0.02372,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-13",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-13/navbar-13.tsx",
+  "painted": 0.32236,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-14",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-14/navbar-14.tsx",
+  "painted": 0.05509,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-2",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-2/navbar-2.tsx",
+  "painted": 0.50376,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-3",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-3/navbar-3.tsx",
+  "painted": 0.42276,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-4",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-4/navbar-4.tsx",
+  "painted": 0.32977,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-5",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-5/navbar-5.tsx",
+  "painted": 0.24229,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-6",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-6/navbar-6.tsx",
+  "painted": 0.42509,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-7",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-7/navbar-7.tsx",
+  "painted": 0.38275,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-8",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-8/navbar-8.tsx",
+  "painted": 0.50376,
+  "canvases": 0
+ },
+ {
+  "slug": "navbar-9",
+  "category": "navbar",
+  "tags": [
+   "navbar",
+   "navigation",
+   "header",
+   "menu",
+   "dropdown",
+   "mega menu",
+   "breadcrumb",
+   "tabs",
+   "mobile"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navbar-9/navbar-9.tsx",
+  "painted": 0.48949,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-1",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-1/navigation-1.tsx",
+  "painted": 0.09765,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-10",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-10/navigation-10.tsx",
+  "painted": 0.01378,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-11",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-11/navigation-11.tsx",
+  "painted": 0.06576,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-12",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-12/navigation-12.tsx",
+  "painted": 0.01647,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-13",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-13/navigation-13.tsx",
+  "painted": 0.00782,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-14",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-14/navigation-14.tsx",
+  "painted": 0.00792,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-15",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-15/navigation-15.tsx",
+  "painted": 0.00505,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-2",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-2/navigation-2.tsx",
+  "painted": 0.28525,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-3",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-3/navigation-3.tsx",
+  "painted": 0.02865,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-4",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-4/navigation-4.tsx",
+  "painted": 0.01342,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-5",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-5/navigation-5.tsx",
+  "painted": 0.33422,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-6",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-6/navigation-6.tsx",
+  "painted": 0.10522,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-7",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-7/navigation-7.tsx",
+  "painted": 0.0237,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-8",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-8/navigation-8.tsx",
+  "painted": 0.01802,
+  "canvases": 0
+ },
+ {
+  "slug": "navigation-9",
+  "category": "navigation",
+  "tags": [
+   "navigation",
+   "menu",
+   "header"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "navigation-9/navigation-9.tsx",
+  "painted": 0.24071,
+  "canvases": 0
+ },
+ {
+  "slug": "nebula-card",
+  "category": "card",
+  "tags": [
+   "card",
+   "shader"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "nebula-card/nebula-card.tsx",
+  "painted": 0.07033,
+  "canvases": 1
+ },
+ {
+  "slug": "nebula-drift",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "nebula-drift/NebulaDrift.jsx",
+  "painted": 0.21882,
+  "canvases": 1
+ },
+ {
+  "slug": "neon-downpour",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "neon-downpour/NeonDownpour.jsx",
+  "painted": 0.80073,
+  "canvases": 1
+ },
+ {
+  "slug": "neon-swell",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "glow",
+   "wave",
+   "webgl",
+   "ambient"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "neon-swell/neon-swell.tsx",
+  "painted": 0.03069,
+  "canvases": 1
+ },
+ {
+  "slug": "newsprint-lens",
+  "category": "Animations",
+  "tags": [
+   "scroll",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "newsprint-lens/NewsprintLens.jsx",
+  "painted": 0.78264,
+  "canvases": 1
+ },
+ {
+  "slug": "newsreel-ripple",
+  "category": "3d",
+  "tags": [
+   "3d",
+   "shader",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "newsreel-ripple/newsreel-ripple.tsx",
+  "painted": 0.21023,
+  "canvases": 1
+ },
+ {
+  "slug": "noise-rim",
+  "category": "3d",
+  "tags": [
+   "3d",
+   "shader",
+   "effect"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "noise-rim/noise-rim.tsx",
+  "painted": 0.19364,
+  "canvases": 1
+ },
+ {
+  "slug": "noise-swells",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "noise-swells/noise-swells.tsx",
+  "painted": 0.03,
+  "canvases": 1
+ },
+ {
+  "slug": "notifications-1",
+  "category": "notifications",
+  "tags": [
+   "notifications",
+   "alerts",
+   "toast",
+   "inbox",
+   "activity"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "notifications-1/notifications-1.tsx",
+  "painted": 0.04324,
+  "canvases": 0
+ },
+ {
+  "slug": "notifications-2",
+  "category": "notifications",
+  "tags": [
+   "notifications",
+   "alerts",
+   "toast",
+   "inbox",
+   "activity"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "notifications-2/notifications-2.tsx",
+  "painted": 0.24155,
+  "canvases": 0
+ },
+ {
+  "slug": "notifications-3",
+  "category": "notifications",
+  "tags": [
+   "notifications",
+   "alerts",
+   "toast",
+   "inbox",
+   "activity"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "notifications-3/notifications-3.tsx",
+  "painted": 0.03673,
+  "canvases": 0
+ },
+ {
+  "slug": "notifications-4",
+  "category": "notifications",
+  "tags": [
+   "notifications",
+   "alerts",
+   "toast",
+   "inbox",
+   "activity"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "notifications-4/notifications-4.tsx",
+  "painted": 0.19585,
+  "canvases": 0
+ },
+ {
+  "slug": "notifications-5",
+  "category": "notifications",
+  "tags": [
+   "notifications",
+   "alerts",
+   "toast",
+   "inbox",
+   "activity"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "notifications-5/notifications-5.tsx",
+  "painted": 0.05632,
+  "canvases": 0
+ },
+ {
+  "slug": "notifications-6",
+  "category": "notifications",
+  "tags": [
+   "notifications",
+   "alerts",
+   "toast",
+   "inbox",
+   "activity"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "notifications-6/notifications-6.tsx",
+  "painted": 0.31155,
+  "canvases": 0
+ },
+ {
+  "slug": "nova-pop",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "particles"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "nova-pop/nova-pop.tsx",
+  "painted": 0.49561,
+  "canvases": 1
+ },
+ {
+  "slug": "onboarding-1",
+  "category": "onboarding",
+  "tags": [
+   "onboarding",
+   "setup",
+   "stepper",
+   "checklist",
+   "invite"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "onboarding-1/onboarding-1.tsx",
+  "painted": 0.2651,
+  "canvases": 0
+ },
+ {
+  "slug": "onboarding-2",
+  "category": "onboarding",
+  "tags": [
+   "onboarding",
+   "setup",
+   "stepper",
+   "checklist",
+   "invite"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "onboarding-2/onboarding-2.tsx",
+  "painted": 0.1455,
+  "canvases": 0
+ },
+ {
+  "slug": "onboarding-3",
+  "category": "onboarding",
+  "tags": [
+   "onboarding",
+   "setup",
+   "stepper",
+   "checklist",
+   "invite"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "onboarding-3/onboarding-3.tsx",
+  "painted": 0.06108,
+  "canvases": 0
+ },
+ {
+  "slug": "onboarding-4",
+  "category": "onboarding",
+  "tags": [
+   "onboarding",
+   "setup",
+   "stepper",
+   "checklist",
+   "invite"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "onboarding-4/onboarding-4.tsx",
+  "painted": 0.22699,
+  "canvases": 0
+ },
+ {
+  "slug": "onboarding-5",
+  "category": "onboarding",
+  "tags": [
+   "onboarding",
+   "setup",
+   "stepper",
+   "checklist",
+   "invite"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "onboarding-5/onboarding-5.tsx",
+  "painted": 0.17274,
+  "canvases": 0
+ },
+ {
+  "slug": "onboarding-6",
+  "category": "onboarding",
+  "tags": [
+   "onboarding",
+   "setup",
+   "stepper",
+   "checklist",
+   "invite"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "onboarding-6/onboarding-6.tsx",
+  "painted": 0.26769,
+  "canvases": 0
+ },
+ {
+  "slug": "onboarding-7",
+  "category": "onboarding",
+  "tags": [
+   "onboarding",
+   "setup",
+   "stepper",
+   "checklist",
+   "invite"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "onboarding-7/onboarding-7.tsx",
+  "painted": 0.15768,
+  "canvases": 0
+ },
+ {
+  "slug": "orbit-rings",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "ui"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "orbit-rings/orbit-rings.tsx",
+  "painted": 0.05628,
+  "canvases": 0
+ },
+ {
+  "slug": "origami-type",
+  "category": "Text Animations",
+  "tags": [
+   "gsap",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "origami-type/OrigamiType.jsx",
+  "painted": 0.01356,
+  "canvases": 0
+ },
+ {
+  "slug": "outline-ink",
+  "category": "Text Animations",
+  "tags": [
+   "gsap",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "outline-ink/OutlineInk.jsx",
+  "painted": 0.02827,
+  "canvases": 0
+ },
+ {
+  "slug": "pan-board",
+  "category": "interaction",
+  "tags": [
+   "interaction",
+   "grid",
+   "ui"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "pan-board/pan-board.tsx",
+  "painted": 0.00216,
+  "canvases": 0
+ },
+ {
+  "slug": "panel-cascade",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "grid",
+   "tech",
+   "webgl",
+   "cyber"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "panel-cascade/panel-cascade.tsx",
+  "painted": 0.03095,
+  "canvases": 1
+ },
+ {
+  "slug": "panel-nav",
+  "category": "Components",
+  "tags": [
+   "gsap",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "panel-nav/PanelNav.jsx",
+  "painted": 0.05606,
+  "canvases": 0
+ },
+ {
+  "slug": "panel-unfold",
+  "category": "modal",
+  "tags": [
+   "modal",
+   "cards"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "panel-unfold/panel-unfold.tsx",
+  "painted": 0.35105,
+  "canvases": 0
+ },
+ {
+  "slug": "parallax-lift",
+  "category": "Text Animations",
+  "tags": [
+   "gsap",
+   "scroll"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "parallax-lift/ParallaxLift.jsx",
+  "painted": 0.02261,
+  "canvases": 0
+ },
+ {
+  "slug": "parallax-panel",
+  "category": "card",
+  "tags": [
+   "card",
+   "3d"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "parallax-panel/parallax-panel.tsx",
+  "painted": 0.06768,
+  "canvases": 0
+ },
+ {
+  "slug": "particle-maelstrom",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "3d",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "particle-maelstrom/particle-maelstrom.tsx",
+  "painted": 0.05801,
+  "canvases": 1
+ },
+ {
+  "slug": "path-marquee",
+  "category": "Text Animations",
+  "tags": [
+   "gsap",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "path-marquee/PathMarquee.jsx",
+  "painted": 0.15959,
+  "canvases": 0
+ },
+ {
+  "slug": "paywall-1",
+  "category": "paywall",
+  "tags": [
+   "paywall",
+   "upgrade",
+   "billing",
+   "gate",
+   "pricing",
+   "trial"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "paywall-1/paywall-1.tsx",
+  "painted": 0.20258,
+  "canvases": 0
+ },
+ {
+  "slug": "paywall-2",
+  "category": "paywall",
+  "tags": [
+   "paywall",
+   "upgrade",
+   "billing",
+   "gate",
+   "pricing",
+   "trial"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "paywall-2/paywall-2.tsx",
+  "painted": 0.49823,
+  "canvases": 0
+ },
+ {
+  "slug": "paywall-3",
+  "category": "paywall",
+  "tags": [
+   "paywall",
+   "upgrade",
+   "billing",
+   "gate",
+   "pricing",
+   "trial"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "paywall-3/paywall-3.tsx",
+  "painted": 0.28895,
+  "canvases": 0
+ },
+ {
+  "slug": "paywall-4",
+  "category": "paywall",
+  "tags": [
+   "paywall",
+   "upgrade",
+   "billing",
+   "gate",
+   "pricing",
+   "trial"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "paywall-4/paywall-4.tsx",
+  "painted": 0.27372,
+  "canvases": 0
+ },
+ {
+  "slug": "paywall-5",
+  "category": "paywall",
+  "tags": [
+   "paywall",
+   "upgrade",
+   "billing",
+   "gate",
+   "pricing",
+   "trial"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "paywall-5/paywall-5.tsx",
+  "painted": 0.15614,
+  "canvases": 0
+ },
+ {
+  "slug": "paywall-6",
+  "category": "paywall",
+  "tags": [
+   "paywall",
+   "upgrade",
+   "billing",
+   "gate",
+   "pricing",
+   "trial"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "paywall-6/paywall-6.tsx",
+  "painted": 0.44458,
+  "canvases": 0
+ },
+ {
+  "slug": "paywall-7",
+  "category": "paywall",
+  "tags": [
+   "paywall",
+   "upgrade",
+   "billing",
+   "gate",
+   "pricing",
+   "trial"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "paywall-7/paywall-7.tsx",
+  "painted": 0.25321,
+  "canvases": 0
+ },
+ {
+  "slug": "perspective-rail",
+  "category": "Components",
+  "tags": [
+   "gsap",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "perspective-rail/PerspectiveRail.jsx",
+  "painted": 0.14712,
+  "canvases": 0
+ },
+ {
+  "slug": "phantom-pointer",
+  "category": "Animations",
+  "tags": [
+   "cursor",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "phantom-pointer/PhantomPointer.jsx",
+  "painted": 0.16883,
+  "canvases": 1
+ },
+ {
+  "slug": "photo-dust",
+  "category": "image",
+  "tags": [
+   "image",
+   "particles",
+   "webgl",
+   "gpgpu",
+   "hover",
+   "gallery"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "photo-dust/photo-dust.tsx",
+  "painted": 0.21053,
+  "canvases": 1
+ },
+ {
+  "slug": "pin-deck",
+  "category": "Components",
+  "tags": [
+   "scroll",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "pin-deck/PinDeck.jsx",
+  "painted": 0.00101,
+  "canvases": 0
+ },
+ {
+  "slug": "pivot-panel",
+  "category": "Components",
+  "tags": [
+   "animation",
+   "motion",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "pivot-panel/PivotPanel.jsx",
+  "painted": 0.00199,
+  "canvases": 0
+ },
+ {
+  "slug": "pixel-pulse",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "dots",
+   "grid",
+   "webgl",
+   "minimal"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "pixel-pulse/pixel-pulse.tsx",
+  "painted": 0.18573,
+  "canvases": 1
+ },
+ {
+  "slug": "plasma-morph",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "3d"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "plasma-morph/plasma-morph.tsx",
+  "painted": 0.02273,
+  "canvases": 1
+ },
+ {
+  "slug": "plasma-tide",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "shader",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "plasma-tide/plasma-tide.tsx",
+  "painted": 0.02954,
+  "canvases": 1
+ },
+ {
+  "slug": "pointer-pull",
+  "category": "Animations",
+  "tags": [
+   "animation"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "pointer-pull/PointerPull.jsx",
+  "painted": 0.00109,
+  "canvases": 0
+ },
+ {
+  "slug": "pointer-ripple",
+  "category": "interactive",
+  "tags": [
+   "interactive",
+   "cursor",
+   "background",
+   "canvas",
+   "effect"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "pointer-ripple/pointer-ripple.tsx",
+  "painted": 0.0038,
+  "canvases": 1
+ },
+ {
+  "slug": "polar-glow",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "polar-glow/PolarGlow.jsx",
+  "painted": 0.0907,
+  "canvases": 1
+ },
+ {
+  "slug": "polar-haze",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "polar-haze/polar-haze.tsx",
+  "painted": 0.19344,
+  "canvases": 1
+ },
+ {
+  "slug": "polar-sweep",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "aurora",
+   "glow",
+   "webgl",
+   "ambient"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "polar-sweep/polar-sweep.tsx",
+  "painted": 0.00887,
+  "canvases": 1
+ },
+ {
+  "slug": "pricing-1",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-1/pricing-1.tsx",
+  "painted": 0.12216,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-10",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-10/pricing-10.tsx",
+  "painted": 0.07998,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-11",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-11/pricing-11.tsx",
+  "painted": 0.64451,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-12",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-12/pricing-12.tsx",
+  "painted": 0.40642,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-13",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-13/pricing-13.tsx",
+  "painted": 0.07656,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-14",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-14/pricing-14.tsx",
+  "painted": 0.10931,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-15",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-15/pricing-15.tsx",
+  "painted": 0.0596,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-2",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-2/pricing-2.tsx",
+  "painted": 0.08133,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-3",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-3/pricing-3.tsx",
+  "painted": 0.07478,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-4",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-4/pricing-4.tsx",
+  "painted": 0.44077,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-5",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-5/pricing-5.tsx",
+  "painted": 0.09556,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-6",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-6/pricing-6.tsx",
+  "painted": 0.1909,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-7",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-7/pricing-7.tsx",
+  "painted": 0.08711,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-8",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-8/pricing-8.tsx",
+  "painted": 0.07973,
+  "canvases": 0
+ },
+ {
+  "slug": "pricing-9",
+  "category": "pricing",
+  "tags": [
+   "pricing",
+   "plans",
+   "subscription",
+   "payment"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "pricing-9/pricing-9.tsx",
+  "painted": 0.11585,
+  "canvases": 0
+ },
+ {
+  "slug": "prism-grid",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "background",
+   "caustics",
+   "glass",
+   "color",
+   "webgl"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "prism-grid/prism-grid.tsx",
+  "painted": 0.19357,
+  "canvases": 1
+ },
+ {
+  "slug": "profile-1",
+  "category": "profile",
+  "tags": [
+   "profile",
+   "user",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "profile-1/profile-1.tsx",
+  "painted": 0.10517,
+  "canvases": 0
+ },
+ {
+  "slug": "profile-2",
+  "category": "profile",
+  "tags": [
+   "profile",
+   "user",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "profile-2/profile-2.tsx",
+  "painted": 0.19367,
+  "canvases": 0
+ },
+ {
+  "slug": "profile-3",
+  "category": "profile",
+  "tags": [
+   "profile",
+   "user",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "profile-3/profile-3.tsx",
+  "painted": 0.15904,
+  "canvases": 0
+ },
+ {
+  "slug": "profile-4",
+  "category": "profile",
+  "tags": [
+   "profile",
+   "user",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "profile-4/profile-4.tsx",
+  "painted": 0.10899,
+  "canvases": 0
+ },
+ {
+  "slug": "profile-5",
+  "category": "profile",
+  "tags": [
+   "profile",
+   "user",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "profile-5/profile-5.tsx",
+  "painted": 0.37351,
+  "canvases": 0
+ },
+ {
+  "slug": "profile-6",
+  "category": "profile",
+  "tags": [
+   "profile",
+   "user",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "profile-6/profile-6.tsx",
+  "painted": 0.07875,
+  "canvases": 0
+ },
+ {
+  "slug": "prompt-input-1",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "prompt",
+   "composer",
+   "input",
+   "textarea"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "prompt-input-1/prompt-input-1.tsx",
+  "painted": 0.32317,
+  "canvases": 0
+ },
+ {
+  "slug": "prompt-input-2",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "prompt",
+   "composer",
+   "input",
+   "textarea"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "prompt-input-2/prompt-input-2.tsx",
+  "painted": 0.50364,
+  "canvases": 0
+ },
+ {
+  "slug": "prompt-input-3",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "prompt",
+   "composer",
+   "input",
+   "textarea"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "prompt-input-3/prompt-input-3.tsx",
+  "painted": 0.42112,
+  "canvases": 0
+ },
+ {
+  "slug": "prompt-input-4",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "prompt",
+   "composer",
+   "input",
+   "textarea"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "prompt-input-4/prompt-input-4.tsx",
+  "painted": 0.42846,
+  "canvases": 0
+ },
+ {
+  "slug": "prompt-input-5",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "prompt",
+   "composer",
+   "input",
+   "textarea"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "prompt-input-5/prompt-input-5.tsx",
+  "painted": 0.32206,
+  "canvases": 0
+ },
+ {
+  "slug": "prompt-input-6",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "prompt",
+   "composer",
+   "input",
+   "textarea"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "prompt-input-6/prompt-input-6.tsx",
+  "painted": 0.50376,
+  "canvases": 0
+ },
+ {
+  "slug": "prompt-input-7",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "prompt",
+   "composer",
+   "input",
+   "textarea"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "prompt-input-7/prompt-input-7.tsx",
+  "painted": 0.50376,
+  "canvases": 0
+ },
+ {
+  "slug": "proximity-nav",
+  "category": "Components",
+  "tags": [
+   "misc"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "proximity-nav/ProximityNav.jsx",
+  "painted": 0.02164,
+  "canvases": 0
+ },
+ {
+  "slug": "quiet-rings",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "ripple",
+   "minimal",
+   "webgl",
+   "ambient"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "quiet-rings/quiet-rings.tsx",
+  "painted": 0.02259,
+  "canvases": 1
+ },
+ {
+  "slug": "rainbow-drift",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "rainbow-drift/RainbowDrift.jsx",
+  "painted": 0.29075,
+  "canvases": 1
+ },
+ {
+  "slug": "rainbow-type",
+  "category": "Text Animations",
+  "tags": [
+   "effect",
+   "motion",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "rainbow-type/RainbowType.jsx",
+  "painted": 0.00129,
+  "canvases": 0
+ },
+ {
+  "slug": "repel-field",
+  "category": "Animations",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "repel-field/RepelField.jsx",
+  "painted": 0.00195,
+  "canvases": 1
+ },
+ {
+  "slug": "retro-static",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "retro-static/RetroStatic.jsx",
+  "painted": 0.18124,
+  "canvases": 1
+ },
+ {
+  "slug": "reveal-list",
+  "category": "Components",
+  "tags": [
+   "animation",
+   "motion",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "reveal-list/RevealList.jsx",
+  "painted": 0.16368,
+  "canvases": 0
+ },
+ {
+  "slug": "ridgeline",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "landscape",
+   "terrain",
+   "webgl",
+   "3d"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "ridgeline/ridgeline.tsx",
+  "painted": 0.00367,
+  "canvases": 1
+ },
+ {
+  "slug": "riffle-type",
+  "category": "Text Animations",
+  "tags": [
+   "gsap"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "riffle-type/RiffleType.jsx",
+  "painted": 0.01338,
+  "canvases": 0
+ },
+ {
+  "slug": "rimlight-button",
+  "category": "Components",
+  "tags": [
+   "ui",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "rimlight-button/RimlightButton.jsx",
+  "painted": 0.00249,
+  "canvases": 1
+ },
+ {
+  "slug": "ring-reel",
+  "category": "Components",
+  "tags": [
+   "ui",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "ring-reel/RingReel.jsx",
+  "painted": 0.10601,
+  "canvases": 1
+ },
+ {
+  "slug": "ripple-lines",
+  "category": "Backgrounds",
+  "tags": [
+   "background"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "ripple-lines/RippleLines.jsx",
+  "painted": 0.1553,
+  "canvases": 1
+ },
+ {
+  "slug": "satin-flow",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "satin-flow/SatinFlow.jsx",
+  "painted": 0.19239,
+  "canvases": 1
+ },
+ {
+  "slug": "satin-ripples",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "satin-ripples/satin-ripples.tsx",
+  "painted": 0.40535,
+  "canvases": 1
+ },
+ {
+  "slug": "scheduling-1",
+  "category": "scheduling",
+  "tags": [
+   "scheduling",
+   "calendar",
+   "availability",
+   "booking",
+   "time"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "scheduling-1/scheduling-1.tsx",
+  "painted": 0.08799,
+  "canvases": 0
+ },
+ {
+  "slug": "scheduling-2",
+  "category": "scheduling",
+  "tags": [
+   "scheduling",
+   "calendar",
+   "availability",
+   "booking",
+   "time"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "scheduling-2/scheduling-2.tsx",
+  "painted": 0.32341,
+  "canvases": 0
+ },
+ {
+  "slug": "scheduling-3",
+  "category": "scheduling",
+  "tags": [
+   "scheduling",
+   "calendar",
+   "availability",
+   "booking",
+   "time"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "scheduling-3/scheduling-3.tsx",
+  "painted": 0.04354,
+  "canvases": 0
+ },
+ {
+  "slug": "scheduling-4",
+  "category": "scheduling",
+  "tags": [
+   "scheduling",
+   "calendar",
+   "availability",
+   "booking",
+   "time"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "scheduling-4/scheduling-4.tsx",
+  "painted": 0.18499,
+  "canvases": 0
+ },
+ {
+  "slug": "scheduling-5",
+  "category": "scheduling",
+  "tags": [
+   "scheduling",
+   "calendar",
+   "availability",
+   "booking",
+   "time"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "scheduling-5/scheduling-5.tsx",
+  "painted": 0.09141,
+  "canvases": 0
+ },
+ {
+  "slug": "scheduling-6",
+  "category": "scheduling",
+  "tags": [
+   "scheduling",
+   "calendar",
+   "availability",
+   "booking",
+   "time"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "scheduling-6/scheduling-6.tsx",
+  "painted": 0.10264,
+  "canvases": 0
+ },
+ {
+  "slug": "scheduling-7",
+  "category": "scheduling",
+  "tags": [
+   "scheduling",
+   "calendar",
+   "availability",
+   "booking",
+   "time"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "scheduling-7/scheduling-7.tsx",
+  "painted": 0.17362,
+  "canvases": 0
+ },
+ {
+  "slug": "screen-mockup",
+  "category": "ui",
+  "tags": [
+   "ui",
+   "mockup"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "screen-mockup/screen-mockup.tsx",
+  "painted": 0.28419,
+  "canvases": 0
+ },
+ {
+  "slug": "settings-form-1",
+  "category": "forms",
+  "tags": [
+   "forms",
+   "settings",
+   "preferences",
+   "profile",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "settings-form-1/settings-form-1.tsx",
+  "painted": 0.07757,
+  "canvases": 0
+ },
+ {
+  "slug": "settings-form-2",
+  "category": "forms",
+  "tags": [
+   "forms",
+   "settings",
+   "preferences",
+   "profile",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "settings-form-2/settings-form-2.tsx",
+  "painted": 0.05885,
+  "canvases": 0
+ },
+ {
+  "slug": "settings-form-3",
+  "category": "forms",
+  "tags": [
+   "forms",
+   "settings",
+   "preferences",
+   "profile",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "settings-form-3/settings-form-3.tsx",
+  "painted": 0.05276,
+  "canvases": 0
+ },
+ {
+  "slug": "settings-form-4",
+  "category": "forms",
+  "tags": [
+   "forms",
+   "settings",
+   "preferences",
+   "profile",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "settings-form-4/settings-form-4.tsx",
+  "painted": 0.04648,
+  "canvases": 0
+ },
+ {
+  "slug": "settings-form-5",
+  "category": "forms",
+  "tags": [
+   "forms",
+   "settings",
+   "preferences",
+   "profile",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "settings-form-5/settings-form-5.tsx",
+  "painted": 0.03897,
+  "canvases": 0
+ },
+ {
+  "slug": "settings-form-6",
+  "category": "forms",
+  "tags": [
+   "forms",
+   "settings",
+   "preferences",
+   "profile",
+   "account"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "settings-form-6/settings-form-6.tsx",
+  "painted": 0.13618,
+  "canvases": 0
+ },
+ {
+  "slug": "sharpen-type",
+  "category": "Text Animations",
+  "tags": [
+   "effect",
+   "motion",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "sharpen-type/SharpenType.jsx",
+  "painted": 0.00101,
+  "canvases": 0
+ },
+ {
+  "slug": "sheen-sweep",
+  "category": "Text Animations",
+  "tags": [
+   "effect",
+   "motion",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "sheen-sweep/SheenSweep.jsx",
+  "painted": 0.00122,
+  "canvases": 0
+ },
+ {
+  "slug": "showcase-1",
+  "category": "showcase",
+  "tags": [
+   "showcase",
+   "portfolio",
+   "gallery",
+   "display"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "showcase-1/showcase-1.tsx",
+  "painted": 0.52857,
+  "canvases": 0
+ },
+ {
+  "slug": "showcase-2",
+  "category": "showcase",
+  "tags": [
+   "showcase",
+   "portfolio",
+   "gallery",
+   "display"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "showcase-2/showcase-2.tsx",
+  "painted": 0.45258,
+  "canvases": 0
+ },
+ {
+  "slug": "showcase-3",
+  "category": "showcase",
+  "tags": [
+   "showcase",
+   "portfolio",
+   "gallery",
+   "display"
+  ],
+  "tier": "deep",
+  "webgl": true,
+  "entry": "showcase-3/showcase-3.tsx",
+  "painted": 0.10246,
+  "canvases": 1
+ },
+ {
+  "slug": "showcase-4",
+  "category": "showcase",
+  "tags": [
+   "showcase",
+   "portfolio",
+   "gallery",
+   "display"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "showcase-4/showcase-4.tsx",
+  "painted": 0.40186,
+  "canvases": 0
+ },
+ {
+  "slug": "showcase-5",
+  "category": "showcase",
+  "tags": [
+   "showcase",
+   "portfolio",
+   "gallery",
+   "display"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "showcase-5/showcase-5.tsx",
+  "painted": 0.31761,
+  "canvases": 0
+ },
+ {
+  "slug": "showcase-6",
+  "category": "showcase",
+  "tags": [
+   "showcase",
+   "portfolio",
+   "gallery",
+   "display"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "showcase-6/showcase-6.tsx",
+  "painted": 0.42782,
+  "canvases": 0
+ },
+ {
+  "slug": "showcase-7",
+  "category": "showcase",
+  "tags": [
+   "showcase",
+   "portfolio",
+   "gallery",
+   "display"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "showcase-7/showcase-7.tsx",
+  "painted": 0.25627,
+  "canvases": 0
+ },
+ {
+  "slug": "showcase-8",
+  "category": "showcase",
+  "tags": [
+   "showcase",
+   "portfolio",
+   "gallery",
+   "display"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "showcase-8/showcase-8.tsx",
+  "painted": 0.39751,
+  "canvases": 0
+ },
+ {
+  "slug": "shutter-glow",
+  "category": "Backgrounds",
+  "tags": [
+   "effect",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "shutter-glow/ShutterGlow.jsx",
+  "painted": 0.37635,
+  "canvases": 1
+ },
+ {
+  "slug": "signal-bands",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "signal-bands/SignalBands.jsx",
+  "painted": 0.2485,
+  "canvases": 1
+ },
+ {
+  "slug": "slant-reel",
+  "category": "carousel",
+  "tags": [
+   "carousel",
+   "marquee",
+   "skew",
+   "scroll",
+   "gallery",
+   "showcase"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "slant-reel/slant-reel.tsx",
+  "painted": 0.19916,
+  "canvases": 0
+ },
+ {
+  "slug": "slanted-lanes",
+  "category": "gallery",
+  "tags": [
+   "gallery",
+   "images",
+   "scroll",
+   "marquee",
+   "showcase",
+   "interactive"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "slanted-lanes/slanted-lanes.tsx",
+  "painted": 0.01877,
+  "canvases": 1
+ },
+ {
+  "slug": "slat-ripple",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "slat-ripple/SlatRipple.jsx",
+  "painted": 0.17315,
+  "canvases": 1
+ },
+ {
+  "slug": "smudge-type",
+  "category": "Text Animations",
+  "tags": [
+   "gsap",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "smudge-type/SmudgeType.jsx",
+  "painted": 0.00372,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-1",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-1/social-proof-1.tsx",
+  "painted": 0.48496,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-10",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-10/social-proof-10.tsx",
+  "painted": 0.07934,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-11",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-11/social-proof-11.tsx",
+  "painted": 0.08906,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-12",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-12/social-proof-12.tsx",
+  "painted": 0.5923,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-13",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-13/social-proof-13.tsx",
+  "painted": 0.10084,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-14",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-14/social-proof-14.tsx",
+  "painted": 0.10052,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-15",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-15/social-proof-15.tsx",
+  "painted": 0.05678,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-16",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-16/social-proof-16.tsx",
+  "painted": 0.40364,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-2",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-2/social-proof-2.tsx",
+  "painted": 0.17214,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-3",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-3/social-proof-3.tsx",
+  "painted": 0.97053,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-4",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-4/social-proof-4.tsx",
+  "painted": 0.10201,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-5",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-5/social-proof-5.tsx",
+  "painted": 0.19312,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-6",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-6/social-proof-6.tsx",
+  "painted": 0.06945,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-7",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-7/social-proof-7.tsx",
+  "painted": 0.64378,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-8",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-8/social-proof-8.tsx",
+  "painted": 0.48687,
+  "canvases": 0
+ },
+ {
+  "slug": "social-proof-9",
+  "category": "social-proof",
+  "tags": [
+   "social-proof",
+   "testimonials",
+   "landing"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "social-proof-9/social-proof-9.tsx",
+  "painted": 0.46992,
+  "canvases": 0
+ },
+ {
+  "slug": "soft-eddy",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "3d",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "soft-eddy/soft-eddy.tsx",
+  "painted": 0.21053,
+  "canvases": 1
+ },
+ {
+  "slug": "soft-entrance",
+  "category": "Animations",
+  "tags": [
+   "effect",
+   "gsap"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "soft-entrance/SoftEntrance.jsx",
+  "painted": 0.00109,
+  "canvases": 0
+ },
+ {
+  "slug": "somersault-deck",
+  "category": "carousel",
+  "tags": [
+   "carousel",
+   "3d",
+   "rotate",
+   "gallery",
+   "showcase",
+   "motion"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "somersault-deck/somersault-deck.tsx",
+  "painted": 0.10548,
+  "canvases": 0
+ },
+ {
+  "slug": "spark-tiles",
+  "category": "Components",
+  "tags": [
+   "gsap"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "spark-tiles/SparkTiles.jsx",
+  "painted": 0.2384,
+  "canvases": 0
+ },
+ {
+  "slug": "speck-drift",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "grid",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "speck-drift/speck-drift.tsx",
+  "painted": 0.02374,
+  "canvases": 1
+ },
+ {
+  "slug": "speckle-wash",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "speckle-wash/SpeckleWash.jsx",
+  "painted": 0.80081,
+  "canvases": 1
+ },
+ {
+  "slug": "spectrum-slats",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "background",
+   "stripes",
+   "color",
+   "cursor",
+   "webgl"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "spectrum-slats/spectrum-slats.tsx",
+  "painted": 0.19295,
+  "canvases": 1
+ },
+ {
+  "slug": "sphere-pool",
+  "category": "Backgrounds",
+  "tags": [
+   "gsap",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "sphere-pool/SpherePool.jsx",
+  "painted": 0.57085,
+  "canvases": 1
+ },
+ {
+  "slug": "spin-reel",
+  "category": "gallery",
+  "tags": [
+   "gallery",
+   "animation",
+   "ui"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "spin-reel/spin-reel.tsx",
+  "painted": 0.08434,
+  "canvases": 0
+ },
+ {
+  "slug": "splash-kit",
+  "category": "loading",
+  "tags": [
+   "loading",
+   "animation",
+   "ui"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "splash-kit/splash-kit.tsx",
+  "painted": 0.00109,
+  "canvases": 0
+ },
+ {
+  "slug": "spring-capsules",
+  "category": "pills",
+  "tags": [
+   "pills",
+   "parallax",
+   "spring",
+   "bounce",
+   "interactive",
+   "motion",
+   "cursor"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "spring-capsules/spring-capsules.tsx",
+  "painted": 0.09101,
+  "canvases": 0
+ },
+ {
+  "slug": "spring-fabric",
+  "category": "Animations",
+  "tags": [
+   "animation",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "spring-fabric/SpringFabric.jsx",
+  "painted": 0.00304,
+  "canvases": 1
+ },
+ {
+  "slug": "square-burst",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "square-burst/SquareBurst.jsx",
+  "painted": 0.23161,
+  "canvases": 1
+ },
+ {
+  "slug": "square-wake",
+  "category": "Animations",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "square-wake/SquareWake.jsx",
+  "painted": 0.19173,
+  "canvases": 1
+ },
+ {
+  "slug": "squish-type",
+  "category": "Text Animations",
+  "tags": [
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "squish-type/SquishType.jsx",
+  "painted": 0.11207,
+  "canvases": 0
+ },
+ {
+  "slug": "stage-tracker",
+  "category": "Components",
+  "tags": [
+   "motion"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "stage-tracker/StageTracker.jsx",
+  "painted": 0.00737,
+  "canvases": 0
+ },
+ {
+  "slug": "star-wheel",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "particles",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "star-wheel/star-wheel.tsx",
+  "painted": 0.08968,
+  "canvases": 1
+ },
+ {
+  "slug": "stardust-swirl",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "stardust-swirl/stardust-swirl.tsx",
+  "painted": 0.00109,
+  "canvases": 1
+ },
+ {
+  "slug": "static-type",
+  "category": "Text Animations",
+  "tags": [
+   "effect",
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "static-type/StaticType.jsx",
+  "painted": 0.03218,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-1",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-1/stats-1.tsx",
+  "painted": 0.38141,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-10",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-10/stats-10.tsx",
+  "painted": 0.49305,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-11",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-11/stats-11.tsx",
+  "painted": 0.56556,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-12",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-12/stats-12.tsx",
+  "painted": 0.07654,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-13",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-13/stats-13.tsx",
+  "painted": 0.06522,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-14",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-14/stats-14.tsx",
+  "painted": 0.08558,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-15",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-15/stats-15.tsx",
+  "painted": 0.07964,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-2",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-2/stats-2.tsx",
+  "painted": 0.46032,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-3",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-3/stats-3.tsx",
+  "painted": 0.51387,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-4",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-4/stats-4.tsx",
+  "painted": 0.20217,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-5",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-5/stats-5.tsx",
+  "painted": 0.40196,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-6",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-6/stats-6.tsx",
+  "painted": 0.29532,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-7",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-7/stats-7.tsx",
+  "painted": 0.11302,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-8",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-8/stats-8.tsx",
+  "painted": 0.27479,
+  "canvases": 0
+ },
+ {
+  "slug": "stats-9",
+  "category": "stats",
+  "tags": [
+   "stats",
+   "metrics",
+   "numbers",
+   "data",
+   "analytics"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "stats-9/stats-9.tsx",
+  "painted": 0.07799,
+  "canvases": 0
+ },
+ {
+  "slug": "steel-vortex",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "3d",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "steel-vortex/steel-vortex.tsx",
+  "painted": 0.20678,
+  "canvases": 1
+ },
+ {
+  "slug": "sticky-specks",
+  "category": "background",
+  "tags": [
+   "background",
+   "metaball",
+   "dots",
+   "canvas",
+   "organic",
+   "interactive"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "sticky-specks/sticky-specks.tsx",
+  "painted": 0.0068,
+  "canvases": 1
+ },
+ {
+  "slug": "storm-bolts",
+  "category": "Backgrounds",
+  "tags": [
+   "background"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "storm-bolts/StormBolts.jsx",
+  "painted": 0.00145,
+  "canvases": 1
+ },
+ {
+  "slug": "sun-shafts",
+  "category": "Backgrounds",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "sun-shafts/SunShafts.jsx",
+  "painted": 0.42434,
+  "canvases": 1
+ },
+ {
+  "slug": "support-1",
+  "category": "support",
+  "tags": [
+   "support",
+   "help",
+   "tickets",
+   "help center",
+   "chat",
+   "service desk"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "support-1/support-1.tsx",
+  "painted": 0.11304,
+  "canvases": 0
+ },
+ {
+  "slug": "support-2",
+  "category": "support",
+  "tags": [
+   "support",
+   "help",
+   "tickets",
+   "help center",
+   "chat",
+   "service desk"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "support-2/support-2.tsx",
+  "painted": 0.09136,
+  "canvases": 0
+ },
+ {
+  "slug": "support-3",
+  "category": "support",
+  "tags": [
+   "support",
+   "help",
+   "tickets",
+   "help center",
+   "chat",
+   "service desk"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "support-3/support-3.tsx",
+  "painted": 0.15223,
+  "canvases": 0
+ },
+ {
+  "slug": "support-4",
+  "category": "support",
+  "tags": [
+   "support",
+   "help",
+   "tickets",
+   "help center",
+   "chat",
+   "service desk"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "support-4/support-4.tsx",
+  "painted": 0.37998,
+  "canvases": 0
+ },
+ {
+  "slug": "support-5",
+  "category": "support",
+  "tags": [
+   "support",
+   "help",
+   "tickets",
+   "help center",
+   "chat",
+   "service desk"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "support-5/support-5.tsx",
+  "painted": 0.20663,
+  "canvases": 0
+ },
+ {
+  "slug": "swipe-reel",
+  "category": "Components",
+  "tags": [
+   "motion",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "swipe-reel/SwipeReel.jsx",
+  "painted": 0.05781,
+  "canvases": 0
+ },
+ {
+  "slug": "swirl-orb",
+  "category": "3d",
+  "tags": [
+   "3d",
+   "shader",
+   "effect"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "swirl-orb/swirl-orb.tsx",
+  "painted": 0.02252,
+  "canvases": 1
+ },
+ {
+  "slug": "synth-horizon",
+  "category": "shader",
+  "tags": [
+   "shader",
+   "3d",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "synth-horizon/synth-horizon.tsx",
+  "painted": 0.20835,
+  "canvases": 1
+ },
+ {
+  "slug": "taffy-tabs",
+  "category": "Components",
+  "tags": [
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "taffy-tabs/TaffyTabs.jsx",
+  "painted": 0.00092,
+  "canvases": 0
+ },
+ {
+  "slug": "tagged-pointer",
+  "category": "cursor",
+  "tags": [
+   "cursor",
+   "pointer",
+   "spring",
+   "interactive",
+   "motion",
+   "ui"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "tagged-pointer/tagged-pointer.tsx",
+  "painted": 0.00109,
+  "canvases": 0
+ },
+ {
+  "slug": "tap-burst",
+  "category": "Animations",
+  "tags": [
+   "misc"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "tap-burst/TapBurst.jsx",
+  "painted": 0.00109,
+  "canvases": 1
+ },
+ {
+  "slug": "terminal-type",
+  "category": "Text Animations",
+  "tags": [
+   "text",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "terminal-type/TerminalType.jsx",
+  "painted": 0.16108,
+  "canvases": 1
+ },
+ {
+  "slug": "tile-swell",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "mosaic",
+   "waves",
+   "webgl",
+   "tiles"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "tile-swell/tile-swell.tsx",
+  "painted": 0.19078,
+  "canvases": 1
+ },
+ {
+  "slug": "tool-calls-1",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "tools",
+   "function-calling",
+   "results"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "tool-calls-1/tool-calls-1.tsx",
+  "painted": 0.09118,
+  "canvases": 0
+ },
+ {
+  "slug": "tool-calls-2",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "tools",
+   "function-calling",
+   "results"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "tool-calls-2/tool-calls-2.tsx",
+  "painted": 0.20437,
+  "canvases": 0
+ },
+ {
+  "slug": "tool-calls-3",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "tools",
+   "function-calling",
+   "results"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "tool-calls-3/tool-calls-3.tsx",
+  "painted": 0.4816,
+  "canvases": 0
+ },
+ {
+  "slug": "tool-calls-4",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "tools",
+   "function-calling",
+   "results"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "tool-calls-4/tool-calls-4.tsx",
+  "painted": 0.08351,
+  "canvases": 0
+ },
+ {
+  "slug": "tool-calls-5",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "tools",
+   "function-calling",
+   "results"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "tool-calls-5/tool-calls-5.tsx",
+  "painted": 0.29064,
+  "canvases": 0
+ },
+ {
+  "slug": "tool-calls-6",
+  "category": "ai",
+  "tags": [
+   "ai",
+   "agent",
+   "tools",
+   "function-calling",
+   "results"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "tool-calls-6/tool-calls-6.tsx",
+  "painted": 0.05721,
+  "canvases": 0
+ },
+ {
+  "slug": "tremor-type",
+  "category": "Text Animations",
+  "tags": [
+   "text"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "tremor-type/TremorType.jsx",
+  "painted": 0.03932,
+  "canvases": 1
+ },
+ {
+  "slug": "twinkle-field",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "twinkle-field/twinkle-field.tsx",
+  "painted": 0.03892,
+  "canvases": 1
+ },
+ {
+  "slug": "twinkle-frame",
+  "category": "Animations",
+  "tags": [
+   "misc"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "twinkle-frame/TwinkleFrame.jsx",
+  "painted": 0.00144,
+  "canvases": 0
+ },
+ {
+  "slug": "twinkle-tiles",
+  "category": "grid",
+  "tags": [
+   "grid",
+   "squares",
+   "shader",
+   "twinkle",
+   "background",
+   "webgl"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "twinkle-tiles/twinkle-tiles.tsx",
+  "painted": 0.18779,
+  "canvases": 1
+ },
+ {
+  "slug": "type-block",
+  "category": "canvas",
+  "tags": [
+   "canvas",
+   "cursor",
+   "3d"
+  ],
+  "tier": "starter",
+  "webgl": false,
+  "entry": "type-block/type-block.tsx",
+  "painted": 0.02693,
+  "canvases": 1
+ },
+ {
+  "slug": "vanishing-lattice",
+  "category": "3d",
+  "tags": [
+   "3d",
+   "grid",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "vanishing-lattice/vanishing-lattice.tsx",
+  "painted": 0.08565,
+  "canvases": 1
+ },
+ {
+  "slug": "vivid-coils",
+  "category": "animation",
+  "tags": [
+   "animation",
+   "effect",
+   "background"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "vivid-coils/vivid-coils.tsx",
+  "painted": 0.99557,
+  "canvases": 1
+ },
+ {
+  "slug": "voltage-frame",
+  "category": "Animations",
+  "tags": [
+   "misc"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "voltage-frame/VoltageFrame.jsx",
+  "painted": 0.01612,
+  "canvases": 1
+ },
+ {
+  "slug": "voxel-cluster",
+  "category": "Animations",
+  "tags": [
+   "3d",
+   "gsap"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "voxel-cluster/VoxelCluster.jsx",
+  "painted": 0.20253,
+  "canvases": 0
+ },
+ {
+  "slug": "waitlist-1",
+  "category": "waitlist",
+  "tags": [
+   "waitlist",
+   "signup",
+   "email",
+   "form",
+   "pre-launch"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "waitlist-1/waitlist-1.tsx",
+  "painted": 0.48644,
+  "canvases": 0
+ },
+ {
+  "slug": "waitlist-2",
+  "category": "waitlist",
+  "tags": [
+   "waitlist",
+   "signup",
+   "email",
+   "form",
+   "pre-launch"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "waitlist-2/waitlist-2.tsx",
+  "painted": 0.40828,
+  "canvases": 0
+ },
+ {
+  "slug": "waitlist-3",
+  "category": "waitlist",
+  "tags": [
+   "waitlist",
+   "signup",
+   "email",
+   "form",
+   "pre-launch"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "waitlist-3/waitlist-3.tsx",
+  "painted": 0.52312,
+  "canvases": 0
+ },
+ {
+  "slug": "waitlist-4",
+  "category": "waitlist",
+  "tags": [
+   "waitlist",
+   "signup",
+   "email",
+   "form",
+   "pre-launch"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "waitlist-4/waitlist-4.tsx",
+  "painted": 0.24115,
+  "canvases": 0
+ },
+ {
+  "slug": "waitlist-5",
+  "category": "waitlist",
+  "tags": [
+   "waitlist",
+   "signup",
+   "email",
+   "form",
+   "pre-launch"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "waitlist-5/waitlist-5.tsx",
+  "painted": 0.40449,
+  "canvases": 0
+ },
+ {
+  "slug": "waitlist-6",
+  "category": "waitlist",
+  "tags": [
+   "waitlist",
+   "signup",
+   "email",
+   "form",
+   "pre-launch"
+  ],
+  "tier": "deep",
+  "webgl": true,
+  "entry": "waitlist-6/waitlist-6.tsx",
+  "painted": 0.2352,
+  "canvases": 1
+ },
+ {
+  "slug": "water-warp",
+  "category": "Animations",
+  "tags": [
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "water-warp/WaterWarp.jsx",
+  "painted": 0.80075,
+  "canvases": 1
+ },
+ {
+  "slug": "waterfall-nav",
+  "category": "Components",
+  "tags": [
+   "gsap",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "waterfall-nav/WaterfallNav.jsx",
+  "painted": 0.00154,
+  "canvases": 0
+ },
+ {
+  "slug": "wave-lattice",
+  "category": "Backgrounds",
+  "tags": [
+   "background",
+   "webgl"
+  ],
+  "tier": "basic",
+  "webgl": true,
+  "entry": "wave-lattice/WaveLattice.jsx",
+  "painted": 0.05681,
+  "canvases": 1
+ },
+ {
+  "slug": "wisp-sphere",
+  "category": "background",
+  "tags": [
+   "background",
+   "shader",
+   "webgl",
+   "orb",
+   "raymarching",
+   "abstract"
+  ],
+  "tier": "starter",
+  "webgl": true,
+  "entry": "wisp-sphere/wisp-sphere.tsx",
+  "painted": 0.18915,
+  "canvases": 1
+ },
+ {
+  "slug": "wizard-1",
+  "category": "wizard",
+  "tags": [
+   "wizard",
+   "stepper",
+   "multi-step",
+   "flow",
+   "progress"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "wizard-1/wizard-1.tsx",
+  "painted": 0.16618,
+  "canvases": 0
+ },
+ {
+  "slug": "wizard-2",
+  "category": "wizard",
+  "tags": [
+   "wizard",
+   "stepper",
+   "multi-step",
+   "flow",
+   "progress"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "wizard-2/wizard-2.tsx",
+  "painted": 0.05095,
+  "canvases": 0
+ },
+ {
+  "slug": "wizard-3",
+  "category": "wizard",
+  "tags": [
+   "wizard",
+   "stepper",
+   "multi-step",
+   "flow",
+   "progress"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "wizard-3/wizard-3.tsx",
+  "painted": 0.10099,
+  "canvases": 0
+ },
+ {
+  "slug": "wizard-4",
+  "category": "wizard",
+  "tags": [
+   "wizard",
+   "stepper",
+   "multi-step",
+   "flow",
+   "progress"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "wizard-4/wizard-4.tsx",
+  "painted": 0.17199,
+  "canvases": 0
+ },
+ {
+  "slug": "wizard-5",
+  "category": "wizard",
+  "tags": [
+   "wizard",
+   "stepper",
+   "multi-step",
+   "flow",
+   "progress"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "wizard-5/wizard-5.tsx",
+  "painted": 0.05028,
+  "canvases": 0
+ },
+ {
+  "slug": "wizard-6",
+  "category": "wizard",
+  "tags": [
+   "wizard",
+   "stepper",
+   "multi-step",
+   "flow",
+   "progress"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "wizard-6/wizard-6.tsx",
+  "painted": 0.03308,
+  "canvases": 0
+ },
+ {
+  "slug": "wizard-7",
+  "category": "wizard",
+  "tags": [
+   "wizard",
+   "stepper",
+   "multi-step",
+   "flow",
+   "progress"
+  ],
+  "tier": "deep",
+  "webgl": false,
+  "entry": "wizard-7/wizard-7.tsx",
+  "painted": 0.35289,
+  "canvases": 0
+ },
+ {
+  "slug": "zoom-shelf",
+  "category": "Components",
+  "tags": [
+   "motion",
+   "ui"
+  ],
+  "tier": "basic",
+  "webgl": false,
+  "entry": "zoom-shelf/ZoomShelf.jsx",
+  "painted": 0.01636,
+  "canvases": 0
+ }
+]

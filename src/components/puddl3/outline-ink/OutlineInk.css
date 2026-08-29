@@ -1,0 +1,20 @@
+.outline-ink {
+  display: block;
+  width: 100%;
+  line-height: 0;
+}
+
+.outline-ink--hover {
+  cursor: pointer;
+}
+
+.outline-ink__svg {
+  display: block;
+  width: 100%;
+  height: var(--outline-ink-height, 160px);
+}
+
+.outline-ink__stroke,
+.outline-ink__fill {
+  user-select: none;
+}

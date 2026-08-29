@@ -1,0 +1,14 @@
+.chroma-columns-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.chroma-columns-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.chroma-columns-content {
+  position: relative;
+  z-index: 1;
+}

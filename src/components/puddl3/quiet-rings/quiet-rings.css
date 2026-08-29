@@ -1,0 +1,16 @@
+.quiet-rings {
+  position: relative;
+  overflow: hidden;
+}
+
+.quiet-rings-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.quiet-rings-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

@@ -1,0 +1,16 @@
+.louver-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.louver-sweep-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.louver-sweep-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

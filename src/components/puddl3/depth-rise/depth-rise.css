@@ -1,0 +1,29 @@
+.text-reveal-3d-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-reveal-3d-container {
+  position: absolute;
+  inset: 0;
+  text-align: center;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+}
+
+.text-reveal-3d-item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  font-weight: 900;
+  text-transform: uppercase;
+  white-space: nowrap;
+  backface-visibility: hidden;
+}

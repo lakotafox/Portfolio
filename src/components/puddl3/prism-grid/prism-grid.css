@@ -1,0 +1,14 @@
+.prism-grid-root {
+  position: relative;
+  overflow: hidden;
+}
+
+.prism-grid-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.prism-grid-content {
+  position: relative;
+  z-index: 10;
+}

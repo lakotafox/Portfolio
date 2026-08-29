@@ -1,0 +1,32 @@
+/* Lab chrome only. Deliberately minimal so it can't be mistaken for a
+ * component's own styling during triage. Note there is NO universal reset
+ * here — the lab must show components exactly as the dice will render them. */
+html, body { margin: 0; padding: 0; background: #0a0a0a; color: #e5e5e5; }
+/* NB: the monospace font is scoped to lab chrome, never to body — otherwise it
+ * inherits into the component under test and misrepresents how it really looks. */
+.lab-index, .lab-err, .lab-loading { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+.lab-stage {
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.lab-loading { padding: 2rem; opacity: 0.5; }
+
+.lab-err {
+  padding: 1.5rem;
+  margin: 0;
+  color: #ff6b6b;
+  white-space: pre-wrap;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.lab-index { padding: 2rem 2.5rem; }
+.lab-index h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
+.lab-index p { opacity: 0.6; margin: 0 0 1.5rem; font-size: 13px; }
+.lab-index ul { list-style: none; padding: 0; columns: 3; gap: 2rem; }
+.lab-index li { margin-bottom: 0.35rem; break-inside: avoid; }
+.lab-index a { color: #7cc4ff; text-decoration: none; font-size: 12px; }
+.lab-index a:hover { text-decoration: underline; }

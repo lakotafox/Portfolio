@@ -1,0 +1,154 @@
+.slant-reel {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  outline: none;
+  user-select: none;
+  color: #171717;
+}
+
+.slant-reel-track {
+  display: flex;
+  width: fit-content;
+  touch-action: pan-y;
+}
+
+.slant-reel-slide {
+  will-change: transform, scale;
+}
+
+.slant-reel-frame {
+  position: relative;
+  display: block;
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  outline: none;
+}
+
+.slant-reel-frame:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+.slant-reel-image {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.slant-reel-scrim {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40%;
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.8),
+    rgb(0 0 0 / 0.3) 50%,
+    transparent
+  );
+}
+
+.slant-reel-title {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: block;
+  padding: 0 0.875rem 0.75rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.375;
+  letter-spacing: -0.01em;
+  color: #fff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+}
+
+.slant-reel-controls {
+  margin-top: 2.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.slant-reel-arrow {
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  padding: 0.25rem;
+  color: inherit;
+  opacity: 0.4;
+  transition: opacity 200ms;
+}
+
+.slant-reel-arrow:hover {
+  opacity: 1;
+}
+
+.slant-reel-arrow:disabled {
+  pointer-events: none;
+  opacity: 0.15;
+}
+
+.slant-reel-rail {
+  display: flex;
+  width: 11rem;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+@media (min-width: 640px) {
+  .slant-reel-rail {
+    width: 14rem;
+  }
+}
+
+.slant-reel-segment {
+  position: relative;
+  height: 2px;
+  flex: 1 1 0%;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  border-radius: 9999px;
+  background-color: color-mix(in srgb, currentColor 20%, transparent);
+  transition: background-color 200ms;
+}
+
+.slant-reel-segment::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -0.625rem;
+  bottom: -0.625rem;
+}
+
+.slant-reel-segment:hover {
+  background-color: color-mix(in srgb, currentColor 45%, transparent);
+}
+
+.slant-reel-indicator {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: currentColor;
+}
+
+@media (prefers-color-scheme: dark) {
+  .slant-reel {
+    color: #f5f5f5;
+  }
+}

@@ -1,0 +1,14 @@
+.newsprint-lens {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.newsprint-lens canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

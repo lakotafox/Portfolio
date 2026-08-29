@@ -1,0 +1,16 @@
+.lattice-sphere {
+  position: relative;
+  overflow: hidden;
+}
+
+.lattice-sphere-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.lattice-sphere-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+}

@@ -1,0 +1,25 @@
+.leaf-turn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.leaf-turn-book {
+  position: relative;
+}
+
+.leaf-turn-leaf {
+  position: absolute;
+}
+
+.leaf-turn-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

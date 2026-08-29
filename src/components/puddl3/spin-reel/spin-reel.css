@@ -1,0 +1,57 @@
+.spin-reel-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spin-reel-wheel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+}
+
+.spin-reel-wheel.draggable {
+  cursor: grab;
+}
+
+.spin-reel-wheel.draggable:active {
+  cursor: grabbing;
+}
+
+.spin-reel-item {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  user-select: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.spin-reel-item:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.spin-reel-item.focused {
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+  outline: 4px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 0px;
+}
+
+.spin-reel-item-number {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 10;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}

@@ -1,0 +1,14 @@
+.keystroke-reveal {
+  display: inline-block;
+  white-space: pre-wrap;
+}
+
+.keystroke-reveal__cursor {
+  margin-left: 0.25rem;
+  display: inline-block;
+  opacity: 1;
+}
+
+.keystroke-reveal__cursor--hidden {
+  display: none;
+}

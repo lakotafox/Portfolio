@@ -1,0 +1,75 @@
+.shutter-reveal {
+  position: relative;
+  width: 100%;
+}
+
+.shutter-reveal__pin {
+  position: sticky;
+  top: 0;
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .shutter-reveal__pin {
+    padding: 2rem;
+  }
+}
+
+.shutter-reveal__stage {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.shutter-reveal__tiles {
+  position: absolute;
+  inset: 0;
+}
+
+.shutter-reveal__tile {
+  position: absolute;
+  will-change: transform;
+}
+
+.shutter-reveal__veil {
+  position: absolute;
+  inset: 0;
+}
+
+.shutter-reveal__image {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  will-change: transform;
+}
+
+.shutter-reveal__scrim {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+.shutter-reveal__content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  will-change: transform;
+}
+
+@media (min-width: 640px) {
+  .shutter-reveal__content {
+    padding: 2.5rem;
+  }
+}
