@@ -44,7 +44,7 @@ const Highlights = () => {
               </svg>
             </div>
             <h3>Software Developer</h3>
-            <p>I build full-stack web apps, security tools, and AI-powered systems. Strong debugging and problem-solving skills with systematic troubleshooting across the entire stack — from dev tools and logging to production infrastructure.</p>
+            <p>I build full-stack web apps, developer tools, and security software. Strong debugging and problem-solving skills with systematic troubleshooting across the entire stack — from dev tools and logging to production infrastructure.</p>
             <button className="skills-toggle" onClick={() => setShowSkills(!showSkills)}>
               {showSkills ? 'Hide' : 'Full List of Skills'} {showSkills ? '▲' : '▼'}
             </button>
@@ -58,19 +58,6 @@ const Highlights = () => {
                     <li>Node.js, REST APIs, PostgreSQL</li>
                     <li>AWS (EC2, S3, Lambda), Netlify, Cloudinary</li>
                     <li>Debugging, systematic troubleshooting, Git</li>
-                  </ul>
-                </div>
-                <div className="skills-category ai-proficiency">
-                  <h4>AI Proficiency</h4>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>5B+ tokens processed in under a year. Advanced AI-augmented workflow.</p>
-                  <ul>
-                    <li>AI coding agents: Claude Code, Cursor, Windsurf</li>
-                    <li>Prompt engineering & context management</li>
-                    <li>RAG (Retrieval-Augmented Generation) pipelines</li>
-                    <li>AI agent orchestration & multi-agent systems</li>
-                    <li>Guardrails, safety layers & responsible AI</li>
-                    <li>LLM integration (API, SDK, MCP servers)</li>
-                    <li>Building AI-powered tools & automation</li>
                   </ul>
                 </div>
                 <div className="skills-category">
@@ -93,7 +80,7 @@ const Highlights = () => {
               </svg>
             </div>
             <h3>Education & Certifications</h3>
-            <p>IBM & Google AI certified. I architect AI-augmented development workflows — from RAG pipelines and agent orchestration to guardrails and LLM integration. 5 billion+ tokens processed building real software with AI coding agents.</p>
+            <p>Certified through IBM and Google, with an Associate's in progress and a Bachelor's to follow. I learn by shipping — every certificate here came alongside real software I built and run.</p>
             <button className="skills-toggle" onClick={() => setShowCerts(!showCerts)}>
               {showCerts ? 'Hide' : 'View All Certifications'} {showCerts ? '▲' : '▼'}
             </button>
@@ -194,7 +181,7 @@ const Highlights = () => {
               </svg>
             </div>
             <h3>Diverse Project Experience</h3>
-            <p>Full-stack platforms, security tools, startup MVPs, AI-powered applications, and client websites. I've shipped production software with Java, Python, TypeScript, React, Next.js, and AWS — and I self-host: SQLite and Postgres, Stripe payments, private networking, real migrations of live customer data off SaaS. I build systems that solve real problems, and I run the ones that matter.</p>
+            <p>Full-stack platforms, security tools, startup MVPs, and client websites. I've shipped production software with Java, Python, TypeScript, React, Next.js, and AWS — and I self-host: SQLite and Postgres, Stripe payments, private networking, real migrations of live customer data off SaaS. I build systems that solve real problems, and I run the ones that matter.</p>
             <button
               className="skills-toggle"
               onClick={() => {
