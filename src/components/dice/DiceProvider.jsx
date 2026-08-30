@@ -11,7 +11,7 @@
  * Shift + a number steps that knob backwards.
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { roll, rerollFrom, unpin, permalink, POOLS, poolStats, CTA_TREATMENTS, DENSITIES, motionFor } from '../../lib/dice';
+import { roll, rerollFrom, unpin, permalink, POOLS, poolStats, CTA_TREATMENTS, DENSITIES, motionFor, FAMILY_KEYS, listForRole } from '../../lib/dice';
 import { applyPalette } from '../../lib/palette';
 import { quarantined } from './P4rtsSlot';
 import REGISTRY from '../../lib/p4rts-registry.json';
@@ -56,6 +56,12 @@ export function DiceProvider({ children }) {
 
   // paint the palette onto :root whenever the look changes
   useEffect(() => { applyPalette(look.palette); }, [look.palette]);
+
+  // family chrome: .theme-win95 etc on <html>, one class at a time
+  useEffect(() => {
+    const el = document.documentElement;
+    for (const k of ['win95']) el.classList.toggle(`theme-${k}`, look.theme === k);
+  }, [look.theme]);
 
   /** Replace the current look, remembering the old one so `back` works. */
   const push = useCallback((next) => {
@@ -114,8 +120,8 @@ export function DiceProvider({ children }) {
     setPast((h) => [...h.slice(-40), look]);
     setFuture([]);
     setLook((cur) => {
-      // cta is a list of treatment NAMES, not pool components
-      const list = role === 'cta' ? CTA_TREATMENTS : POOLS[role];
+      // inside a family, a knob only steps through that family's shortlist
+      const list = listForRole(role, cur.theme);
       if (!list?.length) return cur;
       const i = list.indexOf(cur[role]);
       const next = list[(i + (back ? -1 : 1) + list.length) % list.length];
@@ -146,6 +152,17 @@ export function DiceProvider({ children }) {
    * animation multiplier the backdrop/wordmark read, the wall's drift speed,
    * and the GPU budget. Updating only `density` left `motion` at its roll-time
    * value, so the chip changed but nothing on screen sped up or slowed down. */
+  /** Step the family: freestyle -> win95 -> … Each switch is a fresh roll
+   *  INSIDE the new family, so every knob lands on-theme together. */
+  const cycleTheme = useCallback(() => {
+    setLook((cur) => {
+      const next = FAMILY_KEYS[(FAMILY_KEYS.indexOf(cur.theme ?? 'freestyle') + 1) % FAMILY_KEYS.length];
+      setPast((h) => [...h.slice(-40), cur]);
+      setFuture([]);
+      return roll({ ignoreQuery: true, theme: next });
+    });
+  }, []);
+
   const cycleDensity = useCallback(() => {
     setLook((cur) => {
       const next = DENSITIES[(DENSITIES.indexOf(cur.density) + 1) % DENSITIES.length];
@@ -218,11 +235,11 @@ export function DiceProvider({ children }) {
   }, [reroll, cycle, rollPaletteOnly, rollBgPaletteOnly, cycleDensity, save, mode, setModePersist, back, forward, stepFav]);
 
   const value = useMemo(() => ({
-    look, reroll, cycle, setKnob, rollPaletteOnly, rollBgPaletteOnly, cycleDensity, save, presets, isSaved,
+    look, reroll, cycle, setKnob, rollPaletteOnly, rollBgPaletteOnly, cycleDensity, cycleTheme, save, presets, isSaved,
     back, forward, stepFav, canBack: past.length > 0, canForward: future.length > 0, favIndex,
     mode, setMode: setModePersist, onSlotFail, barOpen, setBarOpen,
     permalink: () => permalink(look), stats: poolStats(),
-  }), [look, reroll, cycle, setKnob, rollPaletteOnly, rollBgPaletteOnly, cycleDensity, save, presets, isSaved,
+  }), [look, reroll, cycle, setKnob, rollPaletteOnly, rollBgPaletteOnly, cycleDensity, cycleTheme, save, presets, isSaved,
        back, forward, stepFav, past.length, future.length, favIndex, mode,
        setModePersist, onSlotFail, barOpen]);
 

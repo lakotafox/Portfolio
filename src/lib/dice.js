@@ -212,6 +212,49 @@ export const POOLS = buildPools(POOL);
 const COST = new Map(POOL.map((c) => [c.slug, c.webgl ? 2 : c.canvases ? 1 : 0]));
 const WEBGL_BUDGET = 6;
 
+/* ---------- families ----------------------------------------------------
+ *
+ * A family is a THEMED roll: every knob snaps to one aesthetic, no mixing.
+ * EDI's win95 theme is the model — fixed palettes (silver chrome, navy,
+ * desktop teal), a curated backdrop shortlist, title effects that read as
+ * period tech, the dino cursor, and a bevelled button. `freestyle` is the
+ * ordinary anything-goes roll. Rolled with weight, forced with ?theme=win95,
+ * cycled with the theme knob. applyRoll() puts .theme-<name> on <html> so CSS
+ * can do the chrome (square corners, bevels, title-bar nav). */
+export const FAMILIES = {
+  win95: {
+    /* silver surfaces, navy accent, black ink — light theme on purpose */
+    palette: {
+      name: 'win95', mood: 'win95', harmony: 'fixed', hue: 240,
+      acc: '#000080', a: '#000080', b: '#1084d0', c: '#008080',
+      bg: '#c0c0c0', bgAlt: '#bdbdbd', ink: '#111111', muted: '#3c3c3c',
+      card: '#c0c0c0', cardHover: '#dfdfdf', border: '#7f7f7f',
+      trio: ['#000080', '#008080', '#800080'],
+      contrast: { ink: 12.6, acc: 7.5, muted: 7.2 },
+    },
+    /* what the ARTWORK renders in — desktop teal + phosphor, not navy */
+    bgPalette: {
+      name: 'win95bg', mood: 'win95', harmony: 'fixed', hue: 180,
+      acc: '#00d9a0', a: '#008080', b: '#33ffcc', c: '#00b386',
+      bg: '#003838', bgAlt: '#004d4d', ink: '#e8fff8', muted: '#66ccb8',
+      card: '#004d4d', cardHover: '#006060', border: '#008080',
+      trio: ['#00d9a0', '#008080', '#33ffcc'],
+      contrast: {},
+    },
+    background: ['cosmos', 'cipher-rain', 'crt-flicker', 'glyph-mosaic',
+      'console-mosaic', 'bit-drizzle', 'retro-static', 'bit-board',
+      'glyph-tide', 'pixel-pulse', 'signal-bands'],
+    /* No animated title effect on purpose: the navy title BAR is the win95
+     * title treatment. Crisp static chrome is the aesthetic. */
+    titleFx: [null],
+    cta: ['win95'],
+    /* the dino IS the cursor (CSS cursor:url), so no effect is mounted */
+    cursor: [null],
+  },
+};
+export const FAMILY_KEYS = ['freestyle', ...Object.keys(FAMILIES)];
+const FAMILY_WEIGHT = 0.16; // roughly one roll in six lands on a family
+
 /* ---------- density / motion feel ---------- */
 
 export const DENSITIES = ['calm', 'balanced', 'loud'];
@@ -264,7 +307,14 @@ export function roll(opts = {}) {
   const density = reduced ? 'calm' : (q.get('density') ?? pick(rng, DENSITIES));
   const feel = reduced ? CALM : (FEEL[density] ?? FEEL.balanced);
 
-  const palette = rollPalette(rng, {
+  // family first: it decides where every other knob is allowed to land
+  const themeQ = q.get('theme');
+  const theme = FAMILY_KEYS.includes(themeQ)
+    ? themeQ
+    : (opts.theme ?? (rng() < FAMILY_WEIGHT ? pick(rng, Object.keys(FAMILIES)) : 'freestyle'));
+  const fam = FAMILIES[theme];
+
+  const palette = fam ? fam.palette : rollPalette(rng, {
     hue: q.get('hue') ? Number(q.get('hue')) : undefined,
     mood: MOOD_KEYS.includes(q.get('mood')) ? q.get('mood') : undefined,
     harmony: HARMONY_KEYS.includes(q.get('harmony')) ? q.get('harmony') : undefined,
@@ -275,7 +325,7 @@ export function roll(opts = {}) {
    * backdrop has no text on it and can be far bolder. Keeping them separate
    * means the artwork can go wild without ever making the site unreadable.
    * Rolled with ?bghue=/?bgmood= or the `p` key. */
-  const bgPalette = rollPalette(rng, {
+  const bgPalette = fam ? fam.bgPalette : rollPalette(rng, {
     hue: q.get('bghue') ? Number(q.get('bghue')) : undefined,
     mood: MOOD_KEYS.includes(q.get('bgmood')) ? q.get('bgmood') : undefined,
   });
@@ -287,14 +337,22 @@ export function roll(opts = {}) {
     return slug;
   };
 
-  const background = take('background', q.get('bg'));
-  const cursor = reduced ? null : take('cursor', q.get('cursor'));
-  const titleFx = take('titleFx', q.get('fx'));
+  /* Inside a family the knob pools ARE the family lists — no mixing. */
+  const famPick = (role, forced) => {
+    const list = fam[role] ?? [];
+    if (forced && list.includes(forced)) return forced;
+    return list.length ? pick(rng, list) : null;
+  };
+
+  const background = fam ? famPick('background', q.get('bg')) : take('background', q.get('bg'));
+  const cursor = reduced ? null : (fam ? famPick('cursor', q.get('cursor')) : take('cursor', q.get('cursor')));
+  const titleFx = fam ? famPick('titleFx', q.get('fx')) : take('titleFx', q.get('fx'));
   const ctaQ = q.get('cta');
-  const cta = CTA_TREATMENTS.includes(ctaQ) ? ctaQ : pick(rng, CTA_TREATMENTS);
+  const cta = fam ? famPick('cta', ctaQ) : (CTA_TREATMENTS.includes(ctaQ) ? ctaQ : pick(rng, CTA_TREATMENTS));
 
   return {
     seed,
+    theme,
     palette,
     bgPalette,
     density,
@@ -342,7 +400,7 @@ export function unpin() {
   if (typeof location === 'undefined') return false;
   const q = new URLSearchParams(location.search);
   let changed = false;
-  for (const k of ['bg', 'cursor', 'fx', 'cta', 'hue', 'mood', 'harmony', 'seed', 'density']) {
+  for (const k of ['bg', 'cursor', 'fx', 'cta', 'hue', 'mood', 'harmony', 'seed', 'density', 'theme']) {
     if (q.has(k)) { q.delete(k); changed = true; }
   }
   if (changed) {
@@ -356,6 +414,14 @@ export function unpin() {
 export function permalink(look) {
   const q = new URLSearchParams({ seed: String(look.seed) });
   return `${location.origin}${location.pathname}?${q}`;
+}
+
+/** The list a knob may step through, honouring the look's family. */
+export function listForRole(role, theme) {
+  const fam = FAMILIES[theme];
+  if (fam && fam[role]) return fam[role].filter((s) => s !== null);
+  if (role === 'cta') return CTA_TREATMENTS;
+  return POOLS[role] ?? [];
 }
 
 export const poolStats = () => ({

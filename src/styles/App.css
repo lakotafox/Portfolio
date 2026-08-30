@@ -1278,3 +1278,108 @@ body:not(.dark-theme) .moon-icon {
     .color-picker-toggle:active,
     .theme-toggle:active { opacity: 1; }
 }
+
+/* ==== THE WIN95 FAMILY ======================================================
+ * One roll in six lands here (or press t). Everything snaps to the desktop:
+ * silver chrome, navy title bars, hard bevels, square corners, and the dino
+ * for a pointer. The --p4-* palette already carries the silver/navy values;
+ * this block does the CHROME the palette can't express. */
+.theme-win95,
+.theme-win95 * {
+    border-radius: 0 !important;
+    cursor: url('/retro/dino.png') 4 2, auto !important;
+}
+
+.theme-win95 body {
+    background: var(--p4-bg, #c0c0c0);
+}
+
+/* cards become raised panels */
+.theme-win95 .highlight-card,
+.theme-win95 .redwoods-banner,
+.theme-win95 .recommendation-card,
+.theme-win95 .project-wall__hover,
+.theme-win95 .project-wall__sheet {
+    background: #c0c0c0 !important;
+    border: 2px solid !important;
+    border-color: #ffffff #404040 #404040 #ffffff !important;
+    box-shadow: 1px 1px 0 0 #808080 inset, -1px -1px 0 0 #dfdfdf inset !important;
+    backdrop-filter: none !important;
+}
+
+/* section headings ride a navy title bar, like a window */
+.theme-win95 .section-title,
+.theme-win95 .p4d-wordmark.section-title {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #ffffff;
+    padding: 0.3em 0.6em;
+    display: block;
+    width: 100%;
+}
+
+/* buttons: bevel everything clickable */
+.theme-win95 .skills-toggle,
+.theme-win95 .project-wall__open,
+.theme-win95 .donate-button {
+    background: #c0c0c0 !important;
+    color: #000 !important;
+    border: 2px solid !important;
+    border-color: #ffffff #404040 #404040 #ffffff !important;
+    box-shadow: none !important;
+}
+.theme-win95 .skills-toggle:active {
+    border-color: #404040 #ffffff #ffffff #404040 !important;
+}
+
+/* nav buttons + the dice panel go silver too */
+.theme-win95 .color-picker-toggle,
+.theme-win95 .theme-toggle {
+    background: #c0c0c0 !important;
+    color: #000 !important;
+    border: 2px solid !important;
+    border-color: #ffffff #404040 #404040 #ffffff !important;
+    opacity: 1 !important;
+}
+.theme-win95 .color-picker-menu {
+    background: #c0c0c0 !important;
+    border: 2px solid !important;
+    border-color: #ffffff #404040 #404040 #ffffff !important;
+}
+.theme-win95 .p4m-line, .theme-win95 .p4m-value, .theme-win95 .p4m-arrow,
+.theme-win95 .p4m-save, .theme-win95 .p4m-seg, .theme-win95 .p4m-navbtn,
+.theme-win95 .p4m-dice, .theme-win95 .p4m-list, .theme-win95 .p4m-item {
+    background: #c0c0c0;
+    color: #111;
+    border-color: #7f7f7f;
+}
+.theme-win95 .p4m-label { color: #3c3c3c; }
+.theme-win95 .p4m-name { color: #111; }
+.theme-win95 .p4m-key { background: #000080; color: #fff; }
+.theme-win95 .p4m-item.is-on { background: #000080; color: #fff; }
+.theme-win95 .p4m-item.is-on .p4m-item-name { color: #fff; }
+
+/* project wall tiles: square, chunky window borders */
+.theme-win95 .tile-stream__inner {
+    border: 2px solid;
+    border-color: #ffffff #404040 #404040 #ffffff;
+    box-shadow: none !important;
+}
+
+/* the hero becomes a proper window: raised panel + navy title bar */
+.theme-win95 .hero .container {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #404040 #404040 #ffffff;
+    box-shadow: 1px 1px 0 0 #808080 inset, -1px -1px 0 0 #dfdfdf inset;
+    padding: 0 2rem 2rem;
+    max-width: 900px;
+}
+.theme-win95 .hero .p4d-wordmark.hero-title,
+.theme-win95 .hero h1.hero-title {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #ffffff;
+    margin: 0 -2rem 1.2rem;
+    padding: 0.25em 0.6em;
+    font-size: 2.4rem;
+}
+.theme-win95 .hero-subtitle { color: #111; }

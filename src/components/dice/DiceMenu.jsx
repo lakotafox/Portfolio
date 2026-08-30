@@ -11,7 +11,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { useDice } from './DiceProvider';
-import { POOLS, CTA_TREATMENTS } from '../../lib/dice';
+import { listForRole } from '../../lib/dice';
 import './dice-menu.css';
 
 const ROWS = [
@@ -22,13 +22,12 @@ const ROWS = [
 ];
 
 const pretty = (slug) => (slug ? String(slug).replace(/-/g, ' ') : 'none');
-const listFor = (role) => (role === 'cta' ? CTA_TREATMENTS : POOLS[role] ?? []);
 
 /** One category row with steppers, and an expandable list of every option. */
-function Row({ hotkey, label, role, value, onStep, onPick }) {
+function Row({ hotkey, label, role, value, theme, onStep, onPick }) {
   const [open, setOpen] = useState(false);
   const listRef = useRef(null);
-  const list = listFor(role);
+  const list = listForRole(role, theme);
   const index = list.indexOf(value);
 
   useEffect(() => {
@@ -105,7 +104,7 @@ export default function DiceMenu() {
   const d = useDice();
   if (!d) return null;
   const {
-    look, cycle, setKnob, reroll, rollPaletteOnly, rollBgPaletteOnly, cycleDensity,
+    look, cycle, setKnob, reroll, rollPaletteOnly, rollBgPaletteOnly, cycleDensity, cycleTheme,
     save, presets, isSaved, mode, setMode, back, forward, stepFav, canBack, favIndex,
   } = d;
 
@@ -113,6 +112,19 @@ export default function DiceMenu() {
 
   return (
     <div className="p4m">
+      <div className="p4m-row">
+        <div className="p4m-line">
+          <kbd className="p4m-key">t</kbd>
+          <span className="p4m-label">theme</span>
+          <button type="button" className="p4m-arrow p4m-arrow--prev" onClick={cycleTheme} aria-label="previous theme">‹</button>
+          <button type="button" className="p4m-value" onClick={cycleTheme}
+            title="a family locks every knob to one aesthetic — no mixing">
+            <span className="p4m-name">{look.theme ?? 'freestyle'}</span>
+          </button>
+          <button type="button" className="p4m-arrow p4m-arrow--next" onClick={cycleTheme} aria-label="next theme">›</button>
+        </div>
+      </div>
+
       {ROWS.map((r) => (
         <Row
           key={r.key}
@@ -120,6 +132,7 @@ export default function DiceMenu() {
           label={r.label}
           role={r.role}
           value={look[r.role]}
+          theme={look.theme}
           onStep={(dir) => cycle(r.role, dir < 0)}
           onPick={setKnob}
         />

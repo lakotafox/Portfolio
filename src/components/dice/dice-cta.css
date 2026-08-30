@@ -24,3 +24,20 @@
 .p4d-cta-inline { display: inline-flex; }
 .p4d-cta-rel { position: relative; display: inline-block; }
 .p4d-cta-beacon { border-radius: 999px; }
+
+/* The win95 family button — a period-correct bevel push button. */
+.p4d-press--win95 {
+    background: #c0c0c0;
+    color: #000;
+    border: 2px solid;
+    border-color: #ffffff #404040 #404040 #ffffff;
+    box-shadow: 1px 1px 0 0 #808080 inset, -1px -1px 0 0 #dfdfdf inset;
+    border-radius: 0;
+    font-weight: 700;
+    padding: 0.7rem 1.6rem;
+}
+.p4d-press--win95:active {
+    border-color: #404040 #ffffff #ffffff #404040;
+    box-shadow: -1px -1px 0 0 #808080 inset, 1px 1px 0 0 #dfdfdf inset;
+    transform: translate(1px, 1px);
+}

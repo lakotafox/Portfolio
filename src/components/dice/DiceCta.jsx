@@ -70,7 +70,7 @@ function Press({ label, href, color, className = 'p4d-press' }) {
   );
 }
 
-export const CTA_TREATMENTS = ['rimlight', 'twinkle', 'voltage', 'gloss', 'spark', 'halo'];
+export const CTA_TREATMENTS = ['rimlight', 'twinkle', 'voltage', 'gloss', 'spark', 'halo', 'win95'];
 
 export default function DiceCta({ fx = 'rimlight', label = 'See the work', href = '#work', palette }) {
   const glossRef = useRef(null);
@@ -81,6 +81,15 @@ export default function DiceCta({ fx = 'rimlight', label = 'See the work', href 
 
   const node = (() => {
     switch (fx) {
+      case 'win95':
+        // the family button: a real 3D-bevel push button, straight off the
+        // desktop. Pure CSS (dice-cta.css) — no vault component needed.
+        return (
+          <a href={href} className="p4d-press p4d-press--win95">
+            {label}
+          </a>
+        );
+
       case 'twinkle':
         // the frame IS the button; its own inner shell does the padding
         return (
