@@ -13,6 +13,7 @@ import { StrictMode, Suspense, lazy, Component } from 'react';
 import { createRoot } from 'react-dom/client';
 import registry from '../lib/p4rts-registry.json';
 import '../styles/p4rts.css';
+import '../styles/Threads.css';
 import './lab.css';
 
 // Every vendored P4RTS component, lazily importable by its registry `entry`.
@@ -56,7 +57,7 @@ class Boundary extends Component {
   }
   render() {
     if (this.state.err) {
-      return <pre className="lab-err">render threw:{'\n'}{String(this.state.err?.message ?? this.state.err)}</pre>;
+      return <pre className="lab-err">render threw:{'\n'}{String(this.state.err?.stack ?? this.state.err?.message ?? this.state.err)}</pre>;
     }
     return this.props.children;
   }
@@ -86,6 +87,10 @@ function Index() {
 
 const params = new URLSearchParams(window.location.search);
 const key = params.get('c');
+/* ?props={"color":[0.2,1,0.6]} — exact-prop repro without touching code.
+ * Merged over LAB_PROPS so a single prop can be overridden in isolation. */
+let PROP_OVERRIDES = {};
+try { PROP_OVERRIDES = JSON.parse(params.get('props') ?? '{}'); } catch { /* ignore */ }
 const bare = params.has('bare'); // no chrome — just the component, for screenshots
 
 let view;
@@ -93,8 +98,13 @@ if (!key) {
   report('ok');
   view = <Index />;
 } else {
-  const meta = BY_SLUG.get(key);
-  const loader = meta && loaderFor(meta.entry);
+  /* __threads mounts the ORIGINAL pre-dice Threads.jsx — the identical shader
+   * that ran in production for months. Bisection control for "did Chrome break
+   * this shader class, or did we?" */
+  const meta = key?.startsWith('__threads') ? { entry: key } : BY_SLUG.get(key);
+  const loader = key?.startsWith('__threads')
+    ? () => import('../components/Threads.jsx')
+    : (meta && loaderFor(meta.entry));
 
   if (!loader) {
     report('error', `no such component: ${key}`);
@@ -111,12 +121,20 @@ if (!key) {
         throw e;
       }
     });
-    view = (
+    view = key === '__threads2' ? (
+      <Boundary>
+        <Suspense fallback={null}>
+          {/* the EXACT original mount from the pre-dice App */}
+          <Lazy amplitude={1} distance={0} enableMouseInteraction={true} {...PROP_OVERRIDES} />
+          <Ready />
+        </Suspense>
+      </Boundary>
+    ) : (
       <Boundary>
         <Suspense fallback={<div className="lab-loading">loading…</div>}>
           {/* sized parent — many vault components measure their container */}
           <div className="p4rts-slot lab-stage">
-            <Lazy {...LAB_PROPS} />
+            <Lazy {...LAB_PROPS} {...PROP_OVERRIDES} />
           </div>
           <Ready />
         </Suspense>

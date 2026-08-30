@@ -68,3 +68,18 @@
 .p4d-cursor.is-on-top {
   z-index: 3;
 }
+
+
+/* loom's GL blend squares alpha away; boost the CANVAS, not the layer div
+ * (the div carries the ground colour — boosting it washed the page). */
+.p4d-backdrop[data-bg="loom"] .p4rts-slot {
+  filter: brightness(3.4) saturate(1.3);
+}
+
+/* plain-image backdrops (bliss) */
+.p4d-builtin-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}

@@ -165,6 +165,11 @@ export const ROLES = {
     c.slug !== 'dust-type' &&
     // Lakota: cut on sight 2026-08-28
     c.slug !== 'hue-tiles' &&
+    /* authored as a barely-there accent; even 4x uniform gain + 3.4x CSS
+     * brightness leaves it near-invisible as a full backdrop (its GL blend
+     * squares alpha away). Beautiful, but not rollable at this size. */
+    c.slug !== 'loom' &&
+    c.slug !== 'retro-static' && // same story: intrinsically near-black ambient
     // renders "Item 1..Item N" demo tiles; the only text-leaking backdrop
     // (verified by sweeping all 99 for rendered innerText)
     c.slug !== 'mesh-drift',
@@ -241,8 +246,8 @@ export const FAMILIES = {
       trio: ['#00d9a0', '#008080', '#33ffcc'],
       contrast: {},
     },
-    background: ['cosmos', 'cipher-rain', 'crt-flicker', 'glyph-mosaic',
-      'console-mosaic', 'bit-drizzle', 'retro-static', 'bit-board',
+    background: ['bliss', 'cosmos', 'cipher-rain', 'crt-flicker', 'glyph-mosaic',
+      'console-mosaic', 'bit-drizzle', 'bit-board',
       'glyph-tide', 'pixel-pulse', 'signal-bands'],
     /* No animated title effect on purpose: the navy title BAR is the win95
      * title treatment. Crisp static chrome is the aesthetic. */

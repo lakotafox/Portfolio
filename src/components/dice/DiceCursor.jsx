@@ -35,11 +35,15 @@ const PRECISE = new Set(['reticle', 'lock-on-pointer', 'morph-pointer', 'tagged-
  *  screen-blend because they paint no ground of their own. */
 const OVERLAY = new Set(['reticle', 'lock-on-pointer', 'goo-pointer', 'glide-pointer', 'morph-pointer', 'tagged-pointer']);
 
-/** Exactly two of these aren't pointers drawn ON a scene — they ARE the scene.
- *  phantom lights its own dark ground, photo-wake ripples photographs. Stacked
- *  over a backdrop they fight it for the same pixels and read as dead, so the
- *  backdrop is skipped while they're up (DiceStage checks this set). */
-export const OWNS_BACKDROP = new Set(['phantom-pointer', 'photo-wake']);
+/* NOBODY hides the user's backdrop. An earlier port of EDI's OWNS_BACKDROP
+ * idea set the backdrop to visibility:hidden whenever phantom-pointer or
+ * photo-wake rolled — but phantom at cursor brightness is nearly invisible on
+ * its own, so the page just looked BLACK, and every backdrop the user stepped
+ * through "did nothing". It even poisoned the verification sweeps (forced
+ * ?bg= shifts the rng, so some backdrops rolled phantom and scored black).
+ * phantom screen-blends over the art instead; photo-wake sits plain above it. */
+export const OWNS_BACKDROP = new Set();
+const PLAIN_OVER_ART = new Set(['photo-wake']);
 
 /* r3f and prop-based components read the pointer from events delivered TO
  * THEIR CANVAS. The cursor layer is pointer-events:none so clicks reach the
@@ -290,7 +294,8 @@ export default function DiceCursor({ choice, palette }) {
   if (!render) return null;
 
   const onTop = OVERLAY.has(choice);
-  const owns = OWNS_BACKDROP.has(choice);
+  const owns = false;
+  const plain = PLAIN_OVER_ART.has(choice);
 
   return (
     <Suspense fallback={null}>
@@ -303,11 +308,11 @@ export default function DiceCursor({ choice, palette }) {
           pointerEvents: 'none',
           // ambient effects live UNDER the content (Lakota's layering);
           // precise pointers ride above it; scene-owners sit at the very back
-          zIndex: owns ? 0 : onTop ? 10000 : 1,
+          zIndex: onTop ? 10000 : 1,
           // full-canvas effects paint a black ground — `screen` makes black
           // invisible so only the bright trail survives. The thin pointers and
           // the scene-owners paint their own ground and must stay plain.
-          mixBlendMode: onTop || owns ? undefined : 'screen',
+          mixBlendMode: onTop || plain ? undefined : 'screen',
         }}
         data-p4rts={choice}
       >

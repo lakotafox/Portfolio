@@ -12,8 +12,25 @@
  * contexts, and leaking them is what makes a page die after a dozen rerolls.
  */
 import { useDice, entryFor } from './DiceProvider';
-import DiceCursor, { OWNS_BACKDROP } from './DiceCursor';
+import DiceCursor from './DiceCursor';
 import P4RTS_PROPS from '../../lib/p4rts-props.json';
+import RGB_TRIPLET from '../../lib/rgb-triplet-props.json';
+
+/* per-slug overdrive for triplet colours (see colourPropsFor) */
+/* loom writes vec4(color*a, a) under SRC_ALPHA blending — alpha is applied
+ * twice, so line contribution is uColor*a^2 (a~0.15). Gain compensates. */
+const TRIPLET_GAIN = { loom: 4, 'retro-static': 9 };
+
+/* CSS-side amplification for effects whose GL blending squares alpha away.
+ * Applied to the SLOT (the canvas), never the layer div — the layer carries
+ * the ground colour, and boosting it washed the whole page green. */
+const SLOT_BOOST = { loom: 'brightness(3.4) saturate(1.3)' };
+
+/* Backdrops that are plain images, not vault components. bliss is THE
+ * wallpaper — Lakota supplied it for the win95 family. */
+const BUILTIN_BACKDROPS = {
+  bliss: '/retro/bliss.webp',
+};
 import P4rtsSlot from './P4rtsSlot';
 import './dice-stage.css';
 
@@ -79,9 +96,11 @@ const hex01 = (hex) => {
 };
 
 /* Props whose vault type says "array" but which are really WebGL RGB
- * TRIPLETS, not lists of hex colours. loom's is `color = [1, 1, 1]` — handing
- * it the palette trio of hex strings garbles the uniform and it renders black. */
-const RGB_TRIPLET = { loom: 'color' };
+ * TRIPLETS ([0.5,0.5,0.5]), not lists of hex colours — handing them the
+ * palette trio of hex strings garbles the uniform and they render black.
+ * loom, retro-static, mercury-flow and oil-slick all failed exactly this way.
+ * Auto-detected from each prop's vault default (numeric 3-array = triplet). */
+
 
 /* Per-backdrop extras that aren't colours. molten-pane's imageSrc defaults to
  * a random Unsplash portrait — it should be Lakota. Drop the real photo at
@@ -94,7 +113,13 @@ function colourPropsFor(slug, pal) {
   const meta = P4RTS_PROPS[slug];
   if (!meta) return {};
   const out = {};
-  if (RGB_TRIPLET[slug]) out[RGB_TRIPLET[slug]] = hex01(pal.acc);
+  if (RGB_TRIPLET[slug]) {
+    /* Shader triplets multiply: values above 1.0 are legal and act as gain.
+     * loom's thin alpha strokes peak ~12% over the ground at 1.0 — authored
+     * as a whisper. As the page's whole backdrop it needs to project. */
+    const gain = TRIPLET_GAIN[slug] ?? 1;
+    out[RGB_TRIPLET[slug]] = hex01(pal.acc).map((v) => v * gain);
+  }
   // props the vault labels color-bg take the palette's ground
   for (const n of meta.colorBg ?? []) out[n] = pal.bg;
   // array-valued colour props take the whole trio (unless they're RGB triplets)
@@ -121,17 +146,24 @@ export default function DiceStage() {
 
   return (
     <>
-      {/* phantom-pointer and photo-wake ARE the scene — a backdrop under them
-        * fights for the same pixels and both read as dead (EDI's OWNS_BACKDROP) */}
+      {/* The layer's ground comes from the ART palette, not the page one.
+        * Thin-line effects (loom, mote-field, wave-lattice…) paint 1px alpha
+        * strokes — over the page's warm mid-dark they wash out to nothing,
+        * over their own palette's near-black floor they read. This is also
+        * what makes the `p` key visibly recolour the ground. */}
       <div
         className="p4d-backdrop"
         aria-hidden="true"
-        style={{
-          filter: tintFor(look.background, bp),
-          visibility: OWNS_BACKDROP.has(look.cursor) ? 'hidden' : undefined,
-        }}
+        style={{ filter: tintFor(look.background, bp), background: bp.bg }}
+        data-bg={look.background ?? undefined}
       >
-        {look.background && (
+        {BUILTIN_BACKDROPS[look.background] && (
+          <div
+            className="p4d-builtin-bg"
+            style={{ backgroundImage: `url(${BUILTIN_BACKDROPS[look.background]})` }}
+          />
+        )}
+        {look.background && !BUILTIN_BACKDROPS[look.background] && (
           <P4rtsSlot
             key={look.background}
             slug={look.background}
