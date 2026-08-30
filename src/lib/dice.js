@@ -246,7 +246,7 @@ export const FAMILIES = {
       trio: ['#00d9a0', '#008080', '#33ffcc'],
       contrast: {},
     },
-    background: ['bliss', 'cosmos', 'cipher-rain', 'crt-flicker', 'glyph-mosaic',
+    background: ['bliss', 'windows-boot', 'cosmos', 'cipher-rain', 'crt-flicker', 'glyph-mosaic',
       'console-mosaic', 'bit-drizzle', 'bit-board',
       'glyph-tide', 'pixel-pulse', 'signal-bands'],
     /* No animated title effect on purpose: the navy title BAR is the win95

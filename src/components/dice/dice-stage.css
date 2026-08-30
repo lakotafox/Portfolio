@@ -83,3 +83,10 @@
   background-size: cover;
   background-position: center;
 }
+
+
+.p4d-builtin-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

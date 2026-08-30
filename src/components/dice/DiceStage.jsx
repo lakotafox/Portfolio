@@ -26,10 +26,13 @@ const TRIPLET_GAIN = { loom: 4, 'retro-static': 9 };
  * the ground colour, and boosting it washed the whole page green. */
 const SLOT_BOOST = { loom: 'brightness(3.4) saturate(1.3)' };
 
-/* Backdrops that are plain images, not vault components. bliss is THE
- * wallpaper — Lakota supplied it for the win95 family. */
+/* Backdrops that are plain media, not vault components — win95 family
+ * treasures Lakota supplied. bliss is THE wallpaper; windows-boot is a
+ * looping boot-sequence tape (muted: autoplay requires it, and a surprise
+ * boot chime on every roll would get old fast). */
 const BUILTIN_BACKDROPS = {
-  bliss: '/retro/bliss.webp',
+  bliss: { type: 'image', src: '/retro/bliss.webp' },
+  'windows-boot': { type: 'video', src: '/retro/windows-boot.mp4' },
 };
 import P4rtsSlot from './P4rtsSlot';
 import './dice-stage.css';
@@ -157,10 +160,21 @@ export default function DiceStage() {
         style={{ filter: tintFor(look.background, bp), background: bp.bg }}
         data-bg={look.background ?? undefined}
       >
-        {BUILTIN_BACKDROPS[look.background] && (
+        {BUILTIN_BACKDROPS[look.background]?.type === 'image' && (
           <div
             className="p4d-builtin-bg"
-            style={{ backgroundImage: `url(${BUILTIN_BACKDROPS[look.background]})` }}
+            style={{ backgroundImage: `url(${BUILTIN_BACKDROPS[look.background].src})` }}
+          />
+        )}
+        {BUILTIN_BACKDROPS[look.background]?.type === 'video' && (
+          <video
+            key={look.background}
+            className="p4d-builtin-bg p4d-builtin-video"
+            src={BUILTIN_BACKDROPS[look.background].src}
+            autoPlay
+            loop
+            muted
+            playsInline
           />
         )}
         {look.background && !BUILTIN_BACKDROPS[look.background] && (
