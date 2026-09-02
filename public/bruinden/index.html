@@ -106,6 +106,19 @@
   .statusdot { font:700 13px/1 var(--mono); color:var(--dim); padding-top:3px; }
   .statusdot.is-done { color:var(--gold); }
   .due-row.done .txt, .due-row.done .due-when { text-decoration:line-through; color:var(--dim); }
+  .sess-head { font-size:13px; color:var(--dim); margin-bottom:6px; line-height:1.4; }
+  .sess-prog { color:var(--gold); font-weight:700; margin-left:6px; }
+  .sess-row { display:flex; gap:12px; align-items:flex-start; padding:14px 2px; border-top:1px solid var(--line); }
+  .sess-row:first-of-type { border-top:none; }
+  .sess-check { flex:none; width:34px; height:34px; border:2px solid var(--line); background:var(--surface); color:var(--gold);
+    border-radius:8px; font:700 13px/1 monospace; cursor:pointer; box-shadow:0 3px 0 var(--line); }
+  .sess-check:active { transform:translateY(3px); box-shadow:none; }
+  .sess-row.done .sess-check { background:var(--gold); color:var(--bg); border-color:var(--gold); box-shadow:none; }
+  .sess-body { min-width:0; }
+  .sess-txt { font-size:15px; margin:2px 0; }
+  .sess-row.done .sess-txt { text-decoration:line-through; color:var(--dim); }
+  .sess-when { font-size:12px; color:var(--dim); }
+  .sess-body a { text-decoration:none; }
   .due-when { font:500 12px/1.4 var(--mono); font-variant-numeric:tabular-nums; padding-top:3px; }
   .due-when .rel { color:var(--dim); font-weight:400; }
   .due-when.overdue, .due-when.today { color:var(--danger); font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
@@ -339,6 +352,13 @@
 
   <nav id="nav"></nav>
 
+  <section id="sec-session">
+    <div class="card">
+      <h2>This session <span class="tag">your battle plan - tap to check off - curated, not auto-synced</span></h2>
+      <div id="session"></div>
+    </div>
+  </section>
+
   <section id="sec-now">
     <div class="now-main">
       <div class="card">
@@ -411,7 +431,16 @@
 // NEVER rename node ids (orphans Lakota's progress).
 // ============================================================
 const HUB_DATA = {
-  updated: "2026-09-01 - catch-up sprint: clear thru Mon Sep 7 by Wed night (camping Wed-Mon)",
+  updated: "2026-09-02 - clear these 4 before camping (back Tue Sep 8)",
+  session: {
+    label: "Wed Sep 2 - clear before camping (back Tue Sep 8). 2320 parked (needs $144 key).",
+    items: [
+      ["s-2470q2","CSIS 2470","Lecture #2 quiz - Remembering the DOM","due TODAY (quick)","https://slcc.instructure.com/courses/1273912/modules/items/34694804"],
+      ["s-philgd2","PHIL","GD#2 - submit the written post + 2 replies","post Sep 4 / replies Sep 7","https://slcc.instructure.com/courses/1274282/modules/items/34239432"],
+      ["s-geogc1","GEOG","Chapter 1 quiz (16) + mapping HW (10)","Sep 8 (study guide built)","https://slcc.instructure.com/courses/1273585/modules/items/33392425"],
+      ["s-bones","CSIS 2470","Roll Dem Bones (134 pts) - THE big build","Sep 6 - can't do while camping","https://slcc.instructure.com/courses/1273912/assignments/19074892"],
+    ]
+  },
   year: 2026,
   week: 1, weeksTotal: 16,
   wallDate: "2027-08-06",
@@ -733,7 +762,7 @@ const HUB_DATA = {
 };
 
 // ============================================================
-const SECTIONS = [["now","NOW"],["courses","COURSES"],["study","STUDY"],["dates","DATES"],["degree","DEGREE"],["money","MONEY"]]
+const SECTIONS = [["session","THIS SESSION"],["now","2 WEEKS"],["courses","COURSES"],["study","STUDY"],["dates","DATES"],["degree","DEGREE"],["money","MONEY"]]
   .filter(([key]) => key !== "study" || Object.keys(HUB_DATA.decks).length);
 const $ = id => document.getElementById(id);
 const LS = k => "slccHub." + k;
@@ -808,7 +837,7 @@ SECTIONS.forEach(([key, label]) => {
   };
   $("nav").appendChild(b);
 });
-const savedTab = localStorage.getItem(LS("tab")) || "now";
+const savedTab = localStorage.getItem(LS("tab")) || "session";
 $("nav").children[Math.max(0, SECTIONS.findIndex(s => s[0] === savedTab))].click();
 addEventListener("scroll", () => $("nav").classList.toggle("stuck", scrollY > 40), { passive:true });
 
@@ -1079,11 +1108,34 @@ $("money").innerHTML = "<table>" + HUB_DATA.money.map(([k, amt, note]) =>
 $("stamp").textContent = "data updated " + HUB_DATA.updated + ".";
 
 // ---------- boot / in-place rerender ----------
+function renderSession() {
+  const s = HUB_DATA.session;
+  if (!s) return;
+  const isDone = k => { try { return localStorage.getItem(LS("sess." + k)) === "1"; } catch { return false; } };
+  const rows = s.items.map(([id, course, txt, when, link]) => {
+    const d = isDone(id);
+    return `<div class="sess-row ${d ? "done" : ""}">
+      <button class="sess-check" data-id="${id}" aria-label="toggle done">${d ? "[x]" : "[ ]"}</button>
+      <div class="sess-body">
+        <a href="${link}" target="_blank"><span data-course="${slugOf(course)}"><span class="due-course">${course}</span></span></a>
+        <div class="sess-txt">${txt}</div>
+        <div class="sess-when">${when}</div>
+      </div></div>`;
+  }).join("");
+  const doneCt = s.items.filter(it => isDone(it[0])).length;
+  $("session").innerHTML = `<div class="sess-head">${s.label}<span class="sess-prog">${doneCt}/${s.items.length} done</span></div>${rows}`;
+  document.querySelectorAll(".sess-check").forEach(b => b.onclick = () => {
+    const k = b.dataset.id;
+    try { localStorage.setItem(LS("sess." + k), isDone(k) ? "0" : "1"); } catch {}
+    renderSession();
+  });
+}
 function rerenderAll() {
   const y = scrollY;
-  renderPace(); renderWeekPath(); renderPills(); renderTrack(); renderHeat();
+  renderSession(); renderPace(); renderWeekPath(); renderPills(); renderTrack(); renderHeat();
   requestAnimationFrame(() => scrollTo(0, y));
 }
+renderSession();
 renderPace();
 renderWeekPath();
 renderPills();
