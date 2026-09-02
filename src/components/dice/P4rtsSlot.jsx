@@ -10,7 +10,7 @@
  *      from every future roll on this device, so the same dud never returns
  *   4. renders nothing on failure, so the portfolio just looks plain, never broken
  */
-import { Component, Suspense, lazy, useMemo } from 'react';
+import { Component, Suspense, lazy, useEffect, useMemo, useRef } from 'react';
 import P4RTS_PROPS from '../../lib/p4rts-props.json';
 
 const MODULES = import.meta.glob('../puddl3/**/*.{jsx,tsx}');
@@ -69,7 +69,31 @@ class Boundary extends Component {
  * without putting real page content inside someone else's DOM. */
 const needsChildren = (slug) => P4RTS_PROPS[slug]?.composition === 'wraps-children';
 
+/* Browsers allow ~16 live WebGL contexts and reclaim abandoned ones lazily.
+ * The vault's ogl/three components never call loseContext() on unmount, so
+ * every reroll LEAKED one — after enough rolls the browser force-evicts,
+ * spamming "THREE.WebGLRenderer: Context Lost" and blacking out components
+ * still on screen. Effect cleanup runs before the DOM detaches, so the
+ * canvases are still reachable here; losing an already-lost context is a
+ * no-op, so double-freeing R3F's self-disposed canvases is harmless. */
+function useReleaseContextsOnUnmount(hostRef, slug) {
+  useEffect(() => {
+    const host = hostRef.current;
+    return () => {
+      if (!host) return;
+      for (const canvas of host.querySelectorAll('canvas')) {
+        try {
+          const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+          gl?.getExtension('WEBGL_lose_context')?.loseContext();
+        } catch { /* context already gone */ }
+      }
+    };
+  }, [hostRef, slug]);
+}
+
 export default function P4rtsSlot({ slug, entry, props = {}, onFail, className = '' }) {
+  const hostRef = useRef(null);
+  useReleaseContextsOnUnmount(hostRef, slug);
   const Cmp = useMemo(() => {
     if (!slug || !entry) return null;
     const loader = MODULES[`../puddl3/${entry}`];
@@ -90,7 +114,7 @@ export default function P4rtsSlot({ slug, entry, props = {}, onFail, className =
   return (
     <Boundary slug={slug} onFail={onFail}>
       <Suspense fallback={null}>
-        <div className={`p4rts-slot ${className}`} data-p4rts={slug}>
+        <div ref={hostRef} className={`p4rts-slot ${className}`} data-p4rts={slug}>
           {/* The spacer exists so a `wraps-children` component mounted as a
             * standalone backdrop has something to wrap. But JSX children
             * OVERRIDE a `children` prop — so injecting it blindly replaced the

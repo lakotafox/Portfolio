@@ -1571,7 +1571,7 @@
   "tier": "basic",
   "webgl": true,
   "entry": "aura-sphere/AuraSphere.jsx",
-  "painted": 0.0075,
+  "painted": 0.0223,
   "canvases": 1
  },
  {
@@ -1901,7 +1901,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "axon-corridor/axon-corridor.tsx",
-  "painted": 0.03158,
+  "painted": 0.0515,
   "canvases": 1
  },
  {
@@ -2149,7 +2149,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "block-bloom/block-bloom.tsx",
-  "painted": 0.0074,
+  "painted": 0.0243,
   "canvases": 1
  },
  {
@@ -2346,7 +2346,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "bloom-beams/bloom-beams.tsx",
-  "painted": 0.18879,
+  "painted": 0.3284,
   "canvases": 1
  },
  {
@@ -2774,7 +2774,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "color-whirl/color-whirl.tsx",
-  "painted": 0.21051,
+  "painted": 0.3649,
   "canvases": 1
  },
  {
@@ -4046,7 +4046,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "dew-sparks/dew-sparks.tsx",
-  "painted": 0.00572,
+  "painted": 0.0112,
   "canvases": 1
  },
  {
@@ -5854,7 +5854,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "ghost-nimbus/ghost-nimbus.tsx",
-  "painted": 0.02911,
+  "painted": 0.0508,
   "canvases": 1
  },
  {
@@ -6634,7 +6634,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "jelly-field/jelly-field.tsx",
-  "painted": 0.21046,
+  "painted": 0.3648,
   "canvases": 1
  },
  {
@@ -7134,7 +7134,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "louver-sweep/louver-sweep.tsx",
-  "painted": 0.02266,
+  "painted": 0.0404,
   "canvases": 1
  },
  {
@@ -7174,7 +7174,7 @@
   "tier": "basic",
   "webgl": true,
   "entry": "mercury-flow/MercuryFlow.jsx",
-  "painted": 0.02367,
+  "painted": 0.0436,
   "canvases": 1
  },
  {
@@ -7553,7 +7553,7 @@
   "tier": "basic",
   "webgl": true,
   "entry": "mote-field/MoteField.jsx",
-  "painted": 0.00432,
+  "painted": 0.0142,
   "canvases": 1
  },
  {
@@ -8124,7 +8124,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "neon-swell/neon-swell.tsx",
-  "painted": 0.03069,
+  "painted": 0.0523,
   "canvases": 1
  },
  {
@@ -8472,7 +8472,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "panel-cascade/panel-cascade.tsx",
-  "painted": 0.03095,
+  "painted": 0.0575,
   "canvases": 1
  },
  {
@@ -8857,7 +8857,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "polar-sweep/polar-sweep.tsx",
-  "painted": 0.00887,
+  "painted": 0.0262,
   "canvases": 1
  },
  {
@@ -9324,7 +9324,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "quiet-rings/quiet-rings.tsx",
-  "painted": 0.02259,
+  "painted": 0.0401,
   "canvases": 1
  },
  {
@@ -9407,7 +9407,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "ridgeline/ridgeline.tsx",
-  "painted": 0.00367,
+  "painted": 0.0174,
   "canvases": 1
  },
  {
@@ -10676,7 +10676,7 @@
   "tier": "starter",
   "webgl": true,
   "entry": "steel-vortex/steel-vortex.tsx",
-  "painted": 0.20678,
+  "painted": 0.3585,
   "canvases": 1
  },
  {
@@ -10693,7 +10693,7 @@
   "tier": "starter",
   "webgl": false,
   "entry": "sticky-specks/sticky-specks.tsx",
-  "painted": 0.0068,
+  "painted": 0.0208,
   "canvases": 1
  },
  {
@@ -10705,7 +10705,7 @@
   "tier": "basic",
   "webgl": false,
   "entry": "storm-bolts/StormBolts.jsx",
-  "painted": 0.00145,
+  "painted": 0.0109,
   "canvases": 1
  },
  {

@@ -280,6 +280,21 @@ export const CURSOR_KEYS = Object.keys(REGISTRY);
 
 export default function DiceCursor({ choice, palette }) {
   const render = REGISTRY[choice];
+  const layerRef = useRef(null);
+
+  // same context-leak fix as P4rtsSlot: cursors swap on reroll too
+  useEffect(() => {
+    const host = layerRef.current;
+    return () => {
+      if (!host) return;
+      for (const canvas of host.querySelectorAll('canvas')) {
+        try {
+          const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+          gl?.getExtension('WEBGL_lose_context')?.loseContext();
+        } catch { /* already gone */ }
+      }
+    };
+  }, [choice]);
 
   // EDI's trick, requested here too: hide the system arrow, and PrecisePoint
   // puts an exact dot at the true pointer for anything that trails.
@@ -300,6 +315,7 @@ export default function DiceCursor({ choice, palette }) {
   return (
     <Suspense fallback={null}>
       <div
+        ref={layerRef}
         aria-hidden="true"
         className="p4d-cursor"
         style={{

@@ -129,9 +129,15 @@ function colourPropsFor(slug, pal) {
   // array-valued colour props take the whole trio (unless they're RGB triplets)
   for (const n of meta.colorArray ?? []) if (out[n] === undefined) out[n] = pal.trio;
   /* The rest walk a ramp so a component asking for six colours gets six
-   * DIFFERENT ones rather than the same accent repeated. */
+   * DIFFERENT ones rather than the same accent repeated. EXCEPT props with
+   * plural names: the vault typed shutter-glow's gradientColors as a single
+   * colour, we sent one hex string, and the component called .push on it —
+   * TypeError, crash, quarantine. A plural name means an array, whatever the
+   * metadata claims. */
   const ramp = [pal.acc, pal.b, pal.a, pal.c, pal.trio[0], pal.trio[1], pal.trio[2]];
-  (meta.color ?? []).forEach((n, i) => { out[n] = ramp[i % ramp.length]; });
+  (meta.color ?? []).forEach((n, i) => {
+    out[n] = /(colors|colours|stops)$/i.test(n) ? pal.trio : ramp[i % ramp.length];
+  });
   return out;
 }
 
