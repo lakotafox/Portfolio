@@ -11,6 +11,7 @@
  * context down instead of leaking it — browsers only allow a handful of live
  * contexts, and leaking them is what makes a page die after a dozen rerolls.
  */
+import { useEffect } from 'react';
 import { useDice, entryFor } from './DiceProvider';
 import DiceCursor from './DiceCursor';
 import P4RTS_PROPS from '../../lib/p4rts-props.json';
@@ -136,10 +137,70 @@ function colourPropsFor(slug, pal) {
 
 
 
+/* Backdrops whose render loop is driven by pointer events (input:
+ * react-props / self) sit on their first frame until the mouse moves — on
+ * touch, forever. molten-pane showed a flat ground until poked. This wakes
+ * them with a synthetic move burst on mount and keeps forwarding real
+ * pointer moves so refraction-style effects track the hand. Same re-entrancy
+ * guard as the cursor bridge: the bubbled copy reaches this listener too. */
+function useBackdropWake(background) {
+  const input = P4RTS_PROPS[background]?.input;
+  /* The vault's input detector isn't complete — molten-pane records null yet
+   * reads the pointer via react props. So the wake burst runs for EVERY
+   * backdrop (a few synthetic moves are harmless to effects that ignore
+   * them), and only the LIVE forwarding is gated: window-listeners would see
+   * each real move twice. */
+  const forwardLive = input !== 'window';
+  useEffect(() => {
+    if (!background) return undefined;
+    let forwarding = false;
+    const send = (x, y) => {
+      /* ALL canvases, not querySelector's first: React StrictMode double-
+       * mounts in dev, so during the wake window a dead first canvas can sit
+       * in front of the live one and swallow every event. And the canvas
+       * specifically — dispatched events bubble UP, so hitting a wrapper div
+       * never reaches it. */
+      let targets = document.querySelectorAll('.p4d-backdrop canvas');
+      if (!targets.length) targets = document.querySelectorAll('.p4d-backdrop [data-p4rts] > *');
+      const init = { bubbles: true, clientX: x, clientY: y, pointerId: 1, pointerType: 'mouse', isPrimary: true };
+      for (const c of targets) {
+        c.dispatchEvent(new PointerEvent('pointermove', init));
+        c.dispatchEvent(new MouseEvent('mousemove', init));
+      }
+    };
+    const onMove = (e) => {
+      if (forwarding) return;
+      forwarding = true;
+      try { send(e.clientX, e.clientY); } finally { forwarding = false; }
+    };
+    /* wake burst: a little sweep so the first paint happens without input.
+     * The canvas mounts lazily (three.js compiles on first visit in dev), so
+     * attempts only count once it EXISTS — a blind 1.8s timer used to expire
+     * before the canvas showed up and the wake fizzled. */
+    let i = 0;
+    const t = setInterval(() => {
+      if (!document.querySelector('.p4d-backdrop canvas')) return; // not up yet
+      forwarding = true;
+      try { send(innerWidth * (0.3 + 0.04 * (i % 12)), innerHeight * (0.35 + 0.02 * (i % 5))); }
+      finally { forwarding = false; }
+      // spread over ~9s: textures/lazy chunks can land well after the canvas
+      if (++i > 30) clearInterval(t);
+    }, 300);
+    const kill = setTimeout(() => clearInterval(t), 20000);
+    if (forwardLive) window.addEventListener('pointermove', onMove, { passive: true });
+    return () => {
+      clearInterval(t); clearTimeout(kill);
+      if (forwardLive) window.removeEventListener('pointermove', onMove);
+    };
+  }, [background, forwardLive]);
+}
+
 export default function DiceStage() {
   const d = useDice();
-  if (!d) return null;
-  const { look, onSlotFail } = d;
+  const look = d?.look;
+  useBackdropWake(look?.background);
+  if (!d || !look) return null;
+  const { onSlotFail } = d;
 
   // Most vault backgrounds accept a colour + speed; the ones that don't just
   // ignore these, which is why they can be passed blindly.
