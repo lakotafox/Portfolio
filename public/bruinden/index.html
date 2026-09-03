@@ -1111,7 +1111,11 @@ $("stamp").textContent = "data updated " + HUB_DATA.updated + ".";
 function renderSession() {
   const s = HUB_DATA.session;
   if (!s) return;
-  const isDone = k => { try { return localStorage.getItem(LS("sess." + k)) === "1"; } catch { return false; } };
+  // done = tapped [x] in this browser, OR flagged done:true (6th elem) by a sweep
+  // (a tap to un-tick writes "0", which overrides the sweep flag)
+  const lsVal = k => { try { return localStorage.getItem(LS("sess." + k)); } catch { return null; } };
+  const flagOf = k => (s.items.find(it => it[0] === k) || [])[5] === true;
+  const isDone = k => lsVal(k) === "1" || (flagOf(k) && lsVal(k) !== "0");
   const rows = s.items.map(([id, course, txt, when, link]) => {
     const d = isDone(id);
     return `<div class="sess-row ${d ? "done" : ""}">
