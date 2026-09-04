@@ -1,3 +1,7 @@
+/* vendor patch: initial hide (see note in tap-deck.tsx) — the init effect
+   reveals via inline style, which beats this class rule. */
+.tap-deck-container { visibility: hidden; }
+
 .tap-deck-container {
   position: relative;
   display: flex;

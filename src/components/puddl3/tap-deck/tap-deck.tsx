@@ -250,7 +250,11 @@ const TapDeck: React.FC<TapDeckProps> = ({
       ref={containerRef}
       onClick={cycle}
       className={`tap-deck-container ${className}`}
-      style={{ opacity, visibility: "hidden" }}
+      /* VENDOR PATCH (carc-portfolio): the initial hide lives in tap-deck.css
+       * now, not here. Inline visibility:"hidden" was re-applied by every
+       * parent re-render, clobbering the imperative reveal in the init effect
+       * — under a live context (our dice) the deck stayed invisible forever. */
+      style={{ opacity }}
     >
       {cards.map((content, idx) => (
         <div

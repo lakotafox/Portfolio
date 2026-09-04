@@ -1,0 +1,117 @@
+/* The project deck. The deck component positions its own cards; this styles
+ * the card FACES and gives the pile breathing room for its fanned spread. */
+.project-deck {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 0 3.5rem;
+}
+
+.project-deck .tap-deck-container {
+    width: var(--deck-w);
+    height: var(--deck-h);
+}
+
+.pdeck-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+    border: 1px solid var(--p4-border, #2a2a33);
+    background: var(--p4-card, #16161c);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.pdeck-img {
+    width: 100%;
+    height: 52%;
+    object-fit: cover;
+    flex: 0 0 auto;
+    pointer-events: none;
+}
+
+.pdeck-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0.9rem 1rem 1rem;
+    gap: 0.45rem;
+}
+
+.pdeck-head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.pdeck-title {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--p4-ink, #fff);
+}
+
+.pdeck-tag {
+    padding: 0.12rem 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--p4-acc, #a855f7) 45%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--p4-acc, #a855f7) 15%, transparent);
+    color: var(--p4-acc, #a855f7);
+    font-size: 0.66rem;
+    white-space: nowrap;
+}
+
+.pdeck-desc {
+    margin: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--p4-muted, #a1a1aa);
+}
+
+.pdeck-open {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    flex: 0 0 auto;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    background: var(--p4-acc, #a855f7);
+    color: #0a0a0a;
+    font-weight: 700;
+    font-size: 0.84rem;
+    text-decoration: none;
+}
+.pdeck-open:active { transform: translateY(1px); }
+
+.pdeck-hint {
+    margin: 1.4rem 0 0;
+    color: var(--p4-muted, #8b8b93);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+}
+
+/* win95: square cards, bevels, of course */
+.theme-win95 .pdeck-card {
+    border: 2px solid !important;
+    border-color: #ffffff #404040 #404040 #ffffff !important;
+}
+.theme-win95 .pdeck-open {
+    border-radius: 0;
+    background: #c0c0c0;
+    color: #000;
+    border: 2px solid;
+    border-color: #ffffff #404040 #404040 #ffffff;
+}

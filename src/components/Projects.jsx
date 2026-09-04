@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ProjectWall from './ProjectWall';
+import ProjectDeck from './ProjectDeck';
 import DiceWordmark from './dice/DiceWordmark';
 
 const projectsData = [
@@ -210,10 +210,10 @@ const Projects = () => {
         <DiceWordmark as="h2" className="section-title" text="Selected Work" />
       </div>
 
-      {/* The wall IS the project cards now — image + title, each tile a real
-        * link. Deliberately OUTSIDE .container so it runs the full width of
-        * the viewport instead of stopping at the 1200px content column. */}
-      <ProjectWall projects={projectsData} />
+      {/* A tap deck instead of the drifting wall: stationary, one project in
+        * focus at a time, same gesture on desktop and phone. Tap to riffle,
+        * Open to visit. */}
+      <ProjectDeck projects={projectsData} />
 
       {/* Project Modal */}
       {modalProject && (
