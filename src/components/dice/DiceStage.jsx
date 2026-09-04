@@ -149,6 +149,11 @@ function colourPropsFor(slug, pal) {
  * them with a synthetic move burst on mount and keeps forwarding real
  * pointer moves so refraction-style effects track the hand. Same re-entrancy
  * guard as the cursor bridge: the bubbled copy reaches this listener too. */
+/* Synthetic pointer events are FLAGGED so cursor systems can ignore them —
+ * unflagged, they bubble to window and the precise dot + window-listening
+ * cursors treat them as the real mouse: "the mouse is hopping around". */
+export const P4D_SYNTH = 'p4dSynthetic';
+
 function useBackdropWake(background) {
   const input = P4RTS_PROPS[background]?.input;
   /* The vault's input detector isn't complete — molten-pane records null yet
@@ -170,12 +175,16 @@ function useBackdropWake(background) {
       if (!targets.length) targets = document.querySelectorAll('.p4d-backdrop [data-p4rts] > *');
       const init = { bubbles: true, clientX: x, clientY: y, pointerId: 1, pointerType: 'mouse', isPrimary: true };
       for (const c of targets) {
-        c.dispatchEvent(new PointerEvent('pointermove', init));
-        c.dispatchEvent(new MouseEvent('mousemove', init));
+        const pe = new PointerEvent('pointermove', init); pe[P4D_SYNTH] = true;
+        const me = new MouseEvent('mousemove', init); me[P4D_SYNTH] = true;
+        c.dispatchEvent(pe);
+        c.dispatchEvent(me);
       }
     };
+    let real = null; // the actual mouse, once it has moved
     const onMove = (e) => {
-      if (forwarding) return;
+      if (forwarding || e[P4D_SYNTH]) return;
+      real = { x: e.clientX, y: e.clientY };
       forwarding = true;
       try { send(e.clientX, e.clientY); } finally { forwarding = false; }
     };
@@ -183,13 +192,16 @@ function useBackdropWake(background) {
      * The canvas mounts lazily (three.js compiles on first visit in dev), so
      * attempts only count once it EXISTS — a blind 1.8s timer used to expire
      * before the canvas showed up and the wake fizzled. */
+    /* The burst holds ONE STATIONARY point (or the real mouse once known) so
+     * nothing observing the pointer sees movement that didn't happen. It also
+     * dies the moment the real mouse moves — live forwarding takes over. */
     let i = 0;
     const t = setInterval(() => {
+      if (real) { clearInterval(t); return; }
       if (!document.querySelector('.p4d-backdrop canvas')) return; // not up yet
       forwarding = true;
-      try { send(innerWidth * (0.3 + 0.04 * (i % 12)), innerHeight * (0.35 + 0.02 * (i % 5))); }
-      finally { forwarding = false; }
-      // spread over ~9s: textures/lazy chunks can land well after the canvas
+      // nudge one pixel so delta-based effects register motion, invisibly
+      try { send(innerWidth * 0.5 + (i % 2), innerHeight * 0.42); } finally { forwarding = false; }
       if (++i > 30) clearInterval(t);
     }, 300);
     const kill = setTimeout(() => clearInterval(t), 20000);

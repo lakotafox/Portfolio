@@ -8,6 +8,7 @@
  * they mark a point instead of flooding an area, so they never obscure a word.
  */
 import { lazy, Suspense, useEffect, useRef } from 'react';
+import { P4D_SYNTH } from './DiceStage';
 
 const L = (f) => lazy(f);
 
@@ -81,9 +82,16 @@ function PointerBridge() {
             bubbles: true, cancelable: true,
             pointerId: 1, pointerType: 'mouse', isPrimary: true,
           };
-          target.dispatchEvent(new PointerEvent('pointermove', init));
-          target.dispatchEvent(new MouseEvent('mousemove', init));
-          if (alsoDown) target.dispatchEvent(new PointerEvent('pointerdown', init));
+          /* flagged: the bridge must not launder synthetic events into
+           * "real" ones — that is exactly how the dot ended up hopping */
+          const pe = new PointerEvent('pointermove', init); pe[P4D_SYNTH] = true;
+          const me = new MouseEvent('mousemove', init); me[P4D_SYNTH] = true;
+          target.dispatchEvent(pe);
+          target.dispatchEvent(me);
+          if (alsoDown) {
+            const pd = new PointerEvent('pointerdown', init); pd[P4D_SYNTH] = true;
+            target.dispatchEvent(pd);
+          }
         }
       } finally {
         bridging = false;
@@ -131,6 +139,7 @@ function PrecisePoint({ color }) {
   const ref = useRef(null);
   useEffect(() => {
     const move = (e) => {
+      if (e[P4D_SYNTH]) return; // the dot marks the REAL pointer only
       const el = ref.current;
       if (el) el.style.transform = `translate3d(${e.clientX - 3}px, ${e.clientY - 3}px, 0)`;
     };
