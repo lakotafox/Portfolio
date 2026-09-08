@@ -431,12 +431,12 @@
 // NEVER rename node ids (orphans Lakota's progress).
 // ============================================================
 const HUB_DATA = {
-  updated: "2026-09-07 full sweep - no grade changes since Thu. PHIL GD#2 replies 0/2 and DUE TONIGHT 11:59pm",
+  updated: "2026-09-08 full sweep - no grade changes. PHIL GD#2 replies 0/2, now LATE (-2 today, -4 tomorrow, locks Wed Sep 9 11:59pm)",
   session: {
-    label: "Mon Sep 7 - PHIL GD#2 REPLIES DUE TONIGHT (0/2 posted, verified). Then Tue: 2470 L#3 quiz + PHIL Logic quiz both Sep 9, MATH Post-Check Sep 10. 2320 parked (needs $144 key).",
+    label: "Tue Sep 8 - PHIL GD#2 replies 0/2, LATE (-2 today, -4 Wed, gone after Wed 11:59pm). Wed: 2470 L#3 quiz + PHIL Logic quiz. Thu: MATH Post-Check + proctoring request. 2320 parked ($144 key).",
     items: [
       ["s-2470q2","CSIS 2470","Lecture #2 quiz - Remembering the DOM","DONE 6/6 (Sep 2)","https://slcc.instructure.com/courses/1273912/modules/items/34694804",true],
-      ["s-philgd2","PHIL","GD#2 - post DONE; replies 0/2 as of Mon morning. Answer Alem's question (is pleasure your main motivator?) + reply to Kate. 250 words total, your own typing, Pangram it","DUE TONIGHT 11:59pm (-2/day after; closes Wed Sep 9)","https://slcc.instructure.com/courses/1274282/modules/items/34239432"],
+      ["s-philgd2","PHIL","GD#2 - post DONE; replies 0/2 as of Mon morning. Answer Alem's question (is pleasure your main motivator?) + reply to Kate. 250 words total, your own typing, Pangram it","LATE: -2 if posted Tue, -4 if Wed; discussion LOCKS Wed Sep 9 11:59pm","https://slcc.instructure.com/courses/1274282/modules/items/34239432"],
       ["s-geogc1","GEOG","Chapter 1 quiz + Ch 2 quiz BOTH submitted Sep 2 (grades not posted yet); mapping HW 10/10","DONE - Ch 2 HW (Solar System Reflection) is next, Sep 15","https://slcc.instructure.com/courses/1273585/assignments/18482863",true],
       ["s-bones","CSIS 2470","Roll Dem Bones (134 pts) - THE big build","SUBMITTED Sep 2 10:58pm - score pending","https://slcc.instructure.com/courses/1273912/assignments/19074892",true],
     ]
@@ -672,7 +672,7 @@ const HUB_DATA = {
     { id:"csis2470-bones", due:"2026-09-06", course:"CSIS 2470", txt:"Assignment #1: Roll Dem Bones (134 pts) - SUBMITTED Sep 2 10:58pm (wcj.fyv.temporary.site/csis2470/bones). Score pending", pts:134,
       link:"https://slcc.instructure.com/courses/1273912/assignments/19074892",
       note:"Folder bones/ = index.html + css/style.css + js/script.js + empty img/. Pure-CSS dice (NO images), Math.random 1-6, DOM message. Advanced (27pts): button->'Roll Again', low/high/avg message, doubles message. Submit LIVE URL as a SUBMISSION not a comment (comment = 0). 2026-09-02: built + old-Windows-desktop styled (Bliss wallpaper, bones.exe window) + dice/doubles sounds (Lakota-downloaded), all 3 advanced items in, uploaded + verified live with a real click. Bump ?v=N on css/js links every upload (cache gotcha). SUBMITTED Sep 2 10:58pm by Lakota (Web URL). Score pending. Don't touch server bones/ until graded." },
-    { id:"phil-gd2c", due:"2026-09-07", course:"PHIL", txt:"Group Discussion #2: Philosophy - 2 replies, 0/2 POSTED (verified Sep 4). Alem asked you a direct question in your thread - answer it", pts:0,
+    { id:"phil-gd2c", due:"2026-09-07", course:"PHIL", txt:"Group Discussion #2: Philosophy - 2 replies, 0/2 POSTED (verified Sep 8, LATE). Locks Wed Sep 9 11:59pm", pts:0,
       link:"https://slcc.instructure.com/courses/1274282/modules/items/34239433",
       note:"Do BEFORE camping (gone Wed night - Mon night). Reply on 2 different days ideally, but get them in by Wed." },
     { id:"geog-ch1q", due:"2026-09-08", course:"GEOG", txt:"Chapter 1 Quiz: Intro to Physical Geography - SUBMITTED Sep 2 7:20pm, grade not posted", pts:16, done:true,
@@ -722,7 +722,7 @@ const HUB_DATA = {
       note:"Same pattern as GD#2: post Fri, 2 replies (250 words total) by Mon. Track both." },
   ],
   watches: [
-    { marker:"(!)", cls:"m-danger", txt:"Sep 15: last 100% refund day -> Sep 18: tuition due. Verify grants zero the $2,640 between those dates. Aid email (8/25) confirms it applies in that window." },
+    { marker:"(!)", cls:"m-danger", txt:"Sep 15: last 100% refund day -> Sep 18: tuition due. Verify grants zero the $2,640 between those dates. Aid email (8/25) + Bursar 10-day reminder (9/8) both say aid posts AFTER the drop period - check the balance Sep 16-17, $75 late fee past Sep 18." },
     { marker:"(!)", cls:"m-warn", txt:"MySLCC action items still open: Agreement to Pay + Emergency Contact. Lakota signs personally." },
     { marker:"->", cls:"m-ok", txt:"Nov 3: Spring 2027 registration opens. Register DAY ONE: ENGL 2010, American Institutions, Life Science, 2x CSIS electives (teach-out sections are scarce). That schedule finishes the degree." },
     { marker:"->", cls:"", txt:"Book the Sim Kaur advisor appointment: 801-957-4978. Questions on file in admin/degree-audit.md." },
