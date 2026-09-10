@@ -431,12 +431,12 @@
 // NEVER rename node ids (orphans Lakota's progress).
 // ============================================================
 const HUB_DATA = {
-  updated: "2026-09-09 - 2470 L#3 quiz 6/6 done. PHIL Logic quiz still due tonight. MATH Exam 1 window Sep 22-24, self-schedule in RegisterBlast",
+  updated: "2026-09-09 - both quizzes done (2470 6/6, PHIL 3/5). Next: MATH Post-Check Thu, PHIL UA#1 + MATH yard disc Fri. Exam 1 window Sep 22-24",
   session: {
-    label: "Wed Sep 9 - 2470 L#3 quiz DONE 6/6. Still due tonight: PHIL Quiz 3 Logic (5). Thu: MATH Post-Check (70% gate). (!) MATH Exam 1 is Sep 22-24 - schedule it in RegisterBlast NOW or arrange remote proctor with Nelson. 2320 parked ($144 key)."
+    label: "Wed Sep 9 - both quizzes done (2470 L#3 6/6, PHIL Logic 3/5 - timer ran out). Thu: MATH Post-Check (70% gate). (!) MATH Exam 1 is Sep 22-24 - schedule it in RegisterBlast NOW or arrange remote proctor with Nelson. 2320 parked ($144 key)."
     items: [
       ["s-2470l3","CSIS 2470","Lecture #3 quiz: Targeting HTML Tags","DONE 6/6 (Sep 9)","https://slcc.instructure.com/courses/1273912/assignments/19074840",true],
-      ["s-philq3","PHIL","Quiz 3: Logic - watch the logic videos + readings first","DUE TONIGHT 11:59pm - 5 pts","https://slcc.instructure.com/courses/1274282/assignments/18871051"],
+      ["s-philq3","PHIL","Quiz 3: Logic - 3/5 (Q4 + Q5 ran out of time, unanswered). (!) PHIL quizzes = 25 MIN, 1 ATTEMPT - read first, then start the timer","DONE 3/5 (Sep 9)","https://slcc.instructure.com/courses/1274282/assignments/18871051",true],
       ["s-mathexam1","MATH","(!) SCHEDULE Exam 1 in RegisterBlast (MySLCC -> Testing Services -> My Exams) OR email Nelson to arrange remote proctoring","Exam window Sep 22-24, 2hr limit - book early, slots run out","https://slcc.instructure.com/courses/1274852/announcements"],
       ["s-mathpost","MATH","Measurement Post-Check - the 70% gate (readiness was 63%)","due Thu Sep 10 - unlocks the Measurement module","https://slcc.instructure.com/courses/1274852/assignments/18635226"],
       ["s-philua1","PHIL","Unit Assignment #1: Practicing Logic - graded for COMPLETION, match the redacted example","due Fri Sep 11 - 20 pts","https://slcc.instructure.com/courses/1274282/assignments/18871166"],
@@ -691,7 +691,7 @@ const HUB_DATA = {
     { id:"math-proctor", due:"2026-09-10", course:"MATH", txt:"(!) MATH Exam 1 = Sep 22-24 window (2 hrs). Either schedule in RegisterBlast (MySLCC -> Testing Services -> My Exams) or, from Portland, file the remote proctor request AND email Nelson", pts:0,
       link:"https://www.slcc.edu/testing/proctoring/proctor-request-form.aspx",
       note:"(!) Only proctored class. Midterms Sep 24 / Oct 22 / Nov 18 / Dec 10. Form verified live 9/8 (old /testing/proctoring.aspx 404s). Allow 3-5 BUSINESS DAYS to process; no expediting. LAKOTA MUST FIND THE PROCTOR FIRST (college/university testing center, for-profit center, public library w/ proctoring, military ed center - NOT anyone related to or associated with you) and confirm availability + get their name, title, org, phone, email, address. Pick 'all exams' to cover all 4 midterms in one request. Hard deadline Wed Dec 9." },
-    { id:"phil-q3", due:"2026-09-09", course:"PHIL", txt:"Quiz 3: Logic (5 pts)", pts:5,
+    { id:"phil-q3", due:"2026-09-09", course:"PHIL", txt:"Quiz 3: Logic - DONE 3/5 (Sep 9; 2 questions left unanswered when the 25-min timer ran out)", pts:5, done:true,
       link:"https://slcc.instructure.com/courses/1274282/assignments/18871051",
       note:"Day after the return. Read the logic chapter first - Unit Assignment #1 (Sep 11) builds on it." },
     { id:"phil-ua1", due:"2026-09-11", course:"PHIL", txt:"Unit Assignment #1: Practicing Logic (20 pts)", pts:20,
