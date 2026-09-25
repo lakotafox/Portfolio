@@ -36,6 +36,9 @@ function popupHtml(p, lat, lon) {
         <a class="w95-btn dir-btn" href="https://maps.apple.com/?daddr=${lat},${lon}&dirflg=w" target="_blank" rel="noopener noreferrer">${pxIcon('compass', 13)} Apple Maps</a>
         <a class="w95-btn dir-btn" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=walking" target="_blank" rel="noopener noreferrer">${pxIcon('map', 13)} Google Maps</a>
       </div>
+      <div class="dir-links">
+        <a class="w95-btn dir-btn sv-btn" href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lon}" target="_blank" rel="noopener noreferrer">${pxIcon('eye', 13)} Street View</a>
+      </div>
       ${p.portlandwild_url ? `<a class="wild-link w95-btn" href="${esc(p.portlandwild_url)}" target="_blank" rel="noopener noreferrer">More on Portland Wild →</a>` : ''}
     </div>`;
 }

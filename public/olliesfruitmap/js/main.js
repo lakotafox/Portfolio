@@ -8,6 +8,7 @@ import { initNearMe } from './nearme.js';
 import { initWalk } from './walk.js';
 import { initTitle } from './title.js';
 import { initFullscreen } from './fullscreen.js';
+import { initBasemapControl } from './basemap.js';
 import { initMrApple } from './mrapple.js';
 import { initMuteButton } from './sounds.js';
 
@@ -17,6 +18,7 @@ initMuteButton(document.getElementById('mute-btn'));
 const map = createMap();
 const groups = createClusterGroups();
 initFullscreen(map);
+initBasemapControl(map);
 initMrApple();
 map.on('popupopen', () => document.dispatchEvent(new CustomEvent('ofm:popup')));
 map.on('popupclose', () => document.dispatchEvent(new CustomEvent('ofm:popupclose')));
