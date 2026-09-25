@@ -91,3 +91,9 @@ Grinding through the 10-course IBM AI Developer cert on Coursera. Goal is to fin
   app folders — Netlify's automatic trailing-slash redirect handles them.
 - Gifsmith deployed at /gifsmith/ (app in public/gifsmith/, search proxy
   function netlify/functions/gifcities-search.js, card in Projects.jsx).
+
+## Ollie's fruit map basemap GOTCHA (2026-09-25)
+- CARTO free basemaps (basemaps.cartocdn.com) now serve an "API KEY
+  REQUIRED" placeholder tile — the map looked broken. Basemaps live in
+  `public/olliesfruitmap/js/map.js` BASEMAPS: OSM (map), Esri World
+  Imagery (satellite/hybrid). Both keyless. Don't reintroduce CARTO.
