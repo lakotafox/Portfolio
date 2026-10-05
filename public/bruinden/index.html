@@ -431,15 +431,15 @@
 // NEVER rename node ids (orphans Lakota's progress).
 // ============================================================
 const HUB_DATA = {
-  updated: "2026-10-02 THU. GD#4 Kalam post+2 replies DONE (all Pangram 0%). Picking Apples HTML ready, PDF not yet submitted. Proctor still unresolved.",
+  updated: "2026-10-05 SUN. Robot Runaway SUBMITTED (late, Oct 5 1:43am). GD#4 Kalam post+2 replies DONE. Picking Apples HTML ready, PDF not yet submitted.",
   session: {
-    label: "Thu Oct 2 - GD#4 Kalam post+replies ALL DONE (Pangram 0%). Picking Apples HTML ready. Next: submit Apples PDF, M2 Summary Quiz (Sun), Robot Runaway (Sun), Finance RC (Mon).",
+    label: "Sun Oct 5 - Robot Runaway SUBMITTED (late, 1:43am). Next: M2 Summary Quiz (Sun HARD LOCK), M3 L#4 quiz (Mon HARD LOCK), Finance RC (Mon), GEOG Ch5 (Tue).",
     items: [
       ["s-proctor","MATH","(!) PROCTOR STILL NOT ARRANGED. Emails sent to Clackamas 9/25 (testing@ + testing.harmony@), NO reply as of Wed 9/30. Call 503-594-3283. Nelson said no penalty once arranged. 400 pts at stake (Exam 1 + Exams 2-4)","call NOW","https://www.slcc.edu/testing/proctoring/proctor-request-form.aspx"],
       ["s-gd4","PHIL","GD#4 Kalam DONE - initial post (251w) + 2 replies (166w Alem + 190w Ellie = 356w). All Pangram 0% AI. Posted Oct 3.","DONE","https://slcc.instructure.com/groups/726317/discussion_topics/8601232"],
       ["s-apples","MATH","FRI 10/2: Picking Apples written assignment (30). Then MARK AS DONE on the module page. Growth Models unlocked (RC 8.59 + Post-Check 7.18)","Fri - 30 pts","https://slcc.instructure.com/courses/1274852/assignments/18635109"],
       ["s-m2sq","CSIS 2470","SUN 10/4: M2 Summary Quiz (12) - HARD LOCK Sun 11:59pm. Review M2 CSS Manipulation lectures","Sun - 12 pts","https://slcc.instructure.com/courses/1273912/quizzes/4870171"],
-      ["s-runaway","CSIS 2470","SUN 10/4: Robot Runaway (134) - due Sun, window to Oct 11. Event listeners + timers from M3. Lecture code in lecture-code-m3/","Sun - 134 pts","https://slcc.instructure.com/courses/1273912/assignments/19074895"],
+      ["s-runaway","CSIS 2470","Robot Runaway (134) SUBMITTED Oct 5 1:43am (late, due Oct 4 11:59pm). Win98 retro theme. URL: wcj.fyv.temporary.site/csis2470/escape","DONE","https://slcc.instructure.com/courses/1273912/assignments/19074895"],
       ["s-finrc","MATH","MON 10/5: Finance Readiness Check (10) - 7/10+ UNLOCKS the Finance module. Discussion: American Finances (10) also due Mon (inside the locked module)","Mon - 20 pts","https://slcc.instructure.com/courses/1274852/assignments/18635024"],
       ["s-m3l4","CSIS 2470","MON 10/5: M3 Lecture #4 Drag and Drop Events (6) - HARD LOCK Mon 11:59pm, no grace","Mon - 6 pts","https://slcc.instructure.com/courses/1273912/assignments/19074788"],
       ["s-gd4c","PHIL","GD#4 comments DONE EARLY - 2 replies posted Oct 3 (Alem 166w + Ellie 190w). Due date was Mon 10/5.","DONE","https://slcc.instructure.com/courses/1274282/assignments/18871158"],
@@ -556,7 +556,7 @@ const HUB_DATA = {
         ["c7-2w","M2 discussion + summary quiz","10-04","disc"] ]},
       { unit:"Module 3 - Events & Errors", nodes:[
         ["c7-3l","Lectures 1-4","10-05","quiz"],
-        ["c7-run","BUILD: Robot Runaway (134pts)","10-04","build"],
+        ["c7-run","BUILD: Robot Runaway (134pts) - submitted","10-04","build","https://slcc.instructure.com/courses/1273912/assignments/19074895",true],
         ["c7-rep","BUILD: Robot Repair (141pts)","10-11","build"],
         ["c7-3w","M3 discussion + summary quiz","10-11","disc"] ]},
       { unit:"Module 4 - Validation & UX", nodes:[
@@ -777,7 +777,7 @@ const HUB_DATA = {
       link:"https://slcc.instructure.com/courses/1274282/discussion_topics/8509514" },
     { id:"csis2470-m2sq", due:"2026-10-04", course:"CSIS 2470", txt:"Module 2 Summary Quiz (12) - HARD LOCK Sun Oct 4", pts:12,
       link:"https://slcc.instructure.com/courses/1273912/quizzes/4870171" },
-    { id:"csis2470-robot", due:"2026-10-04", course:"CSIS 2470", txt:"Module 3 Assignment #1: Robot Runaway (134) - due Sun Oct 4, window to Oct 11", pts:134,
+    { id:"csis2470-robot", due:"2026-10-04", course:"CSIS 2470", txt:"Module 3 Assignment #1: Robot Runaway (134) - SUBMITTED Oct 5 1:43am (late). Win98 theme", pts:134, done:true,
       link:"https://slcc.instructure.com/courses/1273912/assignments/19074895" },
     { id:"math-finrc", due:"2026-10-05", course:"MATH", txt:"Finance Readiness Check (10) - 7/10+ UNLOCKS the Finance module (the only gate)", pts:10,
       link:"https://slcc.instructure.com/courses/1274852/assignments/18635024" },
