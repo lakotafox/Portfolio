@@ -2,11 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>◇ CONTROL ROOM</title>
+
+    <title>CONTROL ROOM — Generative Art by Lakota Fox</title>
+    <meta name="description" content="A control room of 35 live generative-art instruments — code-driven pieces rendered in real time in your browser. Phosphor-green CRT gallery by Lakota Fox." />
+    <meta name="author" content="Lakota Fox" />
+    <meta name="theme-color" content="#05070a" />
+    <link rel="canonical" href="https://lakotafox.com/art/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://lakotafox.com/art/" />
+    <meta property="og:title" content="CONTROL ROOM — Generative Art by Lakota Fox" />
+    <meta property="og:description" content="35 live generative-art pieces rendered in real time. Click any tile to enter the viewer." />
+    <meta property="og:image" content="https://lakotafox.com/project-images/myart.png" />
+    <meta property="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+
+    <!-- IBM Plex Mono is self-hosted (see theme.css @font-face) — the bundle
+         CSS names it in --mono but never shipped it. -->
+    <link rel="preload" href="./fonts/ibm-plex-mono-latin-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="./fonts/ibm-plex-mono-latin-500.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="./fonts/ibm-plex-mono-latin-600.woff2" as="font" type="font/woff2" crossorigin />
+
     <script type="module" crossorigin src="./assets/index-Cpy2g59n.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-DrAKW2Hs.css">
+    <!-- Enhancement layer (owned by the portfolio repo, not the art-app build) —
+         theme.css must load AFTER the bundle CSS so its overrides win by source order. -->
+    <link rel="stylesheet" href="./theme.css" />
+    <script defer src="./enhance.js"></script>
   </head>
   <body>
     <div id="root"></div>
