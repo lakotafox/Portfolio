@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import ProjectDeck from './ProjectDeck';
 import DiceWordmark from './dice/DiceWordmark';
 
 const projectsData = [
@@ -210,10 +209,33 @@ const Projects = () => {
         <DiceWordmark as="h2" className="section-title" text="Selected Work" />
       </div>
 
-      {/* A tap deck instead of the drifting wall: stationary, one project in
-        * focus at a time, same gesture on desktop and phone. Tap to riffle,
-        * Open to visit. */}
-      <ProjectDeck projects={projectsData} />
+      {/* Plain grid: every project visible at once, easy to scan. */}
+      <div className="container">
+        <div className="projects-grid">
+          {projectsData.map((project) => {
+            const external = /^https?:\/\//i.test(project.link ?? '');
+            return (
+              <a
+                key={project.id}
+                href={project.link}
+                target={external ? '_blank' : '_self'}
+                rel={external ? 'noopener noreferrer' : undefined}
+                className="project-card"
+                onClick={(e) => handleCardClick(e, project)}
+              >
+                <div className="project-image">
+                  <img src={project.image} alt={project.title} loading="lazy" />
+                </div>
+                <div className="project-content">
+                  <h3 className="project-title">{project.title}</h3>
+                  <p className="project-desc">{project.description}</p>
+                  <span className="project-tag">{project.tag}</span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Project Modal */}
       {modalProject && (

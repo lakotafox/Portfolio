@@ -97,3 +97,10 @@ Grinding through the 10-course IBM AI Developer cert on Coursera. Goal is to fin
   REQUIRED" placeholder tile — the map looked broken. Basemaps live in
   `public/olliesfruitmap/js/map.js` BASEMAPS: OSM (map), Esri World
   Imagery (satellite/hybrid). Both keyless. Don't reintroduce CARTO.
+
+## Domain outage (2026-10-26)
+- lakotafox.com went to a GoDaddy parked "/lander" page: the GoDaddy registration
+  expired 2026-09-30 and wasn't renewed. Code/Netlify were fine — fallback URL
+  https://portfoliocarc.netlify.app (Netlify site id 55df9804…). If the site
+  "goes down", run `whois lakotafox.com` + `dig lakotafox.com` before touching code.
+  Correct DNS: apex A 75.2.60.5 (Netlify LB), www CNAME portfoliocarc.netlify.app.
