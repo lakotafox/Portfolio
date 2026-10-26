@@ -1,5 +1,14 @@
 import { useState } from 'react';
 
+const claudeStats = [
+  { value: '80.2B', label: 'tokens' },
+  { value: '2,900+', label: 'sessions' },
+  { value: '383K', label: 'messages' },
+  { value: '159K', label: 'agent tool calls' },
+  { value: '170', label: 'active days' },
+  { value: '24 days', label: 'longest streak' },
+];
+
 const Highlights = () => {
   const [showSkills, setShowSkills] = useState(false);
   const [showCerts, setShowCerts] = useState(false);
@@ -196,6 +205,20 @@ const Highlights = () => {
               See Projects ↓
             </button>
           </div>
+        </div>
+
+        {/* Numbers from Claude Code's /stats report. */}
+        <div className="claude-stats">
+          <h3>Claude Code by the Numbers</h3>
+          <div className="claude-stats-grid">
+            {claudeStats.map((stat) => (
+              <div className="claude-stat" key={stat.label}>
+                <span className="claude-stat-value">{stat.value}</span>
+                <span className="claude-stat-label">{stat.label}</span>
+              </div>
+            ))}
+          </div>
+          <p className="claude-stats-note">My personal usage of Claude Code, Anthropic's AI coding agent, since December 2025. Favorite model: Opus 5.5.</p>
         </div>
       </div>
 

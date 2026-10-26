@@ -1383,3 +1383,54 @@ body:not(.dark-theme) .moon-icon {
     font-size: 2.4rem;
 }
 .theme-win95 .hero-subtitle { color: #111; }
+
+/* Claude Code stats strip (Highlights) */
+.claude-stats {
+    margin-top: 2rem;
+    padding: 1.75rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.claude-stats h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+}
+
+.claude-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+}
+
+.claude-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.claude-stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.claude-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.claude-stats-note {
+    margin-top: 1.25rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+    .claude-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
