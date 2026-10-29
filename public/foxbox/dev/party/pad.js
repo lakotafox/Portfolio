@@ -940,7 +940,11 @@ window.addEventListener("resize", () => {
 });
 
 // ── Start ───────────────────────────────────────────────────────────────────────
-await netReady; // the web version first asks for (and checks) the room code
+await netReady; // the web version first asks for (and checks) the room code — and your name
+if (!me.name && globalThis.FOXBOX_NAME) {
+  me.name = String(globalThis.FOXBOX_NAME).replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, 12);
+  saveMe();
+}
 if (me.name) {
   $("me-name").textContent = me.name;
   showScreen("pad-screen");

@@ -414,8 +414,13 @@ function broadcastLobby() {
 }
 
 // ── Screens ───────────────────────────────────────────────────────────────────
+// Optional lobby screen supplied by the page (the web version's FoxBox UI):
+// globalThis.FOXBOX_LOBBY_UI = { visible(on), render(state), room({code, joinUrl}), onPick: set below }.
+const lobbyUI = () => globalThis.FOXBOX_LOBBY_UI || null;
+
 function show(id) {
   for (const s of ["lobby", "countdown", "results"]) $(s).classList.toggle("show", s === id);
+  lobbyUI()?.visible(id === "lobby");
   $("hud").classList.toggle("show", phase === "playing" || phase === "results");
 }
 
@@ -461,6 +466,18 @@ function renderLobby() {
   // ?autoplay=1: the TV Chrome is started with --autoplay-policy=no-user-gesture-required, so sound already works.
   const active = AUTOPLAY_OK || (navigator.userActivation ? navigator.userActivation.hasBeenActive : true);
   $("sound-hint").textContent = active ? "" : "Click once on this page to turn the sound on";
+  lobbyUI()?.render({
+    players: list.map((p) => ({
+      slot: p.slot + 1,
+      name: p.name,
+      color: colorSet(p.slot).base,
+      ready: p.connected,
+      tag: !p.connected ? "away" : p.drawing ? "drawing…" : undefined,
+    })),
+    games: GAMES.map((g) => ({ id: g.id, name: g.name, button: g.button, blurb: g.tagline })),
+    current: GAME.id,
+    status: n > 0 ? [`Press ${GAME.button} on a phone to start!`, autoTxt, botTxt].filter(Boolean).join("  ·  ") : null,
+  });
 }
 
 const AUTOPLAY_OK = new URLSearchParams(location.search).has("autoplay");
@@ -495,6 +512,7 @@ async function refreshInfo() {
         $("join-hint").hidden = false;
         $("join-hint").textContent = info.joinText || "";
         $("join-title").textContent = "Scan or enter the code";
+        lobbyUI()?.room({ code: info.room, joinUrl: padUrl });
         $("pad-url").hidden = true; // the long link is in the QR; people type the short code
         document.querySelector(".join-card").classList.add("web");
       }
@@ -822,9 +840,9 @@ window.__party = {
 
 /** Lobby only: switch the hub to the next (dir 1) / previous game. Reloads the TV page with
  *  ?game=<id>; the roster is saved and the phones stay connected through the server. */
-function switchGame(dir) {
+function switchGame(dir, toId) {
   if (phase !== "lobby" && phase !== "boot") return;
-  const next = GAMES[(GAMES.indexOf(GAME) + dir + GAMES.length) % GAMES.length];
+  const next = (toId && GAMES.find((g) => g.id === toId)) || GAMES[(GAMES.indexOf(GAME) + dir + GAMES.length) % GAMES.length];
   if (next === GAME) return;
   try { localStorage.setItem(GAME_KEY, next.id); } catch {}
   saveRoster();
@@ -846,6 +864,7 @@ function renderHub() {
 
 async function boot() {
   await netReady; // the web version first sets up (or rejoins) its room
+  if (lobbyUI()) lobbyUI().onPick = (id) => switchGame(1, id);
   renderHub();
   loadRoster();
   renderLobby();
