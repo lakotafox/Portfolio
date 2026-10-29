@@ -22,6 +22,7 @@
 .fbx *::after {
   box-sizing: inherit;
 }
+.fbx[hidden],
 .fbx [hidden] {
   display: none !important;
 }
