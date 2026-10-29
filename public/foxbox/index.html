@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoxBox</title>
+    <style>
+      /*
+        Sky Scramble PARTY MODE — the TV host page (served at / by tools/party-server.ts).
+        Phones are the controllers (/pad). This page runs the real game module
+        (build/gc.game.js, which appends its own full-window <canvas>) and mocks the
+        Gaming Couch platform around it: lobby, HUD (scoreboard + overhead name tags),
+        results. Designed for 1920×1080 seen from the couch.
+      */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      body {
+        background: #0b0d12;
+        color: #fff;
+        font-family: "Arial Rounded MT Bold", "Nunito", "Varela Round", system-ui, sans-serif;
+        overflow: hidden;
+        cursor: none; /* the TV never needs a mouse pointer */
+        user-select: none;
+      }
+      /* Root font scales with the window so the layout holds at any TV/window size
+         (16px at 1920 wide). */
+      html {
+        font-size: min(0.8333vw, 1.4815vh);
+      }
+
+      .screen {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: none;
+      }
+      .screen.show {
+        display: flex;
+      }
+
+      /* ── Lobby ──────────────────────────────────────────────────────────── */
+      #lobby {
+        flex-direction: column;
+        align-items: center;
+        padding: 3rem 5rem 2.5rem;
+        box-sizing: border-box;
+        background:
+          radial-gradient(60rem 30rem at 15% 105%, rgba(255, 255, 255, 0.55), transparent 60%),
+          radial-gradient(50rem 22rem at 90% 100%, rgba(255, 255, 255, 0.45), transparent 60%),
+          linear-gradient(180deg, #3d8bfd 0%, #6fb3ff 45%, #bfe3ff 100%);
+        overflow: hidden;
+      }
+      .cloud {
+        position: absolute;
+        background: #fff;
+        border-radius: 999px;
+        opacity: 0.8;
+        filter: blur(0.15rem);
+        animation: drift 40s linear infinite;
+      }
+      .cloud::before,
+      .cloud::after {
+        content: "";
+        position: absolute;
+        background: #fff;
+        border-radius: 50%;
+      }
+      .cloud::before {
+        width: 45%;
+        height: 160%;
+        left: 15%;
+        bottom: 20%;
+      }
+      .cloud::after {
+        width: 35%;
+        height: 130%;
+        right: 15%;
+        bottom: 25%;
+      }
+      @keyframes drift {
+        from {
+          transform: translateX(-30rem);
+        }
+        to {
+          transform: translateX(130rem);
+        }
+      }
+      .title {
+        position: relative;
+        margin: 0;
+        font-size: 8.5rem;
+        line-height: 1;
+        letter-spacing: 0.02em;
+        color: #fff;
+        text-shadow:
+          0 0.45rem 0 #1d5fd1,
+          0 0.9rem 1.5rem rgba(0, 40, 120, 0.35);
+        transform: rotate(-2deg);
+      }
+      .tagline {
+        position: relative;
+        margin: 1rem 0 0;
+        font-size: 2.2rem;
+        color: #0e3a86;
+      }
+      .lobby-main {
+        position: relative;
+        flex: 1;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5rem;
+        min-height: 0;
+      }
+      .join-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #fff;
+        color: #12325f;
+        border-radius: 2.5rem;
+        padding: 2.2rem 2.6rem 1.8rem;
+        box-shadow: 0 1.2rem 3rem rgba(0, 40, 120, 0.3);
+      }
+      .join-card h2 {
+        margin: 0 0 1rem;
+        font-size: 2.8rem;
+      }
+      #qr {
+        width: 26rem;
+        height: 26rem;
+        image-rendering: pixelated;
+      }
+      #pad-url {
+        margin-top: 1rem;
+        font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        font-weight: 700;
+        font-size: 2rem;
+        letter-spacing: 0.02em;
+      }
+      /* web version: the room code under the QR */
+      .join-card.web {
+        padding: 1.6rem 2.4rem 1.6rem;
+      }
+      .join-card.web h2 {
+        font-size: 2.3rem;
+        margin-bottom: 0.6rem;
+      }
+      .join-card.web #qr {
+        width: 18rem;
+        height: 18rem;
+      }
+      #join-hint {
+        margin-top: 0.6rem;
+        font-size: 1.7rem;
+        color: #33507f;
+      }
+      #room-code {
+        margin-top: 0.4rem;
+        font-size: 6.4rem;
+        letter-spacing: 0.18em;
+        line-height: 1;
+        color: #ff5a3c;
+        text-shadow: 0 0.3rem 0 #c7361d22;
+      }
+      .players-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        width: 62rem;
+      }
+      .players-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        font-size: 2.6rem;
+        color: #0e3a86;
+      }
+      .players-head .count {
+        font-size: 2.2rem;
+        opacity: 0.8;
+      }
+      #chips {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+      }
+      .chip {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        height: 7.4rem;
+        padding: 0 1.6rem;
+        border-radius: 4rem;
+        background: var(--c);
+        color: #fff;
+        font-size: 3rem;
+        text-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.35);
+        box-shadow:
+          inset 0 -0.5rem 0 var(--d),
+          0 0.6rem 1.2rem rgba(0, 30, 90, 0.25);
+        box-sizing: border-box;
+        overflow: hidden;
+        animation: pop 0.35s cubic-bezier(0.3, 1.6, 0.6, 1);
+      }
+      .chip .ball {
+        flex: none;
+        width: 4.6rem;
+        height: 4.6rem;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, var(--l), var(--c) 55%, var(--d));
+        border: 0.3rem solid rgba(255, 255, 255, 0.85);
+        position: relative;
+      }
+      .chip .ball::before,
+      .chip .ball::after {
+        content: "";
+        position: absolute;
+        top: 1.5rem;
+        width: 0.7rem;
+        height: 1.1rem;
+        border-radius: 50%;
+        background: #111;
+      }
+      .chip .ball::before {
+        left: 1.25rem;
+      }
+      .chip .ball::after {
+        right: 1.25rem;
+      }
+      /* drawn character pick: a little portrait in the player's colour ring */
+      .chip .thumb {
+        flex: none;
+        width: 4.6rem;
+        height: 6.2rem;
+        border-radius: 1.4rem;
+        background: #fff;
+        border: 0.35rem solid var(--l);
+        box-shadow: 0 0 0 0.25rem var(--d);
+        overflow: hidden;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+      }
+      .chip .thumb.round {
+        width: 4.6rem;
+        height: 4.6rem;
+        border-radius: 50%;
+        background-color: #fff;
+        background-repeat: no-repeat;
+      }
+      .chip .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 0;
+      }
+      .chip .nm {
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .chip .tag {
+        flex: none;
+        font-size: 1.6rem;
+        padding: 0.35rem 0.9rem;
+        border-radius: 1rem;
+        background: rgba(0, 0, 0, 0.25);
+      }
+      .chip .tag.drawing {
+        background: rgba(255, 255, 255, 0.92);
+        color: #12325f;
+        text-shadow: none;
+        animation: drawing-pulse 1.4s ease-in-out infinite;
+      }
+      @keyframes drawing-pulse {
+        50% {
+          opacity: 0.55;
+        }
+      }
+      .chip.off {
+        opacity: 0.45;
+        filter: grayscale(0.6);
+      }
+      .chip.empty {
+        background: rgba(255, 255, 255, 0.25);
+        border: 0.3rem dashed rgba(255, 255, 255, 0.85);
+        box-shadow: none;
+        color: rgba(14, 58, 134, 0.6);
+        text-shadow: none;
+        font-size: 2.2rem;
+        justify-content: center;
+        animation: none;
+      }
+      @keyframes pop {
+        from {
+          transform: scale(0.6);
+          opacity: 0;
+        }
+      }
+      .start-bar {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      #start-text {
+        font-size: 4.2rem;
+        color: #fff;
+        background: #ff5a3c;
+        padding: 1.2rem 3.2rem;
+        border-radius: 3rem;
+        box-shadow:
+          inset 0 -0.6rem 0 #c7361d,
+          0 0.8rem 1.6rem rgba(120, 30, 0, 0.3);
+        animation: pulse 1.4s ease-in-out infinite;
+      }
+      #start-text.idle {
+        background: #2f6fd8;
+        box-shadow:
+          inset 0 -0.6rem 0 #1d4fa8,
+          0 0.8rem 1.6rem rgba(0, 30, 90, 0.3);
+        animation: none;
+      }
+      @keyframes pulse {
+        50% {
+          transform: scale(1.04);
+        }
+      }
+      #auto-text {
+        font-size: 2.2rem;
+        color: #0e3a86;
+        min-height: 2.8rem;
+      }
+      #net-status {
+        position: absolute;
+        right: 2rem;
+        top: 1.6rem;
+        font-size: 1.6rem;
+        color: #0e3a86;
+        opacity: 0.85;
+      }
+      #net-status.bad {
+        color: #b3001b;
+        opacity: 1;
+        background: #fff;
+        padding: 0.6rem 1.2rem;
+        border-radius: 1rem;
+      }
+      #sound-hint {
+        position: absolute;
+        left: 2rem;
+        top: 1.6rem;
+        font-size: 1.6rem;
+        color: #0e3a86;
+        opacity: 0.85;
+      }
+
+      /* ── Countdown ─────────────────────────────────────────────────────── */
+      #countdown {
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background: linear-gradient(180deg, #3d8bfd 0%, #6fb3ff 45%, #bfe3ff 100%);
+        z-index: 40;
+      }
+      #cd-num {
+        font-size: 22rem;
+        line-height: 1;
+        color: #fff;
+        text-shadow:
+          0 0.8rem 0 #1d5fd1,
+          0 1.5rem 3rem rgba(0, 0, 0, 0.4);
+        animation: cd 1s ease-out infinite;
+      }
+      #cd-sub {
+        font-size: 3.4rem;
+        margin-top: 2rem;
+        text-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.6);
+      }
+      @keyframes cd {
+        from {
+          transform: scale(1.4);
+          opacity: 0.3;
+        }
+        30% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* ── Results ───────────────────────────────────────────────────────── */
+      #results {
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background: rgba(8, 14, 34, 0.72);
+        backdrop-filter: blur(0.3rem);
+        z-index: 40;
+      }
+      #res-title {
+        font-size: 7rem;
+        margin: 0;
+        text-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.5);
+      }
+      #res-title .w {
+        color: var(--c);
+        -webkit-text-stroke: 0.15rem rgba(255, 255, 255, 0.9);
+      }
+      #res-list {
+        margin-top: 2.6rem;
+        display: grid;
+        grid-template-columns: repeat(2, 36rem);
+        grid-auto-flow: column;
+        grid-template-rows: repeat(4, auto);
+        gap: 1rem 3rem;
+      }
+      .res-row {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        font-size: 2.8rem;
+        padding: 0.8rem 1.4rem;
+        border-radius: 1.6rem;
+        background: rgba(255, 255, 255, 0.08);
+        border-left: 1rem solid var(--c);
+      }
+      .res-row .pl {
+        width: 4.2rem;
+        text-align: center;
+        font-size: 2.4rem;
+        opacity: 0.9;
+      }
+      .res-row.first {
+        background: rgba(255, 215, 64, 0.22);
+      }
+      .res-row .nm {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .res-row .bot {
+        font-size: 1.5rem;
+        opacity: 0.6;
+      }
+      #res-sub {
+        margin-top: 2.6rem;
+        font-size: 2.6rem;
+        opacity: 0.85;
+      }
+
+      /* ── In-round HUD (the platform's HUD, mocked; TV-sized) ───────────── */
+      #hud {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        pointer-events: none;
+        display: none;
+      }
+      #hud.show {
+        display: block;
+      }
+      #scoreboard {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .player-box {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        width: 11.5rem;
+        padding: 0.6rem 0.9rem;
+        background: rgba(17, 20, 28, 0.78);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-left: 0.6rem solid var(--c);
+        border-radius: 0.8rem;
+        box-sizing: border-box;
+      }
+      .player-box .name {
+        font-size: 1.5rem;
+        color: var(--c);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        filter: brightness(1.25);
+      }
+      .player-box .score {
+        font-size: 1.9rem;
+        font-variant-numeric: tabular-nums;
+      }
+      .player-box .meter {
+        height: 0.5rem;
+        background: rgba(255, 255, 255, 0.14);
+        border-radius: 0.3rem;
+        overflow: hidden;
+      }
+      .player-box .meter-fill {
+        height: 100%;
+        background: var(--c);
+        transition: width 0.15s linear;
+      }
+      .player-box.eliminated {
+        opacity: 0.45;
+        border-left-color: #ef4444;
+      }
+      .player-box.eliminated .name {
+        text-decoration: line-through;
+        color: #ef4444;
+      }
+      #screen-points {
+        position: absolute;
+        inset: 0;
+      }
+      .overhead {
+        position: absolute;
+        transform: translate(-50%, -100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.2rem;
+        white-space: nowrap;
+      }
+      .overhead .oh-name {
+        font-size: 2rem;
+        color: #fff;
+        padding: 0.1rem 0.8rem;
+        border-radius: 0.8rem;
+        background: var(--c);
+        box-shadow: 0 0.15rem 0.4rem rgba(0, 0, 0, 0.35);
+        text-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.5);
+      }
+      .overhead .oh-meter {
+        width: 6rem;
+        height: 0.5rem;
+        background: rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 0.3rem;
+        overflow: hidden;
+      }
+      .overhead .oh-meter-fill {
+        height: 100%;
+        background: var(--c);
+      }
+      .offscreen {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        padding: 0.3rem 0.9rem;
+        border-radius: 1rem;
+        border: 0.3rem solid var(--c);
+        background: rgba(11, 13, 18, 0.85);
+        font-size: 1.6rem;
+        white-space: nowrap;
+      }
+      .offscreen::before {
+        content: "▲ ";
+        color: var(--c);
+      }
+      #paused {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 8rem;
+        text-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.6);
+        display: none;
+      }
+      #paused.show {
+        display: block;
+      }
+      /* the hub's game picker line under the title */
+      #game-pick {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.8rem;
+        margin: 0.5rem 0 1.4rem;
+        font-size: 1.5rem;
+        font-weight: 800;
+      }
+      #game-pick .gp-label {
+        color: rgba(255, 255, 255, 0.85);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 1.1rem;
+      }
+      #game-pick .gp-game {
+        padding: 0.35rem 1.1rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.25);
+        color: rgba(255, 255, 255, 0.75);
+      }
+      #game-pick .gp-game.on {
+        background: #fff;
+        color: #1f4fbf;
+        box-shadow: 0 0.25rem 0 rgba(14, 58, 134, 0.35);
+      }
+      #game-blurb {
+        margin: 2px 0 0;
+        font-size: 15px;
+        font-weight: 700;
+        color: rgba(14, 58, 134, 0.75);
+      }
+      #game-pick .gp-hint {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- LOBBY -->
+    <section id="lobby" class="screen show">
+      <div class="cloud" style="top: 9rem; width: 22rem; height: 6rem; animation-duration: 55s; animation-delay: -20s"></div>
+      <div class="cloud" style="top: 30rem; width: 16rem; height: 4.5rem; animation-duration: 70s; animation-delay: -50s"></div>
+      <div class="cloud" style="top: 52rem; width: 26rem; height: 7rem; animation-duration: 62s; animation-delay: -5s"></div>
+      <div id="sound-hint"></div>
+      <div id="net-status">Connecting…</div>
+      <h1 class="title" id="hub-title">FOXBOX</h1>
+      <p class="tagline" id="tagline"></p>
+      <div id="game-pick"></div>
+      <p id="game-blurb"></p>
+      <div class="lobby-main">
+        <div class="join-card">
+          <h2 id="join-title">Scan to play!</h2>
+          <canvas id="qr" width="400" height="400"></canvas>
+          <div id="pad-url">…</div>
+          <div id="join-hint" hidden></div>
+          <div id="room-code" hidden></div>
+        </div>
+        <div class="players-panel">
+          <div class="players-head"><span>Players</span><span class="count" id="count">0 / 8</span></div>
+          <div id="chips"></div>
+        </div>
+      </div>
+      <div class="start-bar">
+        <div id="start-text" class="idle">Scan the code with your phone to join</div>
+        <div id="auto-text"></div>
+      </div>
+    </section>
+
+    <!-- COUNTDOWN -->
+    <section id="countdown" class="screen">
+      <div id="cd-num">3</div>
+      <div id="cd-sub">Get ready!</div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results" class="screen" data-test="results">
+      <h1 id="res-title"></h1>
+      <div id="res-list"></div>
+      <div id="res-sub"></div>
+    </section>
+
+    <!-- In-round HUD (mock of the Gaming Couch HUD) -->
+    <div id="hud">
+      <div id="screen-points"></div>
+      <div id="scoreboard"></div>
+      <div id="paused">Paused</div>
+    </div>
+
+    <script>globalThis.FOXBOX_NET = "p2p"; globalThis.FOXBOX_ROLE = "host";</script>
+    <script type="module" src="./dev/party/host.js"></script>
+  </body>
+</html>

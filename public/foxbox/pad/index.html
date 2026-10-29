@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#14213d" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>FoxBox — Controller</title>
+    <style>
+      /* Sky Scramble phone controller (served at /pad by tools/party-server.ts). */
+      :root {
+        --c: #8a94a6; /* player colour, set by pad.js once the TV assigns one */
+        --l: #c3cad6;
+        --d: #4d5566;
+      }
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
+      }
+      body {
+        position: fixed;
+        inset: 0;
+        font-family: "Arial Rounded MT Bold", ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        color: #fff;
+        background: #14213d;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-text-size-adjust: 100%;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        border: 0;
+        background: none;
+        padding: 0;
+        cursor: pointer;
+      }
+      .screen {
+        position: absolute;
+        inset: 0;
+        display: none;
+        padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+      }
+      .screen.show {
+        display: flex;
+      }
+
+      /* ── Name screen ──────────────────────────────────────────────────── */
+      #name-screen {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        background: linear-gradient(180deg, #3d8bfd 0%, #8cc4ff 100%);
+        text-align: center;
+      }
+      #name-screen h1 {
+        margin: 0;
+        font-size: clamp(36px, 11vw, 64px);
+        line-height: 1;
+        text-shadow: 0 4px 0 #1d5fd1;
+        transform: rotate(-2deg);
+      }
+      #name-screen p {
+        margin: 0;
+        font-size: 22px;
+        color: #0e3a86;
+      }
+      #name-form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        width: min(340px, 90%);
+      }
+      #name-input {
+        width: 100%;
+        font: inherit;
+        font-size: 28px; /* ≥16px so iOS doesn't zoom on focus */
+        text-align: center;
+        padding: 14px 12px;
+        border-radius: 18px;
+        border: 4px solid #fff;
+        background: rgba(255, 255, 255, 0.92);
+        color: #12325f;
+        outline: none;
+        -webkit-user-select: text;
+        user-select: text;
+      }
+      #name-go {
+        font-size: 30px;
+        padding: 16px;
+        border-radius: 22px;
+        background: #ff5a3c;
+        box-shadow: inset 0 -6px 0 #c7361d;
+      }
+      #name-go:active {
+        transform: translateY(3px);
+        box-shadow: inset 0 -3px 0 #c7361d;
+      }
+      @media (orientation: landscape) and (max-height: 500px) {
+        #name-screen {
+          gap: 10px;
+        }
+        #name-screen h1 {
+          font-size: 40px;
+        }
+        #name-screen p {
+          font-size: 18px;
+        }
+        #name-input {
+          font-size: 22px;
+          padding: 8px;
+        }
+        #name-go {
+          font-size: 22px;
+          padding: 10px;
+        }
+      }
+
+      /* ── Character picker ─────────────────────────────────────────────── */
+      #char-screen {
+        flex-direction: column;
+        gap: 12px;
+        background: linear-gradient(180deg, #3d8bfd 0%, #8cc4ff 100%);
+        text-align: center;
+      }
+      #char-screen h2 {
+        margin: 4px 0 0;
+        font-size: clamp(30px, 9vw, 44px);
+        line-height: 1.05;
+        text-shadow: 0 3px 0 #1d5fd1;
+      }
+      #char-screen .sub {
+        margin: 0;
+        font-size: 18px;
+        color: #0e3a86;
+      }
+      #char-grid {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        touch-action: pan-y;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-auto-rows: min-content;
+        gap: 14px;
+        padding: 6px 4px 12px;
+      }
+      .char-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 8px 12px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.92);
+        color: #12325f;
+        font-size: 22px;
+        border: 5px solid transparent;
+        box-shadow: 0 6px 0 rgba(14, 58, 134, 0.35);
+        touch-action: pan-y;
+      }
+      .char-card.sel {
+        border-color: #ff5a3c;
+        box-shadow: 0 6px 0 #c7361d;
+      }
+      .char-card:active {
+        transform: translateY(3px);
+      }
+      .char-card .pic {
+        width: 100%;
+        height: 210px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+      .char-card .pic img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+      .char-card .pic .ballpic {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, var(--l), var(--c) 55%, var(--d));
+        border: 5px solid #fff;
+        box-shadow: 0 0 0 3px var(--d);
+        position: relative;
+      }
+      .char-card .pic .ballpic::before,
+      .char-card .pic .ballpic::after {
+        content: "";
+        position: absolute;
+        top: 38px;
+        width: 16px;
+        height: 24px;
+        border-radius: 50%;
+        background: #111;
+      }
+      .char-card .pic .ballpic::before {
+        left: 34px;
+      }
+      .char-card .pic .ballpic::after {
+        right: 34px;
+      }
+      .char-card .pic .ballpic.photo {
+        width: 150px;
+        height: 150px;
+        background-color: #fff;
+        background-repeat: no-repeat;
+      }
+      .char-card .pic .ballpic.photo::before,
+      .char-card .pic .ballpic.photo::after {
+        content: none;
+      }
+      .char-card .nm {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .char-card.selfie .pic .cam {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 64px;
+        background: radial-gradient(circle at 35% 30%, #fff3c4, #ffc93d 60%, #e09a00);
+        border: 5px solid #fff;
+        box-shadow: 0 0 0 3px #b07800;
+      }
+      .char-card.drawtile .pic .cam {
+        background: radial-gradient(circle at 35% 30%, #e6f7ff, #7fd0ff 60%, #2a8fd6);
+        box-shadow: 0 0 0 3px #1d6fb0;
+      }
+      .char-card.drawtile .nm {
+        white-space: normal;
+        line-height: 1.05;
+      }
+      #selfie-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* ── Selfie cropper ───────────────────────────────────────────────── */
+      #crop-screen {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        background: linear-gradient(180deg, #23345e 0%, #0b1020 100%);
+        text-align: center;
+      }
+      #crop-screen h2 {
+        margin: 4px 0 0;
+        font-size: clamp(28px, 8vw, 40px);
+        line-height: 1.05;
+      }
+      #crop-screen .sub {
+        margin: 0;
+        font-size: 17px;
+        opacity: 0.85;
+      }
+      #crop-stage {
+        position: relative;
+        width: min(100%, 56vh);
+        aspect-ratio: 1;
+        flex: none;
+        touch-action: none;
+        border-radius: 24px;
+        overflow: hidden;
+        background: #000;
+      }
+      #crop-canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        touch-action: none;
+      }
+      #crop-zoom {
+        width: min(100%, 56vh);
+        height: 40px;
+        accent-color: #ffc93d;
+      }
+      #crop-screen .row {
+        display: flex;
+        gap: 12px;
+        width: min(100%, 56vh);
+      }
+      #crop-screen .row button {
+        flex: 1;
+        font-size: 21px;
+        padding: 14px 8px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.16);
+      }
+      #crop-screen .row #crop-use {
+        flex: 1.6;
+        background: #ff5a3c;
+        box-shadow: inset 0 -5px 0 #c7361d;
+      }
+      #crop-screen .row button:disabled {
+        opacity: 0.5;
+      }
+      #crop-note {
+        min-height: 1.2em;
+        font-size: 17px;
+        color: #ffd27a;
+      }
+      @media (orientation: landscape) and (max-height: 500px) {
+        #crop-screen {
+          display: none;
+          flex-flow: row wrap;
+          justify-content: center;
+          align-content: center;
+          gap: 8px 16px;
+        }
+        #crop-screen.show {
+          display: flex;
+        }
+        #crop-screen h2,
+        #crop-screen .sub {
+          display: none;
+        }
+        #crop-stage {
+          width: auto;
+          height: calc(100vh - 40px);
+        }
+        #crop-zoom,
+        #crop-screen .row {
+          width: 100%;
+        }
+      }
+      #crop-side {
+        display: contents;
+      }
+      @media (orientation: landscape) and (max-height: 500px) {
+        #crop-side {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          width: 40%;
+        }
+      }
+      #char-note {
+        font-size: 16px;
+        color: #0e3a86;
+        min-height: 1em;
+      }
+      #me-ball.roundpic {
+        background-color: #fff;
+        background-repeat: no-repeat;
+        border-color: var(--l);
+      }
+      #me-ball.pic {
+        border-radius: 10px;
+        background: #fff center top / cover no-repeat;
+        border-color: var(--l);
+      }
+      #game-name {
+        font-size: 14px;
+        font-weight: 700;
+        opacity: 0.75;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-top: 4px;
+      }
+      #status #switch-game,
+      #status #change-char {
+        margin-top: 10px;
+        font-size: 18px;
+        padding: 9px 16px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.18);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+      }
+      @media (orientation: landscape) {
+        #status #change-char {
+          margin-top: 0;
+          font-size: 15px;
+          padding: 5px 10px;
+        }
+        .char-card .pic {
+          height: 140px;
+        }
+      }
+
+      /* ── Draw your own ─────────────────────────────────────────────────── */
+      #draw-screen {
+        background: linear-gradient(180deg, #3d8bfd 0%, #8cc4ff 100%);
+        color: #12325f;
+        touch-action: none;
+      }
+      #draw-screen.show {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        grid-template-areas: "top" "stage" "panel";
+        gap: 8px;
+      }
+      #draw-screen.wide.show {
+        grid-template-columns: var(--sq, 50%) minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+        grid-template-areas: "stage top" "stage panel";
+        column-gap: 12px;
+        row-gap: 6px;
+      }
+      #draw-screen button {
+        touch-action: manipulation;
+        font-weight: normal;
+      }
+      #draw-screen button:disabled {
+        opacity: 0.4;
+      }
+      #draw-top {
+        grid-area: top;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 48px;
+      }
+      #draw-title {
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+        font-size: clamp(19px, 5.4vw, 26px);
+        color: #fff;
+        text-shadow: 0 2px 0 #1d5fd1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .dbtn {
+        flex: none;
+        height: 46px;
+        padding: 0 14px;
+        border-radius: 16px;
+        font-size: 19px;
+        background: rgba(255, 255, 255, 0.92);
+        color: #12325f !important;
+        box-shadow: 0 4px 0 rgba(14, 58, 134, 0.35);
+      }
+      .dbtn:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 rgba(14, 58, 134, 0.35);
+      }
+      @media (max-width: 479px) {
+        #draw-title {
+          visibility: hidden; /* no room next to Back / Undo / Clear */
+        }
+      }
+      #draw-confirm {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        padding-left: 10px;
+        border-radius: 16px;
+        background: #fff4e0;
+        font-size: 19px;
+        box-shadow: 0 0 0 3px #ff5a3c;
+      }
+      #draw-confirm[hidden] {
+        display: none;
+      }
+      #draw-confirm span {
+        flex: 1;
+        min-width: 0;
+      }
+      #draw-clear-yes {
+        background: #ff5a3c;
+        color: #fff !important;
+        box-shadow: inset 0 -4px 0 #c7361d;
+      }
+      #draw-stage {
+        grid-area: stage;
+        min-height: 0;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #draw-board {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        border-radius: 18px;
+        overflow: hidden;
+        touch-action: none;
+        background-color: #fff;
+        background-image:
+          linear-gradient(45deg, #e8edf4 25%, transparent 25%, transparent 75%, #e8edf4 75%),
+          linear-gradient(45deg, #e8edf4 25%, transparent 25%, transparent 75%, #e8edf4 75%);
+        background-size: 24px 24px;
+        background-position: 0 0, 12px 12px;
+        box-shadow: 0 0 0 4px #fff, 0 6px 0 4px rgba(14, 58, 134, 0.35);
+      }
+      #draw-board canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        touch-action: none;
+      }
+      #draw-guide {
+        pointer-events: none;
+      }
+      #draw-screen[data-tool="fill"] #draw-board,
+      #draw-screen[data-tool="ball"] #draw-board {
+        cursor: pointer;
+      }
+      #draw-panel {
+        grid-area: panel;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-height: 0;
+      }
+      .seg {
+        display: flex;
+        gap: 6px;
+      }
+      .seg button {
+        flex: 1;
+        min-width: 0;
+        height: 54px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.55);
+        border: 3px solid transparent;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        font-size: 24px;
+        color: #12325f !important;
+      }
+      .seg button span {
+        font-size: 14px;
+        margin-top: 3px;
+      }
+      .seg button[aria-pressed="true"] {
+        background: #fff;
+        border-color: #ff5a3c;
+        box-shadow: 0 3px 0 #c7361d;
+      }
+      #draw-colors {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        grid-auto-rows: 44px;
+        gap: 6px;
+      }
+      #draw-colors .sw {
+        border-radius: 14px;
+        border: 3px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 0 0 1px rgba(14, 58, 134, 0.25);
+      }
+      #draw-colors .sw[aria-pressed="true"] {
+        border: 4px solid #fff;
+        box-shadow: 0 0 0 4px #12325f;
+        transform: scale(1.06);
+      }
+      #draw-row {
+        display: flex;
+        gap: 10px;
+      }
+      #draw-sizes {
+        flex: 1;
+      }
+      #draw-row2 {
+        display: flex;
+        gap: 10px;
+      }
+      #draw-preview {
+        flex: 1.5;
+        min-width: 0;
+        height: 76px;
+        border-radius: 16px;
+        box-shadow: inset 0 0 0 2px rgba(14, 58, 134, 0.18);
+        background: #8fc4f5;
+      }
+      #draw-paper-seg {
+        flex: 1;
+      }
+      #draw-paper-seg button {
+        height: 76px;
+      }
+      .seg button:disabled {
+        opacity: 0.4;
+      }
+      #draw-body {
+        flex: 1.5;
+      }
+      #draw-sizes button i {
+        display: block;
+        border-radius: 50%;
+        background: var(--dot, #1d1b2e);
+        box-shadow: 0 0 0 2px rgba(14, 58, 134, 0.35);
+      }
+      #draw-sizes button[data-size="0"] i {
+        width: 8px;
+        height: 8px;
+      }
+      #draw-sizes button[data-size="1"] i {
+        width: 16px;
+        height: 16px;
+      }
+      #draw-sizes button[data-size="2"] i {
+        width: 28px;
+        height: 28px;
+      }
+      #draw-done {
+        height: 58px;
+        flex: none;
+        border-radius: 20px;
+        font-size: 26px;
+        background: #ff5a3c;
+        color: #fff;
+        box-shadow: inset 0 -6px 0 #c7361d;
+      }
+      #draw-done:active {
+        transform: translateY(3px);
+        box-shadow: inset 0 -3px 0 #c7361d;
+      }
+      #draw-note {
+        min-height: 1.2em;
+        font-size: 16px;
+        text-align: center;
+        color: #0e3a86;
+      }
+      /* short portrait phones: tighter panel so the canvas stays big */
+      @media (orientation: portrait) and (max-height: 700px) {
+        .seg button {
+          height: 46px;
+          font-size: 21px;
+        }
+        .seg button span {
+          font-size: 12px;
+        }
+        #draw-colors {
+          grid-auto-rows: 38px;
+        }
+        #draw-done {
+          height: 50px;
+          font-size: 22px;
+        }
+      }
+      /* landscape: the canvas on the left, everything else on the right */
+      #draw-screen.wide #draw-top {
+        min-height: 42px;
+      }
+      #draw-screen.wide .dbtn {
+        height: 40px;
+        font-size: 17px;
+        padding: 0 12px;
+      }
+      #draw-screen.wide #draw-title {
+        font-size: 20px;
+      }
+      #draw-screen.wide #draw-panel {
+        gap: 6px;
+        justify-content: space-between;
+      }
+      #draw-screen.wide .seg button {
+        height: 46px;
+        font-size: 20px;
+      }
+      #draw-screen.wide .seg button span {
+        font-size: 12px;
+      }
+      #draw-screen.wide #draw-colors {
+        grid-auto-rows: 36px;
+        gap: 5px;
+      }
+      #draw-screen.wide #draw-done {
+        height: 48px;
+        font-size: 22px;
+      }
+      #draw-screen.wide #draw-note {
+        font-size: 14px;
+        min-height: 1.1em;
+      }
+
+      /* ── Controller ───────────────────────────────────────────────────── */
+      #pad-screen {
+        flex-direction: column;
+        gap: 10px;
+        background:
+          radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--c) 55%, transparent), transparent 70%),
+          linear-gradient(180deg, color-mix(in srgb, var(--d) 70%, #0b1020) 0%, #0b1020 100%);
+        touch-action: none;
+      }
+      @supports not (background: color-mix(in srgb, red 50%, blue)) {
+        #pad-screen {
+          background: linear-gradient(180deg, var(--d) 0%, #0b1020 75%);
+        }
+        #status {
+          border-color: var(--c);
+        }
+      }
+      #top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 44px;
+      }
+      #me-ball {
+        flex: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, var(--l), var(--c) 55%, var(--d));
+        border: 3px solid #fff;
+      }
+      #me-name {
+        flex: 1;
+        min-width: 0;
+        font-size: 26px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      #edit-name {
+        flex: none;
+        font-size: 15px;
+        padding: 8px 12px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.14);
+      }
+      #conn {
+        flex: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        padding: 6px 10px;
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.3);
+      }
+      #conn::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #f5b400;
+      }
+      #conn.ok::before {
+        background: #35d07f;
+      }
+      #conn.bad::before {
+        background: #ff4d4d;
+      }
+      #status {
+        text-align: center;
+        padding: 12px 10px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 3px solid color-mix(in srgb, var(--c) 70%, #fff);
+      }
+      #status-big {
+        font-size: clamp(28px, 9vw, 44px);
+        line-height: 1.1;
+      }
+      #status-small {
+        margin-top: 6px;
+        font-size: clamp(16px, 4.6vw, 21px);
+        opacity: 0.9;
+        min-height: 1.2em;
+      }
+      #status button {
+        margin-top: 10px;
+        font-size: 20px;
+        padding: 10px 18px;
+        border-radius: 14px;
+        background: #ff5a3c;
+      }
+      #controls {
+        flex: 1;
+        display: flex;
+        gap: 12px;
+        min-height: 0;
+      }
+      #steer {
+        position: relative;
+        flex: 1.15;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 3px solid rgba(255, 255, 255, 0.18);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        touch-action: none;
+        overflow: hidden;
+      }
+      #steer.active {
+        background: rgba(255, 255, 255, 0.14);
+      }
+      #steer .half {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: clamp(30px, 10vw, 56px);
+        opacity: 0.25;
+        transition: opacity 0.08s;
+      }
+      #steer .half.l {
+        left: 0;
+        justify-content: flex-start;
+        padding-left: 6%;
+      }
+      #steer .half.r {
+        right: 0;
+        justify-content: flex-end;
+        padding-right: 6%;
+      }
+      #steer .half.on {
+        opacity: 0.95;
+        color: var(--l);
+      }
+      #track {
+        position: relative;
+        /* knob centre travels the whole track, so keep the knob inside the panel */
+        width: calc(100% - clamp(58px, 16vw, 84px) - 28px);
+        height: 22px;
+        border-radius: 11px;
+        background: rgba(0, 0, 0, 0.35);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+      }
+      #knob {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: clamp(58px, 16vw, 84px);
+        height: clamp(58px, 16vw, 84px);
+        margin: calc(clamp(58px, 16vw, 84px) / -2) 0 0 calc(clamp(58px, 16vw, 84px) / -2);
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, var(--l), var(--c) 60%, var(--d));
+        border: 4px solid #fff;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+        transition: transform 0.12s ease-out;
+        will-change: transform;
+      }
+      /* 2D stick (Snowball Sumo): no left/right halves, the knob roams the whole pad */
+      #steer.xy .half {
+        display: none;
+      }
+      #steer.xy #track {
+        background: transparent;
+        box-shadow: none;
+      }
+      #steer.xy::after {
+        content: "";
+        position: absolute;
+        width: 64%;
+        aspect-ratio: 1;
+        max-height: 70%;
+        border-radius: 50%;
+        border: 3px dashed rgba(255, 255, 255, 0.25);
+        pointer-events: none;
+      }
+      #steer.active #knob {
+        transition: none;
+      }
+      #steer-label {
+        position: absolute;
+        bottom: 12px;
+        font-size: 16px;
+        opacity: 0.6;
+        pointer-events: none;
+      }
+      #bonk-wrap {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 0;
+      }
+      #bonk {
+        width: min(100%, 260px); /* fallback for browsers without container units */
+        width: min(100%, 100cqh, 320px);
+        aspect-ratio: 1;
+        max-height: 100%;
+        border-radius: 50%;
+        background: radial-gradient(circle at 40% 30%, var(--l), var(--c) 55%, var(--d));
+        border: 6px solid #fff;
+        box-shadow:
+          inset 0 -12px 0 rgba(0, 0, 0, 0.25),
+          0 10px 24px rgba(0, 0, 0, 0.45);
+        font-size: clamp(30px, 10vw, 52px);
+        letter-spacing: 0.04em;
+        text-shadow: 0 3px 4px rgba(0, 0, 0, 0.45);
+        touch-action: none;
+        transition: transform 0.05s;
+      }
+      #bonk.down {
+        transform: scale(0.92);
+        box-shadow:
+          inset 0 6px 14px rgba(0, 0, 0, 0.35),
+          0 4px 10px rgba(0, 0, 0, 0.45);
+        filter: brightness(1.15);
+      }
+      #bonk-wrap {
+        container-type: size;
+      }
+
+      /* Portrait: status card fills the top, controls sit low where thumbs are. */
+      @media (orientation: portrait) {
+        #status {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+        #controls {
+          flex: none;
+          height: 56%;
+        }
+        #steer {
+          flex: 1;
+        }
+      }
+
+      /* Landscape phones: slimmer header/status, controls get the height. */
+      @media (orientation: landscape) {
+        #pad-screen {
+          gap: 8px;
+        }
+        #top {
+          min-height: 36px;
+        }
+        #me-ball {
+          width: 30px;
+          height: 30px;
+        }
+        #me-name {
+          font-size: 22px;
+        }
+        #status {
+          display: flex;
+          align-items: baseline;
+          justify-content: center;
+          gap: 14px;
+          padding: 6px 12px;
+          border-radius: 16px;
+        }
+        #status-big {
+          font-size: clamp(22px, 4.5vh + 1vw, 34px);
+        }
+        #status-small {
+          margin-top: 0;
+          font-size: 17px;
+        }
+        #steer .half {
+          font-size: 44px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section id="name-screen" class="screen">
+      <h1>FoxBox</h1>
+      <p>What's your name?</p>
+      <form id="name-form" autocomplete="off">
+        <input id="name-input" data-test="name-input" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="go" placeholder="Your name" />
+        <button id="name-go" data-test="name-submit" type="submit">Let's play!</button>
+      </form>
+    </section>
+
+    <section id="char-screen" class="screen">
+      <h2>Pick your player!</h2>
+      <p class="sub">Tap one to bounce as it</p>
+      <div id="char-grid"></div>
+      <div id="char-note"></div>
+      <input id="selfie-input" type="file" accept="image/*" capture="user" tabindex="-1" />
+    </section>
+
+    <section id="crop-screen" class="screen">
+      <h2>Line up your face</h2>
+      <p class="sub">Drag to move · pinch or slide to zoom</p>
+      <div id="crop-stage"><canvas id="crop-canvas"></canvas></div>
+      <div id="crop-side">
+        <input id="crop-zoom" type="range" min="1" max="4" step="0.01" value="1" aria-label="Zoom" />
+        <div class="row">
+          <button id="crop-back" type="button">Back</button>
+          <button id="crop-retake" type="button">Retake</button>
+          <button id="crop-use" type="button">Use this</button>
+        </div>
+        <div id="crop-note"></div>
+      </div>
+    </section>
+
+    <section id="draw-screen" class="screen">
+      <div id="draw-top">
+        <button id="draw-back" class="dbtn" type="button">◀ Back</button>
+        <div id="draw-title">Draw your player</div>
+        <button id="draw-undo" class="dbtn" type="button" aria-label="Undo">↶ Undo</button>
+        <button id="draw-clear" class="dbtn" type="button">Clear</button>
+        <div id="draw-confirm" hidden>
+          <span>Clear it all?</span>
+          <button id="draw-clear-yes" class="dbtn" type="button">Yes, clear</button>
+          <button id="draw-clear-no" class="dbtn" type="button">No</button>
+        </div>
+      </div>
+      <div id="draw-stage">
+        <div id="draw-board">
+          <canvas id="draw-art"></canvas>
+          <canvas id="draw-guide"></canvas>
+        </div>
+      </div>
+      <div id="draw-panel">
+        <div id="draw-tools" class="seg">
+          <button type="button" data-tool="pen">✏️<span>Pen</span></button>
+          <button type="button" data-tool="crayon">🖍️<span>Crayon</span></button>
+          <button type="button" data-tool="fill">🪣<span>Fill</span></button>
+          <button type="button" data-tool="eraser">🧽<span>Eraser</span></button>
+        </div>
+        <div id="draw-colors"></div>
+        <div id="draw-row">
+          <div id="draw-sizes" class="seg">
+            <button type="button" data-size="0" aria-label="Small"><i></i><span>S</span></button>
+            <button type="button" data-size="1" aria-label="Medium"><i></i><span>M</span></button>
+            <button type="button" data-size="2" aria-label="Large"><i></i><span>L</span></button>
+          </div>
+          <div id="draw-body" class="seg">
+            <button type="button" data-body="box">🧍<span>Whole body</span></button>
+            <button type="button" data-body="ball">⚽<span>Ball</span></button>
+          </div>
+        </div>
+        <div id="draw-row2">
+          <canvas id="draw-preview" aria-label="Preview of your player in the game"></canvas>
+          <div class="seg" id="draw-paper-seg">
+            <button type="button" id="draw-paper" aria-pressed="true">📄<span>White paper</span></button>
+          </div>
+        </div>
+        <button id="draw-done" type="button">Done ✓</button>
+        <div id="draw-note"></div>
+      </div>
+    </section>
+
+    <section id="pad-screen" class="screen">
+      <div id="top">
+        <div id="me-ball"></div>
+        <div id="me-name"></div>
+        <button id="edit-name" type="button">Name</button>
+        <div id="conn">…</div>
+      </div>
+      <div id="status">
+        <div id="status-big">Connecting…</div>
+        <div id="status-small"></div>
+        <div id="game-name"></div>
+        <div><button id="change-char" type="button" hidden>Change character</button> <button id="switch-game" data-test="switch-game" type="button" hidden>🎮 Switch game</button></div>
+      </div>
+      <div id="controls">
+        <div id="steer" data-test="stick">
+          <div class="half l">◀</div>
+          <div class="half r">▶</div>
+          <div id="track"><div id="knob"></div></div>
+          <div id="steer-label">slide to steer</div>
+        </div>
+        <div id="bonk-wrap"><button id="bonk" data-test="action-button" type="button">BONK</button></div>
+      </div>
+    </section>
+
+    <script>globalThis.FOXBOX_NET = "p2p"; globalThis.FOXBOX_ROLE = "pad";</script>
+    <script type="module" src="../dev/party/pad.js"></script>
+  </body>
+</html>
