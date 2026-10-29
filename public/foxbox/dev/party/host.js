@@ -44,6 +44,7 @@ const GAMES = [
   },
   {
     id: "snowball", name: "Snowball Sumo", gameId: "snowballsumo", button: "SHOVE", stick: "xy",
+    soloBots: 3,
     module: "../../games/snowball/gc.game.js", props: "../../games/snowball/gc.properties.json",
     tagline: "Roll and grow · SHOVE your friends off · last snowball on the island wins!",
   },
@@ -60,8 +61,10 @@ let game = null;
 // ── Tuning ─────────────────────────────────────────────────────────────────────
 const MAX_PLAYERS = 8;
 const MIN_ROUND_PLAYERS = 0; // bots fill up to this many (0: people only, no bots)…
-const SOLO_BOTS = 0; // …except a lone player, who gets this many bots (0 = off; 3 for solo practice)
-const roundTarget = (humanCount) => (humanCount === 1 ? 1 + SOLO_BOTS : MIN_ROUND_PLAYERS);
+// …except a lone player, who gets bots to play against: per game (GAME.soloBots), else SOLO_BOTS.
+// Snowball Sumo needs rivals to push off; Sky Scramble can be climbed alone.
+const SOLO_BOTS = 0;
+const roundTarget = (humanCount) => (humanCount === 1 ? 1 + (GAME.soloBots ?? SOLO_BOTS) : MIN_ROUND_PLAYERS);
 const AUTO_START_MS = 20_000;
 const DRAW_HOLD_MS = 60_000; // auto-start waits at most this much longer while someone is drawing
 const COUNTDOWN_MS = 3_000;
