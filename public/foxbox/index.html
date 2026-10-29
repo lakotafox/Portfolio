@@ -103,8 +103,8 @@
       }
       .tagline {
         position: relative;
-        margin: 1rem 0 0;
-        font-size: 2.2rem;
+        margin: 0.6rem 0 0;
+        font-size: 1.8rem;
         color: #0e3a86;
       }
       .lobby-main {
@@ -588,7 +588,7 @@
         justify-content: center;
         align-items: center;
         gap: 0.8rem;
-        margin: 0.5rem 0 1.4rem;
+        margin: 0.4rem 0 0.2rem;
         font-size: 1.5rem;
         font-weight: 800;
       }
@@ -610,8 +610,9 @@
         box-shadow: 0 0.25rem 0 rgba(14, 58, 134, 0.35);
       }
       #game-blurb {
-        margin: 2px 0 0;
-        font-size: 15px;
+        position: relative;
+        margin: 0 0 0.9rem;
+        font-size: 1.15rem;
         font-weight: 700;
         color: rgba(14, 58, 134, 0.75);
       }
@@ -673,7 +674,7 @@
       <div id="paused">Paused</div>
     </div>
 
-    <script>globalThis.FOXBOX_NET = "p2p"; globalThis.FOXBOX_ROLE = "host";</script>
+    <script>if (!location.pathname.endsWith("/")) location.replace(location.pathname + "/" + location.search + location.hash); globalThis.FOXBOX_NET = "p2p"; globalThis.FOXBOX_ROLE = "host";</script>
     <script type="module" src="./dev/party/host.js"></script>
   </body>
 </html>

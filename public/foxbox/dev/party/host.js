@@ -39,7 +39,7 @@ const HUB_TAGLINE = "Party games on the big screen · your phone is the controll
 const GAMES = [
   {
     id: "sky", name: "Sky Scramble", gameId: "skyscramble", button: "BONK", stick: "x",
-    module: "../../build/gc.game.js", props: "../../build/gc.properties.json",
+    module: "../../sky/gc.game.js", props: "../../sky/gc.properties.json",
     tagline: "Bounce up the clouds · BONK your friends · last one up wins!",
   },
   {

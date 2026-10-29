@@ -1088,7 +1088,7 @@
       </div>
     </section>
 
-    <script>globalThis.FOXBOX_NET = "p2p"; globalThis.FOXBOX_ROLE = "pad";</script>
+    <script>if (!location.pathname.endsWith("/")) location.replace(location.pathname + "/" + location.search + location.hash); globalThis.FOXBOX_NET = "p2p"; globalThis.FOXBOX_ROLE = "pad";</script>
     <script type="module" src="../dev/party/pad.js"></script>
   </body>
 </html>
