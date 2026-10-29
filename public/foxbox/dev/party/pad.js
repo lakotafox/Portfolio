@@ -30,6 +30,7 @@
 
 import { createDrawPad } from "./draw.js";
 import { isP2P, ready as netReady, openSocket, api } from "./net.js";
+import { createRowPad } from "./row-pad.js";
 
 const STORE_KEY = "sky-scramble-pad";
 const DRAW_KEY = "sky-scramble-pad-drawing"; // the drawing in progress / last drawing (PNG data URL + settings)
@@ -716,6 +717,10 @@ function applyMode(g) {
   if (!g || (g.id === mode.id && g.button === mode.button && g.stick === mode.stick && g.count === mode.count)) return;
   mode = { ...mode, ...g };
   $("bonk").textContent = mode.button;
+  const rowing = mode.stick === "motion";
+  steer.hidden = rowing;
+  $("bonk-wrap").hidden = rowing;
+  row.show(rowing);
   steer.classList.toggle("xy", mode.stick === "xy");
   $("steer-label").textContent = mode.stick === "xy" ? "drag to roll" : "slide to steer";
   setXY(0, 0);
@@ -762,7 +767,7 @@ function renderStatus() {
       case "lobby": {
         b = "You're in!";
         const left = st.autoIn != null ? Math.max(0, st.autoIn - Math.floor((Date.now() - st.at) / 1000)) : null;
-        s = `Press ${mode.button} to start` + (st.hold === "drawing" ? " · someone's still drawing" : left != null ? ` · auto-start in ${left}s` : "");
+        s = (mode.stick === "motion" ? "Paddle to start" : `Press ${mode.button} to start`) + (st.hold === "drawing" ? " · someone's still drawing" : left != null ? ` · auto-start in ${left}s` : "");
         break;
       }
       case "countdown":
@@ -771,7 +776,9 @@ function renderStatus() {
         break;
       case "playing":
         b = "GO GO GO!";
-        s = mode.stick === "xy" ? "Drag to roll · SHOVE to bump" : "Steer ◀ ▶ · BONK = dive on heads";
+        s = mode.stick === "motion"
+          ? "Paddle left and right · bump your friends into the rocks"
+          : mode.stick === "xy" ? "Drag to roll · SHOVE to bump" : "Steer ◀ ▶ · BONK = dive on heads";
         break;
       case "out":
         b = "Oops, you're out!";
@@ -810,12 +817,13 @@ setInterval(() => {
 let x = 0;
 let y = 0; // only used by 2D-stick games (down = +1)
 let b = 0;
-let sent = { x: null, y: null, b: null };
+let c = 0; // the second button (b1): Row Row Rumble's right paddle
+let sent = { x: null, y: null, b: null, c: null };
 
 function flush() {
-  if (sent.x === x && sent.y === y && sent.b === b) return;
-  if (sendRaw({ t: "in", x, y, b })) {
-    sent = { x, y, b };
+  if (sent.x === x && sent.y === y && sent.b === b && sent.c === c) return;
+  if (sendRaw({ t: "in", x, y, b, c })) {
+    sent = { x, y, b, c };
     window.__foxboxLastInputAt = Date.now();
   }
 }
@@ -917,12 +925,35 @@ bonk.addEventListener("pointerup", bonkEnd);
 bonk.addEventListener("pointercancel", bonkEnd);
 bonk.addEventListener("lostpointercapture", bonkEnd);
 
+// Row Row Rumble: the phone (or two paddle buttons) drives b and c directly.
+const row = createRowPad(
+  {
+    root: $("row"), motion: $("row-motion"), buttons: $("row-buttons"), boat: $("row-boat"),
+    leftN: $("row-left-n"), rightN: $("row-right-n"), hint: $("row-hint"), meter: $("row-meter"),
+    rollDot: $("row-tilt-dot"), enable: $("row-enable"), ready: $("row-ready"), swap: $("row-swap"), note: $("row-note"),
+    useButtons: $("row-use-buttons"), useMotion: $("row-use-motion"), left: $("oar-l"), right: $("oar-r"),
+  },
+  {
+    onInput(v) {
+      x = v.x;
+      b = v.b;
+      c = v.c;
+      flush();
+      if (lastStatus && lastStatus.state === "lobby" && (v.b || v.c)) renderStatus();
+    },
+    state: () => lastStatus && lastStatus.state,
+  },
+);
+
 function release() {
   steerPointer = null;
   bonkPointer = null;
   steer.classList.remove("active");
-  setX(0);
-  setB(0);
+  if (mode.stick === "motion") row.release();
+  else {
+    setX(0);
+    setB(0);
+  }
 }
 window.addEventListener("blur", release);
 
@@ -932,7 +963,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   padScreen.addEventListener(
     type,
     (e) => {
-      if (e.target.closest("button#edit-name, #status button")) return; // let real buttons click (incl. Switch game)
+      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link")) return; // let real buttons click (incl. Switch game)
       e.preventDefault();
     },
     { passive: false },

@@ -930,6 +930,218 @@
         container-type: size;
       }
 
+      /* Row Row Rumble: the phone is a kayak paddle (motion), or two big paddle buttons */
+      #row {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        gap: 8px;
+      }
+      #controls [hidden] {
+        display: none !important;
+      }
+      #row-motion,
+      #row-buttons {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 3px solid rgba(255, 255, 255, 0.18);
+        padding: 14px;
+        touch-action: none;
+      }
+      #row-boat {
+        position: relative;
+        width: 200px;
+        height: 90px;
+      }
+      #row-boat .hull {
+        position: absolute;
+        left: 50px;
+        right: 50px;
+        top: 34px;
+        height: 34px;
+        border-radius: 0 0 50px 50px;
+        background: linear-gradient(var(--l), var(--c) 60%, var(--d));
+        border: 4px solid #fff;
+      }
+      #row-boat .oar {
+        position: absolute;
+        top: 44px;
+        width: 86px;
+        height: 10px;
+        border-radius: 6px;
+        background: #f7d27a;
+        border: 3px solid #fff;
+        transform-origin: 100% 50%;
+      }
+      #row-boat .oar.l {
+        left: -6px;
+        transform: rotate(-22deg);
+      }
+      #row-boat .oar.r {
+        right: -6px;
+        transform-origin: 0 50%;
+        transform: rotate(22deg);
+      }
+      #row-boat.pull.l .oar.l {
+        animation: row-pull-l 0.45s ease-out;
+      }
+      #row-boat.pull.r .oar.r {
+        animation: row-pull-r 0.45s ease-out;
+      }
+      @keyframes row-pull-l {
+        30% { transform: rotate(26deg); }
+        100% { transform: rotate(-22deg); }
+      }
+      @keyframes row-pull-r {
+        30% { transform: rotate(-26deg); }
+        100% { transform: rotate(22deg); }
+      }
+      #row-boat .splash {
+        position: absolute;
+        top: 64px;
+        width: 70px;
+        height: 22px;
+        border-radius: 50%;
+        background: radial-gradient(rgba(140, 210, 255, 0.9), transparent 70%);
+        opacity: 0;
+      }
+      #row-boat .splash.l {
+        left: -14px;
+      }
+      #row-boat .splash.r {
+        right: -14px;
+      }
+      #row-boat.pull.l .splash.l,
+      #row-boat.pull.r .splash.r {
+        animation: row-splash 0.5s ease-out;
+      }
+      /* warm-up: point at the side to paddle on */
+      #row-boat[data-step="left"] .oar.l,
+      #row-boat[data-step="right"] .oar.r {
+        background: #ffe36b;
+        box-shadow: 0 0 14px #ffe36b;
+      }
+      @keyframes row-splash {
+        20% { opacity: 1; transform: scale(1.2); }
+        100% { opacity: 0; transform: scale(1.6); }
+      }
+      #row-sides {
+        display: flex;
+        gap: 40px;
+        font-size: 15px;
+        text-align: center;
+        opacity: 0.9;
+      }
+      #row-sides b {
+        display: block;
+        font-size: clamp(32px, 10vw, 54px);
+        line-height: 1;
+      }
+      .row-links {
+        display: flex;
+        gap: 8px;
+      }
+      #row-hint {
+        font-size: 17px;
+        text-align: center;
+        opacity: 0.85;
+        min-height: 1.3em;
+      }
+      #row-swing {
+        width: min(80%, 260px);
+        height: 10px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.15);
+        overflow: hidden;
+      }
+      #row-meter {
+        height: 100%;
+        background: var(--c);
+        transform-origin: 0 50%;
+        transform: scaleX(0);
+      }
+      #row-tilt {
+        position: relative;
+        width: min(80%, 260px);
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 18px;
+        opacity: 0.8;
+      }
+      #row-tilt::before {
+        content: "";
+        position: absolute;
+        left: 18px;
+        right: 18px;
+        top: 13px;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.3);
+      }
+      #row-tilt-dot {
+        position: absolute;
+        left: 50%;
+        top: 5px;
+        width: 18px;
+        height: 18px;
+        margin-left: -9px;
+        border-radius: 50%;
+        background: #fff;
+        transition: left 0.08s;
+      }
+      #row-enable,
+      #row-ready {
+        padding: 14px 26px;
+        border-radius: 18px;
+        font-size: 22px;
+        background: #ff5a3c;
+        box-shadow: 0 4px 0 #c7361d;
+      }
+      .row-link {
+        padding: 8px 16px;
+        border-radius: 14px;
+        font-size: 15px;
+        background: rgba(255, 255, 255, 0.14);
+      }
+      #row-buttons .oars {
+        flex: 1;
+        width: 100%;
+        display: flex;
+        gap: 12px;
+      }
+      #oar-l,
+      #oar-r {
+        flex: 1;
+        border-radius: 26px;
+        font-size: clamp(26px, 8vw, 44px);
+        line-height: 1.1;
+        background: radial-gradient(circle at 40% 30%, var(--l), var(--c) 55%, var(--d));
+        border: 5px solid #fff;
+        box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.4);
+        text-shadow: 0 3px 4px rgba(0, 0, 0, 0.45);
+        touch-action: none;
+        transition: transform 0.05s;
+      }
+      #oar-l.down,
+      #oar-r.down {
+        transform: scale(0.94);
+        filter: brightness(1.15);
+      }
+      #row-note {
+        text-align: center;
+        font-size: 14px;
+        opacity: 0.75;
+        min-height: 1.2em;
+      }
+
       /* Portrait: status card fills the top, controls sit low where thumbs are. */
       @media (orientation: portrait) {
         #status {
@@ -1085,6 +1297,26 @@
           <div id="steer-label">slide to steer</div>
         </div>
         <div id="bonk-wrap"><button id="bonk" data-test="action-button" type="button">BONK</button></div>
+        <div id="row" hidden>
+          <div id="row-motion">
+            <div id="row-boat"><i class="oar l"></i><b class="hull"></b><i class="oar r"></i><span class="splash l"></span><span class="splash r"></span></div>
+            <div id="row-sides"><div><b id="row-left-n">0</b>LEFT</div><div><b id="row-right-n">0</b>RIGHT</div></div>
+            <div id="row-hint"></div>
+            <div id="row-swing"><div id="row-meter"></div></div>
+            <div id="row-tilt"><span>L</span><div id="row-tilt-dot"></div><span>R</span></div>
+            <button id="row-enable" type="button" hidden>Enable motion</button>
+            <button id="row-ready" type="button" hidden>Ready!</button>
+            <div class="row-links"><button id="row-swap" class="row-link" type="button" hidden>⇄ Swap sides</button><button id="row-use-buttons" class="row-link" type="button">Use buttons</button></div>
+          </div>
+          <div id="row-buttons" hidden>
+            <div class="oars">
+              <button id="oar-l" data-test="paddle-left" type="button">LEFT<br />PADDLE</button>
+              <button id="oar-r" data-test="paddle-right" type="button">RIGHT<br />PADDLE</button>
+            </div>
+            <button id="row-use-motion" class="row-link" type="button" hidden>Use motion instead</button>
+          </div>
+          <div id="row-note"></div>
+        </div>
       </div>
     </section>
 

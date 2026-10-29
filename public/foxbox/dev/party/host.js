@@ -35,7 +35,8 @@ import { isP2P, ready as netReady, openSocket, api } from "./net.js";
 export const HUB_NAME = "FoxBox"; // shown as FOXBOX on the TV title
 const HUB_TAGLINE = "Party games on the big screen · your phone is the controller";
 // The games in the hub. Each is a Gaming Couch game module driven through the same contract.
-// stick: "x" = left/right only, "xy" = a 2D stick (sent as a0/a1). button = the action's name.
+// stick: "x" = left/right only, "xy" = a 2D stick (sent as a0/a1), "motion" = paddling with the
+// phone like a kayak paddle (b0 / b1 = a left / right stroke, a0 = 0). button = the action's name.
 const GAMES = [
   {
     id: "sky", name: "Sky Scramble", gameId: "skyscramble", button: "BONK", stick: "x",
@@ -47,6 +48,12 @@ const GAMES = [
     soloBots: 3,
     module: "../../games/snowball/gc.game.js", props: "../../games/snowball/gc.properties.json",
     tagline: "Roll and grow · SHOVE your friends off · last snowball on the island wins!",
+  },
+  {
+    id: "row", name: "Row Row Rumble", gameId: "rowrowrumble", button: "PADDLE", stick: "motion",
+    soloBots: 3,
+    module: "../../games/row/gc.game.js", props: "../../games/row/gc.properties.json",
+    tagline: "Paddle with your phone · bump your friends into the rocks · first to the lighthouse wins!",
   },
 ];
 const GAME_KEY = "foxbox-game";
@@ -271,7 +278,7 @@ function onServer(msg) {
     }
     case "in":
       window.__foxboxLastInputAt = Date.now();
-      onInput(msg.id, Number(msg.x) || 0, Number(msg.y) || 0, msg.b ? 1 : 0);
+      onInput(msg.id, Number(msg.x) || 0, Number(msg.y) || 0, msg.b ? 1 : 0, msg.c ? 1 : 0);
       break;
     case "pick":
       if (roster.get(msg.id)?.connected) switchGame(1);
@@ -316,6 +323,7 @@ function onJoin(id, name, character, drawing) {
   // A rejoining phone starts neutral until it sends input again.
   p.x = 0;
   p.b = 0;
+  p.c = 0;
   p.lastB = 0;
   forwardInput(p);
   if (round && !round.ended) {
@@ -347,6 +355,7 @@ function markGone(p) {
   p.goneAt = Date.now();
   p.x = 0;
   p.b = 0;
+  p.c = 0;
   p.lastB = 0;
   forwardInput(p); // neutral while disconnected
 }
@@ -356,14 +365,16 @@ function inRound(p) {
 }
 
 // ── Inputs ────────────────────────────────────────────────────────────────────
-function onInput(id, x, y, b) {
+function onInput(id, x, y, b, c = 0) {
   const p = roster.get(id);
   if (!p || !p.connected) return;
   p.x = clamp(x, -1, 1);
   p.y = GAME.stick === "xy" ? clamp(y, -1, 1) : 0;
   p.b = b;
-  const pressed = b && !p.lastB;
-  p.lastB = b;
+  p.c = GAME.stick === "motion" ? c : 0; // the second button (right paddle) only matters for rowing
+  const down = b || p.c ? 1 : 0;
+  const pressed = down && !p.lastB;
+  p.lastB = down;
   if (phase === "playing") forwardInput(p);
   else if (phase === "lobby" && pressed) startCountdown(p);
 }
@@ -371,7 +382,7 @@ function onInput(id, x, y, b) {
 function forwardInput(p) {
   if (phase !== "playing" || !inRound(p)) return;
   stats.inputsForwarded++;
-  game.inputs(p.slot + 1, { a0: p.x, a1: p.y || 0, b0: p.b, b1: 0 });
+  game.inputs(p.slot + 1, { a0: p.x, a1: p.y || 0, b0: p.b, b1: p.c || 0 });
 }
 
 // ── Status pushed to each phone ───────────────────────────────────────────────
