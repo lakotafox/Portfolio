@@ -51,6 +51,18 @@ function loadMe() {
     // crypto.randomUUID needs a secure context (https) — plain http on the LAN isn't one.
     me.id = "p" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
   }
+  // Web version: one player per browser tab (kept across reloads of that tab), so two tabs —
+  // or two people sharing a device — are two players. The name is still remembered for good.
+  if (isP2P) {
+    try {
+      let tabId = sessionStorage.getItem("foxbox-client-id");
+      if (!tabId) {
+        tabId = "p" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+        sessionStorage.setItem("foxbox-client-id", tabId);
+      }
+      me.id = tabId;
+    } catch {}
+  }
   if (typeof me.name !== "string") me.name = "";
   if (typeof me.character !== "string" || !me.character) me.character = null;
   return me;
