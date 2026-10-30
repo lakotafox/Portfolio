@@ -1,676 +1,172 @@
-/* FoxBox web UI: the join flow on phones and the landing + lobby on the host screen.
-   Everything is scoped under .fbx so it can sit next to a game's own styles. */
-
+/* Shared FoxBox launch/join shell. CSS-only: no additional game or effect canvas. */
+html[data-foxbox-web] {
+  --fbx-entry-bg: var(--fb-bg, #101125);
+  --fbx-entry-ink: var(--fb-ink, #fff9f1);
+  --fbx-entry-muted: var(--fb-muted, #c9c8df);
+  --fbx-entry-accent: var(--fb-accent, #ff9864);
+  --fbx-entry-scene: radial-gradient(ellipse at 12% 12%, #7549c78c, transparent 48%), radial-gradient(ellipse at 94% 28%, #09b9be70, transparent 48%), radial-gradient(ellipse at 52% 112%, #ef5a7c78, transparent 58%), var(--fbx-entry-bg);
+  background: #101125;
+}
+/* The native TV shell hides its cursor. Web hosts need it for fullscreen and
+   every game too; the decorative ring never replaces the system pointer. */
+html[data-foxbox-web], html[data-foxbox-web] body, html[data-foxbox-web] canvas { cursor: auto !important; }
+html[data-foxbox-web] :is(button:not(:disabled), a[href], [role="button"], summary) { cursor: pointer !important; }
+html[data-foxbox-web] :is(input:not([type="button"]):not([type="submit"]):not([type="range"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]) { cursor: text !important; }
+html[data-foxbox-web] :is(button:disabled, [aria-disabled="true"]) { cursor: default !important; }
+.fbx-mouse-ring { position: fixed; left: 0; top: 0; width: 0; height: 0; z-index: 10000; pointer-events: none; transition: transform 85ms ease-out; }
+.fbx-mouse-ring[hidden] { display: none !important; }
+.fbx-mouse-ring>span { display: block; width: 38px; height: 38px; margin: -19px; border: 2px solid var(--fb-accent, #ffb47c); border-radius: 50%; box-shadow: 0 0 0 1px #10112566, 0 0 16px #ffb47c24; transition: transform .18s ease-out, border-radius .18s ease-out; }
+.fbx-mouse-ring.fbx-mouse-over>span { transform: scale(1.3); border-radius: 13px; }
+@media (prefers-reduced-motion: reduce), (hover: none) and (pointer: coarse) { .fbx-mouse-ring { display: none !important; } }
 .fbx {
-  --sky-1: #3d8bfd;
-  --sky-2: #6fb3ff;
-  --sky-3: #bfe3ff;
-  --ink: #12325f;
-  --ink-soft: #3a5a8c;
-  --accent: #ff5a3c;
-  --accent-dark: #c7361d;
-  --title-shadow: #1d5fd1;
-  --card: #ffffff;
-  font-family: "Arial Rounded MT Bold", ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ink: var(--fb-ink, #fff9f1);
+  --ink-soft: var(--fb-muted, #d0cce3);
+  --accent: var(--fb-accent, #ff9864);
+  --accent-dark: #bd4d36;
+  --card: #17192edb;
   color: var(--ink);
+  font-family: "Arial Rounded MT Bold", ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
 }
-.fbx *,
-.fbx *::before,
-.fbx *::after {
-  box-sizing: inherit;
-}
-.fbx[hidden],
-.fbx [hidden] {
-  display: none !important;
-}
-
-/* sky background with soft cloud glows, shared by both screens */
-.fbx-sky {
-  position: relative;
-  min-height: 100%;
+.fbx *, .fbx *::before, .fbx *::after { box-sizing: inherit; }
+.fbx[hidden], .fbx [hidden] { display: none !important; }
+.fbx-scene {
+  isolation: isolate;
   overflow: hidden;
-  background:
-    radial-gradient(60em 30em at 15% 105%, rgba(255, 255, 255, 0.55), transparent 60%),
-    radial-gradient(50em 22em at 90% 100%, rgba(255, 255, 255, 0.45), transparent 60%),
-    linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 45%, var(--sky-3) 100%);
+  background: var(--fbx-entry-scene, radial-gradient(ellipse at 12% 12%, #7549c78c, transparent 48%), radial-gradient(ellipse at 94% 28%, #09b9be70, transparent 48%), radial-gradient(ellipse at 52% 112%, #ef5a7c78, transparent 58%), #101125);
 }
-.fbx-cloud {
-  position: absolute;
-  background: #fff;
-  border-radius: 999px;
-  opacity: 0.75;
-  pointer-events: none;
-  animation: fbx-drift 48s linear infinite;
-}
-.fbx-cloud::before,
-.fbx-cloud::after {
-  content: "";
-  position: absolute;
-  background: #fff;
-  border-radius: 50%;
-}
-.fbx-cloud::before {
-  width: 45%;
-  height: 160%;
-  left: 15%;
-  bottom: 20%;
-}
-.fbx-cloud::after {
-  width: 35%;
-  height: 130%;
-  right: 15%;
-  bottom: 25%;
-}
-@keyframes fbx-drift {
-  from {
-    transform: translateX(-40vw);
-  }
-  to {
-    transform: translateX(140vw);
-  }
-}
+.fbx-scene::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .26; pointer-events: none; background-image: radial-gradient(#ffffff62 1px, transparent 1px); background-size: 28px 28px; mask-image: linear-gradient(135deg, #000, transparent 65%); }
+.fbx-stage { position: relative; flex: 1; width: 100%; min-height: 0; display: flex; }
+.fbx-title { margin: 0; color: var(--ink); font-weight: 950; line-height: .95; letter-spacing: -.055em; text-shadow: 0 .045em 0 #ff9864, 0 .09em .5em #0809195c; }
+.fbx-btn { appearance: none; border: 2px solid #ffffff45; border-radius: 18px; font: inherit; font-weight: 850; cursor: pointer; color: var(--fb-btn-ink, #22152c); background: var(--fb-btn, #ff9864); box-shadow: 0 5px 0 #552849, 0 10px 28px #08091950; text-align: center; transition: transform .15s ease, filter .15s ease, box-shadow .15s ease; }
+.fbx-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+.fbx-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #552849; }
+.fbx-btn:disabled { opacity: .45; cursor: default; filter: none; transform: none; }
+.fbx-btn.fbx-ghost { background: #ffffff12; color: var(--ink); border-color: #ffffff32; box-shadow: none; }
+.fbx :is(button, input, summary, a):focus-visible { outline: 3px solid #ffdd85; outline-offset: 5px; }
+.fbx-card { border: 1px solid #ffffff35; border-radius: 26px; padding: 30px 26px; background: linear-gradient(145deg, #ffffff0e, transparent 55%), var(--card); box-shadow: 0 22px 70px #08091960, inset 0 1px 0 #ffffff15; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); display: flex; flex-direction: column; gap: 19px; }
+.fbx-step { margin: 0; font-size: 11px; font-weight: 800; line-height: 1.6; letter-spacing: .16em; color: var(--accent); text-transform: uppercase; }
+.fbx-h { margin: 0; font-size: clamp(28px, 7.5vw, 36px); line-height: 1.12; font-weight: 850; letter-spacing: -.035em; color: var(--ink); }
+.fbx-p { margin: 0; font-size: 16px; line-height: 1.65; color: var(--ink-soft); }
+.fbx-card [role="alert"] .fbx-p, .fbx-card [role="status"] .fbx-p { margin-top: 14px; }
+.fbx-center { align-items: center; text-align: center; }
+.fbx-spinner { width: 52px; height: 52px; border: 4px solid #ffffff20; border-top-color: var(--accent); border-right-color: #7be4dc; border-radius: 50%; animation: fbx-spin .9s linear infinite; flex: none; margin: 3px 0; }
+@keyframes fbx-spin { to { transform: rotate(360deg); } }
+.fbx-badge { width: 64px; height: 64px; flex: none; border-radius: 21px; display: grid; place-items: center; font-size: 34px; font-weight: 900; color: #ffcf8b; background: #ff986420; border: 1px solid #ff986455; }
 
-.fbx-title {
-  margin: 0;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  color: #fff;
-  font-weight: 400;
-  text-shadow:
-    0 0.06em 0 var(--title-shadow),
-    0 0.12em 0.2em rgba(0, 40, 120, 0.35);
-  transform: rotate(-2deg);
-}
+/* One launch gesture; FOX lands first, then BOX, then the little party guest. */
+.fbx-host { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; overflow-y: auto; font-size: min(.8333vw, 1.4815vh); }
+.fbx-landing { position: relative; flex: 1; min-height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(20px, 3vh, 38px); padding: clamp(24px, 5vh, 70px) 24px; overflow: hidden; }
+.fbx-slam-title { display: flex; justify-content: center; align-items: center; width: 100%; height: clamp(88px, 19vw, 300px); flex: none; font-size: clamp(64px, 17vw, 260px); perspective: 900px; }
+.fbx-word { display: inline-block; transform-origin: 50% 70%; animation: fbx-slam .62s cubic-bezier(.18,.65,.2,1) both; }
+.fbx-word-fox { color: #ffb47c; animation-delay: .12s; }
+.fbx-word-box { color: #fff9f1; animation-delay: .66s; }
+@keyframes fbx-slam { 0% { opacity: 0; transform: translateY(-.8em) scale(3.1) rotate(-7deg); filter: blur(8px); } 12% { opacity: 1; } 52% { transform: translateY(.045em) scale(.88) rotate(2deg); filter: blur(0); } 72% { transform: translateY(-.018em) scale(1.055) rotate(-1deg); } 100% { opacity: 1; transform: none; filter: none; } }
+.fbx-mascot-intro { display: flex; align-items: center; justify-content: center; gap: clamp(12px, 2vw, 28px); min-height: clamp(130px, 17vw, 230px); animation: fbx-mascot-pop .48s 1.33s cubic-bezier(.2,1.4,.4,1) both; }
+.fbx-mascot-figure { flex: none; width: clamp(120px, 15vw, 220px); height: clamp(120px, 15vw, 220px); }
+.fbx-party-fox { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 14px 15px #08091950); transform-origin: 50% 90%; animation: fbx-fox-idle 4s 2s ease-in-out infinite; }
+@keyframes fbx-mascot-pop { from { opacity: 0; transform: translateY(32px) scale(.65); } to { opacity: 1; transform: none; } }
+@keyframes fbx-fox-idle { 0%, 70%, 100% { transform: translateY(0) rotate(0); } 78% { transform: translateY(-6px) rotate(-3deg); } 88% { transform: translateY(-2px) rotate(2deg); } }
+.fbx-speech { position: relative; margin: 0; padding: 17px 23px; border: 2px solid #fff; border-radius: 24px 24px 24px 7px; background: #fff9ee; color: #27223c; font-size: clamp(22px, 2.8vw, 38px); font-weight: 900; line-height: 1.1; letter-spacing: -.035em; box-shadow: 0 9px 0 #08091935; transform: rotate(-3deg); }
+.fbx-speech::before { content: ""; position: absolute; width: 18px; height: 18px; left: -8px; bottom: 13px; background: #fff9ee; transform: rotate(45deg); z-index: -1; }
+.fbx-launch { min-height: 64px; padding: 18px 38px; min-width: min(380px, 85vw); font-size: clamp(23px, 3vw, 38px); line-height: 1.15; letter-spacing: -.035em; border-radius: 22px; }
+.fbx-host-transition { flex: 1; width: 100%; padding: 44px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 44px; font-size: 16px; }
+.fbx-host-transition>.fbx-title { font-size: clamp(58px, 8vw, 108px); }
+.fbx-host-transition .fbx-card { width: min(560px, 100%); padding: 40px 34px; }
+.fbx-host-transition .fbx-btn { font-size: 19px; min-height: 55px; padding: 13px 25px; }
 
-/* the chunky orange button */
-.fbx-btn {
-  appearance: none;
-  border: 0;
-  font: inherit;
-  cursor: pointer;
-  border-radius: 999px;
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 0.3em 0 var(--accent-dark), 0 0.6em 1.2em rgba(150, 40, 10, 0.25);
-  transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
-  text-align: center;
-}
-.fbx-btn:active {
-  transform: translateY(0.25em);
-  box-shadow: 0 0.05em 0 var(--accent-dark), 0 0.2em 0.5em rgba(150, 40, 10, 0.25);
-}
-.fbx-btn:disabled {
-  filter: grayscale(0.6) opacity(0.55);
-  cursor: default;
-}
-.fbx-btn.fbx-ghost {
-  background: rgba(255, 255, 255, 0.85);
-  color: var(--ink);
-  box-shadow: 0 0.3em 0 rgba(14, 58, 134, 0.25);
-}
-.fbx-btn.fbx-ghost:active {
-  box-shadow: 0 0.05em 0 rgba(14, 58, 134, 0.25);
-}
-.fbx-btn:focus-visible,
-.fbx-input:focus-visible,
-.fbx-chip:focus-visible {
-  outline: 0.18em solid #fff;
-  outline-offset: 0.18em;
-}
+/* Phone join, connection, recovery and name screens. */
+.fbx-phone { position: fixed; inset: 0; z-index: 70; display: flex; flex-direction: column; font-size: 16px; padding: calc(24px + env(safe-area-inset-top, 0px)) 22px calc(26px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; overflow-x: hidden; }
+.fbx-phone-head { position: relative; display: flex; justify-content: center; padding: 12px 0 25px; }
+.fbx-phone-head .fbx-title { font-size: 47px; }
+.fbx-screen-host { position: relative; flex: 1; display: flex; min-height: min-content; }
+.fbx-screen { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; width: 100%; max-width: 460px; margin: 0 auto; padding: 12px 0 26px; animation: fbx-screen-in .22s ease both; }
+@keyframes fbx-screen-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.fbx-form { display: flex; flex-direction: column; gap: 12px; }
+.fbx-input { width: 100%; font: inherit; font-size: 22px; color: var(--ink); background: #0b0d2199; border: 2px solid #ffffff32; border-radius: 14px; padding: 16px; outline: none; transition: border-color .15s, background .15s; }
+.fbx-input::placeholder { color: #b3aecb; opacity: 1; }
+.fbx-input:focus { border-color: var(--accent); background: #101327; }
+.fbx-input.fbx-bad { border-color: #ffae87; }
+.fbx-err { min-height: 19px; margin: 0; font-size: 13px; line-height: 1.6; color: #ffc49f; text-align: center; }
+.fbx-phone .fbx-btn { min-height: 58px; padding: 13px 18px; width: 100%; font-size: 20px; }
+.fbx-phone .fbx-btn.fbx-small { min-height: 47px; font-size: 15px; }
+.fbx-row { display: flex; gap: 12px; }
+.fbx-row>* { flex: 1; }
+.fbx-ball { flex: none; border-radius: 50%; background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--c, #8a94a6) 45%, #fff), var(--c, #8a94a6) 58%, color-mix(in srgb, var(--c, #8a94a6) 65%, #000)); box-shadow: inset 0 -3px 6px #0003; }
+.fbx-me { display: flex; align-items: center; gap: 16px; }
+.fbx-me .fbx-ball { width: 62px; height: 62px; }
+.fbx-me-name { font-size: 28px; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
+.fbx-me-slot, .fbx-chipline { font-size: 14px; color: var(--ink-soft); margin-top: 5px; }
+.fbx-chipline { display: flex; align-items: center; gap: 10px; }
+.fbx-gamechip { padding: 7px 12px; border-radius: 10px; background: #ffffff16; color: var(--ink); }
+.fbx-hint { margin: 0; padding: 15px 16px; border-radius: 14px; background: #ff986414; border: 1px solid #ff986433; color: var(--ink-soft); font-size: 15px; line-height: 1.6; text-align: center; }
+.fbx-hint b { color: var(--accent); }
 
-/* player colour ball (set --c on the element) */
-.fbx-ball {
-  flex: none;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--c, #8a94a6) 45%, #fff), var(--c, #8a94a6) 58%, color-mix(in srgb, var(--c, #8a94a6) 65%, #000));
-  box-shadow: inset 0 -0.08em 0.15em rgba(0, 0, 0, 0.18);
-}
+/* Fallback host lobby keeps its existing transport and QR hooks. */
+.fbx-lobby { flex: 1; width: 100%; min-height: 0; padding: 2.8em 5em 3em; display: flex; flex-direction: column; align-items: center; gap: 2em; }
+.fbx-lobby-top { display: flex; flex-direction: column; align-items: center; }
+.fbx-lobby-top .fbx-title { font-size: 7em; }
+.fbx-games { display: flex; align-items: center; gap: .8em; margin-top: 1.8em; }
+.fbx-games-label { font-size: 1.3em; letter-spacing: .16em; color: var(--ink-soft); }
+.fbx-chip { appearance: none; border: 1px solid #ffffff30; border-radius: 1em; font: inherit; font-size: 1.8em; padding: .6em 1em; cursor: pointer; background: #ffffff12; color: var(--ink-soft); }
+.fbx-chip.fbx-on { color: var(--ink); border-color: var(--accent); background: #ffffff22; }
+.fbx-blurb { margin: .8em 0 0; font-size: 1.6em; line-height: 1.4; color: var(--ink-soft); }
+.fbx-lobby-main { flex: 1; display: flex; align-items: center; justify-content: center; gap: 5em; width: 100%; min-height: 0; }
+.fbx-join { flex: none; padding: 1.5em; border: 1px solid #ffffff45; background: #ffffff0d; border-radius: 2em; box-shadow: 0 12px 40px #08091935; }
+.fbx-qr { display: grid; place-items: center; width: 24em; height: 24em; border-radius: 1em; overflow: hidden; background: white; }
+.fbx-qr :is(canvas, svg, img) { width: 100%; height: 100%; image-rendering: pixelated; }
+.fbx-players { flex: 1; max-width: 76em; display: flex; flex-direction: column; gap: 1.5em; }
+.fbx-players-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 2.8em; color: var(--ink); font-weight: 800; }
+.fbx-players-head small { font-size: .65em; color: var(--ink-soft); }
+.fbx-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2em; }
+.fbx-slot { min-width: 0; min-height: 6.8em; padding: 1em 1.3em; display: flex; align-items: center; justify-content: center; gap: 1.1em; border: 1px dashed #ffffff3a; border-radius: 1.6em; background: #11142955; color: var(--ink-soft); }
+.fbx-slot .fbx-empty { font-size: 2em; }
+.fbx-slot.fbx-filled { justify-content: flex-start; border: 1px solid #ffffff30; background: #ffffff14; color: var(--ink); }
+.fbx-slot.fbx-pop { animation: fbx-screen-in .3s ease both; }
+.fbx-slot .fbx-ball { width: 4.4em; height: 4.4em; border: 2px solid #ffffff75; }
+.fbx-slot-name { font-size: 2.5em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fbx-slot-tag { margin-left: auto; flex: none; padding: .4em .7em; font-size: 1.3em; border-radius: .7em; background: #ffffff16; color: var(--ink-soft); }
+.fbx-status { flex: none; max-width: 100%; font-size: 2.2em; padding: .7em 1.3em; border: 1px solid #ffffff25; border-radius: 1em; background: #111429a6; color: var(--ink); text-align: center; }
 
-/* ═══════════════════════════════ PHONE ═══════════════════════════════ */
+/* Web-only paint for native shells exposed during loading, seat setup and countdown.
+   No selectors change controller geometry, input targets, or game canvases. */
+html[data-foxbox-web] body { background: var(--fbx-entry-bg); }
+html[data-foxbox-web="host"] #lobby,
+html[data-foxbox-web="host"] #countdown { background: var(--fbx-entry-scene); color: var(--fbx-entry-ink); }
+html[data-foxbox-web="host"] #lobby>.cloud,
+html[data-foxbox-web="host"] #tagline { display: none; }
+html[data-foxbox-web="host"] #lobby .title { color: var(--fbx-entry-ink); transform: none; font-weight: 950; text-shadow: 0 .05em 0 var(--fbx-entry-accent); }
+html[data-foxbox-web="host"] :is(#lobby .players-panel, #lobby .join-card) { background: #15182bca; border: 1px solid #ffffff35; color: var(--fbx-entry-ink); box-shadow: 0 12px 35px #08091940; }
+html[data-foxbox-web="host"] #lobby :is(.players-head, #game-blurb, #auto-text, #sound-hint, #count) { color: var(--fbx-entry-ink); }
+html[data-foxbox-web="host"] #lobby :is(.join-card h2, #pad-url, #join-hint, #room-code) { display: none !important; }
+html[data-foxbox-web="host"] #lobby .join-card canvas { border-radius: 14px; }
+html[data-foxbox-web="host"] #start-text { background: #ffffff16; border: 1px solid #ffffff35; color: var(--fbx-entry-ink); box-shadow: none; }
+html[data-foxbox-web="host"] #countdown :is(#cd-num, #cd-sub) { color: var(--fbx-entry-ink); text-shadow: 0 .06em 0 #08091955; }
+html[data-foxbox-web="host"] #results { background: linear-gradient(140deg, #30244ce8, #11172aed 60%, #15464ce8); color: var(--fbx-entry-ink); backdrop-filter: blur(20px); }
+html[data-foxbox-web="pad"] :is(#name-screen, #char-screen, #crop-screen),
+html[data-foxbox-web="pad"] body:not(.clook-on) #pad-screen { background: var(--fbx-entry-scene); }
+html[data-foxbox-web="pad"] #name-screen :is(h1, p) { color: var(--fbx-entry-ink); text-shadow: none; }
+html[data-foxbox-web="pad"] #name-input { background: #15182b; color: var(--fbx-entry-ink); border: 2px solid #ffffff40; }
+html[data-foxbox-web="pad"] #name-go { background: var(--fbx-entry-accent); color: #20152c; box-shadow: 0 5px 0 #552849; }
 
-.fbx-phone {
-  position: fixed;
-  inset: 0;
-  font-size: 16px;
-  display: flex;
-  flex-direction: column;
-  padding: calc(16px + env(safe-area-inset-top, 0px)) 20px calc(20px + env(safe-area-inset-bottom, 0px));
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-.fbx-phone .fbx-cloud {
-  width: 120px;
-  height: 34px;
-}
-.fbx-phone-head {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  padding: 6px 0 4px;
-}
-.fbx-phone-head .fbx-title {
-  font-size: 46px;
-}
-.fbx-screen {
-  position: relative;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 18px;
-  width: 100%;
-  max-width: 440px;
-  margin: 0 auto;
-  animation: fbx-in 0.28s ease both;
-}
-@keyframes fbx-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-.fbx-card {
-  background: var(--card);
-  border-radius: 28px;
-  padding: 26px 22px 24px;
-  box-shadow: 0 14px 34px rgba(0, 40, 120, 0.25);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.fbx-step {
-  margin: 0;
-  font-size: 13px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #7a8fb3;
-}
-.fbx-h {
-  margin: 0;
-  font-size: 30px;
-  line-height: 1.1;
-  font-weight: 400;
-  color: var(--ink);
-}
-.fbx-p {
-  margin: 0;
-  font-size: 17px;
-  line-height: 1.35;
-  color: var(--ink-soft);
-}
-.fbx-input {
-  width: 100%;
-  font: inherit;
-  font-size: 26px;
-  color: var(--ink);
-  background: #eef5ff;
-  border: 3px solid #cfe0fb;
-  border-radius: 18px;
-  padding: 14px 16px;
-  outline: none;
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-.fbx-input:focus {
-  border-color: var(--sky-1);
-  background: #fff;
-}
-.fbx-input.fbx-code {
-  text-align: center;
-  font-size: 46px;
-  letter-spacing: 0.32em;
-  padding: 14px 0 14px 0.32em; /* letter-spacing adds space after the last letter */
-  text-transform: uppercase;
-}
-.fbx-input.fbx-bad {
-  border-color: var(--accent);
-  animation: fbx-shake 0.3s ease;
-}
-@keyframes fbx-shake {
-  25% {
-    transform: translateX(-6px);
-  }
-  50% {
-    transform: translateX(6px);
-  }
-  75% {
-    transform: translateX(-3px);
-  }
-}
-.fbx-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.fbx-err {
-  min-height: 22px;
-  margin: 0;
-  font-size: 16px;
-  color: var(--accent-dark);
-  text-align: center;
-}
-.fbx-phone .fbx-btn {
-  font-size: 24px;
-  height: 64px;
-  width: 100%;
-}
-.fbx-phone .fbx-btn.fbx-small {
-  font-size: 18px;
-  height: 52px;
-}
-.fbx-row {
-  display: flex;
-  gap: 12px;
-}
-.fbx-row > * {
-  flex: 1;
-}
-
-/* ready card */
-.fbx-me {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.fbx-me .fbx-ball {
-  width: 74px;
-  height: 74px;
-}
-.fbx-me-name {
-  font-size: 30px;
-  line-height: 1.1;
-  word-break: break-word;
-}
-.fbx-me-slot {
-  font-size: 15px;
-  color: #7a8fb3;
-  margin-top: 4px;
-}
-.fbx-chipline {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 15px;
-  color: #7a8fb3;
-}
-.fbx-gamechip {
-  display: inline-block;
-  padding: 7px 14px;
-  border-radius: 999px;
-  background: #eef5ff;
-  color: var(--ink);
-  font-size: 17px;
-}
-.fbx-hint {
-  margin: 0;
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: #fff4e0;
-  color: #8a4a00;
-  font-size: 17px;
-  line-height: 1.35;
-  text-align: center;
-}
-.fbx-hint b {
-  color: var(--accent-dark);
-  font-weight: 400;
-}
-.fbx-pulse {
-  animation: fbx-pulse 1.6s ease-in-out infinite;
-}
-@keyframes fbx-pulse {
-  50% {
-    transform: scale(1.03);
-  }
-}
-
-/* connecting + error */
-.fbx-center {
-  text-align: center;
-  align-items: center;
-}
-.fbx-spinner {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 7px solid rgba(255, 255, 255, 0.45);
-  border-top-color: #fff;
-  animation: fbx-spin 0.9s linear infinite;
-}
-@keyframes fbx-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.fbx-white {
-  color: #fff;
-  text-shadow: 0 2px 6px rgba(0, 40, 120, 0.3);
-}
-.fbx-badge {
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 40px;
-  background: #fff4e0;
-  color: var(--accent-dark);
-  margin: 0 auto;
-}
-
-/* ═══════════════════════════════ HOST / TV ═══════════════════════════════ */
-
-.fbx-host {
-  position: fixed;
-  inset: 0;
-  /* 1em = 1/120 of a 16:9 frame: everything scales with the window */
-  font-size: min(0.8333vw, 1.4815vh);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.fbx-host .fbx-cloud {
-  width: 22em;
-  height: 6em;
-}
-
-/* landing */
-.fbx-landing {
-  position: relative;
-  flex: 1;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2.4em;
-  padding: 4em;
-  animation: fbx-in 0.35s ease both;
-}
-.fbx-landing .fbx-title {
-  font-size: 13em;
-}
-.fbx-landing .fbx-tag {
-  margin: 0.4em 0 1.6em;
-  font-size: 2.6em;
-  color: var(--ink);
-  text-align: center;
-}
-.fbx-choices {
-  display: flex;
-  gap: 3em;
-}
-.fbx-choice {
-  width: 40em;
-  padding: 2.6em 2.6em 2.4em;
-  border-radius: 3em;
-  display: flex;
-  flex-direction: column;
-  gap: 0.9em;
-  text-align: left;
-}
-.fbx-choice .fbx-ch-title {
-  font-size: 3.6em;
-  line-height: 1.05;
-}
-.fbx-choice .fbx-ch-sub {
-  font-size: 1.9em;
-  opacity: 0.9;
-  line-height: 1.3;
-}
-.fbx-choice.fbx-ghost .fbx-ch-sub {
-  color: var(--ink-soft);
-}
-
-/* lobby */
-.fbx-lobby {
-  position: relative;
-  flex: 1;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1.8em 5em 2.4em;
-  gap: 1.2em;
-  animation: fbx-in 0.35s ease both;
-}
-.fbx-lobby-top {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.fbx-lobby-top .fbx-title {
-  font-size: 6.2em;
-}
-.fbx-games {
-  display: flex;
-  align-items: center;
-  gap: 0.8em;
-  margin-top: 1.2em;
-}
-.fbx-games-label {
-  font-size: 1.5em;
-  letter-spacing: 0.14em;
-  color: rgba(14, 58, 134, 0.65);
-}
-.fbx-chip {
-  appearance: none;
-  border: 0;
-  font: inherit;
-  cursor: pointer;
-  font-size: 2em;
-  padding: 0.45em 1.1em;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.45);
-  color: rgba(14, 58, 134, 0.7);
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-.fbx-chip.fbx-on {
-  background: #fff;
-  color: var(--ink);
-  box-shadow: 0 0.25em 0 rgba(14, 58, 134, 0.25);
-  transform: translateY(-0.1em);
-}
-.fbx-blurb {
-  margin: 0.6em 0 0;
-  font-size: 1.8em;
-  color: rgba(14, 58, 134, 0.8);
-  min-height: 1.3em;
-}
-.fbx-lobby-main {
-  flex: 1;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5em;
-  min-height: 0;
-}
-.fbx-join {
-  flex: none;
-  width: 42em;
-  background: #fff;
-  border-radius: 3em;
-  padding: 2em 3em 2.2em;
-  box-shadow: 0 1.2em 3em rgba(0, 40, 120, 0.3);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.1em;
-}
-.fbx-join-label {
-  font-size: 1.7em;
-  letter-spacing: 0.16em;
-  color: #7a8fb3;
-}
-.fbx-roomcode {
-  font-size: 8em;
-  line-height: 0.95;
-  letter-spacing: 0.12em;
-  padding-left: 0.12em;
-  color: var(--ink);
-}
-.fbx-qr {
-  width: 17em;
-  height: 17em;
-  display: grid;
-  place-items: center;
-}
-.fbx-qr canvas,
-.fbx-qr svg,
-.fbx-qr img {
-  width: 100%;
-  height: 100%;
-  image-rendering: pixelated;
-}
-.fbx-goto {
-  margin: 0;
-  font-size: 1.8em;
-  line-height: 1.35;
-  text-align: center;
-  color: var(--ink-soft);
-}
-.fbx-goto b {
-  color: var(--ink);
-  font-weight: 400;
-}
-.fbx-players {
-  flex: 1;
-  max-width: 76em;
-  display: flex;
-  flex-direction: column;
-  gap: 1.6em;
-}
-.fbx-players-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 3em;
-  color: var(--ink);
-}
-.fbx-players-head small {
-  font-size: 0.75em;
-  color: rgba(14, 58, 134, 0.7);
-}
-.fbx-slots {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.2em;
-}
-.fbx-slot {
-  height: 7em;
-  border-radius: 999px;
-  border: 0.3em dashed rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.22);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.2em;
-  padding: 0 2.4em 0 1.2em;
-  font-size: 1em;
-  color: rgba(14, 58, 134, 0.6);
-}
-.fbx-slot .fbx-empty {
-  font-size: 2.6em;
-}
-.fbx-slot.fbx-filled {
-  border: 0;
-  justify-content: flex-start;
-  background: var(--c);
-  color: #fff;
-  box-shadow: 0 0.45em 0 color-mix(in srgb, var(--c) 60%, #000), 0 0.8em 1.6em rgba(0, 40, 120, 0.22);
-}
-.fbx-slot.fbx-pop {
-  animation: fbx-pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) both;
-}
-@keyframes fbx-pop {
-  from {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-}
-.fbx-slot .fbx-ball {
-  width: 5.4em;
-  height: 5.4em;
-  box-shadow: 0 0 0 0.3em rgba(255, 255, 255, 0.85);
-}
-.fbx-slot-name {
-  font-size: 3em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-shadow: 0 0.06em 0.12em rgba(0, 0, 0, 0.25);
-}
-.fbx-slot-tag {
-  margin-left: auto;
-  flex: none;
-  font-size: 1.6em;
-  padding: 0.3em 0.8em;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--ink);
-}
-.fbx-status {
-  flex: none;
-  font-size: 3em;
-  padding: 0.45em 1.6em;
-  border-radius: 999px;
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 0.18em 0 var(--accent-dark), 0 0.4em 1em rgba(150, 40, 10, 0.25);
-}
-.fbx-status.fbx-idle {
-  background: #2e6fd8;
-  box-shadow: 0 0.18em 0 #1d4fa5, 0 0.4em 1em rgba(0, 40, 120, 0.25);
-}
-
-/* host page on a phone-sized screen: stack, and Join comes first */
 @media (max-width: 760px) {
-  .fbx-host {
-    position: absolute;
-    min-height: 100%;
-    font-size: 6px;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-  .fbx-landing {
-    padding: 6em 3.5em;
-    gap: 3em;
-  }
-  .fbx-landing .fbx-title {
-    font-size: 13em;
-  }
-  .fbx-landing .fbx-tag {
-    font-size: 3em;
-  }
-  .fbx-choices {
-    flex-direction: column-reverse;
-    width: 100%;
-    gap: 2.6em;
-  }
-  .fbx-choice {
-    width: 100%;
-  }
-  .fbx-choice .fbx-ch-title {
-    font-size: 4.4em;
-  }
-  .fbx-choice .fbx-ch-sub {
-    font-size: 2.6em;
-  }
-  .fbx-lobby {
-    padding: 4em 3em;
-  }
-  .fbx-lobby-main {
-    flex-direction: column;
-    gap: 4em;
-  }
-  .fbx-join {
-    width: 100%;
-  }
+  .fbx-host { font-size: 7px; }
+  .fbx-landing { padding: 30px 20px; }
+  .fbx-slam-title { font-size: clamp(60px, 17vw, 125px); height: clamp(80px, 20vw, 145px); }
+  .fbx-mascot-intro { gap: 12px; }
+  .fbx-speech { padding: 15px 18px; font-size: 23px; }
+  .fbx-lobby { padding: 4em 3em; }
+  .fbx-lobby-main { flex-direction: column; gap: 3em; }
+  .fbx-players { width: 100%; flex: none; }
+  .fbx-qr { width: 23em; height: 23em; }
+  .fbx-games { gap: .5em; flex-wrap: wrap; justify-content: center; }
+  .fbx-games-label { display: none; }
+  .fbx-chip { font-size: 2em; }
+  .fbx-host-transition { gap: 30px; padding: 30px 22px; }
+  .fbx-host-transition .fbx-card { padding: 30px 24px; }
 }
+@media (max-width: 390px) { .fbx-phone { padding-left: 16px; padding-right: 16px; } .fbx-card { padding: 26px 20px; } .fbx-mascot-figure { width: 112px; height: 112px; } .fbx-speech { font-size: 21px; padding: 13px 15px; } }
+@media (max-height: 520px) and (min-width: 761px) { .fbx-landing { gap: 14px; padding: 22px; } .fbx-slam-title { height: 110px; font-size: 110px; } .fbx-mascot-intro { min-height: 100px; } .fbx-mascot-figure { width: 100px; height: 100px; } .fbx-speech { font-size: 25px; padding: 13px 18px; } .fbx-launch { min-height: 49px; padding: 12px 24px; font-size: 23px; } }
+@media (prefers-reduced-motion: reduce) { .fbx *, .fbx *::before, .fbx *::after { animation: none !important; transition: none !important; } .fbx-word, .fbx-mascot-intro { opacity: 1; transform: none; } .fbx-spinner { border-right-color: var(--accent); } }

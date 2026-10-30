@@ -905,7 +905,6 @@ async function refreshInfo() {
 function toLobby(afterRound = false) {
   if (afterRound) {
     rotateRoles();
-    newLook();
     lob.selectedGameId = null;
     lob.browse = { gameId: GAME.id, view: "cards", flipped: false };
     saveLobby();

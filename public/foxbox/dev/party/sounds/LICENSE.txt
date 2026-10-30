@@ -16,8 +16,8 @@ https://kenney.nl/
 These AAC/M4A files are exact copies of the chosen FoxBox audio-picker previews.
 The preview preparation level-matched the voices and applied conservative levels
 and brief edge fades to the effect candidates. No further encoding was performed.
-Existing win.m4a and lose.m4a are unchanged project assets; the Kenney credits above
-apply to the seven listed selections.
+The Kenney credits above apply to the seven listed selections. The later
+Round 02 selections and credits are recorded below.
 
 Selected preview provenance (destination <- preview; SHA-256):
 three.m4a <- clips/male-three.m4a; 268f9f752a64755fe44ff89b8192ae3e46be46a6943a5b022953fa7f07f9543f
@@ -72,3 +72,123 @@ Interface Sounds (1.0)
 
 	Follow on Twitter for updates:
 	http://twitter.com/KenneyNL
+
+Round 02 confirmed selections — 2026-10-29
+These six AAC files replace the earlier roll/win/lose/shove/paddle/fire cues.
+Both round finished without a win and elimination use lose.m4a.
+Exact copies of the approved previews; no additional encoding or processing.
+All selected sources: Creative Commons Zero (CC0 1.0).
+https://creativecommons.org/publicdomain/zero/1.0/
+
+roll.m4a — Short two-dice throw
+RPG · CC0
+https://opengameart.org/content/2-dice-roll-29-throws
+Preview: clips/r2-roll-recorded-short.m4a
+SHA-256: 90ee6517739818757c33f5a03d5bc1ebd0f0b6fa43bec84c788b237b673035ec
+Duration: 0.7947 seconds
+Source layers and original-file hashes:
+  dice-20.wav — https://opengameart.org/content/2-dice-roll-29-throws
+  Original SHA-256: 24de58ff9dac8eb096f1c9f9b2b94a8b841ff6e601dbe7c8789fd2c246e56b11
+
+win.m4a — Tracker round-clear melody
+sauer2 · CC0
+https://opengameart.org/content/oldschool-win-and-die-jump-and-run-sounds
+Preview: clips/r2-win-tracker-victory.m4a
+SHA-256: 736e7568bb60dfd730b6de3372a46eb36917b522ea65853003a251598f4ae6f1
+Duration: 1.5466 seconds
+Source layers and original-file hashes:
+  round_end.wav — https://opengameart.org/content/oldschool-win-and-die-jump-and-run-sounds
+  Original SHA-256: 821f0e2d2568f963127309b4ce17334fcecf6888511051aa599acb90cf776f05
+
+lose.m4a — Old-school game over
+den_yes · CC0
+https://opengameart.org/content/game-over-soundold-school
+Preview: clips/r2-lose-oldschool-fail.m4a
+SHA-256: 0877df09af49cb2cac3e50a646717950485f660351eab43586bafa686e1c6d50
+Duration: 1.5873 seconds
+Source layers and original-file hashes:
+  GameOver_0.wav — https://opengameart.org/content/game-over-soundold-school
+  Original SHA-256: 4fd6fa66315ba63837c7c75362ca02c1717e59983a2a40e863f5e6782c7a155d
+
+shove.m4a — Air swing + snow crunch
+artisticdude + qubodup · CC0
+https://opengameart.org/content/swishes-sound-pack
+Preview: clips/r2-shove-swish-snow.m4a
+SHA-256: 983747ded1a122333a6c15902212ed4d9ad382fa033d98e29840c94ac939529d
+Duration: 0.5687 seconds
+Source layers and original-file hashes:
+  swish-1.wav — https://opengameart.org/content/swishes-sound-pack
+  Original SHA-256: 9a15c881345c1ce1c39cc31f52f081c8c4dc81fa41111e0079400f39d3ba0e45
+  snow_step_dry-03.flac — https://opengameart.org/content/4-dry-snow-steps
+  Original SHA-256: 411173d7a0a4a6a3ac357a4fefb54566cfbefc19e1e15e00b6d0d975dcc20f7e
+
+paddle.m4a — Wave swish
+transitking / qubodup · CC0
+https://opengameart.org/content/water-waves
+Preview: clips/r2-paddle-wave-swish.m4a
+SHA-256: 2552fd47d897b6ede07687224b3d77b9859b50e39c19bd4961a42c52620ff618
+Duration: 0.85 seconds
+Source layers and original-file hashes:
+  wave_01_cc0-11505__transitking__wavesound.flac — https://opengameart.org/content/water-waves
+  Original SHA-256: 0bd84b2061a82c234470bd4e16efc6ab24851928d3f93e1757bfea048b2d7a33
+
+fire.m4a — Air whip + pop
+artisticdude + wubitog · CC0
+https://opengameart.org/content/swishes-sound-pack
+Preview: clips/r2-fire-whip-pop.m4a
+SHA-256: cff2c6f8b680c6ae1b7afcf82432e5c050bedb9fa1653f8349fa0bcf27a7d8ff
+Duration: 0.2462 seconds
+Source layers and original-file hashes:
+  swish-1.wav — https://opengameart.org/content/swishes-sound-pack
+  Original SHA-256: 9a15c881345c1ce1c39cc31f52f081c8c4dc81fa41111e0079400f39d3ba0e45
+  pop2.ogg — https://opengameart.org/content/3-pop-sounds
+  Original SHA-256: 8777e88188a8ae6b20729f28cb4240a31c2e0140b79be12bd30423f895a67fba
+
+Archived source license/provenance — dice-recorded:
+Creator: RPG
+Source: https://opengameart.org/content/2-dice-roll-29-throws
+License: Creative Commons Zero (CC0 1.0 Universal)
+https://creativecommons.org/publicdomain/zero/1.0/
+The creator's submission explicitly declares CC0. Personal/commercial use, adaptations and redistribution are permitted; attribution is optional.
+
+Archived source license/provenance — old-win-lose:
+Creator: sauer2
+Source: https://opengameart.org/content/oldschool-win-and-die-jump-and-run-sounds
+License: Creative Commons Zero (CC0 1.0 Universal)
+https://creativecommons.org/publicdomain/zero/1.0/
+The creator's submission explicitly declares CC0. Personal/commercial use, adaptations and redistribution are permitted; attribution is optional.
+
+Archived source license/provenance — old-gameover:
+Creator: den_yes
+Source: https://opengameart.org/content/game-over-soundold-school
+License: Creative Commons Zero (CC0 1.0 Universal)
+https://creativecommons.org/publicdomain/zero/1.0/
+The creator's submission explicitly declares CC0. Personal/commercial use, adaptations and redistribution are permitted; attribution is optional.
+
+Archived source license/provenance — swishes:
+Creator: artisticdude
+Source: https://opengameart.org/content/swishes-sound-pack
+License: Creative Commons Zero (CC0 1.0 Universal)
+https://creativecommons.org/publicdomain/zero/1.0/
+The creator's submission explicitly declares CC0. Personal/commercial use, adaptations and redistribution are permitted; attribution is optional.
+
+Archived source license/provenance — snow:
+Creator: qubodup
+Source: https://opengameart.org/content/4-dry-snow-steps
+License: Creative Commons Zero (CC0 1.0 Universal)
+https://creativecommons.org/publicdomain/zero/1.0/
+The creator's submission explicitly declares CC0. Personal/commercial use, adaptations and redistribution are permitted; attribution is optional.
+
+Archived source license/provenance — waves:
+Creator: transitking / qubodup
+Source: https://opengameart.org/content/water-waves
+License: Creative Commons Zero (CC0 1.0 Universal)
+https://creativecommons.org/publicdomain/zero/1.0/
+The creator's submission explicitly declares CC0. Personal/commercial use, adaptations and redistribution are permitted; attribution is optional.
+
+Archived source license/provenance — pops:
+Creator: wubitog
+Source: https://opengameart.org/content/3-pop-sounds
+License: Creative Commons Zero (CC0 1.0 Universal)
+https://creativecommons.org/publicdomain/zero/1.0/
+The creator's submission explicitly declares CC0. Personal/commercial use, adaptations and redistribution are permitted; attribution is optional.

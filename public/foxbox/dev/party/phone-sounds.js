@@ -7,11 +7,14 @@ export function createPhoneSounds({ onReady = () => {} } = {}) {
   let ctx = null, master = null, previousState = null, previousLobby = null;
   let clipsReady = false, ready = false, cueVersion = 0;
   const voices = new Set(), lastPlayed = new Map(), seenCues = new Set();
-  const countdownVoices = new Set();
+  const countdownVoices = new Set(), activeClips = new Map();
   const bytes = new Map(), buffers = new Map();
-  const effectClips = ["join", "pick", "turn"];
-  const clipNames = ["three", "two", "one", "go", "win", "lose", ...effectClips];
+  const cueClips = {
+    join: "join", pick: "pick", turn: "turn", roll: "roll", win: "win",
+    finish: "lose", out: "lose", shove: "shove", paddle: "paddle", fire: "fire",
+  };
   const countdownClips = ["three", "two", "one", "go"];
+  const clipNames = [...countdownClips, ...new Set(Object.values(cueClips))];
   const loadingClips = new Set(), decodedClips = new Map();
   const hint = document.createElement("div");
   hint.textContent = "Tap anywhere for phone sound";
@@ -89,11 +92,13 @@ export function createPhoneSounds({ onReady = () => {} } = {}) {
     updateReady();
   });
   const audible = () => !!ctx && ctx.state === "running" && !document.hidden;
-  function track(source, envelope) {
+  function track(source, envelope, clip) {
     voices.add(source);
     source.onended = () => {
       voices.delete(source);
       countdownVoices.delete(source);
+      // A fading older source must not clear the newer source for the same clip.
+      if (clip && activeClips.get(clip)?.source === source) activeClips.delete(clip);
       source.disconnect();
       if (envelope) envelope.disconnect();
     };
@@ -104,16 +109,30 @@ export function createPhoneSounds({ onReady = () => {} } = {}) {
     if (now - (lastPlayed.get(kind) ?? -Infinity) < 90) return;
     lastPlayed.set(kind, now);
     try {
-      const buffer = effectClips.includes(kind) ? decodedClips.get(kind) : null;
+      const name = cueClips[kind], buffer = decodedClips.get(name);
       if (buffer) {
-        const source = ctx.createBufferSource();
+        const active = activeClips.get(name);
+        // An elimination immediately followed by results shares one game-over cue.
+        // A distinct result after that cue has ended can play it again.
+        if (active && name === "lose") return;
+        if (active) {
+          const end = ctx.currentTime + .02;
+          active.envelope.gain.cancelScheduledValues(ctx.currentTime);
+          active.envelope.gain.setValueAtTime(active.envelope.gain.value, ctx.currentTime);
+          active.envelope.gain.linearRampToValueAtTime(0, end);
+          active.source.stop(end);
+        }
+        const source = ctx.createBufferSource(), envelope = ctx.createGain();
         source.buffer = buffer;
-        source.connect(master);
-        track(source);
+        envelope.gain.setValueAtTime(1, ctx.currentTime);
+        source.connect(envelope);
+        envelope.connect(master);
+        activeClips.set(name, { source, envelope });
+        track(source, envelope, name);
         source.start();
         return;
       }
-      // Optional lobby clips never delay feedback: use the existing tone now if
+      // Optional feedback clips never delay an event: use the existing tone now if
       // fetching/decoding is pending or failed, without replaying it later.
       for (const [frequency, delay, duration, end = frequency] of patterns[kind] || []) {
         const oscillator = ctx.createOscillator(), envelope = ctx.createGain();
@@ -156,7 +175,6 @@ export function createPhoneSounds({ onReady = () => {} } = {}) {
       if (st.state === "results") {
         const won = st.won ?? st.place === 1;
         play(won ? "win" : "finish");
-        speak(won ? "win" : "lose");
       } else if (st.state === "lobby") play("join");
       else if (st.state === "out") play("out");
     },
