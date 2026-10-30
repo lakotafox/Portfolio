@@ -1,0 +1,74 @@
+FoxBox confirmed phone audio selections — 2026-10-29
+
+Countdown: three.m4a, two.m4a, one.m4a, go.m4a
+Recorded male voice performed by Jeffrey M. Smith.
+Kenney Voiceover Pack #1 — Creative Commons Zero (CC0 1.0).
+https://opengameart.org/content/voiceover-pack-40-lines
+
+Lobby effects: join.m4a = confirmation_001; pick.m4a = confirmation_003;
+turn.m4a = confirmation_002.
+Kenney Interface Sounds (1.0) — Creative Commons Zero (CC0 1.0).
+https://opengameart.org/content/interface-sounds
+
+https://creativecommons.org/publicdomain/zero/1.0/
+https://kenney.nl/
+
+These AAC/M4A files are exact copies of the chosen FoxBox audio-picker previews.
+The preview preparation level-matched the voices and applied conservative levels
+and brief edge fades to the effect candidates. No further encoding was performed.
+Existing win.m4a and lose.m4a are unchanged project assets; the Kenney credits above
+apply to the seven listed selections.
+
+Selected preview provenance (destination <- preview; SHA-256):
+three.m4a <- clips/male-three.m4a; 268f9f752a64755fe44ff89b8192ae3e46be46a6943a5b022953fa7f07f9543f
+two.m4a <- clips/male-two.m4a; 9cc9d255989477c6fd124cbba9eb807ae1c0d4b351cc1cd1d528457bb83c3e0f
+one.m4a <- clips/male-one.m4a; 1fe3239bcb55d212f859eb57df7676a75c40dafe25798e1e724c039de8b29d29
+go.m4a <- clips/male-go.m4a; 827d37859d9e4f88bc0bbf5f2190b28a91c95cfe6593f44be7e9916500f8a0d8
+join.m4a <- clips/kenney-confirmation_001.m4a; 080bf3c0a2e04b9d134f1e242c8410f3ccd4dd3e2f4dd035fda82108cc9a9527
+pick.m4a <- clips/kenney-confirmation_003.m4a; d83a9abadd547baea4d339f0bcfc31561aeba2f7d92468b0d020430eea2f0830
+turn.m4a <- clips/kenney-confirmation_002.m4a; 5060b6978dc7f27f7296aefebd3efef2461100bdbc8b2c7c70631d70b9ddbd8b
+
+
+Original kenney_voiceover-pack License.txt:
+Voiceover Pack #1
+	by Kenney Vleugels for Kenney (www.kenney.nl)
+
+			------------------------------
+
+	License (Creative Commons Zero, CC0)
+	http://creativecommons.org/publicdomain/zero/1.0/
+
+	You may use these graphics in personal and commercial projects.
+	Credit (Kenney or www.kenney.nl) would be nice but is not mandatory.
+
+			------------------------------
+
+	Donate:    http://donate.kenney.nl/
+	Request:   http://request.kenney.nl/
+
+	Twitter:   @KenneyWings
+	Facebook:  fb.com/KenneyNL
+
+
+Original kenney_interface-sounds License.txt:
+Interface Sounds (1.0)
+
+	Created/distributed by Kenney (www.kenney.nl)
+	Creation date: 11-02-2020
+
+			------------------------------
+
+	License: (Creative Commons Zero, CC0)
+	http://creativecommons.org/publicdomain/zero/1.0/
+
+	This content is free to use in personal, educational and commercial projects.
+
+	Support us by crediting Kenney or www.kenney.nl (this is not mandatory)
+
+			------------------------------
+
+	Donate:   http://support.kenney.nl
+	Patreon:  http://patreon.com/kenney/
+
+	Follow on Twitter for updates:
+	http://twitter.com/KenneyNL

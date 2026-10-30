@@ -9,9 +9,10 @@ export function createPhoneSounds({ onReady = () => {} } = {}) {
   const voices = new Set(), lastPlayed = new Map(), seenCues = new Set();
   const countdownVoices = new Set();
   const bytes = new Map(), buffers = new Map();
-  const clipNames = ["three", "two", "one", "go", "win", "lose"];
+  const effectClips = ["join", "pick", "turn"];
+  const clipNames = ["three", "two", "one", "go", "win", "lose", ...effectClips];
   const countdownClips = ["three", "two", "one", "go"];
-  const loadingClips = new Set(), decodedClips = new Set();
+  const loadingClips = new Set(), decodedClips = new Map();
   const hint = document.createElement("div");
   hint.textContent = "Tap anywhere for phone sound";
   hint.setAttribute("role", "status");
@@ -52,7 +53,7 @@ export function createPhoneSounds({ onReady = () => {} } = {}) {
     const data = bytes.get(name) || fetchBytes(name);
     buffers.set(name, data.then((b) => b ? ctx.decodeAudioData(b) : null).catch(() => null).then((buffer) => {
       loadingClips.delete(name);
-      if (buffer) decodedClips.add(name);
+      if (buffer) decodedClips.set(name, buffer);
       // decodeAudioData may consume its bytes, including on failure. A later gesture
       // can fetch fresh bytes; pending work and successfully decoded clips are kept.
       else if (bytes.get(name) === data) bytes.delete(name);
@@ -103,6 +104,17 @@ export function createPhoneSounds({ onReady = () => {} } = {}) {
     if (now - (lastPlayed.get(kind) ?? -Infinity) < 90) return;
     lastPlayed.set(kind, now);
     try {
+      const buffer = effectClips.includes(kind) ? decodedClips.get(kind) : null;
+      if (buffer) {
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(master);
+        track(source);
+        source.start();
+        return;
+      }
+      // Optional lobby clips never delay feedback: use the existing tone now if
+      // fetching/decoding is pending or failed, without replaying it later.
       for (const [frequency, delay, duration, end = frequency] of patterns[kind] || []) {
         const oscillator = ctx.createOscillator(), envelope = ctx.createGain();
         const start = ctx.currentTime + delay;
