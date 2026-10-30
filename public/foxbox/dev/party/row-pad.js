@@ -1,69 +1,64 @@
 /**
  * Row Row Rumble's phone controller (pad.js shows it when the hub's game has stick: "motion").
  *
- * Motion = a kayak paddle: hold the phone in both hands like the middle of a double paddle and
- * pull on one side, then the other. A stroke is a peak in how hard the phone swings (rotation
- * rate or acceleration, whichever is bigger), with hysteresis and a 350 ms refractory. Its side
- * comes from which way the phone is rolled at that moment: gravity along the screen's
- * left-right axis, against a slowly-following neutral. A LEFT stroke is a 120 ms b0 pulse, a
- * RIGHT one a b1 pulse; a0 is always 0 (alternate sides to go straight, the game turns you).
- * Which roll direction means "left" differs between phones and grips, so the warm-up learns it
- * ("Paddle LEFT… now RIGHT"), and "Swap sides" flips it by hand.
- * Buttons: LEFT / RIGHT PADDLE (b0 / b1). Used when there are no motion sensors, when
+ * Paddling only moves you forward — the kayaks steer themselves — so there are no sides here.
+ * Motion: any clear swing or pull of the phone, in any direction, is one stroke: a peak in how
+ * hard the phone swings (rotation rate or acceleration, whichever is bigger) over a threshold
+ * set by the Low / Med / High sensitivity, with hysteresis and a 250 ms refractory. A stroke is a
+ * 120 ms pulse of b0 AND b1 together; a0 is always 0.
+ * Button: one big PADDLE button (tap = stroke). Used when there are no motion sensors, when
  * permission is refused, on the plain-http home hub (browsers only give motion to https pages),
- * or when the player picks "Use buttons".
+ * or when the player picks "Use the button".
  *
- * In the lobby, strokes are a test only (left/right counters and a splash) until the player
- * taps "Ready!", so warming up doesn't start the round for everyone.
+ * In the lobby, motion strokes are a test only ("Paddle to test!" with a splash and a count)
+ * until the player taps "Ready!", so warming up doesn't start the round for everyone.
  *
  *   createRowPad(el, { onInput({x, b, c}), state() }) -> { show(on), release() }
  */
 
-const STROKE_MS = 120; // how long a stroke holds its paddle button down
-const REFRACTORY_MS = 350;
-const HI = 0.55; // swing signal that counts as a stroke…
-const LO = 0.25; // …and the level it must drop back under before the next one
-const SIDE_WINDOW_MS = 350; // the strongest roll seen this recently decides the side
+const STROKE_MS = 120; // how long a stroke holds the paddle buttons down
+const REFRACTORY_MS = 250;
+const SENS = { low: 0.75, med: 0.5, high: 0.32 }; // swing signal that counts as a stroke
+const REARM = 0.45; // …and it must drop under this fraction of that before the next one
 const PREF_KEY = "foxbox-row-input";
-const FLIP_KEY = "foxbox-row-flip";
+const SENS_KEY = "foxbox-row-sens";
 
 export function createRowPad(el, { onInput, state }) {
   let shown = false;
   let input = "motion"; // "motion" | "buttons"
-  let autoFallback = false; // buttons because no sensor answered (switch back if one does)
+  let autoFallback = false; // the button because no sensor answered (switch back if one does)
   let listening = false;
   let gotMotion = false;
-  let ready = false; // the lobby warm-up is done
-  let calib = "left"; // warm-up step: "left" → "right" → "done"
-  let flip = false; // this phone/grip rolls the other way
-  let leftN = 0, rightN = 0;
-  let b = 0, c = 0;
-  let sig = 0, armed = true, lastStroke = -1e9, timerL = null, timerR = null;
-  let roll = 0, neutral = 0, haveNeutral = false;
-  let recent = []; // [time, roll - neutral]
+  let ready = false; // the lobby test is done
+  let sens = "med";
+  let count = 0;
+  let down = 0; // 1 while a stroke pulse holds b0 + b1
+  let sig = 0, armed = true, lastStroke = -1e9, timer = null, side = "l";
   let fallbackTimer = null;
   let asked = false; // the motion permission was asked for (iPhone)
 
   try {
     if (localStorage.getItem(PREF_KEY) === "buttons") input = "buttons";
-    flip = localStorage.getItem(FLIP_KEY) === "1";
-    if (localStorage.getItem(FLIP_KEY) != null) calib = "done"; // learned on an earlier visit
+    if (SENS[localStorage.getItem(SENS_KEY)]) sens = localStorage.getItem(SENS_KEY);
   } catch {}
 
   const hasMotionApi = typeof window.DeviceMotionEvent !== "undefined";
   const needsPermission = hasMotionApi && typeof DeviceMotionEvent.requestPermission === "function";
 
-  const send = () => onInput({ x: 0, b, c });
+  const send = () => onInput({ x: 0, b: down, c: down });
   const warmUp = () => {
     const st = state();
     return (st === "lobby" || !st) && !ready;
   };
 
   // ── feedback ──
-  function pulse(side) {
+  function pulse() {
+    side = side === "l" ? "r" : "l"; // the little boat alternates sides, just for the look
     el.boat.classList.remove("pull", "l", "r");
-    void el.boat.offsetWidth; // restart the animation
+    el.countWrap.classList.remove("hit");
+    void el.boat.offsetWidth; // restart the animations
     el.boat.classList.add("pull", side);
+    el.countWrap.classList.add("hit");
     if (navigator.vibrate) {
       try {
         navigator.vibrate(30);
@@ -73,76 +68,34 @@ export function createRowPad(el, { onInput, state }) {
   function renderHint() {
     const lobby = warmUp() || state() === "lobby" || !state();
     const sensing = input === "motion" && listening && gotMotion;
-    el.ready.hidden = !(sensing && warmUp() && calib === "done");
-    el.swap.hidden = !(input === "motion" && lobby);
+    el.ready.hidden = !(sensing && warmUp());
+    el.sens.hidden = !(input === "motion" && gotMotion && lobby);
     let h;
-    if (input === "buttons") h = lobby ? "Tap a paddle to start · alternate LEFT and RIGHT" : "Alternate LEFT and RIGHT to paddle";
+    if (input === "buttons") h = lobby ? "Tap PADDLE to start · keep a steady beat" : "Tap PADDLE · a steady beat is fastest";
     else if (!gotMotion) h = el.enable.hidden ? "Getting the motion sensor…" : "Tap Enable motion, then paddle with your phone";
-    else if (warmUp() && calib === "left") h = "Hold it like a paddle · paddle on your LEFT";
-    else if (warmUp() && calib === "right") h = "Now paddle on your RIGHT";
-    else if (warmUp()) h = "Left and right both work? Tap Ready! (Swap sides if they're backwards)";
+    else if (warmUp()) h = count ? "Nice! Tap Ready! when it feels right" : "Paddle to test! Swing your phone like a paddle";
     else if (lobby) h = "Paddle to start the round!";
-    else h = "Paddle left, right, left… · more on one side turns you";
+    else h = "Paddle! Paddle! A steady beat is fastest";
     if (el.hint.textContent !== h) el.hint.textContent = h;
-    el.leftN.textContent = String(leftN);
-    el.rightN.textContent = String(rightN);
-    el.boat.dataset.step = warmUp() ? calib : "";
+    el.count.textContent = String(count);
+    el.sens.querySelectorAll("[data-s]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.s === sens)));
+  }
+
+  function stroke() {
+    count++;
+    pulse();
+    renderHint();
+    if (warmUp()) return; // a test stroke: it doesn't start the round
+    clearTimeout(timer);
+    down = 1;
+    send();
+    timer = setTimeout(() => {
+      down = 0;
+      send();
+    }, STROKE_MS);
   }
 
   // ── motion ──
-  function hold(side) {
-    if (side === "l") {
-      clearTimeout(timerL);
-      b = 1;
-      send();
-      timerL = setTimeout(() => {
-        b = 0;
-        send();
-      }, STROKE_MS);
-    } else {
-      clearTimeout(timerR);
-      c = 1;
-      send();
-      timerR = setTimeout(() => {
-        c = 0;
-        send();
-      }, STROKE_MS);
-    }
-  }
-
-  function stroke(now) {
-    // the strongest roll in the last moment says which side the paddle went in
-    let best = 0;
-    for (const [t, d] of recent) if (now - t <= SIDE_WINDOW_MS && Math.abs(d) > Math.abs(best)) best = d;
-    let side = best >= 0 ? "r" : "l";
-    if (warmUp() && calib !== "done") {
-      // learn this phone's direction from the first prompted strokes
-      if (calib === "left") {
-        flip = side !== "l";
-        side = "l";
-        calib = "right";
-      } else {
-        side = (best >= 0) !== flip ? "r" : "l";
-        if (side === "r") {
-          calib = "done";
-          try {
-            localStorage.setItem(FLIP_KEY, flip ? "1" : "0");
-          } catch {}
-        }
-      }
-    } else if (flip) side = side === "l" ? "r" : "l";
-    if (side === "l") leftN++;
-    else rightN++;
-    pulse(side);
-    renderHint();
-    if (!warmUp()) hold(side);
-  }
-
-  function screenAngle() {
-    const a = screen.orientation && typeof screen.orientation.angle === "number" ? screen.orientation.angle : window.orientation || 0;
-    return ((a % 360) + 360) % 360;
-  }
-
   function onMotion(e) {
     // browsers without a sensor still fire events, with every value null
     const gi = e.accelerationIncludingGravity, rr = e.rotationRate;
@@ -158,37 +111,24 @@ export function createRowPad(el, { onInput, state }) {
     }
     if (input !== "motion") return;
     const now = performance.now();
-    // roll: gravity along the screen's left-right axis (in g), whichever way round it's held
-    const g = e.accelerationIncludingGravity || {};
-    const a = screenAngle();
-    const gx = (a === 90 ? g.y : a === 270 ? -(g.y || 0) : a === 180 ? -(g.x || 0) : g.x) || 0;
-    roll = roll * 0.7 + (gx / 9.81) * 0.3;
-    if (!haveNeutral) {
-      neutral = roll;
-      haveNeutral = true;
-    }
-    const dev = roll - neutral;
-    recent.push([now, dev]);
-    while (recent.length && now - recent[0][0] > SIDE_WINDOW_MS) recent.shift();
-    // swing strength
-    const r = e.rotationRate || {};
+    const g = gi || {};
+    const r = rr || {};
     const rot = Math.hypot(r.alpha || 0, r.beta || 0, r.gamma || 0); // deg/s
     let lin;
     const ac = e.acceleration;
     if (ac && ac.x != null) lin = Math.hypot(ac.x, ac.y || 0, ac.z || 0);
     else lin = Math.abs(Math.hypot(g.x || 0, g.y || 0, g.z || 0) - 9.81);
     sig = sig * 0.5 + Math.max(rot / 360, lin / 14) * 0.5;
-    if (armed) neutral = neutral * 0.985 + roll * 0.015; // follow the grip slowly between strokes
-    el.meter.style.transform = `scaleX(${Math.min(1, sig / 1.2)})`;
-    el.rollDot.style.left = `${50 + Math.max(-1, Math.min(1, (flip ? -dev : dev) * 2.5)) * 45}%`;
-    if (armed && sig > HI && now - lastStroke > REFRACTORY_MS) {
+    const hi = SENS[sens];
+    el.meter.style.transform = `scaleX(${Math.min(1, sig / (hi * 2))})`;
+    if (armed && sig > hi && now - lastStroke > REFRACTORY_MS) {
       armed = false;
       lastStroke = now;
-      stroke(now);
-    } else if (!armed && sig < LO) armed = true;
+      stroke();
+    } else if (!armed && sig < hi * REARM) armed = true;
   }
 
-  // Desktops (and some phones) have the API but never send anything: fall back to buttons.
+  // Desktops (and some phones) have the API but never send anything: fall back to the button.
   function armFallback(ms) {
     clearTimeout(fallbackTimer);
     fallbackTimer = setTimeout(() => {
@@ -199,7 +139,7 @@ export function createRowPad(el, { onInput, state }) {
         return;
       }
       autoFallback = true;
-      setInput("buttons", false, "No motion sensor found · using buttons");
+      setInput("buttons", false, "No motion sensor found · using the button");
     }, ms);
   }
 
@@ -216,11 +156,11 @@ export function createRowPad(el, { onInput, state }) {
     try {
       const res = await DeviceMotionEvent.requestPermission();
       if (res !== "granted") {
-        setInput("buttons", false, "Motion wasn't allowed · using buttons (reload the page to ask again)");
+        setInput("buttons", false, "Motion wasn't allowed · using the button (reload the page to ask again)");
         return;
       }
     } catch {
-      setInput("buttons", false, "Couldn't turn on motion · using buttons");
+      setInput("buttons", false, "Couldn't turn on motion · using the button");
       return;
     }
     el.enable.hidden = true;
@@ -229,13 +169,14 @@ export function createRowPad(el, { onInput, state }) {
   }
 
   function startMotion() {
-    if (!hasMotionApi) return setInput("buttons", false, "This phone has no motion sensor · using buttons");
-    if (!window.isSecureContext) return setInput("buttons", false, "Motion needs the https link · using buttons");
+    if (!hasMotionApi) return setInput("buttons", false, "This phone has no motion sensor · using the button");
+    if (!window.isSecureContext) return setInput("buttons", false, "Motion needs the https link · using the button");
     listen(); // Android sends right away; an iPhone needs "Enable motion" first (see armFallback)
   }
 
-  // ── buttons ──
-  function paddle(btn, side) {
+  // ── the button ──
+  {
+    const btn = el.oar;
     let ptr = null;
     btn.addEventListener("pointerdown", (ev) => {
       ev.preventDefault();
@@ -244,28 +185,24 @@ export function createRowPad(el, { onInput, state }) {
         btn.setPointerCapture(ev.pointerId);
       } catch {}
       btn.classList.add("down");
-      if (side === "l") b = 1;
-      else c = 1;
+      clearTimeout(timer);
+      down = 1;
       send();
-      if (side === "l") leftN++;
-      else rightN++;
-      pulse(side);
+      count++;
+      pulse();
       renderHint();
     });
     const end = (ev) => {
       if (ev.pointerId !== ptr) return;
       ptr = null;
       btn.classList.remove("down");
-      if (side === "l") b = 0;
-      else c = 0;
+      down = 0;
       send();
     };
     btn.addEventListener("pointerup", end);
     btn.addEventListener("pointercancel", end);
     btn.addEventListener("lostpointercapture", end);
   }
-  paddle(el.left, "l");
-  paddle(el.right, "r");
 
   function setInput(kind, remember, note) {
     input = kind;
@@ -291,22 +228,21 @@ export function createRowPad(el, { onInput, state }) {
     ready = true;
     renderHint();
   });
-  el.swap.addEventListener("click", () => {
-    flip = !flip;
-    calib = "done";
-    try {
-      localStorage.setItem(FLIP_KEY, flip ? "1" : "0");
-    } catch {}
-    renderHint();
-  });
+  el.sens.querySelectorAll("[data-s]").forEach((b) =>
+    b.addEventListener("click", () => {
+      sens = b.dataset.s;
+      try {
+        localStorage.setItem(SENS_KEY, sens);
+      } catch {}
+      renderHint();
+    }),
+  );
 
   function release() {
-    clearTimeout(timerL);
-    clearTimeout(timerR);
-    el.left.classList.remove("down");
-    el.right.classList.remove("down");
-    if (b || c) {
-      b = c = 0;
+    clearTimeout(timer);
+    el.oar.classList.remove("down");
+    if (down) {
+      down = 0;
       send();
     }
   }

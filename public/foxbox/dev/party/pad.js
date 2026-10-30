@@ -929,9 +929,9 @@ bonk.addEventListener("lostpointercapture", bonkEnd);
 const row = createRowPad(
   {
     root: $("row"), motion: $("row-motion"), buttons: $("row-buttons"), boat: $("row-boat"),
-    leftN: $("row-left-n"), rightN: $("row-right-n"), hint: $("row-hint"), meter: $("row-meter"),
-    rollDot: $("row-tilt-dot"), enable: $("row-enable"), ready: $("row-ready"), swap: $("row-swap"), note: $("row-note"),
-    useButtons: $("row-use-buttons"), useMotion: $("row-use-motion"), left: $("oar-l"), right: $("oar-r"),
+    count: $("row-count"), countWrap: $("row-count-wrap"), hint: $("row-hint"), meter: $("row-meter"),
+    sens: $("row-sens"), enable: $("row-enable"), ready: $("row-ready"), note: $("row-note"),
+    useButtons: $("row-use-buttons"), useMotion: $("row-use-motion"), oar: $("oar"),
   },
   {
     onInput(v) {
