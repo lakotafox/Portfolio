@@ -42,18 +42,21 @@ const GAMES = [
     id: "sky", name: "Sky Scramble", gameId: "skyscramble", button: "BONK", stick: "x",
     module: "../../sky/gc.game.js", props: "../../sky/gc.properties.json",
     tagline: "Bounce up the clouds · BONK your friends · last one up wins!",
+    minPlayers: 1, maxPlayers: 8, controls: "stick-x",
   },
   {
     id: "snowball", name: "Snowball Sumo", gameId: "snowballsumo", button: "SHOVE", stick: "xy",
     soloBots: 3,
     module: "../../games/snowball/gc.game.js", props: "../../games/snowball/gc.properties.json",
     tagline: "Roll and grow · SHOVE your friends off · last snowball on the island wins!",
+    minPlayers: 1, maxPlayers: 8, controls: "stick-xy",
   },
   {
     id: "row", name: "Row Row Rumble", gameId: "rowrowrumble", button: "PADDLE", stick: "motion",
     seats: true, // two per boat: everyone picks a boat + seat in the lobby; bots fill the rest
     module: "../../games/row/gc.game.js", props: "../../games/row/gc.properties.json",
-    tagline: "Paddle with your phone · bump your friends into the rocks · first to the lighthouse wins!",
+    tagline: "Captain rows · first mate steers and throws · first to the lighthouse wins!",
+    minPlayers: 1, maxPlayers: 8, controls: "paddle",
   },
 ];
 const GAME_KEY = "foxbox-game";
@@ -73,6 +76,7 @@ const MIN_ROUND_PLAYERS = 0; // bots fill up to this many (0: people only, no bo
 const SOLO_BOTS = 0;
 const roundTarget = (humanCount) => (humanCount === 1 ? 1 + (GAME.soloBots ?? SOLO_BOTS) : MIN_ROUND_PLAYERS);
 const AUTO_START_MS = 20_000;
+const AUTO_START = false; // lobby v2: the game picker starts the round (no timers)
 const DRAW_HOLD_MS = 60_000; // auto-start waits at most this much longer while someone is drawing
 const COUNTDOWN_MS = 3_000;
 const RESULTS_MS = 8_000;
@@ -84,14 +88,15 @@ const ROSTER_KEY = "sky-scramble-party-roster";
 const COLOR_KEYS = ["blue", "red", "green", "cyan", "yellow", "purple", "pink", "brown"];
 
 // ── Seats (games with `seats`: Row Row Rumble v2) ─────────────────────────────
-// Always BOATS boats, two seats each: the PADDLER paddles (motion), the CAPTAIN steers by tilt,
-// aims with a stick and fires. People pick a seat in the lobby; on start the unseated get the
-// first free seat (paddler first) and bots fill every seat that's still empty.
+// Always BOATS boats, two seats each. Seat ids stay "paddle" / "captain" (the game contract), but
+// players see them as the CAPTAIN (rows, seat "paddle") and the FIRST MATE (steers by tilt, aims
+// with a stick and fires, seat "captain"). People pick a seat in the lobby; on start the unseated
+// get the first free seat (rowing seat first) and bots fill every seat that's still empty.
 const BOATS = 4;
 const BOAT_KEYS = ["red", "blue", "green", "yellow"];
 const BOAT_NAMES = ["Red", "Blue", "Green", "Yellow"];
 const SEATS = ["paddle", "captain"];
-const SEAT_NAMES = { paddle: "Paddler", captain: "Captain" };
+const SEAT_NAMES = { paddle: "Captain", captain: "First mate" }; // what players see
 const validSeat = (st) => !!st && Number.isInteger(st.boat) && st.boat >= 0 && st.boat < BOATS && SEATS.includes(st.seat);
 
 const $ = (id) => document.getElementById(id);
@@ -128,8 +133,10 @@ let autoStartAt = null;
 /** While someone is drawing, the auto-start is held until they finish or this time passes. */
 let drawHoldUntil = null;
 let countdownTimer = null;
+let countdownCueId = "";
 let resultsTimer = null;
 let padUrl = `http://${location.host}/pad`;
+let roomCode = null;
 
 const stats = { rounds: 0, gameOvers: 0, lastPlacement: null, inputsForwarded: 0, lastPoints: null, contractErrors: [] };
 
@@ -269,15 +276,18 @@ function onServer(msg) {
     case "pads": {
       const here = new Set(msg.pads.map((p) => p.id));
       for (const p of roster.values()) if (!here.has(p.id)) markGone(p);
-      for (const p of msg.pads) onJoin(p.id, p.name, p.character, p.drawing);
+      for (const p of msg.pads) onJoin(p.id, p.name, p.character, p.drawing, p.audioReady);
       break;
     }
     case "join":
-      onJoin(msg.id, msg.name, msg.character, msg.drawing);
+      onJoin(msg.id, msg.name, msg.character, msg.drawing, msg.audioReady);
       break;
     case "state": {
       const p = roster.get(msg.id);
-      if (p) setDrawing(p, msg.drawing === true);
+      if (p) {
+        if (typeof msg.audioReady === "boolean") p.audioReady = msg.audioReady;
+        setDrawing(p, msg.drawing === true);
+      }
       break;
     }
     case "leave": {
@@ -295,8 +305,15 @@ function onServer(msg) {
     case "seat":
       onSeat(msg.id, msg.boat, msg.seat);
       break;
-    case "pick":
-      if (roster.get(msg.id)?.connected) switchGame(1);
+    case "pick": // legacy "Switch game" button: the game picker cycles the hub's game
+      if (roster.get(msg.id)?.connected && mayPick(msg.id)) switchGame(1);
+      break;
+    case "browse":
+    case "pickGame":
+    case "roll":
+    case "skipTurn":
+    case "start":
+      onLobbyMsg(msg);
       break;
     case "replaced":
       wsReplaced = true;
@@ -306,7 +323,7 @@ function onServer(msg) {
 }
 
 // ── Players joining / leaving ─────────────────────────────────────────────────
-function onJoin(id, name, character, drawing) {
+function onJoin(id, name, character, drawing, audioReady) {
   if (typeof id !== "string" || !id) return;
   let p = roster.get(id);
   if (!p) {
@@ -335,6 +352,7 @@ function onJoin(id, name, character, drawing) {
   p.character = typeof character === "string" && character ? character : null;
   if (p.character) refreshCharacters();
   p.drawing = drawing === true;
+  p.audioReady = audioReady === true;
   // A rejoining phone starts neutral until it sends input again.
   p.x = 0;
   p.b = 0;
@@ -346,8 +364,14 @@ function onJoin(id, name, character, drawing) {
     if (round.humanIdByPid.get(pid) === p.id) round.nameById.set(pid, p.name);
   }
   saveRoster();
+  if (!lob.order.includes(p.id)) lob.order.push(p.id);
+  lob.names[p.id] = p.name;
+  fixRoles();
+  saveLobby();
   sendStatus(p);
+  toPad(p.id, { t: "lobby", s: lobbyState() }); // a (re)joining phone gets the lobby state right away
   if (phase === "lobby") broadcastLobby();
+  else publishLobby();
   renderLobby();
 }
 
@@ -452,6 +476,223 @@ function assignSeats(humans) {
   saveRoster();
 }
 
+// ── Lobby v2: roles, turns, party scoreboard, look ────────────────────────────
+// Two rotating roles: the GAME PICKER chooses the next game, the THEME ROLLER rolls the lobby
+// look. Different people when there are ≥2 players; both pass to the next player (join order,
+// skipping anyone away) after every round. No timers: anyone can skip either turn. Party points:
+// 3/2/1 for 1st/2nd/3rd (people only; boat crews share their boat's place). The whole state goes
+// to the TV UI (globalThis.FOXBOX_LOBBY_STATE + a "foxbox:lobby" event) and to every phone
+// ({t:"lobby", s}). It survives the TV page reloading to another game (sessionStorage).
+const LOBBY_KEY = "foxbox-lobby";
+const POINTS = [0, 3, 2, 1];
+const randSeed = () => Math.floor(Math.random() * 0x7fffffff);
+const lob = {
+  order: [], // player ids in join order
+  names: {}, // id -> last known name (for the scoreboard after someone leaves)
+  pickerId: null,
+  rollerId: null,
+  points: {}, // id -> party points
+  look: { seed: randSeed(), rollCount: 0 },
+  browse: { gameId: GAME.id, view: "cards", flipped: false },
+  selectedGameId: null,
+  lastResults: [],
+};
+function saveLobby() {
+  try {
+    sessionStorage.setItem(LOBBY_KEY, JSON.stringify(lob));
+  } catch {}
+}
+function loadLobby() {
+  try {
+    const v = JSON.parse(sessionStorage.getItem(LOBBY_KEY));
+    if (!v || typeof v !== "object") return;
+    for (const k of Object.keys(lob)) if (k in v && v[k] != null) lob[k] = v[k];
+    if (!GAMES.some((g) => g.id === lob.selectedGameId)) lob.selectedGameId = null;
+    if (!GAMES.some((g) => g.id === lob.browse?.gameId)) lob.browse = { gameId: GAME.id, view: "cards", flipped: false };
+  } catch {}
+}
+/** Present (connected, or dropped only a moment ago) — a role holder keeps their turn through a reload. */
+function present(id) {
+  const p = id && roster.get(id);
+  return !!p && (p.connected || Date.now() - p.goneAt < REJOIN_GRACE_MS);
+}
+const presentOrder = () => lob.order.filter((id) => roster.get(id)?.connected);
+/** The next connected player after `id` in join order (wrapping), avoiding `avoid` when possible. */
+function nextAfter(id, avoid) {
+  const live = presentOrder();
+  if (!live.length) return null;
+  const all = lob.order;
+  const start = all.indexOf(id);
+  for (let k = 1; k <= all.length; k++) {
+    const cand = all[(start + k + all.length) % all.length];
+    if (live.includes(cand) && (cand !== avoid || live.length === 1)) return cand;
+  }
+  return live[0];
+}
+/** Fill / repair the roles. Returns true if anything changed. */
+function fixRoles() {
+  const before = lob.pickerId + "|" + lob.rollerId;
+  // "present" includes phones that dropped a moment ago (a TV reload reconnects them one by one:
+  // don't treat the first one back as a solo player and hand them both roles)
+  const live = lob.order.filter(present);
+  if (!presentOrder().length) return false;
+  if (!present(lob.pickerId)) lob.pickerId = lob.pickerId && lob.order.includes(lob.pickerId) ? nextAfter(lob.pickerId, lob.rollerId) : live[0];
+  if (!present(lob.rollerId)) lob.rollerId = lob.rollerId && lob.order.includes(lob.rollerId) ? nextAfter(lob.rollerId, lob.pickerId) : nextAfter(lob.pickerId, lob.pickerId);
+  if (live.length >= 2 && lob.rollerId === lob.pickerId) lob.rollerId = nextAfter(lob.pickerId, lob.pickerId);
+  if (live.length === 1) lob.pickerId = lob.rollerId = live[0]; // solo: both
+  return before !== lob.pickerId + "|" + lob.rollerId;
+}
+function rotateRoles() {
+  const p0 = lob.pickerId, r0 = lob.rollerId;
+  lob.pickerId = nextAfter(p0, null);
+  lob.rollerId = nextAfter(r0, lob.pickerId);
+  fixRoles();
+  lob.browse = { gameId: GAME.id, view: "cards", flipped: false };
+}
+function newLook() {
+  lob.look = { seed: randSeed(), rollCount: (lob.look.rollCount || 0) + 1 };
+}
+const mayPick = (id) => id === lob.pickerId || !present(lob.pickerId);
+/** Party points for a finished round: place = finish place (boat place for crews), people only. */
+function awardPoints(r) {
+  const placeByPid = new Map();
+  if (GAME.seats) {
+    const boatOf = new Map(r.players.map((pl) => [pl.playerId, pl.boat]));
+    const boatRank = new Map();
+    for (const pid of r.placement) {
+      const b = boatOf.get(pid);
+      if (!boatRank.has(b)) boatRank.set(b, boatRank.size + 1);
+      placeByPid.set(pid, boatRank.get(b));
+    }
+  } else r.placement.forEach((pid, i) => placeByPid.set(pid, i + 1));
+  const results = [];
+  for (const [pid, place] of placeByPid) {
+    const id = r.humanIdByPid.get(pid);
+    if (!id) continue;
+    const pts = POINTS[place] || 0;
+    lob.points[id] = (lob.points[id] || 0) + pts;
+    results.push({ id, name: r.nameById.get(pid) || lob.names[id] || "?", place, points: pts });
+  }
+  results.sort((a, b) => a.place - b.place);
+  lob.lastResults = results;
+  saveLobby();
+}
+function leaderId() {
+  let best = null;
+  for (const id of lob.order) if ((lob.points[id] || 0) > 0 && (best == null || lob.points[id] > lob.points[best])) best = id;
+  return best;
+}
+function lobbyState() {
+  const placeOf = new Map(lob.lastResults.map((x) => [x.id, x.place]));
+  const lobbyish = phase === "lobby" || phase === "boot";
+  return {
+    phase: lobbyish ? (lob.selectedGameId === GAME.id ? "setup" : "lobby") : phase,
+    room: roomCode,
+    joinUrl: padUrl,
+    currentGameId: GAME.id,
+    players: lob.order
+      .filter((id) => roster.has(id))
+      .map((id) => {
+        const p = roster.get(id);
+        return {
+          id, name: p.name, color: colorSet(p.slot).base, slot: p.slot + 1, connected: p.connected,
+          points: lob.points[id] || 0, isPicker: id === lob.pickerId, isRoller: id === lob.rollerId,
+          ...(placeOf.has(id) ? { place: placeOf.get(id) } : {}),
+        };
+      }),
+    pickerId: lob.pickerId,
+    rollerId: lob.rollerId,
+    leaderId: leaderId(),
+    games: GAMES.map((g) => ({
+      id: g.id, name: g.name, tagline: g.tagline, button: g.button, minPlayers: g.minPlayers, maxPlayers: g.maxPlayers,
+      controls: g.controls, teams: !!g.seats, loop: `lobby2/media/${g.id}.mp4`, poster: `lobby2/media/${g.id}.jpg`,
+    })),
+    browse: lob.browse,
+    selectedGameId: lob.selectedGameId,
+    look: lob.look,
+    lastResults: lob.lastResults,
+  };
+}
+let lastPublished = "";
+function publishLobby() {
+  const st = lobbyState();
+  const json = JSON.stringify(st);
+  if (json === lastPublished) return;
+  lastPublished = json;
+  globalThis.FOXBOX_LOBBY_STATE = st;
+  try {
+    window.dispatchEvent(new CustomEvent("foxbox:lobby", { detail: st }));
+  } catch {}
+  wsSend({ t: "all", m: { t: "lobby", s: st } });
+}
+/** The picker chose a game: the hub switches to it (the TV page reloads) and waits in setup. */
+function pickGame(gameId) {
+  if (phase !== "lobby" && phase !== "boot") return;
+  const g = GAMES.find((q) => q.id === gameId);
+  if (!g) return;
+  lob.selectedGameId = g.id;
+  lob.browse = { ...lob.browse, gameId: g.id };
+  saveLobby();
+  if (g !== GAME) return switchGame(0, g.id);
+  broadcastLobby();
+  renderLobby();
+}
+function onLobbyMsg(msg) {
+  const p = roster.get(msg.id);
+  if (!p || !p.connected) return;
+  const lobbyish = phase === "lobby" || phase === "boot";
+  switch (msg.t) {
+    case "browse":
+      if (!lobbyish || msg.id !== lob.pickerId) return;
+      if (!GAMES.some((g) => g.id === msg.gameId)) return;
+      lob.browse = { gameId: msg.gameId, view: msg.view === "grid" ? "grid" : "cards", flipped: !!msg.flipped };
+      publishLobby();
+      break;
+    case "pickGame":
+      if (lobbyish && mayPick(msg.id)) pickGame(msg.gameId);
+      break;
+    case "roll":
+      if (!lobbyish || msg.id !== lob.rollerId) return;
+      newLook();
+      saveLobby();
+      publishLobby();
+      break;
+    case "skipTurn": {
+      const role = msg.role === "roller" ? "roller" : "picker";
+      if (role === "picker") lob.pickerId = nextAfter(lob.pickerId, lob.rollerId);
+      else lob.rollerId = nextAfter(lob.rollerId, lob.pickerId);
+      if (presentOrder().length >= 2 && lob.pickerId === lob.rollerId) {
+        if (role === "picker") lob.rollerId = nextAfter(lob.pickerId, lob.pickerId);
+        else lob.pickerId = nextAfter(lob.rollerId, lob.rollerId);
+      }
+      if (role === "picker") lob.browse = { gameId: GAME.id, view: "cards", flipped: false };
+      saveLobby();
+      broadcastLobby();
+      renderLobby();
+      break;
+    }
+    case "start":
+      if (!lobbyish || !mayPick(msg.id)) return;
+      if (lob.selectedGameId && lob.selectedGameId !== GAME.id) return pickGame(lob.selectedGameId);
+      if (!lob.selectedGameId) {
+        lob.selectedGameId = GAME.id;
+        saveLobby();
+      }
+      startCountdown(p);
+      break;
+  }
+}
+/** One line for the fallback lobby: who picks, who rolls, who leads. */
+function roleLine() {
+  const nm = (id) => (id && (roster.get(id)?.name || lob.names[id])) || "—";
+  const parts = [];
+  if (lob.pickerId) parts.push(`🎮 ${nm(lob.pickerId)} picks the game`);
+  if (lob.rollerId) parts.push(`🎲 ${nm(lob.rollerId)} rolls the look`);
+  const lead = leaderId();
+  if (lead) parts.push(`👑 ${nm(lead)} ${lob.points[lead]} pts`);
+  return parts.join("  ·  ");
+}
+
 // ── Status pushed to each phone ───────────────────────────────────────────────
 function connectedCount() {
   return [...roster.values()].filter((p) => p.connected).length;
@@ -482,7 +723,10 @@ function statusFor(p) {
   const pid = p.slot + 1;
   if (phase === "results" && round.placement) {
     const place = round.placement.indexOf(pid) + 1;
-    return { ...base, state: "results", place, total: round.placement.length, winner: round.nameById.get(round.placement[0]) };
+    // Crew members share their boat's outcome even though placement lists each seat separately.
+    const winnerBoat = GAME.seats ? round.players.find((pl) => pl.playerId === round.placement[0])?.boat : null;
+    const won = GAME.seats ? winnerBoat != null && round.players.find((pl) => pl.playerId === pid)?.boat === winnerBoat : place === 1;
+    return { ...base, state: "results", place, won, total: round.placement.length, winner: round.nameById.get(round.placement[0]) };
   }
   if (round.out.has(pid)) return { ...base, state: "out" };
   return { ...base, state: "playing" };
@@ -493,6 +737,7 @@ function sendStatus(p) {
 }
 function broadcastLobby() {
   for (const p of roster.values()) sendStatus(p);
+  publishLobby();
 }
 
 // ── Screens ───────────────────────────────────────────────────────────────────
@@ -501,6 +746,7 @@ function broadcastLobby() {
 const lobbyUI = () => globalThis.FOXBOX_LOBBY_UI || null;
 
 function show(id) {
+  queueMicrotask(publishLobby);
   for (const s of ["lobby", "countdown", "results"]) $(s).classList.toggle("show", s === id);
   lobbyUI()?.visible(id === "lobby");
   $("hud").classList.toggle("show", phase === "playing" || phase === "results");
@@ -545,7 +791,7 @@ function renderLobby() {
       ? `Starting by itself in ${Math.max(0, Math.ceil((autoStartAt - Date.now()) / 1000))} s`
       : "";
   const botTxt = n > 0 && bots > 0 ? `${bots} bot${bots > 1 ? "s" : ""} will join in` : "";
-  $("auto-text").textContent = [autoTxt, botTxt].filter(Boolean).join("  ·  ");
+  $("auto-text").textContent = [roleLine(), autoTxt, botTxt].filter(Boolean).join("  ·  ");
   // ?autoplay=1: the TV Chrome is started with --autoplay-policy=no-user-gesture-required, so sound already works.
   const active = AUTOPLAY_OK || (navigator.userActivation ? navigator.userActivation.hasBeenActive : true);
   $("sound-hint").textContent = active ? "" : "Click once on this page to turn the sound on";
@@ -559,7 +805,7 @@ function renderLobby() {
     })),
     games: GAMES.map((g) => ({ id: g.id, name: g.name, button: g.button, blurb: g.tagline })),
     current: GAME.id,
-    status: n > 0 ? [`Press ${GAME.button} on a phone to start!`, autoTxt, botTxt].filter(Boolean).join("  ·  ") : null,
+    status: n > 0 ? [`Press ${GAME.button} on a phone to start!`, roleLine(), autoTxt, botTxt].filter(Boolean).join("  ·  ") : null,
   });
 }
 
@@ -599,14 +845,14 @@ function renderSeatLobby(list) {
   }
   const autoTxt = autoStartAt ? `Starting by itself in ${Math.max(0, Math.ceil((autoStartAt - Date.now()) / 1000))} s` : "";
   const seatTxt = unseated ? `${unseated} still picking a seat` : n > 0 ? "Bots take the empty seats" : "";
-  $("auto-text").textContent = [autoTxt, seatTxt].filter(Boolean).join("  ·  ");
+  $("auto-text").textContent = [roleLine(), autoTxt, seatTxt].filter(Boolean).join("  ·  ");
   const active = AUTOPLAY_OK || (navigator.userActivation ? navigator.userActivation.hasBeenActive : true);
   $("sound-hint").textContent = active ? "" : "Click once on this page to turn the sound on";
   lobbyUI()?.render({
     players: web,
     games: GAMES.map((g) => ({ id: g.id, name: g.name, button: g.button, blurb: g.tagline })),
     current: GAME.id,
-    status: n > 0 ? [`Pick a boat on your phone · ${GAME.button} or FIRE starts!`, autoTxt].filter(Boolean).join("  ·  ") : null,
+    status: n > 0 ? [`Pick a boat on your phone · ${GAME.button} or FIRE starts!`, roleLine(), autoTxt].filter(Boolean).join("  ·  ") : null,
   });
 }
 
@@ -636,9 +882,12 @@ async function refreshInfo() {
       if (info.padUrl) padUrl = info.padUrl;
       // web version: a room code to type in, and where to type it
       if (info.room) {
+        roomCode = info.room;
         $("room-code").hidden = false;
         $("room-code").textContent = info.room;
-        $("room-code").dataset.roomCode = info.room;
+        // test hook only when this page's lobby is the one on screen (the web lobby UI shows its own)
+        if (!lobbyUI()) $("room-code").dataset.roomCode = info.room;
+        else delete $("room-code").dataset.roomCode;
         $("join-hint").hidden = false;
         $("join-hint").textContent = info.joinText || "";
         $("join-title").textContent = "Scan or enter the code";
@@ -653,7 +902,14 @@ async function refreshInfo() {
 }
 
 // ── Lobby → countdown → round ─────────────────────────────────────────────────
-function toLobby() {
+function toLobby(afterRound = false) {
+  if (afterRound) {
+    rotateRoles();
+    newLook();
+    lob.selectedGameId = null;
+    lob.browse = { gameId: GAME.id, view: "cards", flipped: false };
+    saveLobby();
+  }
   clearTimeout(resultsTimer);
   clearInterval(countdownTimer);
   if (round && !round.ended) {
@@ -665,7 +921,7 @@ function toLobby() {
   isPaused = false;
   $("paused").classList.remove("show");
   refreshCharacters(); // pick up drawings added since the last round
-  autoStartAt = connectedCount() > 0 ? Date.now() + AUTO_START_MS : null;
+  autoStartAt = AUTO_START && connectedCount() > 0 ? Date.now() + AUTO_START_MS : null;
   drawHoldUntil = null;
   show("lobby");
   renderLobby();
@@ -681,6 +937,7 @@ function startCountdown(byPlayer) {
   autoStartAt = null;
   drawHoldUntil = null;
   const ends = Date.now() + COUNTDOWN_MS;
+  countdownCueId = `${Date.now()}-${stats.rounds + 1}`;
   $("cd-sub").textContent = byPlayer ? `${byPlayer.name} pressed ${GAME.button} — get ready!` : "Get ready!";
   const tick = () => {
     const left = Math.ceil((ends - Date.now()) / 1000);
@@ -691,6 +948,14 @@ function startCountdown(byPlayer) {
     }
     if ($("cd-num").textContent !== String(left)) {
       $("cd-num").textContent = String(left);
+      const available = [...roster.values()]
+        .filter((p) => p.connected && !p.drawing && (!globalThis.FOXBOX_LOBBY2 || p.audioReady))
+        .sort((a, b) => a.slot - b.slot).map((p) => p.id);
+      const cue = { 3: "three", 2: "two", 1: "one" }[left];
+      if (cue && available.length) {
+        const targetId = available[(3 - left) % available.length];
+        wsSend({ t: "all", m: { t: "soundCue", id: `${countdownCueId}-${cue}`, cue, targetId } });
+      }
       // restart the pop animation
       $("cd-num").style.animation = "none";
       void $("cd-num").offsetWidth;
@@ -698,10 +963,10 @@ function startCountdown(byPlayer) {
     }
   };
   $("cd-num").textContent = "";
-  tick();
-  countdownTimer = setInterval(tick, 100);
   show("countdown");
   broadcastLobby();
+  tick();
+  countdownTimer = setInterval(tick, 100);
 }
 
 function startRound() {
@@ -787,6 +1052,8 @@ function startRound() {
   phase = "playing";
   isPaused = false;
   $("scoreboard").innerHTML = "";
+  // A game can ask for no player panel (Snowball Sumo: hud.setup({players:{hidden:true}})).
+  $("scoreboard").style.display = hudPanelHidden() ? "none" : "";
   $("screen-points").innerHTML = "";
 
   const started = game.play({
@@ -819,7 +1086,11 @@ function startRound() {
   // countdown up until the round is really running, so the TV never shows a stale frame.
   const go = () => {
     if (round !== r || phase !== "playing") return;
-    show(null);
+    $("cd-num").textContent = "GO!";
+    $("cd-sub").textContent = "";
+    show("countdown");
+    wsSend({ t: "all", m: { t: "soundCue", id: `${countdownCueId}-go`, cue: "go" } });
+    setTimeout(() => { if (round === r && phase === "playing") show(null); }, 350);
     // Push whatever the phones are holding right now.
     for (const p of humans) forwardInput(p);
   };
@@ -827,6 +1098,8 @@ function startRound() {
   else go();
   broadcastLobby();
 }
+
+const hudPanelHidden = () => !!(hudConfig && hudConfig.players && hudConfig.players.hidden);
 
 function onHudPlayers(r, list) {
   r.hudById.clear();
@@ -839,6 +1112,7 @@ function onHudPlayers(r, list) {
       if (hp) sendStatus(hp);
     }
   }
+  if (hudPanelHidden()) return; // eliminations/placement above still count; just no panel
   const ordered = [...list].sort((a, b) => a.placement - b.placement);
   $("scoreboard").innerHTML = ordered
     .map((p) => {
@@ -873,6 +1147,7 @@ function renderScreenPoints(r, points) {
 function onGameOver(r, ids) {
   r.ended = true;
   r.placement = [...ids];
+  awardPoints(r);
   stats.gameOvers++;
   stats.lastPlacement = [...ids];
   phase = "results";
@@ -902,7 +1177,7 @@ function onGameOver(r, ids) {
   for (const p of roster.values()) sendStatus(p);
   resultsTimer = setTimeout(() => {
     clearInterval(countdownTimer);
-    toLobby();
+    toLobby(true);
   }, RESULTS_MS);
 }
 
@@ -915,13 +1190,18 @@ setInterval(() => {
   for (const p of [...roster.values()]) {
     if (!p.connected && now - p.goneAt > LOBBY_DROP_MS) {
       roster.delete(p.id);
+      lob.order = lob.order.filter((id) => id !== p.id);
       changed = true;
     }
   }
   if (changed) saveRoster();
+  if (fixRoles()) {
+    saveLobby();
+    changed = true;
+  }
   const n = connectedCount();
   if (n === 0) autoStartAt = null;
-  else if (autoStartAt == null) autoStartAt = now + AUTO_START_MS;
+  else if (autoStartAt == null && AUTO_START) autoStartAt = now + AUTO_START_MS;
   if (autoStartAt != null && now >= autoStartAt) {
     // Hold the auto-start (up to DRAW_HOLD_MS) while someone is drawing; BONK still starts.
     const busy = drawers().length > 0;
@@ -958,7 +1238,7 @@ window.addEventListener("keydown", (e) => {
     e.preventDefault();
     startCountdown(null);
   } else if (e.key === "Enter" && phase === "results") {
-    toLobby();
+    toLobby(true);
   } else if (e.code === "KeyP" && phase === "playing") {
     isPaused = !isPaused;
     game.pause(isPaused);
@@ -992,6 +1272,9 @@ window.__party = {
   },
   start: () => startCountdown(null),
   lobby: () => toLobby(),
+  get lobbyState() {
+    return lobbyState();
+  },
 };
 
 /** Lobby only: switch the hub to the next (dir 1) / previous game. Reloads the TV page with
@@ -1020,7 +1303,8 @@ function renderHub() {
 
 async function boot() {
   await netReady; // the web version first sets up (or rejoins) its room
-  if (lobbyUI()) lobbyUI().onPick = (id) => switchGame(1, id);
+  if (lobbyUI()) lobbyUI().onPick = (id) => pickGame(id);
+  loadLobby();
   renderHub();
   loadRoster();
   renderLobby();
@@ -1054,6 +1338,7 @@ async function boot() {
   phase = "lobby";
   show("lobby");
   renderLobby();
+  publishLobby();
   connect();
 }
 

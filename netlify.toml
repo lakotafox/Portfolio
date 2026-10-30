@@ -154,6 +154,19 @@
   status = 302
   force = true
 
+# FoxBox now uses one production world. Old beta links follow the same path there.
+[[redirects]]
+  from = "/foxbox-beta"
+  to = "/foxbox/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/foxbox-beta/*"
+  to = "/foxbox/:splat"
+  status = 302
+  force = true
+
 # Portfolio (React SPA) is served at /portfolio and all other app routes.
 [[redirects]]
   from = "/*"

@@ -19,6 +19,10 @@ node_modules/
 dist/
 build/
 
+# FoxBox's prebuilt lobby is deployed as static content.
+!public/foxbox/lobby2/dist/
+!public/foxbox/lobby2/dist/**
+
 # Environment files
 .env
 .env.local

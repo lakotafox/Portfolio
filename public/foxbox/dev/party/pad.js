@@ -32,6 +32,12 @@ import { createDrawPad } from "./draw.js";
 import { isP2P, ready as netReady, openSocket, api } from "./net.js";
 import { createRowPad } from "./row-pad.js";
 import { createCapPad } from "./cap-pad.js";
+import { createLandscape } from "./landscape.js";
+import { createPhoneSounds } from "./phone-sounds.js";
+
+const phoneSounds = createPhoneSounds({
+  onReady: (audioReady) => queueMicrotask(() => sendRaw({ t: "state", drawing: drawOpen, audioReady: audioReady === true })),
+});
 
 const STORE_KEY = "sky-scramble-pad";
 const DRAW_KEY = "sky-scramble-pad-drawing"; // the drawing in progress / last drawing (PNG data URL + settings)
@@ -78,8 +84,11 @@ function saveMe() {
 saveMe();
 
 // ── Screens ─────────────────────────────────────────────────────────────────────
+let curScreen = null;
 function showScreen(id) {
+  curScreen = id;
   for (const s of ["name-screen", "char-screen", "crop-screen", "draw-screen", "pad-screen"]) $(s).classList.toggle("show", s === id);
+  if (typeof syncExtras === "function") syncExtras();
 }
 
 // ── Character picker ────────────────────────────────────────────────────────────
@@ -645,7 +654,7 @@ function sendRaw(obj) {
   return false;
 }
 function sendJoin() {
-  sendRaw({ t: "join", id: me.id, name: me.name, character: me.character, drawing: drawOpen });
+  sendRaw({ t: "join", id: me.id, name: me.name, character: me.character, drawing: drawOpen, audioReady: phoneSounds.ready === true });
   sent = { x: null, b: null, s: null };
   flush();
 }
@@ -680,20 +689,79 @@ window.addEventListener("pagehide", () => {
 
 function onMessage(msg) {
   switch (msg.t) {
+    case "soundCue":
+      phoneSounds.cue(msg, me.id);
+      break;
     case "host":
       hostUp = !!msg.up;
       renderStatus();
       break;
     case "status":
+      phoneSounds.status(msg);
       lastStatus = { ...msg, at: Date.now() };
       if (msg.color) applyColor(msg.color);
       if (msg.name && msg.name !== me.name && !me.name) me.name = msg.name;
+      renderStatus();
+      break;
+    case "lobby":
+      // Lobby v2: the shared lobby state (roles, scoreboard, the picker's browsing, the look seed)
+      lobbyState = msg.s && typeof msg.s === "object" ? msg.s : null;
+      phoneSounds.lobby(lobbyState, me.id);
+      globalThis.FOXBOX_LOBBY_STATE = lobbyState;
+      try {
+        window.dispatchEvent(new CustomEvent("foxbox:lobby", { detail: lobbyState }));
+      } catch {}
       renderStatus();
       break;
     case "replaced":
       replaced = true;
       break;
   }
+}
+
+// ── Lobby v2 ────────────────────────────────────────────────────────────────────
+// The TV sends {t:"lobby", s} with everyone's roles; a phone UI (lobby2) talks back through
+// window.foxboxLobby. The host checks the roles: only the GAME PICKER may browse / pick / start,
+// only the THEME ROLLER may roll; anyone may skip either turn.
+var lobbyState = null; // var: renderStatus may run before this line during start-up
+let browseTimer = null;
+let browsePending = null;
+let browseSentAt = 0;
+window.foxboxLobby = {
+  get state() {
+    return lobbyState;
+  },
+  get myId() {
+    return me.id;
+  },
+  /** The picker's position in the game cards (mirrored on the TV), throttled to ~10/s. */
+  browse(gameId, view = "cards", flipped = false) {
+    browsePending = { t: "browse", gameId, view, flipped: !!flipped };
+    const wait = Math.max(0, 100 - (Date.now() - browseSentAt));
+    if (browseTimer) return;
+    browseTimer = setTimeout(() => {
+      browseTimer = null;
+      browseSentAt = Date.now();
+      sendRaw(browsePending);
+    }, wait);
+  },
+  pickGame: (gameId) => sendRaw({ t: "pickGame", gameId }),
+  roll: () => sendRaw({ t: "roll" }),
+  skipTurn: (role) => sendRaw({ t: "skipTurn", role: role === "roller" ? "roller" : "picker" }),
+  start: () => sendRaw({ t: "start" }),
+};
+const iAmPicker = () => !!lobbyState && lobbyState.pickerId === me.id;
+const iAmRoller = () => !!lobbyState && lobbyState.rollerId === me.id;
+function lobbyLine() {
+  if (!lobbyState) return "";
+  const nm = (id) => (lobbyState.players.find((q) => q.id === id) || {}).name || "someone";
+  const mine = lobbyState.players.find((q) => q.id === me.id);
+  const bits = [];
+  if (iAmPicker()) bits.push("🎮 You pick the game");
+  else if (lobbyState.pickerId) bits.push(`🎮 ${nm(lobbyState.pickerId)} picks`);
+  if (iAmRoller()) bits.push("🎲 You roll the look");
+  if (mine && mine.points) bits.push(`${mine.points} pts${lobbyState.leaderId === me.id ? " 👑" : ""}`);
+  return bits.join(" · ");
 }
 
 function applyColor(c) {
@@ -748,12 +816,14 @@ function applyRole() {
   if (role !== "captain") $("pad-screen").classList.remove("picking");
   if (seat) {
     if (seat.color) applyColor(seat.color);
-    const label = `${seat.seat === "captain" ? "CAPTAIN" : "PADDLER"} · ${seat.boatName} boat`;
+    const label = `${SEAT_LABEL[seat.seat] || "CREW"} · ${seat.boatName} boat`;
     cap.setRole(label);
   }
 }
 
-const SEAT_LABEL = { paddle: "PADDLER", captain: "CAPTAIN" };
+// Seat ids stay "paddle" / "captain" (the game contract); the names people see: the rower is the
+// CAPTAIN, the one who steers and fires is the FIRST MATE.
+const SEAT_LABEL = { paddle: "CAPTAIN", captain: "FIRST MATE" };
 const BOAT_LABEL = ["Red", "Blue", "Green", "Yellow"];
 function renderBoats() {
   const st = lastStatus && lastStatus.state;
@@ -804,9 +874,9 @@ function renderStatus() {
   const between = !!(ws && ws.readyState === 1 && hostUp && !replaced && ["lobby", "results", "waiting", "out"].includes(st0));
   $("change-char").hidden = !between || mode.id !== "sky"; // characters are a Sky Scramble thing (for now)
   $("change-char").textContent = me.character ? "Change character" : "Set up your character";
-  $("switch-game").hidden = !(between && st0 === "lobby" && mode.count > 1);
+  $("switch-game").hidden = !(between && st0 === "lobby" && mode.count > 1 && (!lobbyState || iAmPicker()));
   const seatNow = mySeat();
-  $("game-name").textContent = seatNow ? `${mode.name} · ${seatNow.seat === "captain" ? "CAPTAIN" : "PADDLER"} · ${seatNow.boatName} boat` : mode.name;
+  $("game-name").textContent = seatNow ? `${mode.name} · ${SEAT_LABEL[seatNow.seat] || "CREW"} · ${seatNow.boatName} boat` : mode.name;
   const big = $("status-big");
   const small = $("status-small");
   $("me-name").textContent = me.name;
@@ -839,6 +909,8 @@ function renderStatus() {
         b = "You're in!";
         const left = st.autoIn != null ? Math.max(0, st.autoIn - Math.floor((Date.now() - st.at) / 1000)) : null;
         s = (mode.seats && !mySeat() ? "Pick a seat in a boat below" : role === "captain" ? "Press FIRE to start" : mode.stick === "motion" ? "Paddle to start" : `Press ${mode.button} to start`) + (st.hold === "drawing" ? " · someone's still drawing" : left != null ? ` · auto-start in ${left}s` : "");
+        const ll = lobbyLine();
+        if (ll) s += ` · ${ll}`;
         break;
       }
       case "countdown":
@@ -884,6 +956,26 @@ function renderStatus() {
   const capLine = b === "You're in!" ? s : s ? `${b} · ${s}` : b;
   if ($("cap-status").textContent !== capLine) $("cap-status").textContent = capLine;
   $("cap-seat").hidden = !(mode.seats && lastStatus && lastStatus.state === "lobby");
+  syncExtras();
+}
+
+// ── Sideways controllers + the web version's lobby screens ──────────────────────
+// During a round the controller is full screen and landscape (landscape.js). The web version
+// (globalThis.FOXBOX_LOBBY2 = the lobby2 bundle's URL) also covers the lobby phase with the
+// FoxBox lobby screens and gives the controllers the rolled look (lobby2-pad.js).
+let lobby2Pad = null;
+function syncExtras() {
+  const st = lastStatus && lastStatus.state;
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  const playing = connected && curScreen === "pad-screen" && (st === "countdown" || st === "playing");
+  if (typeof land !== "undefined") land.set(playing && globalThis.FOXBOX_LANDSCAPE === true); // on with the next release
+  if (lobby2Pad) {
+    try {
+      lobby2Pad.sync({ screen: curScreen, state: st, connected, gameId: mode.id, seats: !!mode.seats, role: role || null, lobby: lobbyState });
+    } catch (e) {
+      console.warn("[foxbox] lobby2 sync failed", e);
+    }
+  }
 }
 // Lobby auto-start countdown ticks locally between status pushes.
 setInterval(() => {
@@ -901,12 +993,14 @@ let sent = { x: null, y: null, b: null, c: null, s: null };
 function flush() {
   if (sent.x === x && sent.y === y && sent.b === b && sent.c === c && sent.s === s) return;
   if (sendRaw({ t: "in", x, y, b, c, s })) {
+    phoneSounds.input({ b, c }, sent, mode.id, role);
     sent = { x, y, b, c, s };
     window.__foxboxLastInputAt = Date.now();
   }
 }
 
 const steer = $("steer");
+const land = createLandscape($("pad-screen"));
 const knob = $("knob");
 const halfL = steer.querySelector(".half.l");
 const halfR = steer.querySelector(".half.r");
@@ -938,10 +1032,8 @@ function setXY(vx, vy) {
 const setX = (v) => setXY(v, 0);
 
 function steerFrom(ev) {
-  const r = steer.getBoundingClientRect();
-  const half = r.width / 2, halfH = r.height / 2;
-  const dx = ev.clientX - (r.left + half);
-  const dy = ev.clientY - (r.top + halfH);
+  // in the stick's own frame, so it still works when the controller is turned sideways with CSS
+  const { dx, dy, halfW: half, halfH } = land.local(ev, steer);
   if (mode.stick === "xy") {
     // a 2D stick: direction from the middle of the pad, full tilt at ~65 % of the way out
     const k = Math.min(half, halfH) * FULL_AT;
@@ -1070,7 +1162,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   );
 }
 document.addEventListener("touchmove", (e) => {
-  if (!e.target.closest("input, #char-grid, #crop-stage")) e.preventDefault();
+  if (!e.target.closest("input, #char-grid, #crop-stage, #fbx2-pad")) e.preventDefault();
 }, { passive: false });
 for (const type of ["gesturestart", "gesturechange", "gestureend", "dblclick", "contextmenu", "selectstart"]) {
   document.addEventListener(type, (e) => {
@@ -1084,6 +1176,25 @@ window.addEventListener("resize", () => {
 
 // ── Start ───────────────────────────────────────────────────────────────────────
 await netReady; // the web version first asks for (and checks) the room code — and your name
+if (globalThis.FOXBOX_LOBBY2) {
+  // the controllers wear the rolled look too (self-installing; optional)
+  import("./controller-look.js").catch((e) => console.warn("[foxbox] controller look didn't load", e));
+  import("./lobby2-pad.js")
+    .then((m) =>
+      m.initLobby2Pad({
+        url: globalThis.FOXBOX_LOBBY2,
+        myId: () => me.id,
+        editName: () => $("edit-name").click(),
+        changeCharacter: () => showPicker(),
+        lobby: window.foxboxLobby,
+      }),
+    )
+    .then((h) => {
+      lobby2Pad = h;
+      syncExtras();
+    })
+    .catch((e) => console.warn("[foxbox] lobby2 screens didn't load — using the plain ones", e));
+}
 if (!me.name && globalThis.FOXBOX_NAME) {
   me.name = String(globalThis.FOXBOX_NAME).replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, 12);
   saveMe();
