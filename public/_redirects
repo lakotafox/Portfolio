@@ -43,5 +43,9 @@
 /pro-manifest.json  https://puddl3-p4rts.netlify.app/pro-manifest.json   200
 /assets/*           https://puddl3-p4rts.netlify.app/assets/:splat       200
 
+# --- FoxBox: old beta links use production ---
+/foxbox-beta/* /foxbox/:splat 302!
+/foxbox-beta   /foxbox/       302!
+
 # --- portfolio SPA catch-all (must stay last) ---
 /* /index.html 200
