@@ -598,6 +598,7 @@ let lastRx = 0;
 let hostUp = false;
 let replaced = false;
 let lastStatus = null;
+let rowConnectionEpoch = 0;
 
 function setConn(kind, text) {
   const el = $("conn");
@@ -613,6 +614,7 @@ function connect() {
   const sock = openSocket("pad");
   ws = sock;
   sock.onopen = () => {
+    rowConnectionEpoch++;
     retryMs = 400;
     lastRx = Date.now();
     setConn("ok", "Connected");
@@ -867,6 +869,7 @@ $("cap-seat").addEventListener("click", () => $("pad-screen").classList.toggle("
 function renderStatus() {
   if (lastStatus && lastStatus.game) applyMode(lastStatus.game);
   applyRole();
+  syncRowSetup();
   renderBoats();
   if (lastStatus && lastStatus.hub) document.title = `${lastStatus.hub} — Controller`;
   // Between rounds you can switch character (it applies from the next round).
@@ -908,7 +911,11 @@ function renderStatus() {
       case "lobby": {
         b = "You're in!";
         const left = st.autoIn != null ? Math.max(0, st.autoIn - Math.floor((Date.now() - st.at) / 1000)) : null;
-        s = (mode.seats && !mySeat() ? "Pick a seat in a boat below" : role === "captain" ? "Press FIRE to start" : mode.stick === "motion" ? "Paddle to start" : `Press ${mode.button} to start`) + (st.hold === "drawing" ? " · someone's still drawing" : left != null ? ` · auto-start in ${left}s` : "");
+        s = mode.id === "row"
+          ? !mySeat() ? "Pick a seat in a boat below" : st.rowSetup?.ready
+            ? `Ready — ${st.rowSetup.readyCount}/${st.rowSetup.totalCount} players ready`
+            : "Enable motion, test your controls, then tap Ready"
+          : `Press ${mode.button} to start` + (st.hold === "drawing" ? " · someone's still drawing" : left != null ? ` · auto-start in ${left}s` : "");
         const ll = lobbyLine();
         if (ll) s += ` · ${ll}`;
         break;
@@ -1095,37 +1102,61 @@ bonk.addEventListener("pointerup", bonkEnd);
 bonk.addEventListener("pointercancel", bonkEnd);
 bonk.addEventListener("lostpointercapture", bonkEnd);
 
-// Row Row Rumble: the phone (or two paddle buttons) drives b and c directly.
+// Setup is tied to the host epoch and exact seat. Permission/practice is local;
+// only a host acknowledgment marks the player ready.
+function syncRowSetup() {
+  if (mode.id === "row" && lastStatus?.state !== "playing" && (x || y || s || b || c)) {
+    x = y = s = b = c = 0;
+    flush();
+  }
+  const seat = mySeat(), setup = lastStatus?.rowSetup;
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  const next = connected && mode.id === "row" && seat && setup ? {
+    ...setup,
+    key: `${rowConnectionEpoch}:${setup.id}:${seat.boat}:${seat.seat}`,
+    active: lastStatus.state === "lobby",
+  } : null;
+  row.setSetup(role === "paddle" ? next : null);
+  cap.setSetup(role === "captain" ? next : null);
+}
+function sendRowReady(expectedRole, readiness) {
+  const seat = mySeat(), setup = lastStatus?.rowSetup;
+  if (mode.id !== "row" || role !== expectedRole || !seat || !setup || !hostUp || replaced) return;
+  if (readiness.ready ? lastStatus.state !== "lobby" : !["lobby", "countdown"].includes(lastStatus.state)) return;
+  sendRaw({ t: "rowReady", setupId: setup.id, boat: seat.boat, seat: seat.seat,
+    motionReady: readiness.motionReady === true, ready: readiness.ready === true });
+}
+
+// Motion-only CAPTAIN: paddling drives b and c during the race.
 const row = createRowPad(
   {
-    root: $("row"), motion: $("row-motion"), buttons: $("row-buttons"), boat: $("row-boat"),
+    root: $("row"), boat: $("row-boat"),
     count: $("row-count"), countWrap: $("row-count-wrap"), hint: $("row-hint"), meter: $("row-meter"),
     sens: $("row-sens"), enable: $("row-enable"), ready: $("row-ready"), note: $("row-note"),
-    useButtons: $("row-use-buttons"), useMotion: $("row-use-motion"), oar: $("oar"),
   },
   {
     onInput(v) {
-      if (role === "captain" || (mode.seats && role !== "paddle")) return; // its motion listener keeps running: only a paddler paddles
+      if (mode.id !== "row" || role !== "paddle" || lastStatus?.state !== "playing") return;
       x = v.x;
       b = v.b;
       c = v.c;
       flush();
-      if (lastStatus && lastStatus.state === "lobby" && (v.b || v.c)) renderStatus();
     },
     state: () => lastStatus && lastStatus.state,
+    onReady: (readiness) => sendRowReady("paddle", readiness),
   },
 );
 
-// Row Row Rumble v2 captain: tilt steers (s), the stick aims (x, y), FIRE is b.
+// Row Row Rumble FIRST MATE (internal captain seat): tilt steers, the stick aims, FIRE is b.
 const cap = createCapPad(
   {
-    root: $("cap"), steerFill: $("cap-steer-fill"), steerL: $("cap-left"), steerR: $("cap-right"), steerHint: $("cap-steer-hint"),
+    root: $("cap"), steerFill: $("cap-steer-fill"), steerHint: $("cap-steer-hint"),
     aim: $("cap-aim"), aimKnob: $("cap-aim-knob"), aimArrow: $("cap-aim-arrow"), fire: $("cap-fire"), ring: $("cap-ring"),
-    fireLabel: $("cap-fire-label"), role: $("cap-role"), enable: $("cap-enable"), useButtons: $("cap-use-buttons"), note: $("cap-note"),
+    fireLabel: $("cap-fire-label"), role: $("cap-role"), enable: $("cap-enable"), ready: $("cap-ready"), note: $("cap-note"),
   },
   {
     onInput(v) {
-      if (role !== "captain") return;
+      if (mode.id !== "row" || role !== "captain" || lastStatus?.state !== "playing") return;
       x = v.x;
       y = v.y;
       s = v.s;
@@ -1133,6 +1164,8 @@ const cap = createCapPad(
       c = 0;
       flush();
     },
+    state: () => lastStatus && lastStatus.state,
+    onReady: (readiness) => sendRowReady("captain", readiness),
   },
 );
 
@@ -1155,7 +1188,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   padScreen.addEventListener(
     type,
     (e) => {
-      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #cap-enable")) return; // let real buttons click (incl. Switch game)
+      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #cap-enable, #cap-ready")) return; // let real buttons click (incl. Switch game)
       e.preventDefault();
     },
     { passive: false },

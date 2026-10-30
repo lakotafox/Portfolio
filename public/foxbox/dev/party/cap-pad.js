@@ -10,7 +10,7 @@
  *     physical hold whatever the window does — it also works with iOS Rotation Lock on.
  *   - LEFT thumb: aim stick (2D, up = -1).
  *   - RIGHT thumb: FIRE, with a reload ring (RELOAD_MS, a phone-side estimate of the game's reload).
- * Without motion (no sensor / permission refused / plain http) two ◀ ▶ buttons in the top bar steer.
+ * Motion is required; setup offers a tilt test and host-confirmed Ready before the race.
  * In portrait it asks to turn the phone sideways.
  *
  *   createCapPad(el, { onInput({x, y, s, b}) }) -> { show(on), release(), setRole(text) }
@@ -23,17 +23,16 @@ const HOLD_SWITCH_MS = 800; // gravity must clearly point the other way this lon
 const AIM_DEAD = 0.12;
 const AIM_FULL = 0.7; // fraction of the stick radius for full aim
 
-export function createCapPad(el, { onInput }) {
+export function createCapPad(el, { onInput, state = () => "playing", onReady = () => {} }) {
   let shown = false;
   let x = 0, y = 0, s = 0, b = 0;
   let tiltS = 0; // from motion
-  let btnS = 0; // from the ◀ ▶ buttons
-  let useButtons = false;
+  let setup = null, pending = false, permissionGranted = false, testedTilt = false;
+  let phase = state();
   let listening = false;
   let gotMotion = false;
-  let lastFire = -1e9;
+  let lastFire = -1e9, lastMotionAt = -Infinity;
   let fallbackTimer = null;
-  let manualButtons = false; // the player picked the ◀ ▶ buttons themselves
 
   const hasMotionApi = typeof window.DeviceMotionEvent !== "undefined";
   const needsPermission = hasMotionApi && typeof DeviceMotionEvent.requestPermission === "function";
@@ -41,7 +40,12 @@ export function createCapPad(el, { onInput }) {
   const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const iosSign = isIOS ? -1 : 1;
 
-  const send = () => onInput({ x, y, s, b });
+  const send = () => { if (shown && gotMotion && window.isSecureContext && state() === "playing") onInput({ x, y, s, b }); };
+  const preparing = () => !!(shown && setup?.active);
+  const report = (ready = false) => {
+    if (shown && setup && (preparing() || (!ready && state() === "countdown")))
+      onReady({ motionReady: gotMotion, ready: !!ready && gotMotion && testedTilt });
+  };
 
   // ── how the phone is physically held ──
   // holdAngle: which device edge points up, in screen.orientation.angle terms (90 = the device's
@@ -141,14 +145,12 @@ export function createCapPad(el, { onInput }) {
   function setS(v) {
     v = q(Math.max(-1, Math.min(1, v)));
     el.steerFill.style.transform = `translateX(${v * 50}%)`;
-    el.steerL.classList.toggle("on", v < 0);
-    el.steerR.classList.toggle("on", v > 0);
     if (v !== s) {
       s = v;
       send();
     }
   }
-  const updateSteer = () => setS(useButtons ? btnS : tiltS);
+  const updateSteer = () => setS(tiltS);
 
   function screenAngle() {
     const a = screen.orientation && typeof screen.orientation.angle === "number" ? screen.orientation.angle : window.orientation || 0;
@@ -156,96 +158,71 @@ export function createCapPad(el, { onInput }) {
   }
 
   function onMotion(e) {
+    if (!shown || document.hidden || !window.isSecureContext || !hasMotionApi || (needsPermission && !permissionGranted)) return;
     const g = e.accelerationIncludingGravity;
-    if (!g || g.x == null) return;
+    if (!g || !Number.isFinite(g.x) || !Number.isFinite(g.y)) return;
+    lastMotionAt = performance.now();
     if (!gotMotion) {
-      gotMotion = true;
+      gotMotion = permissionGranted = true;
       el.enable.hidden = true;
       clearTimeout(fallbackTimer);
-      if (useButtons && !manualButtons) setButtons(false);
+      el.note.textContent = "";
+      report(false);
       render();
     }
     // Android convention: the reading points UP (away from the floor) in device axes (x right, y top).
     const ax = g.x * iosSign, ay = g.y * iosSign;
     updateHold(ax, ay, performance.now());
-    if (useButtons) return;
     // steer relative to the physical hold (not the window), so auto-rotate can't flip it
     const a = holdAngle == null ? screenAngle() : holdAngle === 180 ? 180 : holdAngle;
     // the screen's right-hand direction, in device axes
     const sx = a === 90 ? -ay : a === 270 ? ay : a === 180 ? -ax : ax;
     let v = -sx / 9.81; // lean the right edge down → the up-vector tips left → steer right
     v = Math.sign(v) * Math.max(0, Math.abs(v) - DEAD) / (FULL_TILT - DEAD);
+    if (!testedTilt && Math.abs(v) > 0.15) { testedTilt = true; render(); }
     tiltS = tiltS * 0.4 + v * 0.6;
     updateSteer();
   }
 
-  function listen() {
-    if (listening) return;
-    listening = true;
-    window.addEventListener("devicemotion", onMotion);
-    clearTimeout(fallbackTimer);
-    fallbackTimer = setTimeout(() => {
-      if (gotMotion) return;
-      if (needsPermission && !asked) {
-        el.enable.hidden = false;
-        render();
-        return;
-      }
-      setButtons(true, "No tilt sensor · steer with ◀ ▶");
-    }, needsPermission ? 1000 : 2500);
-  }
-
-  let asked = false;
-  async function enableMotion() {
-    asked = true;
-    try {
-      const res = await DeviceMotionEvent.requestPermission();
-      if (res !== "granted") return setButtons(true, "Motion wasn't allowed · steer with ◀ ▶ (reload to ask again)");
-    } catch {
-      return setButtons(true, "Couldn't turn on motion · steer with ◀ ▶");
-    }
-    el.enable.hidden = true;
-    goFull();
-    listen();
-  }
-
-  function setButtons(on, note) {
-    useButtons = on;
-    el.root.classList.toggle("buttons", on);
-    el.note.textContent = note || "";
-    btnS = 0;
-    updateSteer();
+  function unavailable(note) {
+    release();
+    gotMotion = false;
+    testedTilt = false;
+    pending = false;
+    el.note.textContent = note;
+    report(false);
     render();
   }
-
   function startMotion() {
-    if (!hasMotionApi) return setButtons(true, "No tilt sensor · steer with ◀ ▶");
-    if (!window.isSecureContext) return setButtons(true, "Tilt needs the https link · steer with ◀ ▶");
-    listen();
+    if (!window.isSecureContext) {
+      el.enable.hidden = true;
+      return unavailable("Tilt needs a secure HTTPS controller link. Rejoin using that link.");
+    }
+    if (!hasMotionApi) {
+      el.enable.hidden = true;
+      return unavailable("This device has no motion sensor. Join on a phone with motion support.");
+    }
+    el.enable.hidden = !needsPermission || permissionGranted;
+    if (!listening) {
+      listening = true;
+      window.addEventListener("devicemotion", onMotion);
+    }
+    clearTimeout(fallbackTimer);
+    fallbackTimer = setTimeout(() => {
+      if (shown && !gotMotion && (!needsPermission || permissionGranted)) unavailable("No tilt readings yet. Check motion access, then try again.");
+    }, 3000);
+    render();
   }
-
-  // ◀ ▶ buttons (fallback)
-  for (const [btn, dir] of [[el.steerL, -1], [el.steerR, 1]]) {
-    let ptr = null;
-    btn.addEventListener("pointerdown", (ev) => {
-      if (!useButtons) return;
-      ev.preventDefault();
-      ptr = ev.pointerId;
-      try {
-        btn.setPointerCapture(ev.pointerId);
-      } catch {}
-      btnS = dir;
-      updateSteer();
-    });
-    const end = (ev) => {
-      if (ev.pointerId !== ptr) return;
-      ptr = null;
-      if (btnS === dir) btnS = 0;
-      updateSteer();
-    };
-    btn.addEventListener("pointerup", end);
-    btn.addEventListener("pointercancel", end);
-    btn.addEventListener("lostpointercapture", end);
+  async function enableMotion() {
+    if (!shown || !window.isSecureContext || !hasMotionApi) return;
+    try {
+      if (needsPermission && await DeviceMotionEvent.requestPermission() !== "granted") {
+        return unavailable("Motion access was denied. Allow Motion & Orientation for this site, then retry.");
+      }
+      permissionGranted = true;
+      startMotion();
+      goFull();
+    } catch { unavailable("Motion access could not be enabled. Check this site's motion permission and retry."); }
   }
 
   // ── aim stick ──
@@ -360,23 +337,37 @@ export function createCapPad(el, { onInput }) {
   requestAnimationFrame(tickRing);
 
   function render() {
+    el.root.classList.toggle("motion-setup", preparing());
     layout();
-    el.steerHint.textContent = useButtons ? "hold ◀ ▶ to steer" : gotMotion ? "tilt to steer" : el.enable.hidden ? "getting tilt…" : "";
+    el.steerHint.textContent = gotMotion ? (state() === "playing" ? "tilt to steer" : "Tilt to test your steering") : "Enable motion to steer";
+    el.ready.hidden = !preparing();
+    el.ready.disabled = !gotMotion || !testedTilt || !!setup?.ready || pending;
+    el.ready.textContent = setup?.ready ? "Ready ✓" : pending ? "Waiting for TV…" : "Ready!";
   }
   window.addEventListener("resize", () => shown && render());
   window.addEventListener("orientationchange", () => shown && setTimeout(render, 50));
   if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", () => shown && render());
 
+  const canInvalidate = () => shown && setup && (state() === "lobby" || state() === "countdown");
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) return;
+    release();
+    if (canInvalidate()) unavailable("Motion paused while this page was hidden. Return, test your tilt, and tap Ready again.");
+  });
+  setInterval(() => {
+    if (canInvalidate() && gotMotion && performance.now() - lastMotionAt > 2500)
+      unavailable("Tilt readings stopped. Move your phone to reconnect, then tap Ready again.");
+  }, 500);
   el.enable.addEventListener("click", enableMotion);
-  el.useButtons.addEventListener("click", () => {
-    manualButtons = !useButtons;
-    setButtons(!useButtons, "");
-    if (!useButtons) startMotion();
+  el.ready.addEventListener("click", () => {
+    if (!preparing() || !gotMotion || !testedTilt || setup.ready || pending) return;
+    pending = true;
+    report(true);
+    render();
   });
 
   function release() {
     x = y = b = 0;
-    btnS = 0;
     el.fire.classList.remove("down");
     el.aim.classList.remove("active");
     el.aimKnob.style.transform = "";
@@ -400,6 +391,7 @@ export function createCapPad(el, { onInput }) {
         } catch {}
       } else {
         release();
+        clearTimeout(fallbackTimer);
         clearRot();
         holdAngle = null;
         try {
@@ -410,6 +402,24 @@ export function createCapPad(el, { onInput }) {
           document.exitFullscreen().catch(() => {});
         }
       }
+    },
+    setSetup(next) {
+      const nextPhase = state();
+      if (nextPhase !== phase && nextPhase === "playing") { release(); lastFire = -1e9; }
+      phase = nextPhase;
+      const changed = next?.key !== setup?.key;
+      if (changed) {
+        release();
+        gotMotion = false;
+        testedTilt = false;
+        tiltS = 0;
+        lastFire = -1e9;
+        lastMotionAt = -Infinity;
+      }
+      setup = next;
+      pending = false;
+      if (shown && changed && !gotMotion) startMotion();
+      render();
     },
     release,
     setRole(text) {

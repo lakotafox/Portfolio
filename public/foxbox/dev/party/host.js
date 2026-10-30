@@ -137,6 +137,7 @@ let countdownCueId = "";
 let resultsTimer = null;
 let padUrl = `http://${location.host}/pad`;
 let roomCode = null;
+let rowSetupId = newRowSetupId();
 
 const stats = { rounds: 0, gameOvers: 0, lastPlacement: null, inputsForwarded: 0, lastPoints: null, contractErrors: [] };
 
@@ -305,6 +306,9 @@ function onServer(msg) {
     case "seat":
       onSeat(msg.id, msg.boat, msg.seat);
       break;
+    case "rowReady":
+      onRowReady(msg);
+      break;
     case "pick": // legacy "Switch game" button: the game picker cycles the hub's game
       if (roster.get(msg.id)?.connected && mayPick(msg.id)) switchGame(1);
       break;
@@ -353,6 +357,11 @@ function onJoin(id, name, character, drawing, audioReady) {
   if (p.character) refreshCharacters();
   p.drawing = drawing === true;
   p.audioReady = audioReady === true;
+  p.rowSetupNonce = newRowSetupId();
+  p.rowReady = false;
+  p.motionReady = false;
+  p.rowSetupId = null;
+  cancelRowCountdown();
   // A rejoining phone starts neutral until it sends input again.
   p.x = 0;
   p.b = 0;
@@ -379,6 +388,10 @@ function onJoin(id, name, character, drawing, audioReady) {
 function setDrawing(p, on) {
   if (p.drawing === on) return;
   p.drawing = on;
+  if (on && GAME.id === "row") {
+    p.rowReady = false;
+    cancelRowCountdown();
+  }
   if (phase === "lobby") broadcastLobby();
   renderLobby();
 }
@@ -396,6 +409,10 @@ function markGone(p) {
   p.b = 0;
   p.c = 0;
   p.lastB = 0;
+  p.rowReady = false;
+  p.motionReady = false;
+  p.rowSetupId = null;
+  cancelRowCountdown();
   forwardInput(p); // neutral while disconnected
 }
 
@@ -416,7 +433,7 @@ function onInput(id, x, y, b, c = 0, s = 0) {
   const pressed = down && !p.lastB;
   p.lastB = down;
   if (phase === "playing") forwardInput(p);
-  else if (phase === "lobby" && pressed) startCountdown(p);
+  else if (phase === "lobby" && pressed && GAME.id !== "row") startCountdown(p);
 }
 
 function forwardInput(p) {
@@ -443,6 +460,10 @@ function onSeat(id, boat, seat) {
   if (!want || sameSeat(p.seat, want)) p.seat = null; // tapping your own seat again stands you up
   else if (seatHolders().some((q) => q !== p && sameSeat(q.seat, want))) return sendStatus(p); // taken
   else p.seat = want;
+  p.rowSetupNonce = newRowSetupId();
+  p.rowReady = false;
+  p.motionReady = false;
+  p.rowSetupId = null;
   saveRoster();
   broadcastLobby();
   renderLobby();
@@ -451,8 +472,57 @@ function onSeat(id, boat, seat) {
 /** Who sits where: [{ paddle: {name, me?}|null, captain: … } × BOATS] for the lobby screens. */
 function boatsView(forId) {
   const view = Array.from({ length: BOATS }, () => ({ paddle: null, captain: null }));
-  for (const q of seatHolders()) view[q.seat.boat][q.seat.seat] = { name: q.name, away: !q.connected, ...(q.id === forId ? { me: true } : {}) };
+  for (const q of seatHolders()) view[q.seat.boat][q.seat.seat] = { name: q.name, away: !q.connected, ready: rowPlayerReady(q), ...(q.id === forId ? { me: true } : {}) };
   return view;
+}
+
+// Row starts only after every connected person has set up their own phone and
+// explicitly readied in this setup. Bots fill spare seats without joining this gate.
+function newRowSetupId() {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+function resetRowSetup() {
+  rowSetupId = newRowSetupId();
+  for (const p of roster.values()) {
+    p.rowReady = false;
+    p.motionReady = false;
+    p.rowSetupId = null;
+  }
+}
+function rowPlayerReady(p) {
+  return !!(p.connected && !p.drawing && validSeat(p.seat) && p.rowReady && p.motionReady && p.rowSetupId === rowSetupToken(p));
+}
+function rowSetupToken(p) { return `${rowSetupId}:${p.rowSetupNonce || "0"}`; }
+function rowReadiness() {
+  const people = [...roster.values()].filter(p => p.connected);
+  return { readyCount: people.filter(rowPlayerReady).length, totalCount: people.length };
+}
+function allRowReady() {
+  const { readyCount, totalCount } = rowReadiness();
+  return lob.selectedGameId === "row" && totalCount > 0 && readyCount === totalCount;
+}
+function cancelRowCountdown() {
+  if (GAME.id !== "row" || phase !== "countdown") return;
+  clearInterval(countdownTimer);
+  phase = "lobby";
+  autoStartAt = null;
+  resetRowSetup();
+  show("lobby");
+  broadcastLobby();
+  renderLobby();
+}
+function onRowReady(msg) {
+  if (GAME.id !== "row" || lob.selectedGameId !== "row" || !["lobby", "countdown"].includes(phase)) return;
+  const p = roster.get(msg.id);
+  if (!p?.connected || msg.setupId !== rowSetupToken(p) || !validSeat(p.seat) ||
+      msg.boat !== p.seat.boat || msg.seat !== p.seat.seat) return;
+  p.motionReady = msg.motionReady === true;
+  p.rowReady = msg.ready === true && p.motionReady && !p.drawing;
+  p.rowSetupId = rowSetupToken(p);
+  if (!rowPlayerReady(p)) cancelRowCountdown();
+  broadcastLobby();
+  renderLobby();
+  if (phase === "lobby" && p.rowReady && allRowReady()) startCountdown(p);
 }
 
 /** Give everyone in `humans` a seat (keep valid unique picks; the rest get the first free seat, paddler first). */
@@ -630,6 +700,7 @@ function pickGame(gameId) {
   if (phase !== "lobby" && phase !== "boot") return;
   const g = GAMES.find((q) => q.id === gameId);
   if (!g) return;
+  if (g.id === "row") resetRowSetup();
   lob.selectedGameId = g.id;
   lob.browse = { ...lob.browse, gameId: g.id };
   saveLobby();
@@ -707,6 +778,9 @@ function statusFor(p) {
     players: connectedCount(),
     game: { id: GAME.id, name: GAME.name, button: GAME.button, stick: GAME.stick, count: GAMES.length, ...(GAME.seats ? { seats: true } : {}) },
     hub: HUB_NAME,
+    ...(GAME.id === "row" && lob.selectedGameId === "row" ? {
+      rowSetup: { id: rowSetupToken(p), ready: rowPlayerReady(p), motionReady: p.motionReady === true && p.rowSetupId === rowSetupToken(p), ...rowReadiness() },
+    } : {}),
     ...(GAME.seats ? { seat: p.seat ? { ...p.seat, color: colorSet(COLOR_KEYS.indexOf(BOAT_KEYS[p.seat.boat])), boatName: BOAT_NAMES[p.seat.boat] } : null, boats: boatsView(p.id), boatColors: BOAT_KEYS.map((k) => colorSet(COLOR_KEYS.indexOf(k)).base) } : {}),
   };
   if (phase === "lobby" || phase === "boot") {
@@ -821,10 +895,10 @@ function renderSeatLobby(list) {
       const who = view[boat][seat];
       cells.push(
         `<div class="chip seat${who ? "" : " botseat"}${who && who.away ? " off" : ""}" style="${colorVars(c)}"><span class="ball"></span>` +
-          `<span class="nm">${esc(who ? who.name : "Bot")}</span><span class="tag">${esc(SEAT_NAMES[seat])}</span></div>`,
+          `<span class="seat-person"><span class="nm">${esc(who ? who.name : "Bot")}</span><span class="tag">${esc(SEAT_NAMES[seat])}${who && !who.away ? who.ready ? " · Ready" : " · Setting up" : ""}</span></span></div>`,
       );
       // the card's colour says which boat; the tag just says which seat
-      web.push({ slot: boat * 2 + (seat === "paddle" ? 1 : 2), name: who ? who.name : "Bot", color: c.base, ready: !!who && !who.away, tag: who && who.away ? "away" : SEAT_NAMES[seat] });
+      web.push({ slot: boat * 2 + (seat === "paddle" ? 1 : 2), name: who ? who.name : "Bot", color: c.base, ready: !!who?.ready, tag: who && who.away ? "away" : `${SEAT_NAMES[seat]}${who ? who.ready ? " · Ready" : " · Setting up" : ""}` });
     }
   }
   const chipsHtml = cells.join("");
@@ -835,9 +909,11 @@ function renderSeatLobby(list) {
   const n = connectedCount();
   $("count").textContent = `${seated} / ${BOATS * 2} seats`;
   const unseated = list.filter((p) => p.connected && !p.seat).length;
+  const readiness = rowReadiness();
+  const readyText = `${readiness.readyCount} / ${readiness.totalCount} ready · Check your phones`;
   const st = $("start-text");
   if (n > 0) {
-    st.textContent = `Pick a boat on your phone · ${GAME.button} or FIRE starts!`;
+    st.textContent = readyText;
     st.classList.remove("idle");
   } else {
     st.textContent = "Scan the code with your phone to join";
@@ -852,7 +928,7 @@ function renderSeatLobby(list) {
     players: web,
     games: GAMES.map((g) => ({ id: g.id, name: g.name, button: g.button, blurb: g.tagline })),
     current: GAME.id,
-    status: n > 0 ? [`Pick a boat on your phone · ${GAME.button} or FIRE starts!`, roleLine(), autoTxt].filter(Boolean).join("  ·  ") : null,
+    status: n > 0 ? [readyText, roleLine(), seatTxt].filter(Boolean).join("  ·  ") : null,
   });
 }
 
@@ -903,6 +979,7 @@ async function refreshInfo() {
 
 // ── Lobby → countdown → round ─────────────────────────────────────────────────
 function toLobby(afterRound = false) {
+  if (GAME.id === "row") resetRowSetup();
   if (afterRound) {
     rotateRoles();
     lob.selectedGameId = null;
@@ -929,6 +1006,7 @@ function toLobby(afterRound = false) {
 
 function startCountdown(byPlayer) {
   if (phase !== "lobby" || !setupDone) return;
+  if (GAME.id === "row" && !allRowReady()) return;
   if (connectedCount() === 0) return;
   // Somebody has to be able to play: not everyone may be busy drawing.
   if (![...roster.values()].some((p) => p.connected && !p.drawing)) return;
@@ -937,8 +1015,9 @@ function startCountdown(byPlayer) {
   drawHoldUntil = null;
   const ends = Date.now() + COUNTDOWN_MS;
   countdownCueId = `${Date.now()}-${stats.rounds + 1}`;
-  $("cd-sub").textContent = byPlayer ? `${byPlayer.name} pressed ${GAME.button} — get ready!` : "Get ready!";
+  $("cd-sub").textContent = GAME.id === "row" ? "Everyone’s ready!" : byPlayer ? `${byPlayer.name} pressed ${GAME.button} — get ready!` : "Get ready!";
   const tick = () => {
+    if (GAME.id === "row" && !allRowReady()) { cancelRowCountdown(); return; }
     const left = Math.ceil((ends - Date.now()) / 1000);
     if (left <= 0) {
       clearInterval(countdownTimer);
@@ -969,10 +1048,14 @@ function startCountdown(byPlayer) {
 }
 
 function startRound() {
+  if (GAME.id === "row" && (phase !== "countdown" || !allRowReady())) {
+    cancelRowCountdown();
+    return;
+  }
   const now = Date.now();
   // Someone still drawing sits this round out (they'd play a half-finished drawing).
   const humans = [...roster.values()]
-    .filter((p) => !p.drawing && (p.connected || now - p.goneAt < REJOIN_GRACE_MS))
+    .filter((p) => GAME.id === "row" ? rowPlayerReady(p) : !p.drawing && (p.connected || now - p.goneAt < REJOIN_GRACE_MS))
     .sort((a, b) => a.slot - b.slot);
   if (humans.length === 0) {
     toLobby();

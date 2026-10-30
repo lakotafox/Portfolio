@@ -1007,26 +1007,6 @@
         gap: 8px;
         height: 42px;
       }
-      #cap-left,
-      #cap-right {
-        width: 54px;
-        height: 42px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.1);
-        font-size: 22px;
-        opacity: 0.45;
-        touch-action: none;
-      }
-      #cap.buttons #cap-left,
-      #cap.buttons #cap-right {
-        opacity: 1;
-        background: rgba(255, 255, 255, 0.2);
-      }
-      #cap-left.on,
-      #cap-right.on {
-        opacity: 1;
-        background: var(--c);
-      }
       #cap-steer {
         flex: 1;
         position: relative;
@@ -1144,7 +1124,8 @@
         font-size: 16px;
         line-height: 1.2;
       }
-      #cap-enable {
+      #cap-enable,
+      #cap-ready {
         font-size: 16px;
         padding: 10px 12px;
         border-radius: 14px;
@@ -1223,6 +1204,8 @@
       #cap.portrait #cap-turn {
         display: flex;
       }
+      #cap.portrait.motion-setup #cap-turn { display: none; }
+      /* Setup permission and Ready remain reachable before motion determines the physical hold. */
       /* the captain plays sideways: give the controls the whole screen while a round is on */
       @media (orientation: landscape) {
         #pad-screen.captain #status {
@@ -1272,7 +1255,7 @@
         opacity: 0.85;
         line-height: 1.25;
       }
-      /* Row Row Rumble: the phone is a kayak paddle (motion), or two big paddle buttons */
+      /* Row Row Rumble: motion-only paddle practice and readiness */
       #row {
         flex: 1;
         display: flex;
@@ -1283,8 +1266,7 @@
       #controls [hidden] {
         display: none !important;
       }
-      #row-motion,
-      #row-buttons {
+      #row-motion {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -1433,33 +1415,12 @@
         background: #ff5a3c;
         box-shadow: 0 4px 0 #c7361d;
       }
+      #row-ready:disabled, #cap-ready:disabled { opacity: 0.55; }
       .row-link {
         padding: 8px 16px;
         border-radius: 14px;
         font-size: 15px;
         background: rgba(255, 255, 255, 0.14);
-      }
-      #row-buttons .oars {
-        flex: 1;
-        width: 100%;
-        display: flex;
-        gap: 12px;
-      }
-      #oar {
-        flex: 1;
-        border-radius: 26px;
-        font-size: clamp(40px, 13vw, 72px);
-        line-height: 1.1;
-        background: radial-gradient(circle at 40% 30%, var(--l), var(--c) 55%, var(--d));
-        border: 5px solid #fff;
-        box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.4);
-        text-shadow: 0 3px 4px rgba(0, 0, 0, 0.45);
-        touch-action: none;
-        transition: transform 0.05s;
-      }
-      #oar.down {
-        transform: scale(0.94);
-        filter: brightness(1.15);
       }
       #row-note {
         text-align: center;
@@ -1623,9 +1584,7 @@
       <div id="controls">
         <div id="cap" hidden>
           <div id="cap-top">
-            <button id="cap-left" type="button" aria-label="Steer left">◀</button>
             <div id="cap-steer"><div id="cap-steer-fill"></div><span id="cap-steer-hint"></span></div>
-            <button id="cap-right" type="button" aria-label="Steer right">▶</button>
           </div>
           <div id="cap-main">
             <div id="cap-aim" data-test="aim"><div id="cap-aim-ring"></div><div id="cap-aim-arrow"></div><div id="cap-aim-knob"></div><span>aim</span></div>
@@ -1634,7 +1593,7 @@
               <div id="cap-status"></div>
               <button id="cap-seat" class="row-link" type="button" data-test="change-seat" hidden>⇄ Change seat</button>
               <button id="cap-enable" type="button" hidden>Enable tilt</button>
-              <button id="cap-use-buttons" class="row-link" type="button">◀ ▶ buttons</button>
+              <button id="cap-ready" type="button" hidden>Ready!</button>
               <div id="cap-note"></div>
             </div>
             <div id="cap-fire-wrap"><button id="cap-fire" data-test="fire" type="button"><span id="cap-ring"></span><b id="cap-fire-label">FIRE</b></button></div>
@@ -1657,13 +1616,6 @@
             <div id="row-sens" class="row-links" aria-label="Sensitivity"><span>Sensitivity</span><button type="button" class="row-link" data-s="low">Low</button><button type="button" class="row-link" data-s="med">Med</button><button type="button" class="row-link" data-s="high">High</button></div>
             <button id="row-enable" type="button" hidden>Enable motion</button>
             <button id="row-ready" type="button" hidden>Ready!</button>
-            <div class="row-links"><button id="row-use-buttons" class="row-link" type="button">Use the button</button></div>
-          </div>
-          <div id="row-buttons" hidden>
-            <div class="oars">
-              <button id="oar" data-test="paddle" type="button">PADDLE</button>
-            </div>
-            <button id="row-use-motion" class="row-link" type="button" hidden>Use motion instead</button>
           </div>
           <div id="row-note"></div>
         </div>
