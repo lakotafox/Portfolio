@@ -4,7 +4,7 @@
  * Paddling only moves you forward — the kayaks steer themselves — so there are no sides here.
  * Motion: any clear swing or pull of the phone, in any direction, is one stroke: a peak in how
  * hard the phone swings (rotation rate or acceleration, whichever is bigger) over a threshold
- * set by the Low / Med / High sensitivity, with hysteresis and a 250 ms refractory. A stroke is a
+ * set by the Low / Med / High sensitivity, counted once per swing peak (280 ms apart at most). A stroke is a
  * 120 ms pulse of b0 AND b1 together; a0 is always 0.
  * Button: one big PADDLE button (tap = stroke). Used when there are no motion sensors, when
  * permission is refused, on the plain-http home hub (browsers only give motion to https pages),
@@ -17,9 +17,9 @@
  */
 
 const STROKE_MS = 120; // how long a stroke holds the paddle buttons down
-const REFRACTORY_MS = 250;
+const REFRACTORY_MS = 280;
 const SENS = { low: 0.75, med: 0.5, high: 0.32 }; // swing signal that counts as a stroke
-const REARM = 0.45; // …and it must drop under this fraction of that before the next one
+const PEAK_DROP = 0.7; // a stroke fires when the swing falls under this fraction of its peak
 const PREF_KEY = "foxbox-row-input";
 const SENS_KEY = "foxbox-row-sens";
 
@@ -33,7 +33,7 @@ export function createRowPad(el, { onInput, state }) {
   let sens = "med";
   let count = 0;
   let down = 0; // 1 while a stroke pulse holds b0 + b1
-  let sig = 0, armed = true, lastStroke = -1e9, timer = null, side = "l";
+  let sig = 0, peak = 0, lastStroke = -1e9, timer = null, side = "l";
   let fallbackTimer = null;
   let asked = false; // the motion permission was asked for (iPhone)
 
@@ -121,11 +121,17 @@ export function createRowPad(el, { onInput, state }) {
     sig = sig * 0.5 + Math.max(rot / 360, lin / 14) * 0.5;
     const hi = SENS[sens];
     el.meter.style.transform = `scaleX(${Math.min(1, sig / (hi * 2))})`;
-    if (armed && sig > hi && now - lastStroke > REFRACTORY_MS) {
-      armed = false;
-      lastStroke = now;
-      stroke();
-    } else if (!armed && sig < hi * REARM) armed = true;
+    // One stroke per swing PEAK: track the peak while over the threshold and fire once the swing
+    // falls off it. (Waiting for the phone to go almost still between strokes — the old re-arm —
+    // never happened while paddling continuously, so only the first stroke counted.)
+    if (sig > hi && sig > peak) peak = sig;
+    if (peak > 0 && sig < peak * PEAK_DROP) {
+      if (now - lastStroke > REFRACTORY_MS) {
+        lastStroke = now;
+        stroke();
+      }
+      peak = 0;
+    }
   }
 
   // Desktops (and some phones) have the API but never send anything: fall back to the button.
