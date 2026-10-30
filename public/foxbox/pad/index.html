@@ -930,6 +930,348 @@
         container-type: size;
       }
 
+      /* ── Row Row Rumble v2: seats + the captain ───────────────────────── */
+      #boats {
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 3px solid rgba(255, 255, 255, 0.16);
+        padding: 8px 10px 10px;
+      }
+      #boats[hidden] {
+        display: none;
+      }
+      #boats-head {
+        text-align: center;
+        font-size: 17px;
+        opacity: 0.85;
+        margin-bottom: 6px;
+      }
+      #boats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .boat {
+        border-radius: 16px;
+        padding: 6px;
+        background: color-mix(in srgb, var(--bc) 30%, rgba(0, 0, 0, 0.35));
+        border: 3px solid var(--bc);
+      }
+      .boat-name {
+        font-size: 15px;
+        text-align: center;
+        margin-bottom: 4px;
+      }
+      .boat .seat {
+        display: block;
+        width: 100%;
+        margin-top: 4px;
+        padding: 7px 4px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.14);
+        font-size: 13px;
+        line-height: 1.15;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .boat .seat b {
+        display: block;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        opacity: 0.75;
+      }
+      .boat .seat.taken {
+        opacity: 0.55;
+      }
+      .boat .seat.mine {
+        background: #fff;
+        color: #12325f;
+        box-shadow: 0 0 0 3px var(--bc);
+      }
+      #pad-screen.seated-play #boats {
+        display: none;
+      }
+      #cap {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+        position: relative;
+      }
+      #cap-top {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 42px;
+      }
+      #cap-left,
+      #cap-right {
+        width: 54px;
+        height: 42px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        font-size: 22px;
+        opacity: 0.45;
+        touch-action: none;
+      }
+      #cap.buttons #cap-left,
+      #cap.buttons #cap-right {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.2);
+      }
+      #cap-left.on,
+      #cap-right.on {
+        opacity: 1;
+        background: var(--c);
+      }
+      #cap-steer {
+        flex: 1;
+        position: relative;
+        height: 18px;
+        border-radius: 9px;
+        background: rgba(0, 0, 0, 0.35);
+        overflow: hidden;
+      }
+      #cap-steer::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        margin-left: -1.5px;
+        background: rgba(255, 255, 255, 0.5);
+      }
+      #cap-steer-fill {
+        position: absolute;
+        left: 25%;
+        width: 50%;
+        top: 2px;
+        bottom: 2px;
+        display: flex;
+        justify-content: center;
+        transition: transform 0.06s linear;
+      }
+      #cap-steer-fill::after {
+        content: "";
+        width: 28px;
+        border-radius: 7px;
+        background: var(--l);
+        box-shadow: 0 0 10px var(--c);
+      }
+      #cap-steer-hint {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 11px;
+        opacity: 0.7;
+        pointer-events: none;
+      }
+      #cap-main {
+        flex: 1;
+        display: flex;
+        gap: 12px;
+        min-height: 0;
+      }
+      #cap-aim {
+        position: relative;
+        flex: 1.1;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 3px solid rgba(255, 255, 255, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: none;
+        overflow: hidden;
+      }
+      #cap-aim.active {
+        background: rgba(255, 255, 255, 0.14);
+      }
+      #cap-aim > span {
+        position: absolute;
+        bottom: 8px;
+        font-size: 14px;
+        opacity: 0.6;
+        pointer-events: none;
+      }
+      #cap-aim-ring {
+        position: absolute;
+        width: 70%;
+        aspect-ratio: 1;
+        max-height: 80%;
+        border-radius: 50%;
+        border: 3px dashed rgba(255, 255, 255, 0.25);
+        pointer-events: none;
+      }
+      #cap-aim-arrow {
+        position: absolute;
+        width: 46%;
+        height: 4px;
+        left: 50%;
+        top: 50%;
+        margin-top: -2px;
+        transform-origin: 0 50%;
+        background: linear-gradient(90deg, transparent, var(--l));
+        opacity: 0;
+        pointer-events: none;
+      }
+      #cap-aim-knob {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, var(--l), var(--c) 60%, var(--d));
+        border: 4px solid #fff;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+        pointer-events: none;
+        will-change: transform;
+      }
+      #cap-mid {
+        flex: none;
+        width: 120px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-align: center;
+      }
+      #cap-role {
+        font-size: 16px;
+        line-height: 1.2;
+      }
+      #cap-enable {
+        font-size: 16px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: #ff5a3c;
+      }
+      #cap-note {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+      #cap-fire-wrap {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 0;
+        container-type: size;
+      }
+      #cap-fire {
+        position: relative;
+        width: min(100%, 100cqh, 300px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle at 40% 30%, #ffb08f, #ff5a3c 55%, #b4321a);
+        border: 6px solid #fff;
+        box-shadow: inset 0 -12px 0 rgba(0, 0, 0, 0.25), 0 10px 24px rgba(0, 0, 0, 0.45);
+        touch-action: none;
+        filter: saturate(0.45) brightness(0.8);
+        transition: transform 0.05s, filter 0.2s;
+      }
+      #cap-fire.loaded {
+        filter: none;
+      }
+      #cap-fire.down {
+        transform: scale(0.92);
+      }
+      #cap-fire.nope {
+        animation: cap-nope 0.25s;
+      }
+      @keyframes cap-nope {
+        25% { transform: translateX(-6px); }
+        75% { transform: translateX(6px); }
+      }
+      #cap-ring {
+        --k: 1;
+        position: absolute;
+        inset: -18px;
+        border-radius: 50%;
+        background: conic-gradient(#ffd23f calc(var(--k) * 360deg), rgba(0, 0, 0, 0.45) 0);
+        -webkit-mask: radial-gradient(circle, transparent 62%, #000 63%);
+        mask: radial-gradient(circle, transparent 62%, #000 63%);
+        pointer-events: none;
+      }
+      #cap-fire-label {
+        position: relative;
+        font-size: clamp(22px, 7cqh, 44px);
+        letter-spacing: 0.04em;
+        text-shadow: 0 3px 4px rgba(0, 0, 0, 0.45);
+      }
+      #cap-turn {
+        display: none;
+        position: absolute;
+        inset: 0;
+        border-radius: 28px;
+        background: rgba(11, 16, 32, 0.92);
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 24px;
+        line-height: 1.35;
+        padding: 16px;
+      }
+      #cap-turn small {
+        font-size: 15px;
+        opacity: 0.8;
+      }
+      #cap.portrait #cap-turn {
+        display: flex;
+      }
+      /* the captain plays sideways: give the controls the whole screen while a round is on */
+      @media (orientation: landscape) {
+        #pad-screen.captain #status {
+          padding: 4px 8px;
+        }
+        #pad-screen.captain #status-big {
+          font-size: 22px;
+        }
+        #pad-screen.captain #status-small {
+          margin-top: 0;
+          font-size: 14px;
+        }
+        #pad-screen.captain.seated-play #top,
+        #pad-screen.captain.seated-play #status {
+          display: none;
+        }
+        #pad-screen.captain #boats-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+        /* sideways, the captain's controls own the screen; the seat picker is an overlay on demand */
+        #pad-screen.captain #status,
+        #pad-screen.captain #boats {
+          display: none;
+        }
+        #pad-screen.captain.picking #boats {
+          display: block;
+          position: absolute;
+          z-index: 5;
+          left: max(12px, env(safe-area-inset-left));
+          right: max(12px, env(safe-area-inset-right));
+          top: 60px;
+          background: rgba(11, 16, 32, 0.96);
+        }
+        #pad-screen.captain #top {
+          min-height: 36px;
+        }
+        #pad-screen.captain #me-ball {
+          width: 30px;
+          height: 30px;
+        }
+        #pad-screen.captain #me-name {
+          font-size: 20px;
+        }
+      }
+      #cap-status {
+        font-size: 13px;
+        opacity: 0.85;
+        line-height: 1.25;
+      }
       /* Row Row Rumble: the phone is a kayak paddle (motion), or two big paddle buttons */
       #row {
         flex: 1;
@@ -1273,7 +1615,31 @@
         <div id="game-name"></div>
         <div><button id="change-char" type="button" hidden>Change character</button> <button id="switch-game" data-test="switch-game" type="button" hidden>🎮 Switch game</button></div>
       </div>
+      <div id="boats" hidden>
+        <div id="boats-head">Pick your boat</div>
+        <div id="boats-grid" data-test="boats"></div>
+      </div>
       <div id="controls">
+        <div id="cap" hidden>
+          <div id="cap-top">
+            <button id="cap-left" type="button" aria-label="Steer left">◀</button>
+            <div id="cap-steer"><div id="cap-steer-fill"></div><span id="cap-steer-hint"></span></div>
+            <button id="cap-right" type="button" aria-label="Steer right">▶</button>
+          </div>
+          <div id="cap-main">
+            <div id="cap-aim" data-test="aim"><div id="cap-aim-ring"></div><div id="cap-aim-arrow"></div><div id="cap-aim-knob"></div><span>aim</span></div>
+            <div id="cap-mid">
+              <div id="cap-role"></div>
+              <div id="cap-status"></div>
+              <button id="cap-seat" class="row-link" type="button" data-test="change-seat" hidden>⇄ Change seat</button>
+              <button id="cap-enable" type="button" hidden>Enable tilt</button>
+              <button id="cap-use-buttons" class="row-link" type="button">◀ ▶ buttons</button>
+              <div id="cap-note"></div>
+            </div>
+            <div id="cap-fire-wrap"><button id="cap-fire" data-test="fire" type="button"><span id="cap-ring"></span><b id="cap-fire-label">FIRE</b></button></div>
+          </div>
+          <div id="cap-turn">📱↻<br>Turn your phone sideways<br><small>Captain: tilt to steer · thumbs to aim &amp; fire</small></div>
+        </div>
         <div id="steer" data-test="stick">
           <div class="half l">◀</div>
           <div class="half r">▶</div>

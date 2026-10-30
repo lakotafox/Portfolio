@@ -31,6 +31,7 @@
 import { createDrawPad } from "./draw.js";
 import { isP2P, ready as netReady, openSocket, api } from "./net.js";
 import { createRowPad } from "./row-pad.js";
+import { createCapPad } from "./cap-pad.js";
 
 const STORE_KEY = "sky-scramble-pad";
 const DRAW_KEY = "sky-scramble-pad-drawing"; // the drawing in progress / last drawing (PNG data URL + settings)
@@ -621,7 +622,7 @@ function connect() {
   sock.onclose = (ev) => {
     if (ws !== sock) return;
     ws = null;
-    sent = { x: null, b: null };
+    sent = { x: null, b: null, s: null };
     if (ev.code === 4000 || replaced) {
       replaced = true;
       setConn("bad", "Paused");
@@ -645,7 +646,7 @@ function sendRaw(obj) {
 }
 function sendJoin() {
   sendRaw({ t: "join", id: me.id, name: me.name, character: me.character, drawing: drawOpen });
-  sent = { x: null, b: null };
+  sent = { x: null, b: null, s: null };
   flush();
 }
 
@@ -714,20 +715,89 @@ function ordinal(n) {
 // the stick is left/right only ("x") or a full 2D stick ("xy").
 let mode = { id: "sky", name: "Sky Scramble", button: "BONK", stick: "x", count: 1 };
 function applyMode(g) {
-  if (!g || (g.id === mode.id && g.button === mode.button && g.stick === mode.stick && g.count === mode.count)) return;
-  mode = { ...mode, ...g };
+  if (!g || (g.id === mode.id && g.button === mode.button && g.stick === mode.stick && g.count === mode.count && !!g.seats === !!mode.seats)) return;
+  mode = { ...mode, ...g, seats: !!g.seats };
   $("bonk").textContent = mode.button;
   const rowing = mode.stick === "motion";
   steer.hidden = rowing;
   $("bonk-wrap").hidden = rowing;
-  row.show(rowing);
   steer.classList.toggle("xy", mode.stick === "xy");
   $("steer-label").textContent = mode.stick === "xy" ? "drag to roll" : "slide to steer";
   setXY(0, 0);
+  role = undefined; // re-pick the controller below
+  applyRole();
 }
+
+// ── Seats (Row Row Rumble v2): pick a boat + seat; the seat decides the controller ──────────
+let role = undefined; // "paddle" | "captain" | null (no seat yet) — undefined = not decided
+function mySeat() {
+  return mode.seats && lastStatus && lastStatus.seat ? lastStatus.seat : null;
+}
+function applyRole() {
+  const rowing = mode.stick === "motion";
+  const seat = mySeat();
+  const want = !mode.seats ? (rowing ? "paddle" : null) : seat ? seat.seat : null;
+  if (want !== role) {
+    role = want;
+    cap.show(role === "captain");
+    row.show(rowing && role === "paddle");
+    x = y = s = b = c = 0;
+    flush();
+  }
+  $("pad-screen").classList.toggle("captain", role === "captain");
+  if (role !== "captain") $("pad-screen").classList.remove("picking");
+  if (seat) {
+    if (seat.color) applyColor(seat.color);
+    const label = `${seat.seat === "captain" ? "CAPTAIN" : "PADDLER"} · ${seat.boatName} boat`;
+    cap.setRole(label);
+  }
+}
+
+const SEAT_LABEL = { paddle: "PADDLER", captain: "CAPTAIN" };
+const BOAT_LABEL = ["Red", "Blue", "Green", "Yellow"];
+function renderBoats() {
+  const st = lastStatus && lastStatus.state;
+  const box = $("boats");
+  const show = !!(mode.seats && lastStatus && lastStatus.boats && (st === "lobby" || st === "results") && ws && ws.readyState === 1 && hostUp);
+  box.hidden = !show;
+  $("pad-screen").classList.toggle("seated-play", !!mode.seats && !show);
+  if (!show) return;
+  const seat = mySeat();
+  $("boats-head").textContent = seat ? "Your seat · tap another to switch" : "Pick your boat";
+  const cols = lastStatus.boatColors || [];
+  let html = "";
+  lastStatus.boats.forEach((bt, i) => {
+    html += `<div class="boat" style="--bc:${cols[i] || "#888"}"><div class="boat-name">${BOAT_LABEL[i]} boat</div>`;
+    for (const k of ["paddle", "captain"]) {
+      const who = bt[k];
+      const cls = who ? (who.me ? " mine" : " taken") : "";
+      const name = who ? (who.me ? "You" : who.name) : "free";
+      html += `<button type="button" class="seat${cls}" data-boat="${i}" data-seat="${k}" data-test="seat-${i}-${k}"${who && !who.me ? " disabled" : ""}><b>${SEAT_LABEL[k]}</b>${escHtml(name)}</button>`;
+    }
+    html += `</div>`;
+  });
+  const grid = $("boats-grid");
+  if (grid.dataset.html !== html) {
+    grid.innerHTML = html;
+    grid.dataset.html = html;
+  }
+}
+const escHtml = (t) => String(t).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+$("boats-grid").addEventListener("click", (e) => {
+  const btn = e.target.closest(".seat");
+  if (!btn || btn.disabled) return;
+  const boat = Number(btn.dataset.boat), seat = btn.dataset.seat;
+  const mine = mySeat();
+  if (mine && mine.boat === boat && mine.seat === seat) sendRaw({ t: "seat", boat: null });
+  else sendRaw({ t: "seat", boat, seat });
+  $("pad-screen").classList.remove("picking"); // the captain's overlay closes once a seat is tapped
+});
+$("cap-seat").addEventListener("click", () => $("pad-screen").classList.toggle("picking"));
 
 function renderStatus() {
   if (lastStatus && lastStatus.game) applyMode(lastStatus.game);
+  applyRole();
+  renderBoats();
   if (lastStatus && lastStatus.hub) document.title = `${lastStatus.hub} — Controller`;
   // Between rounds you can switch character (it applies from the next round).
   const st0 = lastStatus && lastStatus.state;
@@ -735,7 +805,8 @@ function renderStatus() {
   $("change-char").hidden = !between || mode.id !== "sky"; // characters are a Sky Scramble thing (for now)
   $("change-char").textContent = me.character ? "Change character" : "Set up your character";
   $("switch-game").hidden = !(between && st0 === "lobby" && mode.count > 1);
-  $("game-name").textContent = mode.name;
+  const seatNow = mySeat();
+  $("game-name").textContent = seatNow ? `${mode.name} · ${seatNow.seat === "captain" ? "CAPTAIN" : "PADDLER"} · ${seatNow.boatName} boat` : mode.name;
   const big = $("status-big");
   const small = $("status-small");
   $("me-name").textContent = me.name;
@@ -767,7 +838,7 @@ function renderStatus() {
       case "lobby": {
         b = "You're in!";
         const left = st.autoIn != null ? Math.max(0, st.autoIn - Math.floor((Date.now() - st.at) / 1000)) : null;
-        s = (mode.stick === "motion" ? "Paddle to start" : `Press ${mode.button} to start`) + (st.hold === "drawing" ? " · someone's still drawing" : left != null ? ` · auto-start in ${left}s` : "");
+        s = (mode.seats && !mySeat() ? "Pick a seat in a boat below" : role === "captain" ? "Press FIRE to start" : mode.stick === "motion" ? "Paddle to start" : `Press ${mode.button} to start`) + (st.hold === "drawing" ? " · someone's still drawing" : left != null ? ` · auto-start in ${left}s` : "");
         break;
       }
       case "countdown":
@@ -776,8 +847,10 @@ function renderStatus() {
         break;
       case "playing":
         b = "GO GO GO!";
-        s = mode.stick === "motion"
-          ? "Paddle left and right · bump your friends into the rocks"
+        s = role === "captain"
+          ? "Tilt to steer · aim and FIRE at the other boats"
+          : mode.stick === "motion"
+          ? "Paddle! A steady beat is fastest"
           : mode.stick === "xy" ? "Drag to roll · SHOVE to bump" : "Steer ◀ ▶ · BONK = dive on heads";
         break;
       case "out":
@@ -807,6 +880,10 @@ function renderStatus() {
   }
   if (big.textContent !== b) big.textContent = b;
   if (small.textContent !== s) small.textContent = s;
+  // the captain's sideways screen hides #status: mirror it in the middle column
+  const capLine = b === "You're in!" ? s : s ? `${b} · ${s}` : b;
+  if ($("cap-status").textContent !== capLine) $("cap-status").textContent = capLine;
+  $("cap-seat").hidden = !(mode.seats && lastStatus && lastStatus.state === "lobby");
 }
 // Lobby auto-start countdown ticks locally between status pushes.
 setInterval(() => {
@@ -818,12 +895,13 @@ let x = 0;
 let y = 0; // only used by 2D-stick games (down = +1)
 let b = 0;
 let c = 0; // the second button (b1): Row Row Rumble's right paddle
-let sent = { x: null, y: null, b: null, c: null };
+let s = 0; // a captain's tilt steering (-1 left … 1 right)
+let sent = { x: null, y: null, b: null, c: null, s: null };
 
 function flush() {
-  if (sent.x === x && sent.y === y && sent.b === b && sent.c === c) return;
-  if (sendRaw({ t: "in", x, y, b, c })) {
-    sent = { x, y, b, c };
+  if (sent.x === x && sent.y === y && sent.b === b && sent.c === c && sent.s === s) return;
+  if (sendRaw({ t: "in", x, y, b, c, s })) {
+    sent = { x, y, b, c, s };
     window.__foxboxLastInputAt = Date.now();
   }
 }
@@ -935,6 +1013,7 @@ const row = createRowPad(
   },
   {
     onInput(v) {
+      if (role === "captain" || (mode.seats && role !== "paddle")) return; // its motion listener keeps running: only a paddler paddles
       x = v.x;
       b = v.b;
       c = v.c;
@@ -945,11 +1024,32 @@ const row = createRowPad(
   },
 );
 
+// Row Row Rumble v2 captain: tilt steers (s), the stick aims (x, y), FIRE is b.
+const cap = createCapPad(
+  {
+    root: $("cap"), steerFill: $("cap-steer-fill"), steerL: $("cap-left"), steerR: $("cap-right"), steerHint: $("cap-steer-hint"),
+    aim: $("cap-aim"), aimKnob: $("cap-aim-knob"), aimArrow: $("cap-aim-arrow"), fire: $("cap-fire"), ring: $("cap-ring"),
+    fireLabel: $("cap-fire-label"), role: $("cap-role"), enable: $("cap-enable"), useButtons: $("cap-use-buttons"), note: $("cap-note"),
+  },
+  {
+    onInput(v) {
+      if (role !== "captain") return;
+      x = v.x;
+      y = v.y;
+      s = v.s;
+      b = v.b;
+      c = 0;
+      flush();
+    },
+  },
+);
+
 function release() {
   steerPointer = null;
   bonkPointer = null;
   steer.classList.remove("active");
-  if (mode.stick === "motion") row.release();
+  if (role === "captain") cap.release();
+  else if (mode.stick === "motion") row.release();
   else {
     setX(0);
     setB(0);
@@ -963,7 +1063,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   padScreen.addEventListener(
     type,
     (e) => {
-      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link")) return; // let real buttons click (incl. Switch game)
+      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #cap-enable")) return; // let real buttons click (incl. Switch game)
       e.preventDefault();
     },
     { passive: false },

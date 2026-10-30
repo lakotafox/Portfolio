@@ -51,7 +51,7 @@ const GAMES = [
   },
   {
     id: "row", name: "Row Row Rumble", gameId: "rowrowrumble", button: "PADDLE", stick: "motion",
-    soloBots: 3,
+    seats: true, // two per boat: everyone picks a boat + seat in the lobby; bots fill the rest
     module: "../../games/row/gc.game.js", props: "../../games/row/gc.properties.json",
     tagline: "Paddle with your phone · bump your friends into the rocks · first to the lighthouse wins!",
   },
@@ -82,6 +82,17 @@ const ROSTER_KEY = "sky-scramble-party-roster";
 
 // Slot i → colour i (white = "unset" is never used). Same order as mock-platform.js.
 const COLOR_KEYS = ["blue", "red", "green", "cyan", "yellow", "purple", "pink", "brown"];
+
+// ── Seats (games with `seats`: Row Row Rumble v2) ─────────────────────────────
+// Always BOATS boats, two seats each: the PADDLER paddles (motion), the CAPTAIN steers by tilt,
+// aims with a stick and fires. People pick a seat in the lobby; on start the unseated get the
+// first free seat (paddler first) and bots fill every seat that's still empty.
+const BOATS = 4;
+const BOAT_KEYS = ["red", "blue", "green", "yellow"];
+const BOAT_NAMES = ["Red", "Blue", "Green", "Yellow"];
+const SEATS = ["paddle", "captain"];
+const SEAT_NAMES = { paddle: "Paddler", captain: "Captain" };
+const validSeat = (st) => !!st && Number.isInteger(st.boat) && st.boat >= 0 && st.boat < BOATS && SEATS.includes(st.seat);
 
 const $ = (id) => document.getElementById(id);
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
@@ -186,7 +197,7 @@ const colorVars = (c) => `--c:${c.base};--l:${c.light};--d:${c.dark}`;
 
 function saveRoster() {
   try {
-    const list = [...roster.values()].map(({ id, slot, name, character }) => ({ id, slot, name, character }));
+    const list = [...roster.values()].map(({ id, slot, name, character, seat }) => ({ id, slot, name, character, seat }));
     localStorage.setItem(ROSTER_KEY, JSON.stringify(list));
   } catch {}
 }
@@ -198,7 +209,8 @@ function loadRoster() {
       if (typeof p.id !== "string" || !(p.slot >= 0 && p.slot < MAX_PLAYERS)) continue;
       if ([...roster.values()].some((q) => q.slot === p.slot)) continue;
       const character = typeof p.character === "string" ? p.character : null;
-      roster.set(p.id, { id: p.id, slot: p.slot, name: p.name || `Player ${p.slot + 1}`, character, connected: false, goneAt: now, x: 0, b: 0, lastB: 0, drawing: false });
+      const seat = validSeat(p.seat) && ![...roster.values()].some((q) => sameSeat(q.seat, p.seat)) ? { boat: p.seat.boat, seat: p.seat.seat } : null;
+      roster.set(p.id, { id: p.id, slot: p.slot, name: p.name || `Player ${p.slot + 1}`, character, seat, connected: false, goneAt: now, x: 0, b: 0, lastB: 0, drawing: false });
     }
   } catch {}
 }
@@ -278,7 +290,10 @@ function onServer(msg) {
     }
     case "in":
       window.__foxboxLastInputAt = Date.now();
-      onInput(msg.id, Number(msg.x) || 0, Number(msg.y) || 0, msg.b ? 1 : 0, msg.c ? 1 : 0);
+      onInput(msg.id, Number(msg.x) || 0, Number(msg.y) || 0, msg.b ? 1 : 0, msg.c ? 1 : 0, Number(msg.s) || 0);
+      break;
+    case "seat":
+      onSeat(msg.id, msg.boat, msg.seat);
       break;
     case "pick":
       if (roster.get(msg.id)?.connected) switchGame(1);
@@ -309,7 +324,7 @@ function onJoin(id, name, character, drawing) {
       roster.delete(victim.id);
       slot = victim.slot;
     }
-    p = { id, slot, name: "", character: null, connected: true, goneAt: 0, x: 0, b: 0, lastB: 0, drawing: false };
+    p = { id, slot, name: "", character: null, seat: null, connected: true, goneAt: 0, x: 0, b: 0, lastB: 0, drawing: false };
     roster.set(id, p);
   }
   p.connected = true;
@@ -365,11 +380,12 @@ function inRound(p) {
 }
 
 // ── Inputs ────────────────────────────────────────────────────────────────────
-function onInput(id, x, y, b, c = 0) {
+function onInput(id, x, y, b, c = 0, s = 0) {
   const p = roster.get(id);
   if (!p || !p.connected) return;
   p.x = clamp(x, -1, 1);
-  p.y = GAME.stick === "xy" ? clamp(y, -1, 1) : 0;
+  p.y = GAME.stick === "xy" || GAME.seats ? clamp(y, -1, 1) : 0; // a captain's aim stick is 2D too
+  p.s = GAME.seats ? clamp(s, -1, 1) : 0; // a captain's tilt steering
   p.b = b;
   p.c = GAME.stick === "motion" ? c : 0; // the second button (right paddle) only matters for rowing
   const down = b || p.c ? 1 : 0;
@@ -382,7 +398,58 @@ function onInput(id, x, y, b, c = 0) {
 function forwardInput(p) {
   if (phase !== "playing" || !inRound(p)) return;
   stats.inputsForwarded++;
-  game.inputs(p.slot + 1, { a0: p.x, a1: p.y || 0, b0: p.b, b1: p.c || 0 });
+  const pid = p.slot + 1;
+  const seat = round.seatByPid && round.seatByPid.get(pid);
+  if (seat === "captain") game.inputs(pid, { a0: p.x || 0, a1: p.y || 0, a2: p.s || 0, b0: p.b ? 1 : 0, b1: 0 });
+  else if (seat === "paddle") game.inputs(pid, { a0: 0, a1: 0, a2: 0, b0: p.b ? 1 : 0, b1: p.c ? 1 : 0 });
+  else game.inputs(pid, { a0: p.x, a1: p.y || 0, b0: p.b, b1: p.c || 0 });
+}
+
+// ── Seats ─────────────────────────────────────────────────────────────────────
+const sameSeat = (a, b) => !!a && !!b && a.boat === b.boat && a.seat === b.seat;
+const seatHolders = () => [...roster.values()].filter((q) => q.seat && (q.connected || Date.now() - q.goneAt < REJOIN_GRACE_MS));
+
+/** A phone tapped a seat (boat 0..3 + "paddle"|"captain"), or boat null = stand up. Lobby only. */
+function onSeat(id, boat, seat) {
+  const p = roster.get(id);
+  if (!p || !p.connected || !GAME.seats) return;
+  if (phase !== "lobby" && phase !== "boot") return sendStatus(p);
+  const want = boat == null ? null : { boat: Number(boat), seat: String(seat) };
+  if (want && !validSeat(want)) return sendStatus(p);
+  if (!want || sameSeat(p.seat, want)) p.seat = null; // tapping your own seat again stands you up
+  else if (seatHolders().some((q) => q !== p && sameSeat(q.seat, want))) return sendStatus(p); // taken
+  else p.seat = want;
+  saveRoster();
+  broadcastLobby();
+  renderLobby();
+}
+
+/** Who sits where: [{ paddle: {name, me?}|null, captain: … } × BOATS] for the lobby screens. */
+function boatsView(forId) {
+  const view = Array.from({ length: BOATS }, () => ({ paddle: null, captain: null }));
+  for (const q of seatHolders()) view[q.seat.boat][q.seat.seat] = { name: q.name, away: !q.connected, ...(q.id === forId ? { me: true } : {}) };
+  return view;
+}
+
+/** Give everyone in `humans` a seat (keep valid unique picks; the rest get the first free seat, paddler first). */
+function assignSeats(humans) {
+  const taken = new Set();
+  const key = (st) => `${st.boat}:${st.seat}`;
+  for (const p of humans) {
+    if (validSeat(p.seat) && !taken.has(key(p.seat))) taken.add(key(p.seat));
+    else p.seat = null;
+  }
+  for (const p of humans) {
+    if (p.seat) continue;
+    outer: for (let boat = 0; boat < BOATS; boat++)
+      for (const seat of SEATS)
+        if (!taken.has(`${boat}:${seat}`)) {
+          p.seat = { boat, seat };
+          taken.add(`${boat}:${seat}`);
+          break outer;
+        }
+  }
+  saveRoster();
 }
 
 // ── Status pushed to each phone ───────────────────────────────────────────────
@@ -397,8 +464,9 @@ function statusFor(p) {
     slot: p.slot,
     color: colorSet(p.slot),
     players: connectedCount(),
-    game: { id: GAME.id, name: GAME.name, button: GAME.button, stick: GAME.stick, count: GAMES.length },
+    game: { id: GAME.id, name: GAME.name, button: GAME.button, stick: GAME.stick, count: GAMES.length, ...(GAME.seats ? { seats: true } : {}) },
     hub: HUB_NAME,
+    ...(GAME.seats ? { seat: p.seat ? { ...p.seat, color: colorSet(COLOR_KEYS.indexOf(BOAT_KEYS[p.seat.boat])), boatName: BOAT_NAMES[p.seat.boat] } : null, boats: boatsView(p.id), boatColors: BOAT_KEYS.map((k) => colorSet(COLOR_KEYS.indexOf(k)).base) } : {}),
   };
   if (phase === "lobby" || phase === "boot") {
     const held = drawHoldUntil != null && drawers().length > 0;
@@ -440,6 +508,7 @@ function show(id) {
 
 function renderLobby() {
   const list = [...roster.values()].sort((a, b) => a.slot - b.slot);
+  if (GAME.seats) return renderSeatLobby(list);
   const cells = list.map((p) => {
     const c = colorSet(p.slot);
     const tag = !p.connected ? `<span class="tag">away</span>` : p.drawing ? `<span class="tag drawing">drawing…</span>` : "";
@@ -491,6 +560,53 @@ function renderLobby() {
     games: GAMES.map((g) => ({ id: g.id, name: g.name, button: g.button, blurb: g.tagline })),
     current: GAME.id,
     status: n > 0 ? [`Press ${GAME.button} on a phone to start!`, autoTxt, botTxt].filter(Boolean).join("  ·  ") : null,
+  });
+}
+
+/** The lobby for a seats game: 4 boats × (paddler, captain), names or "bot". */
+function renderSeatLobby(list) {
+  const view = boatsView();
+  const seated = seatHolders().length;
+  const cells = [];
+  const web = [];
+  for (let boat = 0; boat < BOATS; boat++) {
+    const c = colorSet(COLOR_KEYS.indexOf(BOAT_KEYS[boat]));
+    for (const seat of SEATS) {
+      const who = view[boat][seat];
+      cells.push(
+        `<div class="chip seat${who ? "" : " botseat"}${who && who.away ? " off" : ""}" style="${colorVars(c)}"><span class="ball"></span>` +
+          `<span class="nm">${esc(who ? who.name : "Bot")}</span><span class="tag">${esc(SEAT_NAMES[seat])}</span></div>`,
+      );
+      // the card's colour says which boat; the tag just says which seat
+      web.push({ slot: boat * 2 + (seat === "paddle" ? 1 : 2), name: who ? who.name : "Bot", color: c.base, ready: !!who && !who.away, tag: who && who.away ? "away" : SEAT_NAMES[seat] });
+    }
+  }
+  const chipsHtml = cells.join("");
+  if ($("chips").dataset.html !== chipsHtml) {
+    $("chips").innerHTML = chipsHtml;
+    $("chips").dataset.html = chipsHtml;
+  }
+  const n = connectedCount();
+  $("count").textContent = `${seated} / ${BOATS * 2} seats`;
+  const unseated = list.filter((p) => p.connected && !p.seat).length;
+  const st = $("start-text");
+  if (n > 0) {
+    st.textContent = `Pick a boat on your phone · ${GAME.button} or FIRE starts!`;
+    st.classList.remove("idle");
+  } else {
+    st.textContent = "Scan the code with your phone to join";
+    st.classList.add("idle");
+  }
+  const autoTxt = autoStartAt ? `Starting by itself in ${Math.max(0, Math.ceil((autoStartAt - Date.now()) / 1000))} s` : "";
+  const seatTxt = unseated ? `${unseated} still picking a seat` : n > 0 ? "Bots take the empty seats" : "";
+  $("auto-text").textContent = [autoTxt, seatTxt].filter(Boolean).join("  ·  ");
+  const active = AUTOPLAY_OK || (navigator.userActivation ? navigator.userActivation.hasBeenActive : true);
+  $("sound-hint").textContent = active ? "" : "Click once on this page to turn the sound on";
+  lobbyUI()?.render({
+    players: web,
+    games: GAMES.map((g) => ({ id: g.id, name: g.name, button: g.button, blurb: g.tagline })),
+    current: GAME.id,
+    status: n > 0 ? [`Pick a boat on your phone · ${GAME.button} or FIRE starts!`, autoTxt].filter(Boolean).join("  ·  ") : null,
   });
 }
 
@@ -602,8 +718,32 @@ function startRound() {
   const nameById = new Map();
   const colorById = new Map();
   const humanIdByPid = new Map();
+  const seatByPid = new Map();
   const players = [];
-  for (const p of humans) {
+  if (GAME.seats) {
+    // Every seat of every boat is filled: people where they sat (or the first free seat), bots elsewhere.
+    assignSeats(humans);
+    const taken = new Map(humans.map((p) => [`${p.seat.boat}:${p.seat.seat}`, p]));
+    const freeIds = [...Array(MAX_PLAYERS).keys()].map((i) => i + 1).filter((id) => !usedSlots.has(id - 1));
+    let botN = 0;
+    for (let boat = 0; boat < BOATS; boat++)
+      for (const seat of SEATS) {
+        const p = taken.get(`${boat}:${seat}`);
+        if (p) {
+          // both crew members (and bot fillers) wear the BOAT's colour, so HUD cards, nametags and boats match
+          players.push({ type: "player", playerId: p.slot + 1, color: BOAT_KEYS[boat], boat, seat, name: p.name });
+          nameById.set(p.slot + 1, p.name);
+          humanIdByPid.set(p.slot + 1, p.id);
+          seatByPid.set(p.slot + 1, seat);
+        } else {
+          const pid = freeIds.shift();
+          players.push({ type: "bot", playerId: pid, color: BOAT_KEYS[boat], boat, seat });
+          nameById.set(pid, `Bot ${++botN}`);
+          seatByPid.set(pid, seat);
+        }
+      }
+  }
+  for (const p of GAME.seats ? [] : humans) {
     const pl = { type: "player", playerId: p.slot + 1, color: COLOR_KEYS[p.slot] };
     const character = characterField(p);
     if (character) pl.character = character; // party-mode extra; absent = puffball
@@ -612,7 +752,7 @@ function startRound() {
     humanIdByPid.set(p.slot + 1, p.id);
   }
   let botN = 0;
-  const target = roundTarget(humans.length);
+  const target = GAME.seats ? 0 : roundTarget(humans.length);
   for (let s = 0; s < MAX_PLAYERS && players.length < target; s++) {
     if (usedSlots.has(s)) continue;
     // Also skip slots reserved by roster members sitting this round out (keeps colours unique).
@@ -626,14 +766,16 @@ function startRound() {
     players.push({ type: "bot", playerId: s + 1, color: COLOR_KEYS[s] });
     nameById.set(s + 1, `Bot ${++botN}`);
   }
-  players.sort((a, b) => a.playerId - b.playerId);
-  for (const pl of players) colorById.set(pl.playerId, colorSet(pl.playerId - 1));
+  if (!GAME.seats) players.sort((a, b) => a.playerId - b.playerId);
+  // seats games: the HUD / results colour a player by their BOAT
+  for (const pl of players) colorById.set(pl.playerId, GAME.seats ? colorSet(COLOR_KEYS.indexOf(BOAT_KEYS[pl.boat])) : colorSet(pl.playerId - 1));
 
   round = {
     players,
     nameById,
     colorById,
     humanIdByPid,
+    seatByPid,
     out: new Set(),
     hudById: new Map(),
     placement: null,
@@ -834,7 +976,7 @@ window.__party = {
     return phase;
   },
   get roster() {
-    return [...roster.values()].map(({ id, slot, name, character, connected, x, b, drawing }) => ({ id, slot, name, character, connected, x, b, drawing }));
+    return [...roster.values()].map(({ id, slot, name, character, connected, x, b, drawing, seat }) => ({ id, slot, name, character, connected, x, b, drawing, seat }));
   },
   get round() {
     return round && { players: round.players.map(({ character, ...p }) => (character ? { ...p, character: character.src } : p)), names: Object.fromEntries(round.nameById), out: [...round.out], placement: round.placement, ended: round.ended };

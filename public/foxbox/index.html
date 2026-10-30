@@ -289,6 +289,21 @@
         opacity: 0.45;
         filter: grayscale(0.6);
       }
+      /* Row Row Rumble v2: a chip per boat seat (boat colour); empty seats go to bots */
+      .chip.seat .nm {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .chip.seat .tag {
+        font-size: 1.4rem;
+      }
+      .chip.botseat {
+        opacity: 0.55;
+        filter: saturate(0.6);
+      }
       .chip.empty {
         background: rgba(255, 255, 255, 0.25);
         border: 0.3rem dashed rgba(255, 255, 255, 0.85);
