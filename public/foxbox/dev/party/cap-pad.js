@@ -40,7 +40,8 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
   const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const iosSign = isIOS ? -1 : 1;
 
-  const send = () => { if (shown && gotMotion && window.isSecureContext && state() === "playing") onInput({ x, y, s, b }); };
+  // shot: this FIRE press really shoots (reloaded), so the phone may twang
+  const send = (shot = false) => { if (shown && gotMotion && window.isSecureContext && state() === "playing") onInput({ x, y, s, b, shot }); };
   const preparing = () => !!(shown && setup?.active);
   const report = (ready = false) => {
     if (shown && setup && (preparing() || (!ready && state() === "countdown")))
@@ -196,7 +197,7 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
   function startMotion() {
     if (!window.isSecureContext) {
       el.enable.hidden = true;
-      return unavailable("Tilt needs a secure HTTPS controller link. Rejoin using that link.");
+      return unavailable("Tilt needs the secure (https) link: scan the QR code on the TV again.");
     }
     if (!hasMotionApi) {
       el.enable.hidden = true;
@@ -294,7 +295,8 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
       } catch {}
       btn.classList.add("down");
       const now = performance.now();
-      if (now - lastFire >= RELOAD_MS) {
+      const loaded = now - lastFire >= RELOAD_MS;
+      if (loaded) {
         lastFire = now;
         btn.classList.remove("shot");
         void btn.offsetWidth;
@@ -310,7 +312,7 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
         btn.classList.add("nope");
       }
       b = 1;
-      send();
+      send(loaded);
     });
     const end = (ev) => {
       if (ev.pointerId !== ptr) return;

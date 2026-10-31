@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
+    <!-- iPhone Safari can't hide its bars from a page: Add to Home Screen opens the controller full screen -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="FoxBox" />
+    <link rel="manifest" href="../dev/party/pad-manifest.json" />
+    <link rel="apple-touch-icon" href="../dev/party/foxbox-icon-180.png" />
     <meta name="theme-color" content="#14213d" />
     <meta name="format-detection" content="telephone=no" />
     <title>FoxBox — Controller</title>
@@ -941,6 +946,8 @@
         display: none;
       }
       #boats-head {
+        display: block;
+        width: 100%;
         text-align: center;
         font-size: 17px;
         opacity: 0.85;
@@ -1480,6 +1487,224 @@
           font-size: 44px;
         }
       }
+
+      /* Row Row Rumble setup (lobby): seat, motion test and Ready on one phone screen. Once you're
+         seated the seat picker folds to one line (tap it to change seats), and the controller
+         scrolls if a small phone still can't fit it all. */
+      #pad-screen.row-setup {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+      }
+      #pad-screen.row-setup > * {
+        flex: none;
+      }
+      #pad-screen.row-setup #status {
+        padding: 8px 10px;
+      }
+      #pad-screen.row-setup #status-big,
+      #pad-screen.row-setup #game-name,
+      #pad-screen.row-setup #clook-heading {
+        display: none;
+      }
+      #pad-screen.row-setup #status-small {
+        margin-top: 0;
+        font-size: 15px;
+      }
+      #pad-screen.row-setup #status button {
+        margin-top: 6px;
+        font-size: 16px;
+        padding: 6px 12px;
+      }
+      #pad-screen.row-setup:not(.picking) #boats.seated {
+        padding: 6px 10px;
+      }
+      #pad-screen.row-setup:not(.picking) #boats.seated #boats-head {
+        margin: 0;
+        padding: 4px 0;
+        opacity: 1;
+      }
+      #pad-screen.row-setup:not(.picking) #boats.seated #boats-grid {
+        display: none;
+      }
+      #pad-screen.row-setup #controls {
+        height: auto;
+      }
+      #pad-screen.row-setup #row-motion {
+        flex: none;
+        padding: 10px;
+        gap: 8px;
+        touch-action: pan-y;
+      }
+      #pad-screen.row-setup #row-boat {
+        transform: scale(0.75);
+        margin: -11px 0;
+      }
+      #pad-screen.row-setup #row-count-wrap b {
+        font-size: 40px;
+      }
+      /* the first mate with the phone upright: the setup column first, aim + FIRE underneath */
+      #pad-screen.row-setup #cap.portrait #cap-main {
+        flex-wrap: wrap;
+        row-gap: 10px;
+      }
+      #pad-screen.row-setup #cap.portrait #cap-mid {
+        order: -1;
+        width: 100%;
+      }
+      #pad-screen.row-setup #cap.portrait #cap-aim,
+      #pad-screen.row-setup #cap.portrait #cap-fire-wrap {
+        height: 140px;
+      }
+      /* After a round: the TV's arcade high-score screen, phone-sized (pad.js fills it); the controls wait */
+      #pad-screen.results #boats,
+      #pad-screen.results #controls,
+      #pad-screen.results #game-name,
+      #pad-screen.results #clook-heading {
+        display: none !important;
+      }
+      #pad-screen.results #status {
+        display: flex !important;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow-y: auto;
+        padding: 18px 14px;
+        border: 0;
+        border-radius: 0;
+        background-color: #05070f;
+        background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 4px);
+        box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428;
+      }
+      #pad-screen.results #status-big {
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        font-size: clamp(18px, 6vw, 26px);
+        line-height: 1.4;
+        color: #35d07f;
+      }
+      #pad-screen.results #status-big::after {
+        content: "_";
+        animation: res-blink 1s steps(1, end) infinite;
+      }
+      #pad-screen.results #status-small {
+        margin-top: 10px;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        font-size: 10px;
+        line-height: 1.6;
+        color: #c9d2e6;
+        opacity: 1;
+      }
+      @keyframes res-blink {
+        50% { opacity: 0; }
+      }
+      #res-art {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 14px;
+      }
+      #res-art[hidden] {
+        display: none;
+      }
+      #res-art .px-crowned {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #res-art .px-sprite {
+        display: block;
+      }
+      /* out of the top three: the puffball sobs (a one-pixel hop) and two tears drop in pixel steps */
+      #res-art .px-cry {
+        position: relative;
+        display: block;
+        animation: px-sob 0.8s steps(1, end) infinite;
+      }
+      #res-art .px-tear {
+        position: absolute;
+        left: calc(var(--px) * 3);
+        top: calc(var(--px) * 7);
+        width: var(--px);
+        height: calc(var(--px) * 2);
+        background: linear-gradient(#bfeaff 50%, #4aa3ff 50%);
+        animation: px-tear 1.2s steps(5, end) infinite;
+      }
+      #res-art .px-tear.r {
+        left: calc(var(--px) * 8);
+        animation-delay: -0.6s;
+      }
+      @keyframes px-tear {
+        0% { transform: translateY(0); opacity: 1; }
+        70% { opacity: 1; }
+        100% { transform: translateY(calc(var(--px) * 5)); opacity: 0; }
+      }
+      @keyframes px-sob {
+        50% { transform: translateY(calc(var(--px) * -1)); }
+      }
+      #res-mini {
+        margin-top: 20px;
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        font-size: 10px;
+        text-align: left;
+      }
+      #res-mini[hidden] {
+        display: none;
+      }
+      #res-mini .r {
+        display: grid;
+        grid-template-columns: 52px 66px minmax(0, 1fr);
+        gap: 8px;
+        align-items: baseline;
+        color: #ffffff;
+      }
+      #res-mini .r.solo {
+        grid-template-columns: 52px minmax(0, 1fr);
+      }
+      #res-mini .r.hd {
+        color: #6c7a99;
+        font-size: 8px;
+      }
+      #res-mini .r.first {
+        color: #ffd23f;
+      }
+      #res-mini .r.mine {
+        color: #35d07f;
+      }
+      /* your row: a ">" hangs in the margin so the ranks stay lined up */
+      #res-mini .rk {
+        position: relative;
+      }
+      #res-mini .r.mine .rk::before {
+        content: ">";
+        position: absolute;
+        right: calc(100% + 3px);
+      }
+      #res-mini .crew {
+        font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #pad-screen.results #status-big::after { animation: none; }
+        #res-art .px-cry,
+        #res-art .px-tear { animation: none; }
+      }
+      @media (orientation: portrait) {
+        /* upright, #status and the seat line already say these */
+        #pad-screen.row-setup:not(.cap-rot) #cap-role,
+        #pad-screen.row-setup:not(.cap-rot) #cap-status,
+        #pad-screen.row-setup:not(.cap-rot) #cap-seat {
+          display: none;
+        }
+      }
     </style>
       <link id="fbx-ui-css" rel="stylesheet" href="../ui/foxbox-ui.css">
   </head>
@@ -1572,13 +1797,15 @@
         <div id="conn">…</div>
       </div>
       <div id="status">
+        <div id="res-art" aria-hidden="true" hidden></div>
         <div id="status-big">Connecting…</div>
         <div id="status-small"></div>
+        <div id="res-mini" data-test="results-list" hidden></div>
         <div id="game-name"></div>
         <div><button id="change-char" type="button" hidden>Change character</button> <button id="switch-game" data-test="switch-game" type="button" hidden>🎮 Switch game</button></div>
       </div>
       <div id="boats" hidden>
-        <div id="boats-head">Pick your boat</div>
+        <button id="boats-head" type="button">Pick your boat</button>
         <div id="boats-grid" data-test="boats"></div>
       </div>
       <div id="controls">

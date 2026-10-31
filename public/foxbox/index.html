@@ -423,64 +423,85 @@
       }
 
       /* ── Results ───────────────────────────────────────────────────────── */
+      /* Results: an arcade high-score screen (the pixel look). The winner's puffball wears the crown. */
       #results {
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        background: rgba(8, 14, 34, 0.72);
-        backdrop-filter: blur(0.3rem);
+        background-color: #05070f;
+        background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 0.3rem, transparent 0.3rem 0.6rem);
         z-index: 40;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
       }
       #res-title {
-        font-size: 7rem;
         margin: 0;
-        text-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2.4rem;
+        font-size: 4.4rem;
+        font-weight: 400;
+        line-height: 1.3;
+        color: #35d07f;
+        text-align: center;
       }
-      #res-title .w {
-        color: var(--c);
-        -webkit-text-stroke: 0.15rem rgba(255, 255, 255, 0.9);
+      .px-sprite {
+        display: block;
+        flex: none;
+      }
+      .px-crowned {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .res-cursor {
+        animation: res-blink 1s steps(1, end) infinite;
+      }
+      @keyframes res-blink {
+        50% { opacity: 0; }
       }
       #res-list {
-        margin-top: 2.6rem;
-        display: grid;
-        grid-template-columns: repeat(2, 36rem);
-        grid-auto-flow: column;
-        grid-template-rows: repeat(4, auto);
-        gap: 1rem 3rem;
+        margin-top: 4rem;
+        width: min(120rem, 88vw);
+        display: flex;
+        flex-direction: column;
+        gap: 1.8rem;
+        font-size: 2.2rem;
       }
       .res-row {
-        display: flex;
-        align-items: center;
-        gap: 1.2rem;
-        font-size: 2.8rem;
-        padding: 0.8rem 1.4rem;
-        border-radius: 1.6rem;
-        background: rgba(255, 255, 255, 0.08);
-        border-left: 1rem solid var(--c);
+        display: grid;
+        grid-template-columns: 10rem 18rem minmax(0, 1fr);
+        align-items: baseline;
+        gap: 2.4rem;
+        color: #ffffff;
       }
-      .res-row .pl {
-        width: 4.2rem;
-        text-align: center;
-        font-size: 2.4rem;
-        opacity: 0.9;
+      #res-list.solo .res-row {
+        grid-template-columns: 10rem minmax(0, 1fr);
+      }
+      .res-row.res-hd {
+        color: #6c7a99;
+        font-size: 1.6rem;
       }
       .res-row.first {
-        background: rgba(255, 215, 64, 0.22);
+        color: #ffd23f;
       }
-      .res-row .nm {
-        flex: 1;
+      .res-row .crew {
+        font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif;
+        font-size: 2.8rem;
+        font-weight: 700;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .res-row .bot {
-        font-size: 1.5rem;
-        opacity: 0.6;
-      }
       #res-sub {
-        margin-top: 2.6rem;
-        font-size: 2.6rem;
-        opacity: 0.85;
+        margin-top: 4.4rem;
+        font-size: 1.8rem;
+        line-height: 1.6;
+        color: #35d07f;
+        text-align: center;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .res-cursor { animation: none; }
       }
 
       /* ── In-round HUD (the platform's HUD, mocked; TV-sized) ───────────── */
@@ -567,6 +588,12 @@
         background: var(--c);
         box-shadow: 0 0.15rem 0.4rem rgba(0, 0, 0, 0.35);
         text-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.5);
+      }
+      .overhead .oh-label {
+        font-size: 1.1rem;
+        line-height: 1;
+        color: #fff;
+        text-shadow: 0 0.1rem 0.25rem rgba(0, 0, 0, 0.8);
       }
       .overhead .oh-meter {
         width: 6rem;

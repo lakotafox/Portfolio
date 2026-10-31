@@ -33,6 +33,7 @@ import { isP2P, ready as netReady, openSocket, api } from "./net.js";
 import { createRowPad } from "./row-pad.js";
 import { createCapPad } from "./cap-pad.js";
 import { createLandscape } from "./landscape.js";
+import { crownedPuff, cryingPuff, sprite } from "./pixel-art.js";
 import { createPhoneSounds } from "./phone-sounds.js";
 
 const phoneSounds = createPhoneSounds({
@@ -759,10 +760,10 @@ function lobbyLine() {
   const nm = (id) => (lobbyState.players.find((q) => q.id === id) || {}).name || "someone";
   const mine = lobbyState.players.find((q) => q.id === me.id);
   const bits = [];
-  if (iAmPicker()) bits.push("🎮 You pick the game");
-  else if (lobbyState.pickerId) bits.push(`🎮 ${nm(lobbyState.pickerId)} picks`);
-  if (iAmRoller()) bits.push("🎲 You roll the look");
-  if (mine && mine.points) bits.push(`${mine.points} pts${lobbyState.leaderId === me.id ? " 👑" : ""}`);
+  if (iAmPicker()) bits.push("You pick the game");
+  else if (lobbyState.pickerId) bits.push(`${nm(lobbyState.pickerId)} picks`);
+  if (iAmRoller()) bits.push("You roll the look");
+  if (mine && mine.points) bits.push(`${mine.points} pts${lobbyState.leaderId === me.id ? ", in the lead" : ""}`);
   return bits.join(" · ");
 }
 
@@ -813,9 +814,9 @@ function applyRole() {
     row.show(rowing && role === "paddle");
     x = y = s = b = c = 0;
     flush();
+    $("pad-screen").classList.remove("picking"); // a new seat: the seat picker folds away again
   }
   $("pad-screen").classList.toggle("captain", role === "captain");
-  if (role !== "captain") $("pad-screen").classList.remove("picking");
   if (seat) {
     if (seat.color) applyColor(seat.color);
     const label = `${SEAT_LABEL[seat.seat] || "CREW"} · ${seat.boatName} boat`;
@@ -833,9 +834,16 @@ function renderBoats() {
   const show = !!(mode.seats && lastStatus && lastStatus.boats && (st === "lobby" || st === "results") && ws && ws.readyState === 1 && hostUp);
   box.hidden = !show;
   $("pad-screen").classList.toggle("seated-play", !!mode.seats && !show);
+  // Row setup: seat line + motion test + Ready on one screen (pad.html folds the seat picker)
+  $("pad-screen").classList.toggle("row-setup", show && st === "lobby");
   if (!show) return;
   const seat = mySeat();
-  $("boats-head").textContent = seat ? "Your seat · tap another to switch" : "Pick your boat";
+  box.classList.toggle("seated", !!seat);
+  $("boats-head").textContent = !seat
+    ? "Pick your boat"
+    : $("pad-screen").classList.contains("picking")
+      ? "Your seat · tap another to switch"
+      : `${SEAT_LABEL[seat.seat] || "CREW"} · ${seat.boatName} boat · ⇄ Change seat`;
   const cols = lastStatus.boatColors || [];
   let html = "";
   lastStatus.boats.forEach((bt, i) => {
@@ -865,6 +873,11 @@ $("boats-grid").addEventListener("click", (e) => {
   $("pad-screen").classList.remove("picking"); // the captain's overlay closes once a seat is tapped
 });
 $("cap-seat").addEventListener("click", () => $("pad-screen").classList.toggle("picking"));
+$("boats-head").addEventListener("click", () => {
+  if (!mySeat()) return;
+  $("pad-screen").classList.toggle("picking");
+  renderBoats();
+});
 
 function renderStatus() {
   if (lastStatus && lastStatus.game) applyMode(lastStatus.game);
@@ -941,13 +954,9 @@ function renderStatus() {
         s = "A round is on — you'll join the next one";
         break;
       case "results":
-        if (st.place === 1) {
-          b = "🏆 You won! 🏆";
-          s = `1st of ${st.total} — amazing!`;
-        } else {
-          b = `You came ${ordinal(st.place)}`;
-          s = `of ${st.total} · ${st.winner} won`;
-        }
+        // the TV's results: who won (a boat in team games), your place and points, then the list
+        b = st.won ?? st.place === 1 ? "YOU WON!" : `YOU CAME ${ordinal(st.place).toUpperCase()}`;
+        s = `${String(st.winner || "").toUpperCase()} WINS!` + (st.points ? ` · +${st.points} PTS` : "");
         break;
       case "full":
         b = "Game is full";
@@ -959,6 +968,34 @@ function renderStatus() {
   }
   if (big.textContent !== b) big.textContent = b;
   if (small.textContent !== s) small.textContent = s;
+  const rows = ws && ws.readyState === 1 && lastStatus?.state === "results" && Array.isArray(lastStatus.results) ? lastStatus.results : null;
+  $("pad-screen").classList.toggle("results", !!rows);
+  $("res-mini").hidden = !rows;
+  $("res-art").hidden = !rows;
+  if (rows) {
+    // the arcade high-score table: RANK · BOAT · CREW (team games) or RANK · NAME; your row in green
+    const team = !!rows[0]?.team;
+    const html = `<div class="r hd${team ? "" : " solo"}"><span>RANK</span><span>${team ? "BOAT" : "NAME"}</span>${team ? "<span>CREW</span>" : ""}</div>` +
+      rows.map((r, i) => `<div class="r${i === 0 ? " first" : ""}${r.mine ? " mine" : ""}${team ? "" : " solo"}"><span class="rk">${ordinal(i + 1).toUpperCase()}</span>` +
+        (team
+          ? `<span>${escHtml(String(r.team || "").replace(/ boat$/i, "").toUpperCase())}</span><span class="crew">${escHtml((r.names || []).join(" · "))}</span>`
+          : `<span class="crew">${escHtml((r.names || [])[0] || "")}</span>`) + `</div>`).join("");
+    if ($("res-mini").dataset.html !== html) {
+      $("res-mini").innerHTML = html;
+      $("res-mini").dataset.html = html;
+    }
+    // the crown is 1st place's alone: 2nd and 3rd see their own puffball, the rest a crying one
+    const mineRow = rows.find((r) => r.mine);
+    const won = lastStatus.won ?? lastStatus.place === 1;
+    const myColor = mineRow?.color || "#ffd23f";
+    const art = won || !mineRow ? crownedPuff(rows[0]?.color || "#ffd23f", 5)
+      : lastStatus.place <= 3 ? sprite("puff", 5, { color: myColor })
+      : cryingPuff(myColor, 5);
+    if ($("res-art").dataset.html !== art) {
+      $("res-art").innerHTML = art;
+      $("res-art").dataset.html = art;
+    }
+  }
   // the captain's sideways screen hides #status: mirror it in the middle column
   const capLine = b === "You're in!" ? s : s ? `${b} · ${s}` : b;
   if ($("cap-status").textContent !== capLine) $("cap-status").textContent = capLine;
@@ -995,12 +1032,13 @@ let y = 0; // only used by 2D-stick games (down = +1)
 let b = 0;
 let c = 0; // the second button (b1): Row Row Rumble's right paddle
 let s = 0; // a captain's tilt steering (-1 left … 1 right)
+let shot = false; // that captain's FIRE press really shoots (reloaded): only then the phone twangs
 let sent = { x: null, y: null, b: null, c: null, s: null };
 
 function flush() {
   if (sent.x === x && sent.y === y && sent.b === b && sent.c === c && sent.s === s) return;
   if (sendRaw({ t: "in", x, y, b, c, s })) {
-    phoneSounds.input({ b, c }, sent, mode.id, role);
+    phoneSounds.input({ b, c, shot }, sent, mode.id, role);
     sent = { x, y, b, c, s };
     window.__foxboxLastInputAt = Date.now();
   }
@@ -1162,6 +1200,7 @@ const cap = createCapPad(
       s = v.s;
       b = v.b;
       c = 0;
+      shot = v.shot === true;
       flush();
     },
     state: () => lastStatus && lastStatus.state,
@@ -1188,14 +1227,15 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   padScreen.addEventListener(
     type,
     (e) => {
-      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #cap-enable, #cap-ready")) return; // let real buttons click (incl. Switch game)
+      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready")) return; // let real buttons click (incl. Switch game)
+      if (padScreen.classList.contains("row-setup") && !e.target.closest("#cap-aim, #cap-fire")) return; // Row setup scrolls
       e.preventDefault();
     },
     { passive: false },
   );
 }
 document.addEventListener("touchmove", (e) => {
-  if (!e.target.closest("input, #char-grid, #crop-stage, #fbx2-pad")) e.preventDefault();
+  if (!e.target.closest("input, #char-grid, #crop-stage, #fbx2-pad, #pad-screen.row-setup")) e.preventDefault();
 }, { passive: false });
 for (const type of ["gesturestart", "gesturechange", "gestureend", "dblclick", "contextmenu", "selectstart"]) {
   document.addEventListener(type, (e) => {
@@ -1205,6 +1245,19 @@ for (const type of ["gesturestart", "gesturechange", "gestureend", "dblclick", "
 window.addEventListener("resize", () => {
   setXY(x, y);
   draw.layout();
+});
+// Full screen where the browser allows a page to ask (Android, iPad): once, on the first tap that
+// isn't typing. iPhone Safari never does; there the Home Screen icon opens it full screen (pad.html).
+let askedFull = false;
+document.addEventListener("pointerup", (e) => {
+  const el = document.documentElement, go = el.requestFullscreen || el.webkitRequestFullscreen;
+  if (askedFull || e.target.closest?.("input") || !go || !(document.fullscreenEnabled || document.webkitFullscreenEnabled)) return;
+  askedFull = true;
+  if (document.fullscreenElement || document.webkitFullscreenElement) return;
+  try {
+    const p = go.call(el, { navigationUI: "hide" });
+    if (p && p.catch) p.catch(() => {});
+  } catch {}
 });
 
 // ── Start ───────────────────────────────────────────────────────────────────────

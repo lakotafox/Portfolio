@@ -13,6 +13,8 @@ export function createPhoneSounds({ onReady = () => {} } = {}) {
     join: "join", pick: "pick", turn: "turn", roll: "roll", win: "win",
     finish: "lose", out: "lose", shove: "shove", paddle: "paddle", fire: "fire",
   };
+  // the paddle plays on every stroke: softer, spaced out and a little different each time so it never drones
+  const minGapMs = { paddle: 380 }, clipGain = { paddle: 0.45 }, pitchJitter = { paddle: 0.08 };
   const countdownClips = ["three", "two", "one", "go"];
   const clipNames = [...countdownClips, ...new Set(Object.values(cueClips))];
   const loadingClips = new Set(), decodedClips = new Map();
@@ -106,7 +108,7 @@ export function createPhoneSounds({ onReady = () => {} } = {}) {
   function play(kind) {
     if (!audible()) return;
     const now = performance.now();
-    if (now - (lastPlayed.get(kind) ?? -Infinity) < 90) return;
+    if (now - (lastPlayed.get(kind) ?? -Infinity) < (minGapMs[kind] ?? 90)) return;
     lastPlayed.set(kind, now);
     try {
       const name = cueClips[kind], buffer = decodedClips.get(name);
@@ -124,7 +126,8 @@ export function createPhoneSounds({ onReady = () => {} } = {}) {
         }
         const source = ctx.createBufferSource(), envelope = ctx.createGain();
         source.buffer = buffer;
-        envelope.gain.setValueAtTime(1, ctx.currentTime);
+        if (pitchJitter[kind]) source.playbackRate.value = 1 + (Math.random() * 2 - 1) * pitchJitter[kind];
+        envelope.gain.setValueAtTime(clipGain[kind] ?? 1, ctx.currentTime);
         source.connect(envelope);
         envelope.connect(master);
         activeClips.set(name, { source, envelope });
@@ -190,6 +193,7 @@ export function createPhoneSounds({ onReady = () => {} } = {}) {
     input(next, prev, gameId, role) {
       if (previousState !== "playing") return;
       if ((next.b && !prev.b) || (next.c && !prev.c)) {
+        if (gameId === "row" && role === "captain" && !next.shot) return; // FIRE while reloading: no twang
         play(gameId === "row" ? (role === "captain" ? "fire" : "paddle") : gameId === "snowball" ? "shove" : "bonk");
       }
     },

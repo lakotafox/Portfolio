@@ -1,4 +1,8 @@
 /* Shared FoxBox launch/join shell. CSS-only: no additional game or effect canvas. */
+/* The pixel look's two faces (both SIL OFL, licences beside them): chunky capitals for labels and
+   buttons, a softer pixel face for names and sentences. */
+@font-face { font-family: "FoxBox Pixel"; src: url("fonts/PressStart2P-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "FoxBox Soft"; src: url("fonts/PixelifySans.ttf") format("truetype"); font-weight: 400 700; font-display: swap; }
 html[data-foxbox-web] {
   --fbx-entry-bg: var(--fb-bg, #101125);
   --fbx-entry-ink: var(--fb-ink, #fff9f1);
@@ -144,7 +148,8 @@ html[data-foxbox-web="host"] #lobby :is(.join-card h2, #pad-url, #join-hint, #ro
 html[data-foxbox-web="host"] #lobby .join-card canvas { border-radius: 14px; }
 html[data-foxbox-web="host"] #start-text { background: #ffffff16; border: 1px solid #ffffff35; color: var(--fbx-entry-ink); box-shadow: none; }
 html[data-foxbox-web="host"] #countdown :is(#cd-num, #cd-sub) { color: var(--fbx-entry-ink); text-shadow: 0 .06em 0 #08091955; }
-html[data-foxbox-web="host"] #results { background: linear-gradient(140deg, #30244ce8, #11172aed 60%, #15464ce8); color: var(--fbx-entry-ink); backdrop-filter: blur(20px); }
+/* results: the arcade high-score screen (see index.html) */
+html[data-foxbox-web="host"] #results { background: #05070f repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 0.3rem, transparent 0.3rem 0.6rem); color: #fff; }
 html[data-foxbox-web="pad"] :is(#name-screen, #char-screen, #crop-screen),
 html[data-foxbox-web="pad"] body:not(.clook-on) #pad-screen { background: var(--fbx-entry-scene); }
 html[data-foxbox-web="pad"] #name-screen :is(h1, p) { color: var(--fbx-entry-ink); text-shadow: none; }

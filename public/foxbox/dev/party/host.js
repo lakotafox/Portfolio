@@ -28,6 +28,7 @@
  */
 
 import qrcodegen from "./vendor/qrcodegen.js";
+import { crownedPuff } from "./pixel-art.js";
 import { isP2P, ready as netReady, openSocket, api } from "./net.js";
 
 // ── The hub ────────────────────────────────────────────────────────────────────
@@ -757,10 +758,10 @@ function onLobbyMsg(msg) {
 function roleLine() {
   const nm = (id) => (id && (roster.get(id)?.name || lob.names[id])) || "—";
   const parts = [];
-  if (lob.pickerId) parts.push(`🎮 ${nm(lob.pickerId)} picks the game`);
-  if (lob.rollerId) parts.push(`🎲 ${nm(lob.rollerId)} rolls the look`);
+  if (lob.pickerId) parts.push(`${nm(lob.pickerId)} picks the game`);
+  if (lob.rollerId) parts.push(`${nm(lob.rollerId)} rolls the look`);
   const lead = leaderId();
-  if (lead) parts.push(`👑 ${nm(lead)} ${lob.points[lead]} pts`);
+  if (lead) parts.push(`${nm(lead)} leads with ${lob.points[lead]} pts`);
   return parts.join("  ·  ");
 }
 
@@ -796,11 +797,15 @@ function statusFor(p) {
   if (!round || round.humanIdByPid.get(p.slot + 1) !== p.id) return { ...base, state: "waiting" };
   const pid = p.slot + 1;
   if (phase === "results" && round.placement) {
-    const place = round.placement.indexOf(pid) + 1;
-    // Crew members share their boat's outcome even though placement lists each seat separately.
-    const winnerBoat = GAME.seats ? round.players.find((pl) => pl.playerId === round.placement[0])?.boat : null;
-    const won = GAME.seats ? winnerBoat != null && round.players.find((pl) => pl.playerId === pid)?.boat === winnerBoat : place === 1;
-    return { ...base, state: "results", place, won, total: round.placement.length, winner: round.nameById.get(round.placement[0]) };
+    // the TV's results list (crew members share their boat's place), shown on the phone as well
+    const rows = round.results || resultRows(round);
+    const mine = rows.findIndex((row) => row.members.some((m) => m.pid === pid));
+    const place = mine + 1, title = rows[0].team ?? rows[0].members[0].name;
+    const points = lob.lastResults.find((x) => x.id === p.id)?.points ?? 0;
+    return {
+      ...base, state: "results", place, won: place === 1, total: rows.length, winner: title, points,
+      results: rows.map((row, i) => ({ team: row.team || null, color: row.color.base, names: row.members.map((m) => m.name), mine: i === mine })),
+    };
   }
   if (round.out.has(pid)) return { ...base, state: "out" };
   return { ...base, state: "playing" };
@@ -1215,7 +1220,9 @@ function renderScreenPoints(r, points) {
     const name = esc(r.nameById.get(pt.playerId) ?? `#${pt.playerId}`);
     if (pt.type === "playerOverhead" && !pt.isOffScreen) {
       const d = r.hudById.get(pt.playerId);
-      const meter = d && typeof d.meter === "number" && d.meter >= 0 ? `<div class="oh-meter"><div class="oh-meter-fill" style="width:${d.meter}%"></div></div>` : "";
+      // the meter can carry a small label over it (Row Row Rumble: "reloading")
+      const label = d && typeof d.meterLabel === "string" && d.meterLabel ? `<div class="oh-label">${esc(d.meterLabel)}</div>` : "";
+      const meter = d && typeof d.meter === "number" && d.meter >= 0 ? `${label}<div class="oh-meter"><div class="oh-meter-fill" style="width:${d.meter}%"></div></div>` : "";
       html.push(`<div class="overhead" style="left:${pt.x * 100}%;top:${(1 - pt.y) * 100}%;${colorVars(c)}"><div class="oh-name">${name}</div>${meter}</div>`);
     } else if (pt.type === "playerPosition" && pt.isOffScreen) {
       const left = clamp(pt.x, 0.05, 0.95) * 100;
@@ -1224,6 +1231,24 @@ function renderScreenPoints(r, points) {
     }
   }
   $("screen-points").innerHTML = html.join("");
+}
+
+/**
+ * The round's results, one list for the TV and every phone: a row per boat in a team game (its crew
+ * together, ranked like the points), else a row per player. [{ team?, color, members: [{ pid, name, bot }] }]
+ */
+function resultRows(r) {
+  const member = (pid) => ({ pid, name: r.nameById.get(pid) ?? `#${pid}`, bot: !r.humanIdByPid.has(pid) });
+  if (!GAME.seats) return r.placement.map((pid) => ({ color: r.colorById.get(pid) || colorSet(0), members: [member(pid)] }));
+  const boatOf = new Map(r.players.map((pl) => [pl.playerId, pl.boat]));
+  const rows = [];
+  for (const pid of r.placement) {
+    const boat = boatOf.get(pid);
+    let row = rows.find((x) => x.boat === boat);
+    if (!row) rows.push((row = { boat, team: `${BOAT_NAMES[boat] ?? "?"} boat`, color: colorSet(COLOR_KEYS.indexOf(BOAT_KEYS[boat])), members: [] }));
+    row.members.push(member(pid));
+  }
+  return rows;
 }
 
 function onGameOver(r, ids) {
@@ -1235,22 +1260,22 @@ function onGameOver(r, ids) {
   phase = "results";
   $("screen-points").innerHTML = "";
 
-  const winnerId = ids[0];
-  const wc = r.colorById.get(winnerId) || colorSet(0);
-  const wname = r.nameById.get(winnerId) ?? "Someone";
-  $("res-title").innerHTML = `<span class="w" style="${colorVars(wc)}">${esc(wname)}</span> wins!`;
-  $("res-list").innerHTML = ids
-    .map((id, i) => {
-      const c = r.colorById.get(id) || colorSet(0);
-      const isBot = !r.humanIdByPid.has(id);
-      return `<div class="res-row${i === 0 ? " first" : ""}" style="${colorVars(c)}"><span class="pl">${i === 0 ? "👑" : ordinal(i + 1)}</span><span class="nm">${esc(r.nameById.get(id) ?? `#${id}`)}</span>${isBot ? '<span class="bot">BOT</span>' : ""}</div>`;
-    })
+  r.results = resultRows(r);
+  const top = r.results[0];
+  const team = !!top.team;
+  $("res-title").innerHTML = `${crownedPuff(top.color.base, 9)}<span>${esc((team ? top.team : top.members[0].name).toUpperCase())} WINS!<span class="res-cursor">_</span></span>`;
+  // an arcade high-score table: RANK · BOAT · CREW in team games, RANK · NAME otherwise
+  const head = team ? `<div class="res-row res-hd"><span>RANK</span><span>BOAT</span><span>CREW</span></div>` : `<div class="res-row res-hd"><span>RANK</span><span>NAME</span></div>`;
+  $("res-list").className = team ? "team" : "solo";
+  $("res-list").innerHTML = head + r.results
+    .map((row, i) => team
+      ? `<div class="res-row${i === 0 ? " first" : ""}"><span>${ordinal(i + 1).toUpperCase()}</span><span>${esc(BOAT_NAMES[row.boat] ?? "").toUpperCase()}</span><span class="crew">${row.members.map((m) => esc(m.name)).join(" · ")}</span></div>`
+      : `<div class="res-row${i === 0 ? " first" : ""}"><span>${ordinal(i + 1).toUpperCase()}</span><span class="crew">${esc(row.members[0].name)}</span></div>`)
     .join("");
-  $("res-list").style.gridTemplateRows = `repeat(${Math.min(4, Math.ceil(ids.length / 2) || 1)}, auto)`;
   const ends = Date.now() + RESULTS_MS;
   const upd = () => {
     const left = Math.max(0, Math.ceil((ends - Date.now()) / 1000));
-    $("res-sub").textContent = `Back to the lobby in ${left}…  then ${GAME.button} for a rematch!`;
+    $("res-sub").textContent = `BACK TO THE LOBBY IN ${left}... THEN ${GAME.button} FOR A REMATCH!`;
   };
   upd();
   clearInterval(countdownTimer);

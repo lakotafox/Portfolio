@@ -89,7 +89,7 @@ export function createRowPad(el, { onInput, state, onReady = () => {} }) {
   function startMotion() {
     if (!window.isSecureContext) {
       el.enable.hidden = true;
-      return unavailable("Motion needs a secure HTTPS controller link. Rejoin using that link.");
+      return unavailable("Motion needs the secure (https) link: scan the QR code on the TV again.");
     }
     if (!hasMotionApi) {
       el.enable.hidden = true;
