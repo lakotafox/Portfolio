@@ -1101,6 +1101,7 @@ function onMessage(msg) {
       if (knightGameMsg(msg)) break; // KNIGHT: the knight module's (Knight Platformer is the hub's game)
       if (kartGameMsg(msg)) break; // KART: the kart module's (FOX KART is the hub's game)
       if (mode.id === "row" && msg.m && msg.m.type === "rowTrain") { rowTrain.onMessage(msg.m); renderStatus(); break; } // ROWTRAIN: the controls check
+      if (mode.id === "row" && msg.m && msg.m.type === "rowBoat") { row.boatState(msg.m); break; } // ROWBOAT: reloading / stunned on the paddler's boat art
       if (mode.id === "snowball" && msg.m && msg.m.type === "round") { roundCue(msg.m); break; } // SNOWBALL: best of three
       if (msg.m && typeof msg.m === "object") {
         if (golfPad) golfPad.onMessage(msg.m);
@@ -1463,7 +1464,7 @@ function applyRole() {
   }
   $("pad-screen").classList.toggle("captain", role === "captain");
   if (seat) {
-    if (seat.color) applyColor(seat.color);
+    if (seat.color) { applyColor(seat.color); row.setColor(seat.color.base); } // ROWBOAT: the paddler's boat art in the boat's colour
     const label = `${SEAT_LABEL[seat.seat] || "CREW"} · ${seat.boatName} boat`;
     cap.setRole(label);
   }

@@ -106,7 +106,8 @@ export function createRowTrainPad({ screen, onChange = () => {} }) {
     return "status";
   }
   function mount(p) {
-    const host = p === "cap" ? document.getElementById("cap-mid") : p === "status" ? document.getElementById("status") : screen;
+    // (side: inside the paddle panel when it's there — its own corner, whatever the status line above it measures)
+    const host = p === "cap" ? document.getElementById("cap-mid") : p === "status" ? document.getElementById("status") : document.getElementById("row-motion") || screen;
     if (!host) return;
     if (p === "status") {
       const after = document.getElementById("status-small");
@@ -284,9 +285,12 @@ function injectCss() {
 #status #rtp[data-mine="0"] .rtp-big { font-size: 13px; }
 #status #rtp .rtp-sub { display: none; } /* the status line above says it already */
 
-/* paddler, sideways: the empty left side of the paddle panel (the boat + count stay in the middle) */
-#pad-screen #rtp[data-place="side"] { position: absolute; z-index: 30; left: 26px; top: 76px; bottom: 26px;
-  width: calc(50% - 190px); min-width: 120px; }
+/* paddler, sideways: the left side of the paddle panel, on a dark card over the water (the boat stays in the middle) */
+#pad-screen #rtp[data-place="side"] { position: absolute; z-index: 30; left: 10px; top: 10px; bottom: 10px;
+  width: calc(50% - 110px); max-width: 260px; min-width: 120px; box-sizing: border-box; padding: 10px 8px;
+  background: rgba(10, 20, 40, 0.78); box-shadow: var(--px-frame3, 0 0 0 3px #0a1428); }
+@container rowpanel (max-height: 230px) { #rtp[data-place="side"] .rtp-anim { display: none; } }
+@container rowpanel (max-height: 170px) { #rtp[data-place="side"] .rtp-sub { display: none; } }
 
 /* first mate: the top of the middle column, between the aim stick and FIRE; its role line + tip make room */
 #cap-mid #rtp { width: 100%; gap: 6px; }

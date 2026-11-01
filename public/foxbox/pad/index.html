@@ -1797,115 +1797,125 @@
       #controls [hidden] {
         display: none !important;
       }
+      /* the panel is the player's own boat on the water (row-pad.js draws it into #row-boat's canvas, the TV's kayak);
+         the stroke count is a chip in its corner, the hint / swing meter / buttons sit along its bottom edge */
       #row-motion {
+        position: relative;
         flex: 1;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        border-radius: 28px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 3px solid rgba(255, 255, 255, 0.18);
-        padding: 14px;
+        align-items: flex-end; /* the hint, meter and buttons: the right side, clear of the boat in the middle */
+        justify-content: flex-end;
+        gap: 6px;
+        min-height: 0;
+        border-radius: 18px;
+        background: #1f5f8b;
+        border: 3px solid var(--px-ink);
+        box-shadow: 0 4px 0 var(--px-drop);
+        padding: 10px 14px;
+        overflow: hidden;
         touch-action: none;
       }
-      #row-boat {
+      #row-motion > :not(#row-boat):not(#rtp) {
         position: relative;
-        width: 200px;
-        height: 90px;
+        z-index: 2;
+        max-width: calc(50% - 80px);
       }
-      #row-boat .hull {
+      #row-boat {
         position: absolute;
-        left: 50px;
-        right: 50px;
-        top: 34px;
-        height: 34px;
-        border-radius: 0 0 50px 50px;
-        background: linear-gradient(var(--l), var(--c) 60%, var(--d));
-        border: 4px solid #fff;
+        inset: 0;
+        overflow: hidden;
       }
-      #row-boat .oar {
+      #row-boat .row-art {
         position: absolute;
-        top: 44px;
-        width: 86px;
-        height: 10px;
-        border-radius: 6px;
-        background: #f7d27a;
-        border: 3px solid #fff;
-        transform-origin: 100% 50%;
+        display: block;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        image-rendering: pixelated;
       }
-      #row-boat .oar.l {
-        left: -6px;
-        transform: rotate(-22deg);
+      /* RELOADING / STUNNED!: over the boat, like the TV's line under the nametag */
+      #row-boat .row-tag {
+        position: absolute;
+        right: 8px;
+        top: 50px;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px 5px;
+        font: 10px/1.2 var(--px-font);
+        color: var(--px-gold);
+        text-shadow: 2px 2px 0 var(--px-ink);
+        background: rgba(10, 20, 40, 0.78);
+        box-shadow: var(--px-frame3);
+        white-space: nowrap;
+        pointer-events: none;
       }
-      #row-boat .oar.r {
-        right: -6px;
+      #row-boat .row-tag[hidden] {
+        display: none;
+      }
+      #row-boat .row-tag i {
+        display: block;
+        width: 64px;
+        height: 6px;
+        background: var(--px-ink);
+        padding: 1px;
+      }
+      #row-boat .row-tag b {
+        display: block;
+        height: 100%;
+        background: #f2b51d;
         transform-origin: 0 50%;
-        transform: rotate(22deg);
       }
-      #row-boat.pull.l .oar.l {
-        animation: row-pull-l 0.45s ease-out;
+      #row-boat .row-tag[data-what="stun"] {
+        color: #fff9f1;
+        background: rgba(199, 54, 29, 0.9);
       }
-      #row-boat.pull.r .oar.r {
-        animation: row-pull-r 0.45s ease-out;
+      #row-boat .row-tag[data-what="stun"] i {
+        display: none;
       }
-      @keyframes row-pull-l {
-        30% { transform: rotate(26deg); }
-        100% { transform: rotate(-22deg); }
-      }
-      @keyframes row-pull-r {
-        30% { transform: rotate(-26deg); }
-        100% { transform: rotate(22deg); }
-      }
-      #row-boat .splash {
-        position: absolute;
-        top: 64px;
-        width: 70px;
-        height: 22px;
-        border-radius: 50%;
-        background: radial-gradient(rgba(140, 210, 255, 0.9), transparent 70%);
-        opacity: 0;
-      }
-      #row-boat .splash.l {
-        left: -14px;
-      }
-      #row-boat .splash.r {
-        right: -14px;
-      }
-      #row-boat.pull.l .splash.l,
-      #row-boat.pull.r .splash.r {
-        animation: row-splash 0.5s ease-out;
-      }
-      /* warm-up: point at the side to paddle on */
-      #row-boat[data-step="left"] .oar.l,
-      #row-boat[data-step="right"] .oar.r {
-        background: #ffe36b;
-        box-shadow: 0 0 14px #ffe36b;
-      }
-      @keyframes row-splash {
-        20% { opacity: 1; transform: scale(1.2); }
-        100% { opacity: 0; transform: scale(1.6); }
-      }
+      /* the stroke count: a small pixel chip in the corner, popping on every stroke */
       #row-count-wrap {
-        font-size: 15px;
-        text-align: center;
-        opacity: 0.9;
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 2;
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        padding: 5px 8px 6px;
+        font: 9px/1 var(--px-font);
+        text-transform: uppercase;
+        color: #c9d2e6;
+        background: rgba(10, 20, 40, 0.78);
+        box-shadow: var(--px-frame3);
+        pointer-events: none;
       }
       #row-count-wrap b {
-        display: block;
-        font-size: clamp(44px, 16vw, 80px);
-        line-height: 1;
+        font: 20px/1 var(--px-font);
+        color: #fff9f1;
+        text-shadow: 2px 2px 0 var(--px-ink);
       }
       #row-count-wrap.hit b {
-        animation: row-count-pop 0.3s ease-out;
+        display: inline-block;
+        animation: row-count-pop 0.3s steps(3, end);
+        color: var(--px-gold);
       }
       @keyframes row-count-pop {
         30% { transform: scale(1.35); }
       }
       #row-sens {
         align-items: center;
-        font-size: 14px;
+        font-size: 12px;
+        gap: 5px;
+        padding: 3px 6px;
+        border-radius: 12px;
+        background: rgba(10, 20, 40, 0.62);
+      }
+      #row-sens .row-link {
+        padding: 5px 9px;
+        font-size: 12px;
       }
       #row-sens span {
         opacity: 0.75;
@@ -1920,16 +1930,23 @@
         gap: 8px;
       }
       #row-hint {
-        font-size: 17px;
+        max-width: 100%;
+        padding: 4px 8px;
+        font: 10px/1.35 var(--px-font);
+        text-transform: uppercase;
         text-align: center;
-        opacity: 0.85;
-        min-height: 1.3em;
+        color: #fff9f1;
+        text-shadow: 2px 2px 0 var(--px-ink);
+        background: rgba(10, 20, 40, 0.62);
+      }
+      #row-hint:empty {
+        display: none;
       }
       #row-swing {
-        width: min(80%, 260px);
-        height: 10px;
-        border-radius: 6px;
-        background: rgba(255, 255, 255, 0.15);
+        width: 200px;
+        height: 8px;
+        background: var(--px-ink);
+        border: 2px solid var(--px-ink);
         overflow: hidden;
       }
       #row-meter {
@@ -2055,18 +2072,44 @@
       #pad-screen.row-setup #controls {
         height: auto;
       }
+      /* the race (not setup): the panel is a size container, so the TRAINING card on its left can drop its picture
+         when the panel is short (row-train-pad.js); and the look's rolled game heading steps aside for the boat
+         (a big title effect would squeeze the status words into a column and the boat panel with them) */
+      #pad-screen:not(.row-setup) #row-motion {
+        container: rowpanel / size;
+      }
+      #pad-screen:not(.row-setup):has(#row:not([hidden])) #clook-heading {
+        display: none;
+      }
+      /* upright (not turned): the panel is narrow, the hint + meter go back under the boat, centred */
+      @media (orientation: portrait) {
+        #pad-screen:not(.land-rot) #row-motion { align-items: center; }
+        #pad-screen:not(.land-rot) #row-motion > :not(#row-boat):not(#rtp) { max-width: 100%; }
+      }
+      /* setup: the boat is a strip at the top of the panel, the motion test + Ready under it on the panel's dark */
       #pad-screen.row-setup #row-motion {
         flex: none;
-        padding: 10px;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 140px 10px 10px;
         gap: 8px;
+        background: #12304f;
         touch-action: pan-y;
       }
-      #pad-screen.row-setup #row-boat {
-        transform: scale(0.75);
-        margin: -11px 0;
+      #pad-screen.row-setup #row-motion > :not(#row-boat):not(#rtp) {
+        max-width: 100%;
       }
-      #pad-screen.row-setup #row-count-wrap b {
-        font-size: 40px;
+      #pad-screen.row-setup #row-sens {
+        font-size: 14px;
+      }
+      #pad-screen.row-setup #row-sens .row-link {
+        padding: 8px 16px;
+        font-size: 15px;
+      }
+      #pad-screen.row-setup #row-boat {
+        bottom: auto;
+        height: 130px;
+        border-bottom: 3px solid var(--px-ink);
       }
       /* the first mate with the phone upright: the setup column first, aim + FIRE underneath */
       #pad-screen.row-setup #cap.portrait #cap-main {
@@ -2436,8 +2479,7 @@
         <div id="bonk-wrap"><button id="bonk" data-test="action-button" type="button">BONK</button></div>
         <div id="row" hidden>
           <div id="row-motion">
-            <div id="row-boat"><i class="oar l"></i><b class="hull"></b><i class="oar r"></i><span class="splash l"></span><span class="splash r"></span></div>
-            <div id="row-count-wrap"><b id="row-count">0</b>strokes</div>
+            <div id="row-boat" data-test="row-boat"><div id="row-count-wrap"><b id="row-count">0</b>strokes</div></div>
             <div id="row-hint"></div>
             <div id="row-swing"><div id="row-meter"></div></div>
             <div id="row-sens" class="row-links" aria-label="Sensitivity"><span>Sensitivity</span><button type="button" class="row-link" data-s="low">Low</button><button type="button" class="row-link" data-s="med">Med</button><button type="button" class="row-link" data-s="high">High</button></div>
