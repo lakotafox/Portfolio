@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.khabefox.foxbox.controller",
+      "sha256_cert_fingerprints": [
+        "3A:C2:43:4D:5E:C6:6F:CF:D0:AE:9F:1A:24:A5:12:91:47:55:EE:2E:8F:83:52:9E:EB:02:FB:B3:B5:1A:CE:95",
+        "88:BA:17:7B:54:DC:55:AF:8C:2A:4B:0D:C3:00:A3:02:B7:91:E9:37:7E:DC:4B:95:38:1D:FE:0F:2E:80:03:7D"
+      ]
+    }
+  }
+]
