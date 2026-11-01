@@ -9,6 +9,9 @@
  * The toolbar (FoxBox pixel arcade: FoxBox Pixel labels, square cream frame, navy fill, hard shadow, pixel icons):
  *   YOUR NAME + pencil   tap to rename (pad.js's name step)
  *   CHARACTER            kept hidden (Lakota): Sky's own setup asks for the character when Sky is picked
+ *   USE CURSOR           the phone as a Wii-style pointer for its TV's lobby (pointer-pad.js: a full-screen tap pad over
+ *                        this layer, RECENTER, SPEED; the TV draws the cursor: pointer-tv.js). Phones with a motion API
+ *                        and a touch screen; an extra TV's phones while they're linked straight to that TV
  *   PARTY                the host's phone only (lobby state hostId): a sheet with BOTS FILL / OFF, and in web TV mode
  *                        (the lobby state has `party`) GROUP NAME + PRIVATE / PUBLIC too
  * lobby2 gives the toolbar a place in its content (mountLobby({toolbar})): the first row upright, the top of the
@@ -28,6 +31,8 @@ const ICONS = {
   puff: ["..####..", ".######.", "########", "##.##.##", "##.##.##", "########", ".######.", "..####.."],
   sliders: ["..#.....", "########", "..#.....", "........", ".....#..", "########", ".....#..", "........"],
   close: ["#.....#", ".#...#.", "..#.#..", "...#...", "..#.#..", ".#...#.", "#.....#"],
+  cursor: ["#......", "##.....", "###....", "####...", "#####..", "######.", "###....", "#.##..."],
+  target: ["...#...", ".#####.", ".#...#.", "##.#.##", ".#...#.", ".#####.", "...#..."],
 };
 function icon(name, px = 2) {
   const rows = ICONS[name], w = rows[0].length, h = rows.length;
@@ -58,12 +63,12 @@ function injectCss() {
   cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 .fbx2-tb[hidden] { display: none; }
 .fbx2-tb:active { transform: translateY(3px); box-shadow: 0 1px 0 ${SHADOW}; background: #24264a; }
-.fbx2-tb[aria-expanded="true"] { background: ${GOLD}; color: ${INK}; }
+.fbx2-tb[aria-expanded="true"], .fbx2-tb[aria-pressed="true"] { background: ${GOLD}; color: ${INK}; }
 .fbx2-tb:focus-visible { outline: 3px solid ${GOLD}; outline-offset: 3px; }
 .fbx2-tb .fbx2-ico { flex: none; display: block; }
 .fbx2-tb-name { min-width: 0; max-width: 13ch; overflow: hidden; text-overflow: ellipsis; padding: 2px 0; }
 .fbx2-tb[data-test="lobby-edit-name"] .fbx2-ico { color: ${GOLD}; }
-.fbx2-tb[aria-expanded="true"] .fbx2-ico { color: ${INK}; }
+.fbx2-tb[aria-expanded="true"] .fbx2-ico, .fbx2-tb[aria-pressed="true"] .fbx2-ico { color: ${INK}; }
 @media (max-width: 359px) { .fbx2-tb { padding: 0 7px; gap: 5px; font-size: 8px; } }
 /* sideways it sits over the right-hand column: centred like the tabs under it, a little tighter, the host's PARTY next
    to the name (Sky's CHARACTER is the one that wraps) */
@@ -160,6 +165,11 @@ export async function initLobby2Pad({ url, myId, editName, changeCharacter, lobb
   const nameBtn = mk("lobby-edit-name", `<span class="fbx2-tb-name">Name</span>${icon("pencil")}`, () => editName());
   nameBtn.setAttribute("aria-label", "Change your name");
   const nameLabel = nameBtn.querySelector(".fbx2-tb-name");
+  // USE CURSOR: the chip shows once pointer-pad.js is loaded and this phone can do it (a click: iPhone asks for motion)
+  let ptr = null;
+  const cursorBtn = mk("lobby-cursor", `${icon("cursor")}<span>Use cursor</span>`, () => ptr && ptr.toggle());
+  cursorBtn.hidden = true;
+  cursorBtn.setAttribute("aria-pressed", "false");
   const charBtn = mk("lobby-character", `${icon("puff")}<span>Character</span>`, () => changeCharacter());
   charBtn.hidden = true;
   const partyBtn = mk("lobby-party", `${icon("sliders")}<span>Party</span>`, () => (sheet.open ? sheet.close() : sheet.show()));
@@ -182,14 +192,50 @@ export async function initLobby2Pad({ url, myId, editName, changeCharacter, lobb
   };
   if (typeof ResizeObserver === "function") new ResizeObserver(measure).observe(bar);
   window.addEventListener("resize", measure);
-  let lastJson = "";
+  let lastJson = "", lastSt = null;
+  /** The lobby state for the shell. While the cursor pad covers the picker's phone, its cards don't take the pick
+   * (pickerId masked): the picker picks on the TV, which moves the browse; when the pad goes, the shell sees this phone
+   * as the picker again and its cards start from the TV's browse (instead of the card they showed before). */
+  const push = () => {
+    if (!lastSt) return;
+    const st = ptr && ptr.active && lastSt.pickerId === myId() ? { ...lastSt, pickerId: "" } : lastSt;
+    const json = JSON.stringify(st);
+    if (json !== lastJson) {
+      lastJson = json;
+      shell.update({ ...st, me: myId() });
+    }
+  };
+  const paintCursor = () => {
+    const on = !!(ptr && ptr.on);
+    if (cursorBtn.getAttribute("aria-pressed") !== String(on)) cursorBtn.setAttribute("aria-pressed", String(on));
+  };
+  let lastSync = null; // sync()'s last arguments: replayed once pointer-pad.js is in (the chip shows at once)
+  import("./pointer-pad.js")
+    .then((m) => {
+      ptr = m.createPointerPad({
+        layer,
+        send: (pm) => lobby.ptr && lobby.ptr(pm),
+        icon,
+        onChange: () => {
+          paintCursor();
+          push();
+        },
+      });
+      if (lastSync) api.sync(lastSync);
+    })
+    .catch((e) => console.warn("[foxbox] USE CURSOR didn't load", e));
 
-  return {
-    sync({ screen, connected, lobby: st }) {
+  const api = {
+    sync(args) {
+      lastSync = args;
+      const { screen, connected, lobby: st } = args;
       const show = !!(st && connected && screen === "pad-screen" && st.phase === "lobby");
       if (layer.hidden === show) layer.hidden = !show;
       document.body.classList.toggle("fbx2-lobby-on", show);
-      if (!st) return sheet.sync(null);
+      if (!st) {
+        if (ptr) ptr.sync({ show: false });
+        return sheet.sync(null);
+      }
       charBtn.hidden = true; // Lakota: no CHARACTER in the lobby bar; Sky's own setup asks for the character first
       const mine = (st.players || []).find((q) => q.id === myId());
       const nm = (mine && mine.name) || "Name";
@@ -197,14 +243,18 @@ export async function initLobby2Pad({ url, myId, editName, changeCharacter, lobb
       const isHost = !!(show && st.hostId && st.hostId === myId());
       partyBtn.hidden = !isHost;
       sheet.sync(isHost ? { bots: st.bots === "fill" ? "fill" : "off", party: st.party && typeof st.party === "object" ? st.party : null } : null);
+      // USE CURSOR: this phone's own TV draws the cursor. An extra TV's phone needs its direct link to that TV (the web
+      // build's FOXBOX_PATH "p2p"): over the relay its pointer would reach the main TV, which only draws its own phones
+      const ptrOk = !!(ptr && ptr.supported && typeof lobby.ptr === "function" && mine && (!mine.house || globalThis.FOXBOX_PATH === "p2p"));
+      cursorBtn.hidden = !ptrOk;
+      if (ptr) ptr.sync({ show: show && ptrOk, color: (mine && mine.color) || null, picker: !!(mine && st.pickerId === myId()) });
+      paintCursor();
       if (show) requestAnimationFrame(measure);
-      const json = JSON.stringify(st);
-      if (json !== lastJson) {
-        lastJson = json;
-        shell.update({ ...st, me: myId() });
-      }
+      lastSt = st;
+      push();
     },
   };
+  return api;
 }
 
 /**

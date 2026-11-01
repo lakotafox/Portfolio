@@ -1092,6 +1092,14 @@ window.foxboxLobby = {
     if (typeof change.pub === "boolean") m.pub = change.pub;
     if (m.group != null || m.pub != null) sendRaw({ t: "game", m });
   },
+  /** USE CURSOR (lobby2-pad.js → pointer-pad.js): the phone's pointer for its TV's lobby — {x, y} 0..10000, + d / tap /
+   * rc, or {off:1} — as {t:"game", m:{type:"ptr", …}} (pointer-tv.js on the TV has the list). */
+  ptr(m) {
+    if (!m || typeof m !== "object") return false;
+    const out = { type: "ptr" }; // first: an extra TV's link spots it by the message's start (net-p2p.js GAME_PTR)
+    for (const k of Object.keys(m)) if (k !== "type") out[k] = m[k];
+    return sendRaw({ t: "game", m: out });
+  },
 };
 const iAmPicker = () => !!lobbyState && lobbyState.pickerId === me.id;
 const iAmRoller = () => !!lobbyState && lobbyState.rollerId === me.id;

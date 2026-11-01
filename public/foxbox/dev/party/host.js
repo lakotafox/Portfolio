@@ -519,6 +519,7 @@ function drawers() {
 
 function markGone(p) {
   if (!p.connected) return;
+  if (ptrTv) ptrTv.remove(p.id); // USE CURSOR: its cursor goes with it
   p.connected = false;
   p.goneAt = Date.now();
   p.x = 0;
@@ -574,6 +575,7 @@ function onGolfMap(msg) {
   renderGolfMap();
 }
 function onGameMsg(msg) {
+  if (msg.m && typeof msg.m === "object" && msg.m.type === "ptr") return onPointerMsg(msg); // USE CURSOR (the lobby's pointers)
   if (msg.m && typeof msg.m === "object" && msg.m.type === "map") return onGolfMap(msg); // TEE TIME's setup
   if (msg.m && typeof msg.m === "object" && msg.m.type === "bots") return onBotsMsg(msg); // the host phone's BOTS toggle
   if (msg.m && typeof msg.m === "object" && msg.m.type === "party") return onPartyMsg(msg); // web TV mode: the host phone's group name / public
@@ -1059,6 +1061,10 @@ function lobbyState() {
 }
 let lastPublished = "";
 function publishLobby() {
+  if (ptrTv) { // USE CURSOR: the cursors only live on the lobby's cards, and only for players who are here
+    if (!pointerLobby()) ptrTv.clear();
+    else for (const c of ptrTv.list()) if (!roster.get(c.id)?.connected) ptrTv.remove(c.id);
+  }
   syncTvB(); // a linked second TV gets the roster + seats too (they aren't all in the lobby state)
   const st = lobbyState();
   const json = JSON.stringify(st);
@@ -1133,6 +1139,62 @@ function onLobbyMsg(msg) {
       startCountdown(p);
       break;
   }
+}
+
+// ── USE CURSOR: phones as Wii-style pointers over the lobby ────────────────────────
+// A phone with USE CURSOR on (lobby2-pad.js → pointer-pad.js) sends {t:"game", m:{type:"ptr", x, y, d?, tap?, rc?, off?}};
+// pointer-tv.js draws one cursor per phone in its slot colour with its name, eased and clamped to the screen, and
+// frames the game card it points at. Only on the lobby's cards, and each TV draws only its OWN phones (the screen they
+// look at): the main TV its phones, an extra TV the phones that joined from its QR (net-p2p.js hands it their pointer
+// before anything goes on to the main TV: FOXBOX_HOUSE_PTR → mirrorPointer). A tap: the picker's on a side card selects
+// it (the browse, as a swipe on the picker's phone does), on the middle card picks it (the picker phone's own
+// {t:"pickGame"} path; from an extra TV that message goes on to the main TV as the phone's own); anyone else's, or on
+// no card, is a harmless ping.
+var ptrTv = null, ptrLoad = null; // var: markGone / publishLobby may run before this line during start-up
+var ptrWait = new Map(); // id → its newest message while pointer-tv.js loads
+var ptrOut = null; // an extra TV: the lobby message a tap makes, for the main TV (mirrorPointer)
+/** The lobby's cards are up here (the cursors' only screen for now). */
+function pointerLobby() {
+  return (phase === "lobby" || phase === "boot") && lob.selectedGameId !== GAME.id;
+}
+function onPointerMsg(msg) {
+  const p = roster.get(msg.id);
+  if (!p || !p.connected || (mirror ? p.house !== mirror.id : !!p.house) || !pointerLobby()) return;
+  if (!ptrTv) {
+    if (msg.m.off) ptrWait.delete(msg.id);
+    else ptrWait.set(msg.id, msg.m);
+    ptrLoad ||= import("./pointer-tv.js")
+      .then((mod) => {
+        ptrTv = mod.createPointerTv({ onTap: pointerTap });
+        const waiting = [...ptrWait];
+        ptrWait.clear();
+        for (const [id, m] of waiting) onPointerMsg({ id, m });
+      })
+      .catch((e) => console.warn("[party] USE CURSOR: pointer-tv.js didn't load", e));
+    return;
+  }
+  const c = colorSet(p.slot);
+  ptrTv.update(msg.id, msg.m, { name: p.name, base: c.base, light: c.light, picker: msg.id === lob.pickerId });
+}
+/** A cursor's tap on hit (pointer-tv.js: the card under it, or null) → what it did: "pick" | "select" | "ping". */
+function pointerTap(id, hit) {
+  if (!pointerLobby() || lob.selectedGameId || !hit || id !== lob.pickerId || !GAMES.some((g) => g.id === hit.gameId)) return "ping";
+  const pick = hit.kind === "card" && hit.offset === 0;
+  const m = pick ? { t: "pickGame", gameId: hit.gameId } : { t: "browse", gameId: hit.gameId, view: "cards", flipped: false };
+  if (mirror) ptrOut = m; // an extra TV: the main TV decides (mirrorPointer passes it on as the phone's own message)
+  else onLobbyMsg({ ...m, id });
+  return pick ? "pick" : "select";
+}
+/** An extra TV: one of ITS phones' pointer messages (net-p2p.js, globalThis.FOXBOX_HOUSE_PTR, synchronously): drawn here;
+ * returns the lobby message that goes on to the main TV for it ({t:"browse"} / {t:"pickGame"} from the picker's tap), or
+ * null (nothing goes on). */
+function mirrorPointer(id, m) {
+  if (!mirror || !m || typeof m !== "object") return null;
+  ptrOut = null;
+  onPointerMsg({ id, m });
+  const out = ptrOut;
+  ptrOut = null;
+  return out;
 }
 /** One line for the fallback lobby: who picks, who rolls, who leads. */
 function roleLine() {
@@ -2338,6 +2400,7 @@ async function initTwoTvs() {
   }
   if (mirror) mirror.ui = mirrorKit.screenUi({ game: GAME.name });
   if (mirror) globalThis.FOXBOX_HOUSE_GAME = mirrorGameInput; // KNIGHT: own phones' game input → this TV's live view first
+  if (mirror) globalThis.FOXBOX_HOUSE_PTR = mirrorPointer; // USE CURSOR: own phones' pointers are drawn on this TV
 }
 function mirrorMsg(msg) {
   switch (msg.t) {
