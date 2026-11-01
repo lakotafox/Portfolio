@@ -20,9 +20,8 @@
 // the world y of the screen's bottom edge, horizontal wrap at 1920.
 
 import { characterFit } from './character.js';
-import { PLAYER_R, JET_SPUTTER_TICKS, JET_ITEM_TICKS, JET_ITEM_ARM_TICKS, jetBalloons } from './sim.js';
+import { PLAYER_R } from './sim.js';
 import { createBackdrop } from './backdrop.js';
-import { createJetLook, jetLookKey, headAnchor } from './jetpack-look.js';
 
 const VW = 1920, VH = 1080, TAU = Math.PI * 2;
 const HUD_LEFT = 200, HUD_TOP = 90; // platform HUD lives here: keep calm
@@ -306,8 +305,6 @@ export function createRenderer(canvas, colors, opts = {}) {
   const ctx = canvas.getContext('2d');
   if (opts.assets !== false) loadAssets();
   const backdrop = opts.backdrop === false ? null : createBackdrop();
-  // the jetpack items' looks (jetpack-look.js); which item is the sim's (item.kind / player.jetKind)
-  const jl = createJetLook(makeCanvas, () => res);
 
   let dpr = 1, cw = 1, ch = 1, scale = 1, ox = 0, oy = 0, res = 1;
   let builtAssetVersion = -1;
@@ -350,7 +347,6 @@ export function createRenderer(canvas, colors, opts = {}) {
   let parts = []; // particles
   let bursts = []; // comic bursts
   let outs = []; // eliminated players' fall animations (screen space)
-  let loose = []; // spent jetpack items falling away (screen space)
   let shooting = null;
   let lastTick = -1, lastState = null;
   let camPrev = 0, camCur = 0;
@@ -358,7 +354,7 @@ export function createRenderer(canvas, colors, opts = {}) {
   let shake = 0;
 
   function resetRound() {
-    recs = new Map(); platFx = new Map(); parts = []; bursts = []; outs = []; loose = [];
+    recs = new Map(); platFx = new Map(); parts = []; bursts = []; outs = [];
     lastTick = -1;
   }
 
@@ -606,7 +602,7 @@ export function createRenderer(canvas, colors, opts = {}) {
         const n = ballOutlined(art, pad, rgbStr(col.base), rgbStr(col.dark));
         const g = ballOutlined(greyscaled(art), pad, rgbStr(GREY.base), rgbStr(GREY.dark));
         const w = n.width / res, h = n.height / res;
-        s = { n, g, w, h, ax: w / 2, ay: (pad + art.height) / res, bodyH: fit.h, halfW: w / 2, ball: true, head: { h: fit.h, dx: 0 } };
+        s = { n, g, w, h, ax: w / 2, ay: (pad + art.height) / res, bodyH: fit.h, halfW: w / 2, ball: true };
         charSprites.set(key, s);
         return s;
       }
@@ -621,9 +617,6 @@ export function createRenderer(canvas, colors, opts = {}) {
       const ax = (pad + fit.ax * px) / res, ay = (pad + fit.ay * px) / res;
       const w = n.width / res, h = n.height / res;
       s = { n, g, w, h, ax, ay, bodyH: fit.h, halfW: Math.max(ax, w - ax) };
-      // where a jetpack hat / balloons go: the top of the middle of the drawing (jetpack-look.js headAnchor)
-      const hd = headAnchor(n, ax * res, ay * res, fit.w * res, fit.h * res);
-      s.head = hd ? { h: hd.h / res, dx: hd.dx / res } : { h: fit.h, dx: 0 };
     } catch (e) {
       s = null; // a broken image falls back to the puffball
     }
@@ -957,86 +950,6 @@ export function createRenderer(canvas, colors, opts = {}) {
           shake = Math.min(1, shake + (big ? 1 : 0.55));
           break;
         }
-        case 'jetSpawn':
-          if (ev.on === 'cloud') {
-            // an item pops onto a cloud: a puff of sparkle where it sits
-            ring(x, y - 30, '#fff3b0', 80, 0.45, 5);
-            stars(x, y - 20, 8, ['#ffd23f', '#ffffff'], 300, 140);
-            dust(x, y - 40, 5, '#ffffff', 1.2);
-          } else {
-            ring(x, y, '#fff3b0', 70, 0.4, 5);
-            stars(x, y, 6, ['#ffd23f', '#ffffff'], 260, 60);
-          }
-          break;
-        case 'jetGet': {
-          ring(x, y, '#ffffff', 120, 0.35, 7);
-          stars(x, y, 12, ['#ffd23f', '#ffffff', '#ff5a3c', rgbStr(col.base)], 520, 160);
-          const word = { A: 'ZOOM!', C: 'WHIRR!', D: 'WHEE!' }[jetLookKey(ev.kind)];
-          bursts.push({ x, y: y + 40, t0: time, text: word, rot: (R() - 0.5) * 0.3, seed: (R() * 1e6) | 0, col: rgbStr(col.base), size: 0.9 });
-          while (bursts.length > 3) bursts.shift();
-          shake = Math.min(1, shake + 0.25);
-          break;
-        }
-        case 'jetSputter':
-        case 'jetPop':
-        case 'jetEnd': {
-          // each item's end warning: the tanks cough smoke, the propeller puffs as it winds down, a balloon pops
-          const kind = jetLookKey(ev.kind);
-          const p = (state.players || []).find((q) => q.playerId === ev.playerId);
-          const hd = p ? headTop(p, kind) : { x, y };
-          if (kind === 'D') {
-            // which balloon: yellow (top) first, then green, then pink (the bunch's offsets from the knot, y up)
-            const b = { jetSputter: [0.5, 17, '#ffd23f'], jetPop: [6.5, 14, '#35d07f'], jetEnd: [-5.5, 14, '#ff8c9a'] }[ev.type];
-            const bx = hd.x + b[0] * jl.U, by = hd.y + b[1] * jl.U;
-            ring(bx, by, '#ffffff', 46, 0.22, 4);
-            for (let i = 0; i < 10; i++) {
-              const a = (i / 10) * TAU + R() * 0.3;
-              addPart({ k: 0, x: bx, y: by, vx: Math.cos(a) * (220 + R() * 120), vy: Math.sin(a) * (220 + R() * 120), g: 500, drag: 3,
-                life: 0.3 + R() * 0.2, size: 5 + R() * 4, grow: -4, col: i & 1 ? b[2] : '#ffffff' });
-            }
-            bursts.push({ x: bx + (ev.type === 'jetPop' ? 40 : ev.type === 'jetEnd' ? -40 : 0), y: by + 40, t0: time, text: 'POP!', rot: (R() - 0.5) * 0.4, seed: (R() * 1e6) | 0, col: b[2], size: 0.4 });
-            while (bursts.length > 3) bursts.shift();
-            break;
-          }
-          if (ev.type === 'jetPop') break;
-          if (kind === 'C') {
-            // the propeller's tired little puffs, above it (clear of the face)
-            for (let i = 0; i < (ev.type === 'jetEnd' ? 4 : 3); i++) {
-              addPart({ k: 0, x: hd.x + (R() - 0.5) * 40, y: hd.y + 50 + R() * 12, vx: (R() - 0.5) * 90, vy: 50 + R() * 50, g: -20,
-                drag: 2.4, life: 0.45 + R() * 0.25, size: 6 + R() * 4, grow: 9, col: i & 1 ? '#c9cdd6' : '#e4e7ec' });
-            }
-          } else {
-            const fy = p ? p.y - (p.r || PLAYER_R) - 10 : y;
-            for (let i = 0; i < (ev.type === 'jetEnd' ? 7 : 4); i++) {
-              addPart({ k: 0, x: x + (R() - 0.5) * 50, y: fy - R() * 20, vx: (R() - 0.5) * 120, vy: -40 - R() * 80, g: -30,
-                drag: 2.2, life: 0.55 + R() * 0.35, size: 10 + R() * 8, grow: 16, col: i & 1 ? '#c9cdd6' : '#e4e7ec' });
-            }
-          }
-          if (ev.type === 'jetEnd' && p) {
-            // the spent item falls away: the empty tanks drop off the back, the hat flies off the head
-            const r0 = p.r || PLAYER_R;
-            const bodyH = p.h > 0 ? p.h : r0 * 2;
-            const mid = bodyH > 130 ? bodyH * 0.56 : bodyH / 2;
-            const side = (p.facing || 1) < 0 ? 1 : -1;
-            if (kind === 'A') loose.push({ kind, x: wrapX(p.x), y: VH - (p.y - r0 + mid - camCur), vx: side * (60 + R() * 60), vy: 60, rot: 0, vr: side * (2 + R() * 2), t: 0 });
-            else loose.push({ kind, x: wrapX(hd.x), y: VH - (hd.y - camCur) - 20, vx: (R() - 0.5) * 260, vy: -520, rot: 0, vr: (R() < 0.5 ? -1 : 1) * (5 + R() * 3), t: 0 });
-          }
-          break;
-        }
-        case 'jetGone':
-          if (ev.off) break; // its cloud scrolled away under the screen
-          if (ev.on === 'cloud') {
-            dust(x, y - 30, 6, '#ffffff', 1.2);
-            ring(x, y - 20, '#fff3b0', 60, 0.3, 4);
-            break;
-          }
-          ring(x, y, '#d4eafa', 80, 0.3, 4);
-          for (let i = 0; i < 8; i++) {
-            const a = (i / 8) * TAU;
-            addPart({ k: 0, x: x + Math.cos(a) * 40, y: y + Math.sin(a) * 40, vx: Math.cos(a) * 160, vy: Math.sin(a) * 160, g: 0,
-              drag: 4, life: 0.3, size: 5, grow: 2, col: '#ffffff' });
-          }
-          break;
         case 'out':
           // the fall animation itself is started from the alive→false transition
           break;
@@ -1582,34 +1495,9 @@ export function createRenderer(canvas, colors, opts = {}) {
         y = rec.py + (rec.cy - rec.py) * alpha;
       }
       x = wrapX(x);
-      // flying a jetpack item (the bob / sway are the sim's: each item floats its own way)
-      const jet = p.jet > 0 ? { kind: jetLookKey(p.jetKind), left: p.jet, sputter: p.jet < JET_SPUTTER_TICKS, balloons: jetBalloons(p.jet) } : null;
       const sy = VH - (y - camY);
       const bodyH = p.h > 0 ? p.h : r * 2;
       const cs = charSprite(p.playerId);
-      /**
-       * The item on the body: drawn in the body's own frame (feet at (xx, fy), leaning with it, its head
-       * top where the drawing's head is), and its wrap copy near an edge.
-       */
-      const jetAt = (layer, xx, fy, o) => {
-        if (!jet) return;
-        const head = cs && cs.head ? cs.head : { h: bodyH, dx: 0 };
-        const lean = rec ? clamp(-rec.dxt / 8, -1, 1) : 0;
-        const draw = (cx) => {
-          ctx.save();
-          ctx.translate(cx, fy);
-          if (o.rot) ctx.rotate(o.rot);
-          // the hat sits on the real head; the balloons are held up from the top of the drawing (raised hands hold them)
-          const top = jet.kind === 'D' ? bodyH : head.h;
-          jl.drawFlyer(ctx, jet.kind, { x: 0, feetY: 0, bodyH: bodyH * o.scY, headX: head.dx * (p.facing < 0 ? -1 : 1) * o.scX, headY: -top * o.scY,
-            time, left: jet.left, sputter: jet.sputter, balloons: jet.balloons, lean, layer });
-          ctx.restore();
-        };
-        draw(xx);
-        if (xx < 90) draw(xx + VW);
-        else if (xx > VW - 90) draw(xx - VW);
-      };
-      if (jet) jetExhaust(p, r, bodyH, jet);
       if (cs) {
         // drawn character: feet at (x, sy + r), head top bodyH above
         const feetY = sy + r;
@@ -1618,89 +1506,21 @@ export function createRenderer(canvas, colors, opts = {}) {
         if (!cs.ball) o.rot *= 0.6; // a tall body leans less
         if (o.mode === 'dizzy') o.rot += Math.sin(time * 15) * 0.14; // wobble while dazed
         if (!cs.ball) drawFeetMark(p.playerId, cs, x, feetY);
-        jetAt('back', x, feetY, o);
         drawChar(cs, x, feetY, o);
         const m = cs.halfW + 14;
         if (x < m) drawChar(cs, x + VW, feetY, o);
         else if (x > VW - m) drawChar(cs, x - VW, feetY, o);
-        jetAt('front', x, feetY, o);
         if (o.mode === 'dizzy') drawDizzyStars(x, feetY - bodyH - 10, r);
         continue;
       }
       if (sy < -r * 3 || sy > VH + r * 3) continue;
       const o = playerLook(p, rec);
-      jetAt('back', x, sy + r, o);
       drawBall(col, r, x, sy, o);
       // wrap ghost
       const m = r + 14;
       if (x < m) drawBall(col, r, x + VW, sy, o);
       else if (x > VW - m) drawBall(col, r, x - VW, sy, o);
-      jetAt('front', x, sy + r, o);
       if (o.mode === 'dizzy') drawDizzyStars(x, sy - r - 10, r);
-    }
-  }
-
-  // ---------------------------------------------------------------- the jetpack: exhaust, items, spent items
-  /** Flame bits streaming down from a flyer's jets (grey coughs while sputtering). World units, y up. */
-  function jetExhaust(p, r, bodyH, jet) {
-    const feet = p.y - r;
-    for (const n of jl.exhaust(jet.kind, bodyH)) {
-      if (R() > (jet.sputter ? 0.12 : 0.55)) continue;
-      addPart(jet.sputter
-        ? { k: 0, x: p.x + n.dx + (R() - 0.5) * 10, y: feet + n.dy, vx: (R() - 0.5) * 50, vy: -60 - R() * 60, g: -20, drag: 2,
-          life: 0.45 + R() * 0.25, size: 7 + R() * 5, grow: 12, col: R() < 0.5 ? '#c9cdd6' : '#8f9bb5' }
-        : { k: 0, x: p.x + n.dx + (R() - 0.5) * 8, y: feet + n.dy, vx: (R() - 0.5) * 40, vy: -280 - R() * 140, g: 0, drag: 1.5,
-          life: 0.18 + R() * 0.12, size: 4 + R() * 3, grow: 2, col: R() < 0.55 ? '#ffd23f' : '#ff5a3c' });
-    }
-  }
-  /**
-   * World position where a worn item sits: a drawn doodle's real head (see charSprite) for the hat, the
-   * top of the drawing (above that head) for the balloons.
-   */
-  function headTop(p, kind) {
-    const r0 = p.r || PLAYER_R;
-    const bodyH = p.h > 0 ? p.h : r0 * 2;
-    const cs = charSprite(p.playerId);
-    const hd = cs && cs.head ? cs.head : { h: bodyH, dx: 0 };
-    return { x: p.x + hd.dx * ((p.facing || 1) < 0 ? -1 : 1), y: p.y - r0 + (kind === 'D' ? bodyH : hd.h) };
-  }
-  /**
-   * The jetpack items, so you can see which one it is before you touch it: in a bubble (holding its
-   * place on the screen, the sim's frac, drifting sideways) or sitting on its cloud (riding it down).
-   */
-  function drawJetItems(state, camY) {
-    const items = state.jet && state.jet.items;
-    if (!items || !items.length) return;
-    for (const it of items) {
-      const kind = jetLookKey(it.kind);
-      const o = { time, age: it.age, armTicks: JET_ITEM_ARM_TICKS, lifeTicks: JET_ITEM_TICKS, id: it.id };
-      if (it.on === 'cloud') {
-        const c = (state.platforms || []).find((q) => q.id === it.pid);
-        if (!c) continue;
-        const sx = wrapX(c.x + it.dx), baseY = VH - (c.y - camY) + 4; // tucked into the cloud's top a little
-        if (baseY < -60 || baseY > VH + 160) continue;
-        jl.drawCloudItem(ctx, kind, { ...o, x: sx, baseY });
-        if (sx < 70) jl.drawCloudItem(ctx, kind, { ...o, x: sx + VW, baseY });
-        else if (sx > VW - 70) jl.drawCloudItem(ctx, kind, { ...o, x: sx - VW, baseY });
-        continue;
-      }
-      const sx = wrapX(it.x), sy = VH - it.frac * VH;
-      jl.drawBubble(ctx, kind, { ...o, x: sx, y: sy });
-      if (sx < 70) jl.drawBubble(ctx, kind, { ...o, x: sx + VW, y: sy });
-      else if (sx > VW - 70) jl.drawBubble(ctx, kind, { ...o, x: sx - VW, y: sy });
-    }
-  }
-  /** Spent items (after jetEnd) tumbling down off the screen. */
-  function drawLooseItems(dt) {
-    for (let i = loose.length - 1; i >= 0; i--) {
-      const l = loose[i];
-      l.t += dt;
-      l.vy += 1700 * dt;
-      l.x += l.vx * dt;
-      l.y += l.vy * dt;
-      l.rot += l.vr * dt;
-      if (l.y > VH + 120 || l.t > 3) { loose.splice(i, 1); continue; }
-      jl.drawLoose(ctx, l.kind, { x: l.x, y: l.y, rot: l.rot, alpha: l.t > 1.6 ? Math.max(0, 1 - (l.t - 1.6) / 0.6) : 1 });
     }
   }
 
@@ -1955,11 +1775,9 @@ export function createRenderer(canvas, colors, opts = {}) {
     if (!drawImageLayer('bg_near', camY)) { drawCloudLayer(camY, sk, 1); drawHills(camY, 'near'); }
 
     drawPlatforms(state, camY);
-    drawJetItems(state, camY);
     drawBursts(camY); // comic bursts sit behind the players so nobody is hidden
     drawPlayers(state, camY, alpha);
     updateDrawParticles(dt, camY);
-    drawLooseItems(dt);
     drawOuts(dt);
 
     ctx.restore();
