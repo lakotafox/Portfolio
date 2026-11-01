@@ -18,10 +18,16 @@
  * uploads a 512×512 PNG of the square around the circle to POST /api/selfie. The server lists
  * it as the ball character "selfie-<client id>", which this phone then picks.
  *
- * "Draw your own" (draw.js) opens a full-screen drawing canvas; Done uploads the drawing (with a
- * white sticker edge, cropped, plus its hitbox) to POST /api/drawing as "drawn-<client id>",
- * which this phone then picks; the tile becomes "Edit my drawing". The canvas is kept in
- * localStorage (DRAW_KEY) after every stroke, so a reload / phone lock mid-drawing loses nothing
+ * Drawings (draw.js, a full-screen canvas; Done uploads the drawing with a white sticker edge,
+ * cropped, plus its hitbox, to POST /api/drawing, and this phone then picks it):
+ *   NEW DRAWING — always a blank canvas; the TV saves it as a NEW character of this player's (the
+ *                 TV picks the id and lists this player as its `owner`).
+ *   EDIT        — only on this player's own drawings (owner = me): that drawing, to change it; the
+ *                 upload names it (X-Drawing-Id) and the TV replaces it — and refuses anyone else's.
+ *   CLEAR       — on the canvas, to start over.
+ * Lakota (Oct 31): with one drawing per phone and DRAW reopening the phone's last canvas, people drew
+ * over each other's drawings. The canvas is kept in localStorage (DRAW_KEY, with who it belongs to and
+ * which drawing it is) after every stroke, so a reload / phone lock mid-drawing loses nothing
  * (and a reload goes straight back to the drawing). While the drawing screen is open the phone
  * reports {t:"state", drawing:true} (also in join): the TV shows "drawing…" and keeps this
  * player out of any round that starts meanwhile.
@@ -169,13 +175,37 @@ function cardEl(id, name, pic) {
   b.addEventListener("click", () => chooseCharacter(id));
   return b;
 }
+/** My own drawing's tile with an EDIT key under it (only mine: the TV refuses anyone else's edit anyway). */
+function editSlot(card, id) {
+  const slot = document.createElement("div");
+  slot.className = "char-slot";
+  const ed = document.createElement("button");
+  ed.type = "button";
+  ed.className = "pxbtn pxbtn-paper pxbtn-sm char-edit";
+  ed.dataset.test = "char-edit";
+  ed.dataset.char = id;
+  ed.setAttribute("aria-label", "Edit my drawing");
+  const ico = document.createElement("i");
+  ico.className = "ico";
+  ico.innerHTML = sprite("pencil", 2);
+  const label = document.createElement("span");
+  label.textContent = "EDIT";
+  ed.append(ico, label);
+  ed.addEventListener("click", () => openDraw(id));
+  slot.append(card, ed);
+  return slot;
+}
 
-const mySelfieId = () => "selfie-" + me.id.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 32);
-const myDrawingId = () => "drawn-" + me.id.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 32);
+/** This player's id as the TV keeps it (X-Client-Id → the picture's owner). */
+const myOwnerId = () => me.id.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 32);
+const mySelfieId = () => "selfie-" + myOwnerId();
+/** One of MY drawings: the TV lists who made each one (owner); an older TV only had one per phone, "drawn-<my id>". */
+const isMyDrawing = (c) => !!c && (typeof c.owner === "string" ? !!c.owner && c.owner === myOwnerId() : c.id === "drawn-" + myOwnerId());
 /** What a character is called on the tiles and the READY screen. */
-const charLabel = (c) => (!c ? "Puffball" : c.id === myDrawingId() ? "My drawing" : c.id === mySelfieId() ? "My selfie" : c.name || "Drawing");
+const charLabel = (c) => (!c ? "Puffball" : isMyDrawing(c) ? "My drawing" : c.id === mySelfieId() ? "My selfie" : c.name || "Drawing");
 
-// SELFIE is a <label> for the camera file input (the most reliable way to open it on iOS); DRAW opens draw.js
+// SELFIE is a <label> for the camera file input (the most reliable way to open it on iOS); NEW DRAWING opens
+// draw.js on a blank canvas (EDIT, on my own drawings' tiles, opens that drawing)
 $("draw-tile").addEventListener("click", () => openDraw());
 
 /** Where the picker's BACK goes: "pad" (the controller), "ready" (Sky's READY screen) or nowhere (hidden). */
@@ -205,10 +235,11 @@ async function showPicker() {
   const fill = () => {
     grid.innerHTML = "";
     grid.append(cardEl(null, charLabel(null), spriteEl("puff", 6, myColor())));
-    // my own drawing and selfie first, then everything else
+    // my own drawings (newest first) and selfie first, then everything else
     const list = charList ? [...charList.values()] : [];
-    const mine = (c) => (c.id === myDrawingId() ? 2 : c.id === mySelfieId() ? 1 : 0);
-    list.sort((a, b) => mine(b) - mine(a));
+    const mine = (c) => (isMyDrawing(c) ? 2 : c.id === mySelfieId() ? 1 : 0);
+    const at = new Map(list.map((c, i) => [c, i]));
+    list.sort((a, b) => mine(b) - mine(a) || (mine(a) === 2 ? at.get(b) - at.get(a) : at.get(a) - at.get(b)));
     for (const c of list) {
       let pic;
       if (c.hitbox && c.hitbox.ball) {
@@ -221,7 +252,8 @@ async function showPicker() {
         pic.alt = "";
         pic.decoding = "async";
       }
-      grid.append(cardEl(c.id, charLabel(c), pic));
+      const card = cardEl(c.id, charLabel(c), pic);
+      grid.append(isMyDrawing(c) ? editSlot(card, c.id) : card);
     }
   };
   fill();
@@ -437,6 +469,7 @@ $("crop-use").addEventListener("click", async () => {
 // ── Draw your own ──────────────────────────────────────────────────────────────
 let drawOpen = false; // the drawing screen is up (reported to the TV as drawing=true)
 let drawSaveTimer = null;
+let drawEdit = null; // EDIT: the id of my drawing on the canvas (DONE replaces it); null = a NEW drawing (DONE adds one)
 
 function loadDraft() {
   try {
@@ -452,9 +485,12 @@ function saveDraft() {
   drawSaveTimer = null;
   const st = draw.state();
   st.open = drawOpen;
+  st.who = me.id; // whose canvas this is (two players in two tabs of one browser share this storage)
+  st.edit = drawEdit; // and which drawing (null = a new one)
   if (st.png && st.png.length > DRAW_MAX_CHARS) {
     const old = loadDraft();
-    st.png = old && old.png ? old.png : null; // too big to keep: hold on to the last one that fit
+    // too big to keep: hold on to the last one that fit (of this same drawing)
+    st.png = old && old.png && old.who === st.who && old.edit === st.edit ? old.png : null;
   }
   try {
     localStorage.setItem(DRAW_KEY, JSON.stringify(st));
@@ -509,23 +545,40 @@ const draw = createDrawPad(
   },
 );
 
-async function openDraw() {
+/**
+ * The drawing screen. openDraw() = NEW DRAWING: always a blank canvas (only the pen, colour and size carry
+ * over), saved as a new character. openDraw(id) = EDIT one of MY drawings: its canvas as I left it when this
+ * browser has it, else the uploaded picture to work on. resume = the page came back mid-drawing (reload /
+ * phone lock): the canvas as it was, NEW or EDIT as it was — but only my own (not another tab's player's).
+ */
+async function openDraw(editId = null, resume = false) {
+  const draft = loadDraft() || {};
+  const myDraft = draft.who === me.id;
+  let state = { tool: draft.tool, color: draft.color, size: draft.size, paper: draft.paper };
+  let src = "";
+  if (resume) {
+    if (myDraft || draft.who === undefined) state = draft; // (undefined: kept by an older page — this browser's)
+    drawEdit = myDraft && typeof draft.edit === "string" && draft.edit ? draft.edit : null;
+  } else if (editId) {
+    const c = charList && charList.get(editId);
+    if (!isMyDrawing(c)) return; // EDIT is only on my own drawings
+    drawEdit = editId;
+    if (myDraft && draft.edit === editId && typeof draft.png === "string") state = draft;
+    else src = c.src; // made in another tab / browser, or this canvas holds another drawing now
+  } else drawEdit = null;
   release();
   showScreen("draw-screen");
   setDrawing(true);
-  const draft = loadDraft() || {};
-  let fallback = null;
-  const mine = charList && charList.get(myDrawingId());
-  if (!("png" in draft) && mine) {
-    // no local copy of my drawing (storage cleared / another browser): start from the uploaded one
-    fallback = await new Promise((res) => {
-      const im = new Image();
-      im.onload = () => res(im);
-      im.onerror = () => res(null);
-      im.src = mine.src;
-    });
-  }
-  await draw.open(draft, fallback);
+  $("draw-title").innerHTML = drawEdit ? "EDIT YOUR<br />DOODLE" : "DRAW YOUR<br />DOODLE";
+  const fallback = !src
+    ? null
+    : await new Promise((res) => {
+        const im = new Image();
+        im.onload = () => res(im);
+        im.onerror = () => res(null);
+        im.src = src;
+      });
+  await draw.open(state, fallback);
   saveDraft();
 }
 
@@ -537,20 +590,30 @@ async function uploadDrawing() {
   try {
     const blob = await new Promise((res) => baked.canvas.toBlob(res, "image/png"));
     if (!blob) throw new Error("could not make the picture");
-    const res = await api("/api/drawing", {
-      method: "POST",
-      headers: {
-        "Content-Type": "image/png",
-        "X-Client-Id": me.id,
-        "X-Name": encodeURIComponent(me.name || ""),
-        "X-Hitbox": JSON.stringify(baked.hitbox),
-      },
-      body: blob,
-    });
-    const data = await res.json().catch(() => null);
+    // EDIT names the drawing it replaces (the TV checks it's mine); NEW leaves it out and the TV makes a new one
+    const send = (editId) =>
+      api("/api/drawing", {
+        method: "POST",
+        headers: {
+          "Content-Type": "image/png",
+          "X-Client-Id": me.id,
+          "X-Name": encodeURIComponent(me.name || ""),
+          "X-Hitbox": JSON.stringify(baked.hitbox),
+          ...(editId ? { "X-Drawing-Id": editId } : {}),
+        },
+        body: blob,
+      });
+    let res = await send(drawEdit);
+    let data = await res.json().catch(() => null);
+    if (drawEdit && res.status === 404) {
+      // the drawing I was changing isn't on this TV (another party): keep this one as a new drawing
+      res = await send(null);
+      data = await res.json().catch(() => null);
+    }
     if (!res.ok || !data || !data.ok || !data.character) throw new Error((data && data.error) || `error ${res.status}`);
     if (!charList) charList = new Map();
     charList.set(data.character.id, data.character);
+    drawEdit = data.character.id; // this canvas is that drawing now: EDIT on it picks up right here
     drawOpen = false; // chooseCharacter's join tells the TV (drawing: false)
     saveDraft();
     draw.busy(false);
@@ -1602,11 +1665,11 @@ if (!me.name && globalThis.FOXBOX_NAME) {
 if (me.name) {
   $("me-name").textContent = me.name;
   showScreen("pad-screen");
-  // reloaded (or the phone dropped the page) mid-drawing: straight back to it
+  // reloaded (or the phone dropped the page) mid-drawing: straight back to it (only my own drawing in progress)
   const draft = loadDraft();
-  if (draft && draft.open) {
+  if (draft && draft.open && (draft.who === me.id || draft.who === undefined)) {
     drawOpen = true; // the first join already says "drawing"
-    openDraw();
+    openDraw(null, true);
   }
   connect();
 } else {

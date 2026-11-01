@@ -2207,12 +2207,13 @@ function syncTvB(force = false) {
 // until a picture is in, and keeps it if one never comes.
 const PIC_MAX = 160; // px, the longer side
 const PIC_MAX_CHARS = 24000; // a data URL longer than this is made again smaller
-const picJobs = new Map(); // character id → Promise<{ id, src, hitbox } | null>
-const tvPicSent = new Map(); // extra TV id → Set of character ids sent to it
+const picJobs = new Map(); // character id → { from: the picture's src, job: Promise<{ id, src, hitbox } | null> }
+const tvPicSent = new Map(); // extra TV id → Map(character id → the src its copy was made from)
 function smallPicture(id) {
-  if (picJobs.has(id)) return picJobs.get(id);
   const c = characters.get(id);
   if (!c || typeof c.src !== "string" || !c.src) return Promise.resolve(null);
+  const had = picJobs.get(id);
+  if (had && had.from === c.src) return had.job; // (an edited drawing has a new src: made again)
   const job = new Promise((resolve) => {
     const im = new Image();
     const t = setTimeout(() => resolve(null), 8000);
@@ -2246,11 +2247,13 @@ function smallPicture(id) {
     };
     im.src = c.src;
   });
-  picJobs.set(id, job);
-  job.then((r) => { if (!r) picJobs.delete(id); }); // not made: tried again on the next lobby change
+  const entry = { from: c.src, job };
+  picJobs.set(id, entry);
+  job.then((r) => { if (!r && picJobs.get(id) === entry) picJobs.delete(id); }); // not made: tried again on the next lobby change
   return job;
 }
-/** The main TV: every linked extra TV gets the pictures of the people in the party it doesn't have yet. */
+/** The main TV: every linked extra TV gets the pictures of the people in the party it doesn't have yet — and a
+ * drawing again when its owner edited it (same id, new picture: the extra TV's copy is replaced). */
 function sendTvPics() {
   if (mirror || !linkedTvs.size) return;
   const ids = new Set();
@@ -2258,13 +2261,14 @@ function sendTvPics() {
   if (!ids.size) return;
   for (const tv of linkedTvs.keys()) {
     let sent = tvPicSent.get(tv);
-    if (!sent) tvPicSent.set(tv, (sent = new Set()));
+    if (!sent) tvPicSent.set(tv, (sent = new Map()));
     for (const id of ids) {
-      if (sent.has(id)) continue;
-      sent.add(id);
+      const from = characters.get(id).src;
+      if (sent.get(id) === from) continue;
+      sent.set(id, from);
       smallPicture(id).then((pic) => {
-        if (pic && linkedTvs.has(tv)) toTv1(tv, { t: "m:pic", ...pic });
-        else sent.delete(id);
+        if (pic && linkedTvs.has(tv) && characters.get(id)?.src === from) toTv1(tv, { t: "m:pic", ...pic });
+        else if (sent.get(id) === from) sent.delete(id);
       });
     }
   }
