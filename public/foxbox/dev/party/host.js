@@ -119,6 +119,59 @@ const GAMES = [
     },
   },
   // ── end KNIGHT ──
+  // ── KART (FOX KART) ──
+  {
+    // FOX KART (fox-kart repo): an original retro kart racer, 1–8 racers (bots fill), the phones held sideways as tilt
+    // wheels with GAS + ITEM. The phone UI is its own module (dev/party/kart/kart-pad.js, see pad.js): the setup (a racer,
+    // READY) and the race. It talks to the game through {t:"game"} messages (fox-kart CONTRACT.md "Phone protocol"); the
+    // setup's own messages (fkpick / fktrack / fkother) are handled here (see "FOX KART setup" below).
+    id: "kart", name: "FOX KART", gameId: "foxkart", button: "START", stick: "kart",
+    module: "../../games/kart/gc.game.js", props: "../../games/kart/gc.properties.json",
+    tagline: "Tilt to steer · grab FOX BOXES · first across the line!",
+    minPlayers: 1, maxPlayers: 8, controls: "Tilt to steer · GAS · ITEM (phone sideways)",
+    racers: ["fox", "puff", "cat", "frog", "knight", "penguin", "bunny", "raccoon"], // the art's ids (CONTRACT "Art APIs"); default = by slot, like game.js
+    tracks: [{ id: "rampart", name: "RAMPART RUN", laps: 3, open: true }],
+    // ONE countdown (the game runs its own grid swoop + start lights): the shell's countdown card is a short READY!
+    // (no 3-2-1, no phone cues) and there's no GO! card (startCountdown / startRound read these)
+    countdownMs: 1000,
+    countdownLabel: "READY!",
+    card: {
+      chip: "Kart Racer",
+      motion: true,
+      rules: [
+        "Tilt your phone to steer, hold GAS",
+        "Drive through FOX BOXES, tap ITEM to use it",
+        "3 laps around the castle — watch for shortcuts",
+        "THUNDER PUFF hunts whoever is 1st!",
+      ],
+      win: "First across the line after 3 laps wins",
+    },
+  },
+  // ── end KART ──
+  // ── WHOSFOX (WHO'S THE FOX?) ──
+  {
+    // WHO'S THE FOX? (whos-the-fox repo, Lakota's design): a social game. Every phone gets a secret task (a photo, a
+    // 5 s clip, a 10 s voice take, a doodle, a few typed words, or something done live); one player is secretly THE FOX
+    // and fakes it. The TV shows a cosy meeting room (who's done), then the SHOWCASE of everyone's takes (never the
+    // tasks), the vote (WHO'S THE FOX? + EMPLOYEE OF THE MONTH) and the reveal; every vote sends one player out until two
+    // are left. The phone UI is its own module (dev/party/whosfox/whosfox-pad.js); everything rides {t:"game", m}.
+    // People only (bots: false: BOTS FILL leaves it alone); 3+ players (see "WHOSFOX setup" below).
+    id: "whosfox", name: "WHO'S THE FOX?", gameId: "whosthefox", button: "START", stick: "whosfox",
+    module: "../../games/whosfox/gc.game.js", props: "../../games/whosfox/gc.properties.json",
+    tagline: "Secret tasks on your phone · one of you is faking it · find the fox!",
+    minPlayers: 3, maxPlayers: 8, bots: false, controls: "Your phone: a secret task, the camera, the mic, DONE, then vote",
+    card: {
+      chip: "Secret Tasks + Vote",
+      rules: [
+        "Everyone gets a secret task: a photo, a clip, a voice take, a doodle...",
+        "One of you is the fox and has to fake it",
+        "Watch the takes on the TV, then vote: who's the fox?",
+        "Every vote sends someone out, until two are left",
+      ],
+      win: "Most points wins: survive, spot the fox, or fool everyone",
+    },
+  },
+  // ── end WHOSFOX ──
 ];
 const GAME_KEY = "foxbox-game";
 const GAME = (() => {
@@ -473,6 +526,7 @@ function onJoin(id, name, character, drawing, audioReady, house) {
   // (a phone that only reconnected keeps its pick and its READY)
   if (isNew) cancelSkyCountdown();
   if (isNew) cancelKnightCountdown(); // KNIGHT: the same for the knight setup's everyone's-ready countdown
+  if (isNew) cancelKartCountdown(); // KART: the same for the kart setup's everyone's-ready countdown
   // A rejoining phone starts neutral until it sends input again.
   p.x = 0;
   p.b = 0;
@@ -579,7 +633,10 @@ function onGameMsg(msg) {
   if (msg.m && typeof msg.m === "object" && msg.m.type === "map") return onGolfMap(msg); // TEE TIME's setup
   if (msg.m && typeof msg.m === "object" && msg.m.type === "bots") return onBotsMsg(msg); // the host phone's BOTS toggle
   if (msg.m && typeof msg.m === "object" && msg.m.type === "party") return onPartyMsg(msg); // web TV mode: the host phone's group name / public
+  // Sky's doodle vote — only while Sky is the game: WHO'S THE FOX? sends its own {type:"vote"} to its game (fromPhone)
+  if (GAME.id === "sky" && msg.m && typeof msg.m === "object" && (msg.m.type === "vote" || msg.m.type === "vitem")) return onSkyVoteMsg(msg);
   if (onKnightMsg(msg)) return; // KNIGHT: the knight setup's kpick / klevel / kother (the module isn't running yet)
+  if (onKartMsg(msg)) return; // KART: the kart setup's fkpick / fktrack / fkother (the module isn't running yet)
   const p = roster.get(msg.id);
   if (!p || !p.connected || phase !== "playing" || !inRound(p) || !msg.m || typeof msg.m !== "object") return;
   if (!game || typeof game.fromPhone !== "function") return;
@@ -725,9 +782,237 @@ function skySet(p, picked, ready) {
   renderLobby();
   maybeStartSky();
 }
-/** Everyone connected is ready (and nobody not-ready dropped a moment ago): the countdown. */
+/** Everyone connected is ready (and nobody not-ready dropped a moment ago): the doodle vote first when 2+ people play
+ * their own drawing (once per setup), then the countdown. */
 function maybeStartSky() {
-  if (phase === "lobby" && allSkyReady() && !skyWaitingOnDrop()) startCountdown(null, "ready");
+  if (!(phase === "lobby" && allSkyReady() && !skyWaitingOnDrop())) return;
+  const v = lob.sky.vote;
+  if (v && v.step !== "done") return; // the vote is on: it comes back here when it's over
+  if (!v) {
+    const cands = skyVoteCands();
+    if (cands.length >= 2) return startSkyVote(cands);
+  }
+  startCountdown(null, "ready");
+}
+
+// ── Sky Scramble: the doodle vote (Lakota, Nov 1) ──────────────────────────────────────────────────────
+// Everyone's ready and at least 2 people play their own DRAWING (a drawing whose owner is that player): before the
+// countdown every phone votes for its favourite doodle, never its own (puffball and selfie players vote too; bots aren't
+// people here, so they neither vote nor count). The TV shows the doodles in a pixel gallery with the votes ticking in,
+// SKY_VOTE_MS or until everyone has voted. A tie: a random one of the tied, after a drumroll. The winner picks a free
+// starting item on their phone from Sky's power-ups (the jetpack items) and starts the round flying it (round player
+// startItem → sim.js startJet). The referee (this TV) decides; phones on any TV vote ({t:"game"} reaches it through
+// their TV), and the extra TVs draw the same gallery from lob.sky.vote (m:lobby carries lob).
+// lob.sky.vote = { id, step: "vote" | "tie" | "pick" | "won" | "done", cands: [{ id, char }], votes: { voterId: candId },
+//   ends, allAt, counts, tied, tieEnds, winner, pickEnds, item, wonUntil }   (saved with the lobby)
+const SKY_VOTE_MS = 15000, SKY_TIE_MS = 2600, SKY_PICK_MS = 12000, SKY_WON_MS = 3200, SKY_AWAY_PICK_MS = 3000;
+const SKY_ITEMS = ["tanks", "hat", "balloons"]; // Sky's power-ups: the jetpack items (build/sim.js JET_KINDS)
+const SKY_ITEM_LABEL = { tanks: "TANKS", hat: "HAT", balloons: "BALLOONS" };
+/** The people here playing their own drawing (the vote's doodles). */
+function skyVoteCands() {
+  return [...roster.values()]
+    .filter((p) => p.connected && lob.sky?.picked[p.id] && p.character && characters.get(p.character)?.owner === p.id)
+    .sort((a, b) => a.slot - b.slot)
+    .map((p) => ({ id: p.id, char: p.character }));
+}
+/** The people who can vote: here, and with a doodle that isn't theirs to vote for. */
+function skyVoters(v) {
+  return [...roster.values()].filter((p) => p.connected && v.cands.some((c) => c.id !== p.id)).map((p) => p.id);
+}
+function startSkyVote(cands) {
+  lob.sky.vote = { id: newRowSetupId(), step: "vote", cands, votes: {}, ends: Date.now() + SKY_VOTE_MS, tied: [], winner: null, item: null };
+  skyVoteChanged();
+}
+function skyVoteChanged() {
+  saveLobby();
+  broadcastLobby();
+  renderLobby();
+  renderSkyVote();
+}
+/** The vote's steps move on with the clock (the lobby loop, every 250 ms; a TV reload carries on from lob). */
+function skyVoteTick() {
+  const v = lob.sky && lob.sky.vote;
+  if (!v || v.step === "done" || mirror || !skySetupActive() || phase !== "lobby") return;
+  const now = Date.now();
+  if (v.step === "vote") {
+    const voters = skyVoters(v);
+    const all = voters.length > 0 && voters.every((id) => v.votes[id]);
+    if (all && !v.allAt) v.allAt = now;
+    if (now >= v.ends || (all && now - v.allAt >= 900)) finishSkyVote(now); // (the last vote ticks in first)
+    else renderSkyVote();
+  } else if (v.step === "tie") {
+    if (now >= v.tieEnds) {
+      v.step = "pick";
+      v.pickEnds = now + SKY_PICK_MS;
+      skyVoteChanged();
+    } else renderSkyVote();
+  } else if (v.step === "pick") {
+    const w = roster.get(v.winner);
+    const away = !w || !w.connected; // the winner's phone is gone: a random item after a moment
+    if (now >= v.pickEnds || (away && now >= v.pickEnds - SKY_PICK_MS + SKY_AWAY_PICK_MS)) skyItemPicked(SKY_ITEMS[Math.floor(Math.random() * SKY_ITEMS.length)]);
+    else renderSkyVote();
+  } else if (v.step === "won" && now >= v.wonUntil) {
+    v.step = "done";
+    skyVoteChanged();
+    maybeStartSky(); // everyone ready → the countdown (someone who joined meanwhile readies up first)
+  }
+}
+function finishSkyVote(now) {
+  const v = lob.sky.vote;
+  const counts = Object.fromEntries(v.cands.map((c) => [c.id, 0]));
+  for (const [voter, to] of Object.entries(v.votes)) if (to in counts && voter !== to) counts[to]++;
+  const max = Math.max(...Object.values(counts));
+  const top = v.cands.map((c) => c.id).filter((id) => counts[id] === max);
+  v.counts = counts;
+  v.winner = top[Math.floor(Math.random() * top.length)]; // a tie: a random one of the tied (shown after the drumroll)
+  if (top.length > 1) {
+    v.step = "tie";
+    v.tied = top;
+    v.tieEnds = now + SKY_TIE_MS;
+  } else {
+    v.step = "pick";
+    v.pickEnds = now + SKY_PICK_MS;
+  }
+  skyVoteChanged();
+}
+function skyItemPicked(item) {
+  const v = lob.sky.vote;
+  v.item = item;
+  v.step = "won";
+  v.wonUntil = Date.now() + SKY_WON_MS;
+  skyVoteChanged();
+}
+/** {t:"game", m:{type:"vote", vote, for}} (a phone's vote) / {type:"vitem", vote, item} (the winner's free item). */
+function onSkyVoteMsg(msg) {
+  const v = lob.sky && lob.sky.vote, p = roster.get(msg.id), m = msg.m;
+  if (mirror || !v || !p || !p.connected || m.vote !== v.id || !skySetupActive()) return;
+  if (m.type === "vote") {
+    const to = String(m.for || "");
+    if (v.step !== "vote" || to === p.id || !v.cands.some((c) => c.id === to) || v.votes[p.id] === to) return;
+    v.votes[p.id] = to;
+    v.allAt = 0;
+    skyVoteChanged();
+  } else if (m.type === "vitem") {
+    if (v.step !== "pick" || p.id !== v.winner || !SKY_ITEMS.includes(m.item)) return;
+    skyItemPicked(m.item);
+  }
+}
+/** The vote as one phone sees it (in its status): the doodles (not the running counts: the TV shows those), its vote. */
+function skyVoteFor(p) {
+  const v = lob.sky.vote, now = Date.now();
+  const name = (id) => roster.get(id)?.name || "?";
+  const shown = v.step !== "vote"; // the counts once the vote is over
+  return {
+    id: v.id, step: v.step,
+    cands: v.cands.map((c) => ({ id: c.id, char: c.char, name: name(c.id), mine: c.id === p.id, ...(shown && v.counts ? { n: v.counts[c.id] || 0 } : {}) })),
+    my: v.votes[p.id] || null,
+    voted: Object.keys(v.votes).length, voters: skyVoters(v).length,
+    left: Math.max(0, ((v.step === "vote" ? v.ends : v.step === "pick" ? v.pickEnds : now) - now) / 1000),
+    tied: v.tied || [],
+    winner: v.step === "tie" ? null : v.winner || null,
+    winnerName: v.step !== "tie" && v.winner ? name(v.winner) : "",
+    item: v.item || null, items: SKY_ITEMS,
+  };
+}
+/** The round's start item: the vote's winner (if they play this round) gets their pick. */
+function skyStartItem(p) {
+  const v = GAME.id === "sky" && lob.sky && lob.sky.vote;
+  return v && v.step === "done" && v.item && v.winner === p.id ? v.item : null;
+}
+
+/** The TV's gallery (every TV: the extra TVs draw it from lob too): the doodles, votes ticking in, the drumroll, the win. */
+const SKY_VOTE_CSS = `
+#sky-vote { position: fixed; inset: 0; z-index: 97; display: flex; align-items: center; justify-content: center; background: #050611c7;
+  font-family: "FoxBox Pixel", ui-monospace, monospace; color: #fff9f1; pointer-events: none; }
+#sky-vote[hidden] { display: none; }
+#sky-vote .sv-panel { width: min(108rem, 94vw); max-height: 90vh; box-sizing: border-box; padding: 2.2rem 2.6rem 2rem; background: #101125;
+  border: 0.32rem solid #fff9f1; box-shadow: 0 0.6rem 0 #04050e, 0 1.8rem 4rem #000a; display: flex; flex-direction: column; gap: 1.6rem; }
+#sky-vote .sv-head { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+#sky-vote .sv-title { font-size: 2.2rem; line-height: 1.3; color: #ffd23f; text-shadow: 0.25rem 0.25rem 0 #0a1428; }
+#sky-vote .sv-time { min-width: 5.6rem; padding: 0.7rem 1rem; text-align: center; font-size: 2.2rem; color: #0a1428; background: #ffd23f;
+  box-shadow: 0 0 0 0.25rem #0a1428; }
+#sky-vote .sv-time:empty { visibility: hidden; }
+#sky-vote .sv-gal { list-style: none; margin: 0; padding: 2.8rem 0.4rem 0.4rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 1.6rem; }
+#sky-vote .sv-card { position: relative; width: 17rem; display: flex; flex-direction: column; align-items: center; gap: 0.8rem; padding: 1rem 1rem 1.1rem;
+  background: #1b1d3a; box-shadow: 0 0 0 0.25rem #fff9f1, 0 0.5rem 0 0.25rem #04050e; transition: transform 0.15s; }
+#sky-vote .sv-pic { width: 15rem; height: 15rem; display: flex; align-items: center; justify-content: center; background: #fff;
+  background-image: linear-gradient(45deg, #e8edf4 25%, transparent 25%, transparent 75%, #e8edf4 75%), linear-gradient(45deg, #e8edf4 25%, transparent 25%, transparent 75%, #e8edf4 75%);
+  background-size: 1.6rem 1.6rem; background-position: 0 0, 0.8rem 0.8rem; }
+#sky-vote .sv-pic img { max-width: 92%; max-height: 92%; image-rendering: auto; }
+#sky-vote .sv-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: "FoxBox Soft", ui-rounded, sans-serif;
+  font-size: 1.9rem; color: #fff9f1; }
+#sky-vote .sv-votes { display: flex; align-items: center; gap: 0.6rem; min-height: 2.2rem; font-size: 1.5rem; color: #ffd23f; }
+#sky-vote .sv-votes i { width: 1rem; height: 1rem; background: #ffd23f; box-shadow: 0 0 0 0.18rem #0a1428; animation: sv-pop 0.35s steps(3, end); }
+#sky-vote .sv-crown { position: absolute; top: -2.6rem; left: 50%; transform: translateX(-50%); }
+#sky-vote .sv-card.lead { box-shadow: 0 0 0 0.25rem #ffd23f, 0 0.5rem 0 0.25rem #04050e; }
+#sky-vote .sv-card.win { background: #2a2410; box-shadow: 0 0 0 0.4rem #ffd23f, 0 0.6rem 0 0.4rem #04050e; transform: scale(1.06); }
+#sky-vote .sv-card.out { opacity: 0.45; }
+#sky-vote .sv-card.drum { animation: sv-drum calc(var(--n, 2) * 0.22s) steps(1, end) infinite; animation-delay: calc(var(--i, 0) * 0.22s); }
+#sky-vote .sv-foot { display: flex; align-items: center; justify-content: center; gap: 1.4rem; font-size: 1.1rem; line-height: 1.6; color: #c9c8df; text-align: center; }
+#sky-vote .sv-foot .px-sprite { flex: none; }
+@keyframes sv-pop { 0% { transform: scale(0.2); } 70% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes sv-drum { 0% { box-shadow: 0 0 0 0.4rem #ffd23f, 0 0.5rem 0 0.4rem #04050e; background: #2a2410; } 50% { box-shadow: 0 0 0 0.25rem #fff9f1, 0 0.5rem 0 0.25rem #04050e; background: #1b1d3a; } }
+@media (prefers-reduced-motion: reduce) { #sky-vote .sv-card.drum, #sky-vote .sv-votes i { animation: none; } }
+`;
+// an extra TV's phones ask it for the pictures (net-p2p.js screenApi /api/characters): its small copies (m:pic)
+globalThis.FOXBOX_SCREEN_CHARS = () => (mirror ? [...characters.values()].filter((c) => c && c.src).map((c) => ({ id: c.id, name: c.name || "", src: c.src, hitbox: c.hitbox || null })) : []);
+let svBox = null;
+function renderSkyVote() {
+  const v = lob.sky && lob.sky.vote;
+  const on = !!v && v.step !== "done" && skySetupActive() && phase === "lobby";
+  if (!svBox) {
+    if (!on) return;
+    const st = document.createElement("style");
+    st.id = "sky-vote-css";
+    st.textContent = SKY_VOTE_CSS;
+    document.head.append(st);
+    svBox = document.createElement("div");
+    svBox.id = "sky-vote";
+    svBox.dataset.test = "sky-vote";
+    svBox.innerHTML = '<div class="sv-panel"><div class="sv-head"><span class="sv-title"></span><span class="sv-time"></span></div><ol class="sv-gal"></ol><div class="sv-foot"></div></div>';
+    document.body.append(svBox);
+  }
+  if (svBox.hidden === on) svBox.hidden = !on;
+  if (!on) return;
+  const clock = globalThis.FOXBOX_CLOCK && typeof globalThis.FOXBOX_CLOCK.bossNow === "function" ? globalThis.FOXBOX_CLOCK : null;
+  const now = mirror && clock ? clock.bossNow() : Date.now();
+  const name = (id) => roster.get(id)?.name || "?";
+  const counts = v.counts || Object.fromEntries(v.cands.map((c) => [c.id, Object.values(v.votes || {}).filter((to) => to === c.id).length]));
+  const max = Math.max(0, ...Object.values(counts));
+  const winName = v.winner ? name(v.winner).toUpperCase() : "";
+  const title = v.step === "vote" ? "VOTE FOR THE BEST DOODLE" : v.step === "tie" ? "IT'S A TIE! DRUMROLL..."
+    : v.step === "pick" ? `${winName}'S DOODLE WINS!` : `${winName}'S DOODLE WINS · picks ${SKY_ITEM_LABEL[v.item] || ""}`;
+  const left = v.step === "vote" ? v.ends - now : v.step === "pick" ? v.pickEnds - now : 0;
+  const time = left > 0 ? String(Math.ceil(left / 1000)) : "";
+  const cards = v.cands.map((c, i) => {
+    const ch = characters.get(c.char);
+    const pic = ch && ch.src ? `<img src="${esc(ch.src)}" alt="">` : sprite("puff", 6, { color: colorSet(roster.get(c.id)?.slot ?? 0).base });
+    const n = counts[c.id] || 0;
+    const tiedI = v.step === "tie" ? (v.tied || []).indexOf(c.id) : -1;
+    const cls = v.step === "vote" ? (n > 0 && n === max ? "lead" : "")
+      : v.step === "tie" ? (tiedI >= 0 ? "drum" : "out")
+      : c.id === v.winner ? "win" : "out";
+    const crown = (v.step === "pick" || v.step === "won") && c.id === v.winner ? `<span class="sv-crown">${sprite("crown", 4)}</span>` : "";
+    const style = tiedI >= 0 ? ` style="--i:${tiedI};--n:${(v.tied || []).length}"` : "";
+    return `<li class="sv-card ${cls}" data-player="${esc(c.id)}" data-votes="${n}"${style}>${crown}<span class="sv-pic">${pic}</span><span class="sv-name">${esc(name(c.id))}</span><span class="sv-votes">${n ? `${n} ${"<i></i>".repeat(Math.min(n, 8))}` : "&nbsp;"}</span></li>`;
+  }).join("");
+  const voters = mirror ? (v.cands.length ? [...roster.values()].filter((p) => p.connected).length : 0) : skyVoters(v).length;
+  const foot = v.step === "vote" ? `${Object.keys(v.votes || {}).length} OF ${voters} VOTED · VOTE ON YOUR PHONE · NOT FOR YOUR OWN`
+    : v.step === "tie" ? "A RANDOM ONE OF THE TIED WINS"
+    : v.step === "pick" ? `${sprite("tanks", 3)}${sprite("hat", 3)}${sprite("balloons", 3)} ${esc(winName)} PICKS A FREE ITEM TO START WITH`
+    : `${sprite(v.item || "balloons", 4)} ${esc(winName)} STARTS THE ROUND WITH ${esc(SKY_ITEM_LABEL[v.item] || "")}`;
+  const html = `${title}|${time}|${cards}|${foot}`;
+  if (svBox.dataset.html === html) return;
+  svBox.dataset.html = html;
+  svBox.dataset.step = v.step;
+  svBox.querySelector(".sv-title").textContent = title;
+  svBox.querySelector(".sv-time").textContent = time;
+  const gal = svBox.querySelector(".sv-gal");
+  if (gal.dataset.html !== cards) {
+    gal.innerHTML = cards;
+    gal.dataset.html = cards;
+  }
+  svBox.querySelector(".sv-foot").innerHTML = foot;
 }
 function onSkyReady(msg) {
   const p = roster.get(msg.id);
@@ -786,8 +1071,12 @@ function knightDressBots(players) {
     pl.knight = { knight: pk.knight, sword: pk.sword };
   }
 }
-/** startRound(): the game's options get the picker's level. */
-const knightOptions = () => (GAME.id === "knight" ? { level: (lob.knight && lob.knight.level) || "castle" } : {});
+/** The castle's look (DAY / NIGHT on the picker's level card), remembered on this TV; night until someone picks. */
+const KNIGHT_CASTLE_KEY = "foxbox-knight-castle";
+const knightCastleSaved = () => { try { return localStorage.getItem(KNIGHT_CASTLE_KEY) === "day" ? "day" : "night"; } catch { return "night"; } };
+const knightCastleOf = (s) => (s && (s.castle === "day" || s.castle === "night") ? s.castle : knightCastleSaved());
+/** startRound(): the game's options get the picker's level and the castle's look. */
+const knightOptions = () => (GAME.id === "knight" ? { level: (lob.knight && lob.knight.level) || "castle", castle: knightCastleOf(lob.knight) } : {});
 function knightSetupActive() {
   return GAME.id === "knight" && lob.selectedGameId === "knight" && !!lob.knight && (phase === "lobby" || phase === "boot");
 }
@@ -798,7 +1087,7 @@ function newKnightSetup(keep) {
   if (keep) for (const [id, pk] of Object.entries(keep.picks)) if (roster.has(id) && pk) picks[id] = { knight: pk.knight, sword: pk.sword, ready: false };
   const open = KNIGHT.levels.filter((l) => l.open);
   const bots = Array.from({ length: MAX_PLAYERS }, (_, slot) => ({ slot, ...knightRandomPick() })); // re-rolled per setup
-  lob.knight = { id: newRowSetupId(), level: keep && open.some((l) => l.id === keep.level) ? keep.level : open[0].id, picks, bots };
+  lob.knight = { id: newRowSetupId(), level: keep && open.some((l) => l.id === keep.level) ? keep.level : open[0].id, picks, bots, castle: knightCastleOf(keep) };
 }
 /** No pick yet: the default for this slot (the same as game.js: knight by slot, sword by slot). */
 const knightDefault = (p) => ({ knight: KNIGHT.knights[p.slot % KNIGHT.knights.length], sword: KNIGHT.swords[p.slot % KNIGHT.swords.length] });
@@ -807,8 +1096,11 @@ function knightPickOf(p) {
   return { knight: knightId(pk && pk.knight, KNIGHT.knights) || d.knight, sword: knightId(pk && pk.sword, KNIGHT.swords) || d.sword };
 }
 const knightIsReady = (p) => !!(lob.knight && lob.knight.picks[p.id] && lob.knight.picks[p.id].ready);
-/** One player's step: "away" | "picking" | "ready". */
-const knightState = (p) => (!p.connected ? "away" : knightIsReady(p) ? "ready" : "picking");
+/** Where a phone is in the setup (its kpick's step): "knight" (choosing a knight) | "sword" | "ready" (THAT'S ME). */
+const knightStep = (p) => { const pk = lob.knight && lob.knight.picks[p.id]; return pk && (pk.step === "sword" || pk.step === "ready") ? pk.step : "knight"; };
+/** One player's state on the TV: "away" | "knight" (picking a knight) | "sword" (picking a sword) | "picking" (that's me, not
+ *  ready yet) | "ready". */
+const knightState = (p) => (!p.connected ? "away" : knightIsReady(p) ? "ready" : knightStep(p) === "ready" ? "picking" : knightStep(p));
 function knightReadiness() {
   const people = [...roster.values()].filter((p) => p.connected);
   return { readyCount: people.filter(knightIsReady).length, totalCount: people.length };
@@ -836,8 +1128,8 @@ function cancelKnightCountdown() {
 /** The lobby state's `knight` during the setup. */
 function knightLobby() {
   const picks = {};
-  for (const [id, pk] of Object.entries(lob.knight.picks)) if (roster.has(id) && pk) picks[id] = { knight: pk.knight, sword: pk.sword, ready: !!pk.ready };
-  return { id: lob.knight.id, level: lob.knight.level, levels: KNIGHT.levels, picks, bots: knightBotSlots().length, ...knightReadiness() };
+  for (const [id, pk] of Object.entries(lob.knight.picks)) if (roster.has(id) && pk) picks[id] = { knight: pk.knight, sword: pk.sword, ready: !!pk.ready, step: pk.step || "knight" };
+  return { id: lob.knight.id, level: lob.knight.level, levels: KNIGHT.levels, castle: knightCastleOf(lob.knight), picks, bots: knightBotSlots().length, ...knightReadiness() };
 }
 /** pickGame(): a fresh setup when the knight game is picked (unless it already is the pick); none for other games. */
 function knightOnPick(g) {
@@ -847,18 +1139,23 @@ function knightOnPick(g) {
 /** {t:"game", m} from a phone: the setup's own messages. Returns true when it was one of them. */
 function onKnightMsg(msg) {
   const m = msg.m;
-  if (!m || typeof m !== "object" || !["kpick", "klevel", "kother"].includes(m.type)) return false;
+  if (!m || typeof m !== "object" || !["kpick", "klevel", "kcastle", "kother"].includes(m.type)) return false;
   const p = roster.get(msg.id);
   if (!p || !p.connected) return true;
   if (!knightSetupActive()) return sendStatus(p), true; // not in the setup: just tell the phone where things are
   if (m.type === "kpick") {
     if (m.setupId !== lob.knight.id) return sendStatus(p), toPad(p.id, { t: "lobby", s: lobbyState() }), true; // an old setup's
     const d = knightDefault(p);
-    lob.knight.picks[p.id] = { knight: knightId(m.knight, KNIGHT.knights) || d.knight, sword: knightId(m.sword, KNIGHT.swords) || d.sword, ready: m.ready === true };
+    const step = m.step === "sword" || m.step === "ready" ? m.step : m.step === "knight" ? "knight" : m.ready === true ? "ready" : "knight";
+    lob.knight.picks[p.id] = { knight: knightId(m.knight, KNIGHT.knights) || d.knight, sword: knightId(m.sword, KNIGHT.swords) || d.sword, ready: m.ready === true, step };
   } else if (!mayPick(p.id)) return true; // the level and PICK ANOTHER GAME are the game picker's
   else if (m.type === "klevel") {
     if (!KNIGHT.levels.some((l) => l.id === m.id && l.open)) return true; // COMING SOON
     lob.knight.level = m.id;
+  } else if (m.type === "kcastle") {
+    if (m.castle !== "day" && m.castle !== "night") return true;
+    lob.knight.castle = m.castle; // DAY / NIGHT: this round and the next setups on this TV
+    try { localStorage.setItem(KNIGHT_CASTLE_KEY, m.castle); } catch {}
   } else {
     // kother, PICK ANOTHER GAME: back to the game cards (the TV stays on this game until the picker picks one)
     lob.knight = null;
@@ -873,15 +1170,207 @@ function onKnightMsg(msg) {
 }
 /** startRound(): a round that started because everyone was ready takes the ready ones. */
 const knightTakes = (p) => GAME.id !== "knight" || countdownWhy !== "ready" || !lob.knight || knightIsReady(p);
-/** toLobby(): after the results (or a round / countdown called off) back to the knight setup, not the game cards. */
+/** toLobby(): after the results everyone goes back to the FoxBox lobby (the game cards, Lakota); the next NONAME pick
+ *  starts a fresh setup at the knight step (each phone preselects its last pick). A round / countdown called off goes
+ *  back to the knight setup (picks kept, nobody ready). */
 function knightBackToSetup(afterRound) {
-  if (GAME.id !== "knight" || (!afterRound && lob.selectedGameId !== "knight" && !lob.knight)) return;
+  if (GAME.id !== "knight") return;
+  if (afterRound) {
+    lob.knight = null;
+    lob.selectedGameId = null;
+    lob.browse = { gameId: GAME.id, view: "cards", flipped: false };
+    saveLobby();
+    return;
+  }
+  if (lob.selectedGameId !== "knight" && !lob.knight) return;
   lob.selectedGameId = "knight";
   newKnightSetup(validKnightSetup(lob.knight) ? lob.knight : null);
   lob.browse = { gameId: GAME.id, view: "cards", flipped: false };
   saveLobby();
 }
 // ── end KNIGHT ──
+
+// ── KART (FOX KART) ──
+// ── FOX KART setup: a racer, READY; the track (one open: RAMPART RUN, 3 laps) ──────────────────
+// Once FOX KART is picked (lobby phase "setup") every phone's kart module (dev/party/kart/kart-pad.js) shows its racer
+// picker (8 critters, the kart in the player's slot colour), then READY (that tap also asks iPhone motion permission);
+// the game picker also gets PICK ANOTHER GAME. lob.kart = { id, track, picks: { [clientId]: { racer, ready } }, bots },
+// saved with the lobby (a TV reload keeps it); bots = this setup's racer order for the bots (re-rolled per setup).
+// Phone → TV ({t:"game", m}): {type:"fkpick", setupId, racer, ready} on every change · the picker only: {type:"fktrack",
+// id} (an open track) and {type:"fkother"} (PICK ANOTHER GAME: back to the game cards). The countdown starts once every
+// connected player is ready (a not-ready player who just dropped gets KART_DROP_WAIT_MS); Enter on the TV starts at once
+// (no pick = the racer by slot). After the results: the FoxBox lobby (Lakota's choice for NONAME); each phone's last
+// racer is kept (lob.kartLast) and preselected the next time FOX KART is picked. A round / countdown called off (Esc)
+// goes back to the setup, picks kept, nobody ready.
+const KART = GAMES.find((g) => g.id === "kart");
+const KART_DROP_WAIT_MS = 4000;
+const kartRacer = (v) => (typeof v === "string" && KART.racers.includes(v) ? v : null);
+const kartTrackOk = (id) => KART.tracks.some((t) => t.id === id && t.open);
+const kartTrack = () => KART.tracks.find((t) => t.id === (lob.kart && lob.kart.track)) || KART.tracks.find((t) => t.open) || KART.tracks[0];
+function kartSetupActive() {
+  return GAME.id === "kart" && lob.selectedGameId === "kart" && !!lob.kart && (phase === "lobby" || phase === "boot");
+}
+const validKartSetup = (s) => !!s && typeof s === "object" && typeof s.id === "string" && typeof s.track === "string" && !!s.picks && typeof s.picks === "object";
+function kartShuffled() {
+  const a = KART.racers.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+/** A fresh setup; `keep` = the last one: its picks kept (nobody ready), the same track. The bots' racer order re-rolled. */
+function newKartSetup(keep) {
+  const picks = {};
+  if (keep && keep.picks && typeof keep.picks === "object") for (const [id, pk] of Object.entries(keep.picks)) if (roster.has(id) && pk && kartRacer(pk.racer)) picks[id] = { racer: pk.racer, ready: false };
+  const track = keep && kartTrackOk(keep.track) ? keep.track : (KART.tracks.find((t) => t.open) || KART.tracks[0]).id;
+  lob.kart = { id: newRowSetupId(), track, picks, bots: kartShuffled() };
+}
+/** No pick yet: the racer this phone picked last time, else the one by slot (game.js does the same by slot). */
+const kartDefault = (p) => kartRacer(lob.kartLast && lob.kartLast[p.id]) || KART.racers[p.slot % KART.racers.length];
+function kartPickOf(p) {
+  const pk = lob.kart && lob.kart.picks[p.id];
+  return kartRacer(pk && pk.racer) || kartDefault(p);
+}
+const kartIsReady = (p) => !!(lob.kart && lob.kart.picks[p.id] && lob.kart.picks[p.id].ready);
+/** One player's step: "away" | "picking" | "ready". */
+const kartState = (p) => (!p.connected ? "away" : kartIsReady(p) ? "ready" : "picking");
+function kartReadiness() {
+  const people = [...roster.values()].filter((p) => p.connected);
+  return { readyCount: people.filter(kartIsReady).length, totalCount: people.length };
+}
+function allKartReady() {
+  if (!kartSetupActive()) return false;
+  const { readyCount, totalCount } = kartReadiness();
+  return totalCount > 0 && readyCount === totalCount;
+}
+/** Everyone connected is ready (and nobody not-ready dropped a moment ago): the countdown. */
+function maybeStartKart() {
+  const dropWait = [...roster.values()].some((p) => !p.connected && Date.now() - p.goneAt < KART_DROP_WAIT_MS && !kartIsReady(p));
+  if (phase === "lobby" && allKartReady() && !dropWait) startCountdown(null, "ready");
+}
+/** Someone new joined during the everyone's-ready countdown: back to the setup for them. */
+function cancelKartCountdown() {
+  if (GAME.id !== "kart" || phase !== "countdown" || countdownWhy !== "ready") return;
+  clearInterval(countdownTimer);
+  phase = "lobby";
+  autoStartAt = null;
+  show("lobby");
+  broadcastLobby();
+  renderLobby();
+}
+/** The round FOX KART would start right now, by startRound()'s own rules (one plan for the TV panel, the lobby state and
+ * the race, so the TV shows exactly the bots that will drive): the people = everyone connected (they'll all be READY at
+ * the start) + people who dropped a moment ago (REJOIN_GRACE_MS) and were ready; the bots' slots = free slots first, then
+ * slots held by people sitting it out (startRound's fill order); racers = the unpicked ones in this setup's order. */
+function kartRoundPlan() {
+  const fill = mirror ? mirror.bots === "fill" && GAME.bots !== false : botsOn(); // an extra TV shows the main TV's setting
+  const now = Date.now();
+  const humans = [...roster.values()]
+    .filter((p) => !p.drawing && (p.connected || (now - p.goneAt < REJOIN_GRACE_MS && kartIsReady(p))))
+    .sort((a, b) => a.slot - b.slot);
+  const used = new Set(humans.map((p) => p.slot));
+  const target = fill && GAME.id === "kart" ? Math.max(humans.length, Math.min(MAX_PLAYERS, GAME.maxPlayers || MAX_PLAYERS)) : humans.length;
+  const slots = [];
+  for (let s = 0; s < MAX_PLAYERS && humans.length + slots.length < target; s++) {
+    if (used.has(s) || [...roster.values()].some((q) => q.slot === s)) continue;
+    slots.push(s);
+  }
+  for (let s = 0; s < MAX_PLAYERS && humans.length + slots.length < target; s++) if (!used.has(s) && !slots.includes(s)) slots.push(s);
+  slots.sort((a, b) => a - b);
+  return { humans, slots, racers: kartBotRacers(slots, humans.map(kartPickOf)) };
+}
+/** The bots' racers (slot → racer): the racers nobody drives, in this setup's order (then repeats when they run out). */
+function kartBotRacers(slots, taken) {
+  const used = new Set(taken.filter(Boolean));
+  const order = lob.kart && Array.isArray(lob.kart.bots) && lob.kart.bots.filter(kartRacer).length === KART.racers.length ? lob.kart.bots : KART.racers;
+  const free = order.filter((r) => !used.has(r));
+  const out = new Map();
+  slots.forEach((slot, i) => out.set(slot, i < free.length ? free[i] : order[(i - free.length) % order.length]));
+  return out;
+}
+/** startRound(): the READY flags are spent (a TV reload mid-race must not start another race from stale ones). */
+function kartRoundStarts() {
+  if (GAME.id !== "kart" || !lob.kart || !lob.kart.picks) return;
+  for (const pk of Object.values(lob.kart.picks)) if (pk) pk.ready = false;
+  saveLobby();
+}
+/** startRound(): every bot gets an unpicked racer (the TV panel showed the same); host.js already marks them bot: true. */
+function kartDressBots(players) {
+  if (GAME.id !== "kart") return;
+  const bots = players.filter((pl) => pl.type === "bot");
+  const racers = kartBotRacers(bots.map((pl) => pl.playerId - 1), players.filter((pl) => pl.type !== "bot").map((pl) => pl.kart && pl.kart.racer));
+  for (const pl of bots) {
+    pl.bot = true;
+    pl.kart = { racer: racers.get(pl.playerId - 1) };
+  }
+}
+/** startRound(): the game's options get the track. */
+const kartOptions = () => (GAME.id === "kart" ? { track: kartTrack().id } : {});
+/** The lobby state's `kart` during the setup. picks = this setup's real picks only (a phone with none shows its racer
+ * picker); racerOf = the racer every roster player would drive right now (their pick, else last race's, else by slot). */
+function kartLobby() {
+  const picks = {}, racerOf = {};
+  for (const [id, pk] of Object.entries(lob.kart.picks)) if (roster.has(id) && pk && kartRacer(pk.racer)) picks[id] = { racer: pk.racer, ready: !!pk.ready };
+  for (const p of roster.values()) racerOf[p.id] = kartPickOf(p);
+  const plan = kartRoundPlan(), slots = plan.slots, botRacers = plan.racers;
+  const tr = kartTrack();
+  return {
+    id: lob.kart.id, track: tr.id, trackName: tr.name, laps: tr.laps || 3, tracks: KART.tracks, racers: KART.racers,
+    picks, racerOf, bots: slots.length, botRacers: slots.map((s) => botRacers.get(s)), ...kartReadiness(),
+  };
+}
+/** pickGame(): a fresh setup when FOX KART is picked (unless it already is the pick); none for other games. */
+function kartOnPick(g) {
+  if (g.id !== "kart") lob.kart = null;
+  else if (lob.selectedGameId !== "kart" || !validKartSetup(lob.kart)) newKartSetup(null);
+}
+/** {t:"game", m} from a phone: the setup's own messages. Returns true when it was one of them. */
+function onKartMsg(msg) {
+  const m = msg.m;
+  if (!m || typeof m !== "object" || !["fkpick", "fktrack", "fkother"].includes(m.type)) return false;
+  const p = roster.get(msg.id);
+  if (!p || !p.connected) return true;
+  if (!kartSetupActive()) return sendStatus(p), true; // not in the setup: just tell the phone where things are
+  if (m.type === "fkpick") {
+    if (m.setupId !== lob.kart.id) return sendStatus(p), toPad(p.id, { t: "lobby", s: lobbyState() }), true; // an old setup's
+    const racer = kartRacer(m.racer) || kartPickOf(p);
+    lob.kart.picks[p.id] = { racer, ready: m.ready === true };
+    if (kartRacer(m.racer)) lob.kartLast = { ...(lob.kartLast && typeof lob.kartLast === "object" ? lob.kartLast : {}), [p.id]: racer };
+  } else if (!mayPick(p.id)) return true; // the track and PICK ANOTHER GAME are the game picker's
+  else if (m.type === "fktrack") {
+    if (!kartTrackOk(m.id)) return true; // COMING SOON
+    lob.kart.track = m.id;
+  } else {
+    // fkother, PICK ANOTHER GAME: back to the game cards (the TV stays on this game until the picker picks one)
+    lob.kart = null;
+    lob.selectedGameId = null;
+    lob.browse = { gameId: GAME.id, view: "cards", flipped: false };
+  }
+  saveLobby();
+  broadcastLobby();
+  renderLobby();
+  maybeStartKart();
+  return true;
+}
+/** startRound(): a round that started because everyone was ready takes the ready ones. */
+const kartTakes = (p) => GAME.id !== "kart" || countdownWhy !== "ready" || !lob.kart || kartIsReady(p);
+/** toLobby(): after the results the FoxBox lobby (the setup is done with); a round / countdown called off (Esc) goes
+ * back to the kart setup, picks kept, nobody ready. */
+function kartToLobby(afterRound) {
+  if (afterRound) {
+    if (lob.kart) {
+      lob.kart = null;
+      saveLobby();
+    }
+    return;
+  }
+  if (GAME.id !== "kart" || (lob.selectedGameId !== "kart" && !lob.kart)) return;
+  lob.selectedGameId = "kart";
+  newKartSetup(validKartSetup(lob.kart) ? lob.kart : null);
+  saveLobby();
+}
+// ── end KART ──
 
 /** Give everyone in `humans` a seat (keep valid unique picks; the rest get the first free seat, paddler first). */
 function assignSeats(humans) {
@@ -927,6 +1416,8 @@ const lob = {
   sky: null, // Sky Scramble's setup (see skySetupActive)
   golf: null, // TEE TIME's setup: { map: "sunny" | "sunset" | "night" | "candy" | "random" } (the picker's choice)
   knight: null, // KNIGHT: Knight Platformer's setup { id, level, picks } (see knightSetupActive)
+  kart: null, // KART: FOX KART's setup { id, track, picks, bots } (see kartSetupActive)
+  kartLast: {}, // KART: each phone's last racer (clientId → racer id), preselected the next time FOX KART is picked
 };
 function saveLobby() {
   try {
@@ -1045,6 +1536,8 @@ function lobbyState() {
     hostId: hostPhoneId(), // the host's phone: the only one with the BOTS toggle
     ...(partyEditable() ? { party: { group: partyInfo.group || "", pub: !!partyInfo.pub } } : {}), // web TV mode: its GROUP NAME + PUBLIC / PRIVATE too
     ...(knightSetupActive() ? { knight: knightLobby() } : {}), // KNIGHT: the knight setup (level, picks, who's ready)
+    ...(kartSetupActive() ? { kart: kartLobby() } : {}), // KART: the kart setup (track, racers, who's ready, bots)
+    ...(whosfoxSetupActive() ? { whosfox: { min: WHOSFOX_MIN, have: whosfoxPeople() } } : {}), // WHOSFOX: "needs 3+ players"
     pickerId: lob.pickerId,
     rollerId: lob.rollerId,
     leaderId: leaderId(),
@@ -1088,6 +1581,7 @@ function pickGame(gameId) {
   if (g.id !== "golf") lob.golf = null; // TEE TIME: a fresh map choice (RANDOM until the picker taps a map)
   else if (lob.selectedGameId !== "golf" || !lob.golf) lob.golf = { map: "random" };
   knightOnPick(g); // KNIGHT: a fresh knight setup (everyone picks a knight + sword and readies up)
+  kartOnPick(g); // KART: a fresh kart setup (everyone picks a racer and readies up)
   lob.selectedGameId = g.id;
   lob.browse = { ...lob.browse, gameId: g.id };
   saveLobby();
@@ -1228,6 +1722,7 @@ function statusFor(p) {
     ...(skySetupActive() ? {
       skySetup: { id: lob.sky.id, picked: !!lob.sky.picked[p.id], ready: skyState(p) === "ready", ...skyReadiness() },
     } : {}),
+    ...(skySetupActive() && lob.sky.vote && lob.sky.vote.step !== "done" ? { skyVote: skyVoteFor(p) } : {}), // the doodle vote
     ...(GAME.seats ? { seat: p.seat ? { ...p.seat, color: colorSet(COLOR_KEYS.indexOf(BOAT_KEYS[p.seat.boat])), boatName: BOAT_NAMES[p.seat.boat] } : null, boats: boatsView(p.id), boatColors: BOAT_KEYS.map((k) => colorSet(COLOR_KEYS.indexOf(k)).base) } : {}),
   };
   if (phase === "lobby" || phase === "boot") {
@@ -1290,10 +1785,17 @@ function show(id) {
   lobbyUI()?.visible(id === "lobby");
   $("hud").classList.toggle("show", phase === "playing" || phase === "results");
   renderSkyReady();
+  renderSkyVote();
   renderGolfMap();
   renderBotsToggle();
   renderKnightSetup(); // KNIGHT
+  renderKartSetup(); // KART
+  renderWhosfoxSetup(); // WHOSFOX
 }
+// an extra TV draws the doodle vote's clock from lob (the main TV's lobby loop does it there)
+setInterval(() => {
+  if (mirror && lob.sky && lob.sky.vote) renderSkyVote();
+}, 250);
 
 /** BOTS: FILL / OFF from the lobby (the toggle, the B key): saved on this TV for the next parties too. */
 function setBotsMode(v) {
@@ -1447,7 +1949,7 @@ function renderSkyReady() {
 // The knight setup on the TV (#knight-setup, index.html), under the join card like Sky's READY CHECK: the LEVEL (a
 // thumbnail, its name, "<PICKER> PICKS", the closed ones COMING SOON) and the READY list, every player's knight in their
 // slot colour (drawn with dev/party/knight/knight-art.js, loaded on demand; coloured placeholders until it's there).
-const KNIGHT_LABEL = { ready: "READY", picking: "PICKING", away: "AWAY" };
+const KNIGHT_LABEL = { ready: "READY", picking: "THAT'S ME", knight: "PICKING KNIGHT", sword: "PICKING SWORD", away: "AWAY" };
 let knightArt = null; // the art module once loaded; false = not available (placeholders)
 let knightArtLoad = null;
 let knightAnim = 0;
@@ -1482,7 +1984,7 @@ function renderKnightSetup(force = false) {
   const rows = list.map((p) => {
     const st = knightState(p), pk = knightPickOf(p), c = colorSet(p.slot).base;
     const what = [nameOf("KNIGHTS", pk.knight), nameOf("SWORDS", pk.sword)].filter(Boolean).join(" · ") || `KNIGHT ${pk.knight} · SWORD ${pk.sword}`;
-    return `<li class="${st}" style="--kc:${esc(c)}" data-player="${esc(p.id)}" data-setup="${st}" data-knight="${pk.knight}" data-sword="${pk.sword}" data-color="${esc(c)}">`
+    return `<li class="${st === "ready" || st === "away" ? st : "picking"}" style="--kc:${esc(c)}" data-player="${esc(p.id)}" data-setup="${st === "ready" || st === "away" ? st : "picking"}" data-step="${p.connected ? knightStep(p) : "away"}" data-knight="${pk.knight}" data-sword="${pk.sword}" data-color="${esc(c)}">`
       + `<canvas class="ks-pic" width="34" height="34" data-slot="${p.slot}" data-knight="${pk.knight}" data-sword="${pk.sword}"></canvas>`
       + `<span class="ks-who2"><span class="ks-name">${esc(p.name)}</span><span class="ks-what">${esc(what.toUpperCase())}</span></span><span class="ks-badge">${KNIGHT_LABEL[st]}</span></li>`;
   }).join("");
@@ -1494,7 +1996,7 @@ function renderKnightSetup(force = false) {
       + `<span class="ks-who2"><span class="ks-name">BOT ${i + 1}</span><span class="ks-what">${esc(what.toUpperCase())}</span></span><span class="ks-badge">BOT</span></li>`;
   });
   const html = `<div class="ks-head"><span>LEVEL</span><span class="ks-who">${esc(picker ? `${picker.name} PICKS` : "THE PICKER PICKS").toUpperCase()}</span></div>`
-    + `<div class="ks-level"><canvas class="ks-thumb" width="320" height="180" data-level="${esc(lv.id)}"></canvas><div class="ks-lvname" data-level="${esc(lv.id)}">${esc(lv.name)}</div></div>`
+    + `<div class="ks-level"><canvas class="ks-thumb" width="320" height="180" data-level="${esc(lv.id)}"></canvas><div class="ks-lvname" data-level="${esc(lv.id)}" data-castle="${knightCastleOf(lob.knight)}">${esc(lv.name)} · ${knightCastleOf(lob.knight) === "day" ? "DAY" : "NIGHT"}</div></div>`
     + `<div class="ks-others">${others}</div>`
     + `<div class="ks-head ks-rhead"><span>READY CHECK</span><span class="ks-count" data-test="knight-ready-count">${readyCount}/${totalCount}</span></div>`
     + `<ol class="ks-list" data-test="knight-ready-list">${rows}${botRows.join("")}</ol><div class="ks-hint">PICK A KNIGHT + A SWORD ON YOUR PHONE, THEN TAP READY</div>`;
@@ -1527,7 +2029,7 @@ function drawKnightThumb(box) {
   const g = cv.getContext("2d"), W = cv.width, H = cv.height;
   g.imageSmoothingEnabled = false;
   if (knightArt && typeof knightArt.drawLevelThumb === "function") {
-    try { return void knightArt.drawLevelThumb(g, cv.dataset.level, W, H); } catch (e) { knightWarn("drawLevelThumb threw", e); }
+    try { return void knightArt.drawLevelThumb(g, cv.dataset.level, W, H, { castle: knightCastleOf(lob.knight) }); } catch (e) { knightWarn("drawLevelThumb threw", e); } // (art without the look ignores it)
   }
   ["#091228", "#0c1730", "#0f1d3c", "#142546", "#18294f"].forEach((c, i) => { g.fillStyle = c; g.fillRect(0, i * 30, W, 31); });
   g.fillStyle = "#fff3b0";
@@ -1567,6 +2069,188 @@ function drawKnightSetup() {
   }
 }
 // ── end KNIGHT ──
+
+// ── KART (FOX KART) ──
+// The kart setup on the TV (#kart-setup, index.html), under the join card like the knight's: the TRACK card (the game's
+// own mini-map when the module has it — game.trackImage(id) —, its name, "3 LAPS") and the READY list, every racer's
+// portrait in the player's slot colour (dev/party/kart/kart-art.js drawRacerPortrait, loaded on demand; coloured
+// placeholders until it's there), the bots that will join with their racers.
+const KART_LABEL = { ready: "READY", picking: "PICKING", away: "AWAY" };
+let kartArt = null; // the art module once loaded; false = not available (placeholders)
+let kartArtLoad = null;
+let kartAnim = 0;
+const kartWarned = new Set();
+function kartWarn(key, e) {
+  if (kartWarned.has(key)) return;
+  kartWarned.add(key);
+  console.warn(`[party] kart ${key}`, (e && e.message) || e);
+}
+const kartRacerName = (id) => ((kartArt && Array.isArray(kartArt.RACERS) && kartArt.RACERS.find((q) => q && q.id === id)) || {}).name || String(id || "").toUpperCase();
+function renderKartSetup(force = false) {
+  const box = $("kart-setup");
+  if (!box) return;
+  const layer = document.getElementById("fbx2-tv");
+  const on = kartSetupActive() && phase === "lobby" && !!layer && !layer.hidden;
+  if (box.hidden === on) box.hidden = !on;
+  if (!on) {
+    clearInterval(kartAnim);
+    kartAnim = 0;
+    return;
+  }
+  if (!kartArtLoad) {
+    kartArtLoad = import("./kart/kart-art.js")
+      .then((m) => { kartArt = m; renderKartSetup(true); })
+      .catch((e) => { kartArt = false; kartWarn("art not loaded (placeholders)", e); });
+  }
+  const tr = kartTrack();
+  const picker = roster.get(lob.pickerId);
+  const { readyCount, totalCount } = kartReadiness();
+  const list = [...roster.values()].sort((a, b) => (b.connected - a.connected) || a.slot - b.slot);
+  const others = KART.tracks.filter((t) => t !== tr).map((t) => `<span class="fk-other${t.open ? "" : " soon"}" data-track="${esc(t.id)}">${esc(t.name)}${t.open ? "" : "<b>COMING SOON</b>"}</span>`).join("");
+  const rows = list.map((p) => {
+    const st = kartState(p), racer = kartPickOf(p), c = colorSet(p.slot).base;
+    return `<li class="${st}" style="--kc:${esc(c)}" data-player="${esc(p.id)}" data-setup="${st}" data-racer="${esc(racer)}" data-color="${esc(c)}">`
+      + `<canvas class="fk-pic" width="48" height="48" data-slot="${p.slot}" data-racer="${esc(racer)}"></canvas>`
+      + `<span class="fk-who2"><span class="fk-name">${esc(p.name)}</span><span class="fk-what">${esc(kartRacerName(racer))}</span></span><span class="fk-badge">${KART_LABEL[st]}</span></li>`;
+  }).join("");
+  const plan = kartRoundPlan(), slots = plan.slots, botRacers = plan.racers; // the same bots the race will get
+  const botRows = slots.map((slot, i) => {
+    const racer = botRacers.get(slot), c = colorSet(slot).base;
+    return `<li class="bot" style="--kc:${esc(c)}" data-bot="${slot}" data-setup="bot" data-racer="${esc(racer)}" data-color="${esc(c)}">`
+      + `<canvas class="fk-pic" width="48" height="48" data-slot="${slot}" data-racer="${esc(racer)}"></canvas>`
+      + `<span class="fk-who2"><span class="fk-name">BOT ${i + 1}</span><span class="fk-what">${esc(kartRacerName(racer))}</span></span><span class="fk-badge">BOT</span></li>`;
+  });
+  const choice = KART.tracks.filter((t) => t.open).length > 1; // one open track: nobody picks it
+  const html = `<div class="fk-head"><span>TRACK</span><span class="fk-who">${choice ? esc(picker ? `${picker.name} PICKS` : "THE PICKER PICKS").toUpperCase() : ""}</span></div>`
+    + `<div class="fk-track"><canvas class="fk-map" width="128" height="72" data-track="${esc(tr.id)}"></canvas><div class="fk-tname" data-track="${esc(tr.id)}">${esc(tr.name)}<small data-test="kart-laps">${tr.laps || 3} LAPS</small></div></div>`
+    + (others ? `<div class="fk-others">${others}</div>` : "")
+    + `<div class="fk-head fk-rhead"><span>READY CHECK</span><span class="fk-count" data-test="kart-ready-count">${readyCount}/${totalCount}</span></div>`
+    + `<ol class="fk-list" data-test="kart-ready-list">${rows}${botRows.join("")}</ol><div class="fk-hint">PICK A RACER ON YOUR PHONE, THEN TAP READY</div>`;
+  if (force || box.dataset.html !== html) {
+    box.innerHTML = html;
+    box.dataset.html = html;
+    box.dataset.track = tr.id;
+    drawKartTrack(box);
+    drawKartSetup();
+  } else if (box.querySelector("canvas.fk-map:not([data-real])")) drawKartTrack(box); // the game module set up meanwhile: its map now
+  box.classList.toggle("all", totalCount > 0 && readyCount === totalCount);
+  box.classList.toggle("many", list.length + botRows.length > 3);
+  box.classList.toggle("crowd", list.length + botRows.length > 6); // 7-8 rows: tighter still, so all of them fit
+  if (!kartAnim) kartAnim = setInterval(drawKartSetup, 250);
+  // under the join card, as wide as the left column allows (like the knight's panel)
+  const join = layer.querySelector(".fbx2-join"), r = join && join.getBoundingClientRect();
+  if (r && r.width > 0) {
+    const cards = layer.querySelector(".fbx2-cards"), cr = cards && cards.getBoundingClientRect();
+    const room = cr && cr.left > r.left ? cr.left - r.left - 28 : 330;
+    box.style.left = `${Math.round(r.left)}px`;
+    box.style.top = `${Math.round(r.bottom + 24)}px`;
+    box.style.width = `${Math.round(Math.max(r.width, Math.min(360, room)))}px`;
+    box.style.maxHeight = `${Math.max(160, Math.round(innerHeight - r.bottom - 40))}px`;
+  }
+}
+/** The track card: the game's mini-map (game.trackImage(id), a canvas) on grass, else a little pixel circuit. */
+function drawKartTrack(box) {
+  const cv = box.querySelector("canvas.fk-map");
+  if (!cv) return;
+  const g = cv.getContext("2d"), W = cv.width, H = cv.height;
+  g.imageSmoothingEnabled = false;
+  g.fillStyle = "#3f8f3a";
+  g.fillRect(0, 0, W, H);
+  let im = null;
+  try { im = game && typeof game.trackImage === "function" ? game.trackImage(cv.dataset.track) : null; } catch (e) { kartWarn("trackImage threw", e); }
+  if (im && im.width > 0 && im.height > 0) {
+    const k = Math.min(W / im.width, H / im.height), w = Math.round(im.width * k), h = Math.round(im.height * k);
+    g.imageSmoothingEnabled = k < 1; // a downscaled map reads better smoothed; never blur an upscale
+    g.drawImage(im, Math.round((W - w) / 2), Math.round((H - h) / 2), w, h);
+    cv.dataset.real = "1";
+    return;
+  }
+  // placeholder: a grey loop road with a curb, the checkered start line
+  g.fillStyle = "#2f7a32";
+  for (let y = 0; y < H; y += 8) g.fillRect(0, y, W, 4);
+  g.fillStyle = "#e8e2d0";
+  g.fillRect(14, 10, W - 28, H - 20);
+  g.fillStyle = "#5d6070";
+  g.fillRect(16, 12, W - 32, H - 24);
+  g.fillStyle = "#3f8f3a";
+  g.fillRect(30, 24, W - 60, H - 48);
+  g.fillStyle = "#e8e2d0";
+  g.fillRect(28, 22, W - 56, 2);
+  g.fillRect(28, H - 24, W - 56, 2);
+  for (let i = 0; i < 6; i++) { g.fillStyle = i % 2 ? "#ffffff" : "#14101f"; g.fillRect(W / 2 - 2 + (i % 2) * 2, 12 + i * 2, 2, 2); g.fillRect(W / 2 - (i % 2) * 2, 12 + i * 2, 2, 2); }
+  g.fillStyle = "#ffd23f";
+  g.fillRect(W / 2 - 1, 4, 2, 8);
+}
+/** Every racer's portrait (READY ones bob), ~4 times a second while the panel is up. */
+function drawKartSetup() {
+  const box = $("kart-setup");
+  if (!box || box.hidden) return;
+  const t = performance.now() / 1000;
+  for (const cv of box.querySelectorAll("canvas.fk-pic")) {
+    const g = cv.getContext("2d"), W = cv.width, H = cv.height, slot = Number(cv.dataset.slot) || 0, color = colorSet(slot);
+    const li = cv.parentElement, ready = !!(li && li.classList.contains("ready")), racer = cv.dataset.racer;
+    g.imageSmoothingEnabled = false;
+    g.clearRect(0, 0, W, H);
+    if (kartArt && typeof kartArt.drawRacerPortrait === "function") {
+      try {
+        kartArt.drawRacerPortrait(g, racer, COLOR_KEYS[slot], 0, 0, W, { t, pose: ready ? "cheer" : "idle", bg: color.dark });
+        continue;
+      } catch (e) { kartWarn("drawRacerPortrait threw", e); }
+    }
+    g.fillStyle = color.dark; // placeholder: the slot colour with the racer's first letter
+    g.fillRect(0, 0, W, H);
+    g.fillStyle = color.base;
+    g.fillRect(6, 8, W - 12, H - 12);
+    g.fillStyle = "#ffffff";
+    g.font = "10px monospace";
+    g.textAlign = "center";
+    g.fillText((racer || "?").slice(0, 1).toUpperCase(), W / 2, H - 9);
+  }
+}
+// ── end KART ──
+// ── WHOSFOX (WHO'S THE FOX?) setup: 3+ PEOPLE (bots never play it) ──
+// Picked with fewer than 3 players: START does nothing and the TV + the phones say "NEEDS 3+ PLAYERS" (the phone module
+// reads lobby.whosfox / lobby.players). The panel sits under the join card like TEE TIME's map.
+const WHOSFOX_MIN = 3;
+function whosfoxSetupActive() {
+  return GAME.id === "whosfox" && lob.selectedGameId === "whosfox" && (phase === "lobby" || phase === "boot");
+}
+/** The people who'd play now (connected, not drawing). */
+const whosfoxPeople = () => [...roster.values()].filter((p) => p.connected && !p.drawing).length;
+let whosfoxNudge = 0;
+function whosfoxNeedMore() {
+  whosfoxNudge = Date.now();
+  renderWhosfoxSetup();
+  broadcastLobby();
+}
+function renderWhosfoxSetup() {
+  const box = $("whosfox-setup");
+  if (!box) return;
+  const layer = document.getElementById("fbx2-tv");
+  const on = whosfoxSetupActive() && phase === "lobby" && (!layer || !layer.hidden);
+  if (box.hidden === on) box.hidden = !on;
+  if (!on) return;
+  const n = whosfoxPeople(), ok = n >= WHOSFOX_MIN;
+  const picker = roster.get(lob.pickerId);
+  const html = `<div class="wf-head"><span>WHO'S THE FOX?</span><span class="wf-who">3-8 PLAYERS</span></div>`
+    + `<div class="wf-need ${ok ? "ok" : "no"}" data-test="whosfox-need" data-have="${n}">${ok ? `${n} PLAYERS · READY!` : `NEEDS 3+ PLAYERS<br><small>${n} HERE</small>`}</div>`
+    + `<div class="wf-hint">${ok ? esc(picker ? `${String(picker.name).toUpperCase()} PRESSES START ON THEIR PHONE` : "THE PICKER PRESSES START") : "GET MORE PHONES TO SCAN THE QR CODE"}</div>`;
+  if (box.dataset.html !== html) {
+    box.innerHTML = html;
+    box.dataset.html = html;
+  }
+  box.classList.toggle("nudge", !ok && Date.now() - whosfoxNudge < 1200);
+  if (layer) {
+    const join = layer.querySelector(".fbx2-join"), r = join && join.getBoundingClientRect();
+    if (r && r.width > 0) {
+      box.style.left = `${Math.round(r.left)}px`;
+      box.style.top = `${Math.round(r.bottom + 32)}px`;
+      box.style.width = `${Math.round(Math.max(r.width, 330))}px`;
+    }
+  }
+}
+setInterval(() => { if (GAME.id === "whosfox" && phase === "lobby") renderWhosfoxSetup(); }, 500);
+// ── end WHOSFOX ──
 
 function renderLobby() {
   const list = [...roster.values()].sort((a, b) => a.slot - b.slot);
@@ -1636,9 +2320,12 @@ function renderLobby() {
     status: n > 0 ? [skyLine || `Press ${GAME.button} on a phone to start!`, roleLine(), autoTxt, botTxt].filter(Boolean).join("  ·  ") : null,
   });
   renderSkyReady();
+  renderSkyVote();
   renderGolfMap();
   renderBotsToggle();
   renderKnightSetup(); // KNIGHT
+  renderKartSetup(); // KART
+  renderWhosfoxSetup(); // WHOSFOX
 }
 
 /** The lobby for a seats game: 4 boats × (paddler, captain), names or "bot". */
@@ -1770,12 +2457,15 @@ function toLobby(afterRound = false) {
     saveLobby();
   }
   knightBackToSetup(afterRound); // KNIGHT: the game keeps going: back to the knight setup (picks kept, nobody ready)
+  kartToLobby(afterRound); // KART: after the results the FoxBox lobby; called off: back to the kart setup (picks kept, nobody ready)
   clearTimeout(resultsTimer);
   clearInterval(countdownTimer);
   if (round && !round.ended) {
     // Aborted mid-round: freeze the game; the next play() tears it down.
     round.ended = true;
     game.pause(true);
+    // WHOSFOX: a game can let go of what it holds right away (WHO'S THE FOX?'s takes: photos, clips, voice takes)
+    if (typeof game.abort === "function") try { game.abort(); } catch (e) { console.warn("[party] game.abort threw", e); }
   }
   phase = "lobby";
   isPaused = false;
@@ -1793,13 +2483,14 @@ function startCountdown(byPlayer, why = "start") {
   if (phase !== "lobby" || !setupDone) return;
   if (GAME.id === "row" && !allRowReady()) return;
   if (connectedCount() === 0) return;
+  if (GAME.id === "whosfox" && whosfoxPeople() < WHOSFOX_MIN) return whosfoxNeedMore(); // WHOSFOX: people only, 3+
   // Somebody has to be able to play: not everyone may be busy drawing.
   if (![...roster.values()].some((p) => p.connected && !p.drawing)) return;
   phase = "countdown";
   countdownWhy = why;
   autoStartAt = null;
   drawHoldUntil = null;
-  const ends = Date.now() + COUNTDOWN_MS;
+  const ends = Date.now() + (GAME.countdownMs ?? COUNTDOWN_MS); // KART: a short card (the game counts down itself)
   countdownCueId = `${Date.now()}-${stats.rounds + 1}`;
   $("cd-sub").textContent = GAME.id === "row" || why === "ready" ? "Everyone’s ready!" : byPlayer ? `${byPlayer.name} pressed ${GAME.button} — get ready!` : "Get ready!";
   const tick = () => {
@@ -1810,12 +2501,13 @@ function startCountdown(byPlayer, why = "start") {
       startRound();
       return;
     }
-    if ($("cd-num").textContent !== String(left)) {
-      $("cd-num").textContent = String(left);
+    const label = GAME.countdownLabel || String(left); // KART: READY! instead of 3-2-1 (its start lights count down)
+    if ($("cd-num").textContent !== label) {
+      $("cd-num").textContent = label;
       const available = [...roster.values()]
         .filter((p) => p.connected && !p.drawing && (!globalThis.FOXBOX_LOBBY2 || p.audioReady))
         .sort((a, b) => a.slot - b.slot).map((p) => p.id);
-      const cue = { 3: "three", 2: "two", 1: "one" }[left];
+      const cue = GAME.countdownLabel ? null : { 3: "three", 2: "two", 1: "one" }[left]; // KART: no phone 3-2-1 cues
       if (cue && available.length) {
         const targetId = available[(3 - left) % available.length];
         wsSend({ t: "all", m: { t: "soundCue", id: `${countdownCueId}-${cue}`, cue, targetId } });
@@ -1847,8 +2539,9 @@ function startRound() {
     .filter((p) => GAME.id === "row" ? rowPlayerReady(p)
       : !p.drawing && (p.connected || now - p.goneAt < REJOIN_GRACE_MS) && (!skyReadyStart || !!lob.sky.ready[p.id]))
     .filter(knightTakes) // KNIGHT: a round started by READY takes the ready players
+    .filter(kartTakes) // KART: the same for the kart setup
     .sort((a, b) => a.slot - b.slot);
-  if (humans.length === 0) {
+  if (humans.length === 0 || (GAME.id === "whosfox" && humans.length < WHOSFOX_MIN)) { // WHOSFOX: 3+ people
     toLobby();
     return;
   }
@@ -1887,6 +2580,9 @@ function startRound() {
     const character = characterField(p);
     if (character) pl.character = character; // party-mode extra; absent = puffball
     if (GAME.id === "knight") pl.knight = knightPickOf(p); // KNIGHT: the knight + sword this player picked (party extra)
+    const item = skyStartItem(p);
+    if (item) pl.startItem = item; // Sky: the doodle vote's winner starts flying their free item (party extra)
+    if (GAME.id === "kart") pl.kart = { racer: kartPickOf(p) }; // KART: the racer this player picked (party extra)
     players.push(pl);
     nameById.set(p.slot + 1, p.name);
     humanIdByPid.set(p.slot + 1, p.id);
@@ -1908,6 +2604,8 @@ function startRound() {
   }
   if (!GAME.seats) players.sort((a, b) => a.playerId - b.playerId);
   knightDressBots(players); // KNIGHT: bot: true + each bot's knight + sword
+  kartDressBots(players); // KART: bot: true + each bot's racer (the unpicked ones)
+  kartRoundStarts(); // KART: the READY flags are spent (a TV reload mid-race doesn't restart from them)
   // seats games: the HUD / results colour a player by their BOAT
   for (const pl of players) colorById.set(pl.playerId, GAME.seats ? colorSet(COLOR_KEYS.indexOf(BOAT_KEYS[pl.boat])) : colorSet(pl.playerId - 1));
 
@@ -1937,7 +2635,7 @@ function startRound() {
     seed: r.seed,
     // FoxBox party extension: the game's setup choices (TEE TIME: the map the picker chose; every game: the
     // BOTS setting — Row Row Rumble leaves boats with nobody aboard out when it's "off")
-    options: { bots: botsOn() ? "fill" : "off", ...(GAME.id === "golf" && lob.golf ? { map: lob.golf.map } : {}), ...knightOptions() }, // KNIGHT: + the picker's level
+    options: { bots: botsOn() ? "fill" : "off", ...(GAME.id === "golf" && lob.golf ? { map: lob.golf.map } : {}), ...knightOptions(), ...kartOptions() }, // KNIGHT: + the picker's level · KART: + the track
     players,
     gameProperties,
     hud: {
@@ -1992,11 +2690,20 @@ function startRound() {
       onGameOver(r, ids, extra);
     },
     ...tvBHooks(r), // multi-TV: the game's per-tick view for the extra TVs (relay parties, games with playMirror)
+    // KART MTV: FOX KART draws only THIS TV's players' panes (every extra TV draws its own phones' players): the people
+    // whose phones joined from the main TV's QR (roster house "") — or from an extra TV that isn't linked any more
+    ...(GAME.id === "kart" ? { ownIds: [...r.humanIdByPid].filter(([, id]) => { const h = roster.get(id)?.house; return !h || !linkedTvs.has(h); }).map(([pid]) => pid) } : {}),
+    // end KART MTV
   });
   // With drawn characters play() first loads their images and returns a Promise: keep the
   // countdown up until the round is really running, so the TV never shows a stale frame.
   const go = () => {
     if (round !== r || phase !== "playing") return;
+    if (GAME.countdownLabel) { // KART: no GO! card (the game's start lights say GO): straight to the game
+      show(null);
+      for (const p of humans) forwardInput(p);
+      return;
+    }
     $("cd-num").textContent = "GO!";
     $("cd-sub").textContent = "";
     show("countdown");
@@ -2112,7 +2819,7 @@ function onGameOver(r, ids, extra) {
   const upd = () => {
     const left = Math.max(0, Math.ceil((ends - Date.now()) / 1000));
     $("res-sub").textContent = `BACK TO THE LOBBY IN ${left}... THEN ${GAME.button} FOR A REMATCH!`;
-    if (GAME.id === "knight") $("res-sub").textContent = `NEXT LEVEL: PICK YOUR KNIGHT IN ${left}...`; // KNIGHT: back to its setup
+    if (GAME.id === "knight") $("res-sub").textContent = `BACK TO THE LOBBY IN ${left}...`; // KNIGHT: setup2 goes back to the game cards (Lakota), no rematch hint
   };
   upd();
   clearInterval(countdownTimer);
@@ -2130,6 +2837,7 @@ function onGameOver(r, ids, extra) {
 let lastAutoShown = null;
 setInterval(() => {
   if (phase !== "lobby" || mirror) return; // a second TV keeps the boss's roster as sent
+  skyVoteTick(); // Sky's doodle vote moves on with the clock
   const now = Date.now();
   let changed = false;
   for (const p of [...roster.values()]) {
@@ -2147,6 +2855,7 @@ setInterval(() => {
   // Sky's setup: everyone still here is ready, the one who wasn't left (a few seconds ago) → go
   maybeStartSky();
   maybeStartKnight(); // KNIGHT: the same for the knight setup
+  maybeStartKart(); // KART: the same for the kart setup
   if (phase !== "lobby") return;
   const n = connectedCount();
   if (n === 0) autoStartAt = null;
@@ -2369,6 +3078,13 @@ function tvBHooks(r) {
       tvBRound = { t: "m:round", header, players: r.players.map(({ character, ...pl }) => pl), names: [...r.nameById], humans: [...r.humanIdByPid], seats: [...r.seatByPid] };
       toTvB(tvBRound);
     },
+    // WHOSFOX (multi-TV): a game's side messages for the extra TVs (WHO'S THE FOX? takes: photos, clips, voice takes),
+    // passed straight through the relay and never kept here (not in the ring a TV linking later gets)
+    onMirrorSide(m) {
+      if (round !== r || !linkedTvs.size || !m || typeof m !== "object") return;
+      toTvB({ t: "m:side", m });
+    },
+    mirrorLinked: () => linkedTvs.size,
     onMirrorTick(tick) {
       if (round !== r) return;
       tvBRecent.push(tick);
@@ -2412,6 +3128,11 @@ function mirrorMsg(msg) {
     case "m:results": return mirrorResults(round, msg.ids, false, msg.values);
     case "m:switch": return mirrorFollow(msg.game);
     case "m:pic": return mirrorPic(msg); // a small copy of a player's picture (drawing / selfie)
+    case "m:side": // WHOSFOX: the running game's side message (a piece of a take) for this TV's view
+      if (mirror.view && typeof mirror.view.side === "function") {
+        try { mirror.view.side(msg.m); } catch (e) { console.warn("[party] view.side failed", e); }
+      }
+      return;
     case "pin": return mirrorInput(msg); // one of THIS TV's phones moved its stick / button (live games)
     case "m:pause": // the main TV paused / resumed its round
       if (phase === "playing" && game) {
@@ -2489,13 +3210,14 @@ function mirrorLobby(m) {
 }
 function mirrorCountdown() {
   phase = "countdown";
-  const ends = Date.now() + COUNTDOWN_MS;
+  const ends = Date.now() + (GAME.countdownMs ?? COUNTDOWN_MS); // KART: the main TV's short card
   $("cd-sub").textContent = GAME.id === "row" ? "Everyone’s ready!" : "Get ready!";
   const tick = () => {
     const left = Math.ceil((ends - Date.now()) / 1000);
     if (left <= 0) return clearInterval(countdownTimer);
-    if ($("cd-num").textContent === String(left)) return;
-    $("cd-num").textContent = String(left);
+    const label = GAME.countdownLabel || String(left); // KART: READY! (no 3-2-1)
+    if ($("cd-num").textContent === label) return;
+    $("cd-num").textContent = label;
     $("cd-num").style.animation = "none";
     void $("cd-num").offsetWidth;
     $("cd-num").style.animation = "";
@@ -2562,6 +3284,9 @@ function mirrorRound(m) {
   // "CONNECTED TO <HOST>'S GAME": the host's name from the HOST steps (golf's banner has the corner: top middle there);
   // no host name (web TV mode, or left blank): "CONNECTED TO <GROUP>"
   mirror.ui.playing(mirror.party?.host || houseName("") || "", { at: GAME.id === "golf" ? "top" : GAME.id === "knight" ? "bottom" : "corner", group: mirror.party?.group || "" }); // KNIGHT: bottom left
+  // KART MTV: a game with its own start lights (countdownLabel: FOX KART) gets no GO! card here either, like the main TV
+  if (GAME.countdownLabel) { show(null); return; }
+  // end KART MTV
   $("cd-num").textContent = "GO!";
   $("cd-sub").textContent = "";
   show("countdown");
@@ -2666,6 +3391,10 @@ window.__party = {
   get knight() {
     return lob.knight && JSON.parse(JSON.stringify(lob.knight));
   },
+  /** KART: the kart setup { id, track, picks: {id: {racer, ready}}, bots } or null (+ last: each phone's last racer). */
+  get kart() {
+    return lob.kart && { ...JSON.parse(JSON.stringify(lob.kart)), last: { ...(lob.kartLast || {}) } };
+  },
   start: () => startCountdown(null),
   lobby: () => toLobby(),
   get lobbyState() {
@@ -2742,6 +3471,17 @@ async function boot() {
     saveLobby();
   }
   // ── end KNIGHT ──
+  // ── KART (FOX KART) ──: picked (this page just loaded for it, or reloaded mid-setup): its setup goes on / begins
+  if (GAME.id === "kart" && lob.selectedGameId === "kart") {
+    if (!validKartSetup(lob.kart)) {
+      newKartSetup(null);
+      saveLobby();
+    }
+  } else if (lob.kart) {
+    lob.kart = null;
+    saveLobby();
+  }
+  // ── end KART ──
   renderHub();
   if (!mirror) loadRoster();
   renderLobby();

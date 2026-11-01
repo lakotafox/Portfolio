@@ -648,7 +648,8 @@ function stepJet(state, events) {
 // ── Public API ────────────────────────────────────────────────────────────────
 
 /**
- * Build a fresh round. players: [{ playerId, isBot }], seed: number, jetpack: true for the jetpack
+ * Build a fresh round. players: [{ playerId, isBot, startJet? }] (startJet: "A" | "C" | "D" or a name: that player
+ * starts the round flying that item, e.g. the doodle vote's winner; its jetGet comes with the first tick), seed: number, jetpack: true for the jetpack
  * power-ups (off unless asked for, so a plain round is exactly as before); "often" (or { often: true })
  * for testing, { item: "A" | "C" | "D" } to make every one that item (see "Jetpack" above).
  * Everyone spawns spread out on a wide starting cloud at the bottom of the screen.
@@ -705,6 +706,13 @@ export function createSim({ players, seed, jetpack = false }) {
       jet: 0,
       jetKind: null,
     });
+    const sj = jetKindKey(pl.startJet);
+    if (sj) { // a free item to start (the FoxBox doodle vote's winner): flying it from the first tick
+      const me = state.players[state.players.length - 1];
+      me.jet = JET_TICKS;
+      me.jetKind = sj;
+      (state.startEvents ||= []).push({ type: "jetGet", id: -1, kind: sj, on: "start", playerId: pl.playerId, x: me.x, y: me.y });
+    }
   });
 
   // Lanes start spread across the world, rooted on the starting cloud.
@@ -723,6 +731,10 @@ export function stepSim(state, inputs) {
   const events = [];
   if (state.finished) return events;
   state.tick++;
+  if (state.startEvents) { // a free starting item's jetGet (createSim)
+    events.push(...state.startEvents);
+    state.startEvents = null;
+  }
   moveDrifts(state);
 
   const ps = state.players;

@@ -533,7 +533,13 @@ export function createDrawPad(el, hooks) {
   // ── input ──
   function pos(e) {
     const r = art.getBoundingClientRect();
-    return { x: ((e.clientX - r.left) / r.width) * N, y: ((e.clientY - r.top) / r.height) * N };
+    // the drawing screen may be turned sideways (landscape.js, a portrait window): map the point into its own frame
+    const t = art.closest(".land-rot"), m = t && /rotate\((-?\d+(?:\.\d+)?)deg\)/.exec(t.style.transform || "");
+    const deg = m ? Number(m[1]) : 0;
+    if (!deg) return { x: ((e.clientX - r.left) / r.width) * N, y: ((e.clientY - r.top) / r.height) * N };
+    const a = (-deg * Math.PI) / 180, vx = e.clientX - (r.left + r.width / 2), vy = e.clientY - (r.top + r.height / 2);
+    const w = art.offsetWidth || r.width, h = art.offsetHeight || r.height;
+    return { x: ((vx * Math.cos(a) - vy * Math.sin(a)) / w + 0.5) * N, y: ((vx * Math.sin(a) + vy * Math.cos(a)) / h + 0.5) * N };
   }
   const mid = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
 
@@ -738,7 +744,7 @@ export function createDrawPad(el, hooks) {
   }
   function drawPreview() {
     const cv = el.preview;
-    const r = cv.getBoundingClientRect();
+    const r = { width: cv.offsetWidth, height: cv.offsetHeight }; // its layout size (a turned screen swaps the box's)
     if (r.width < 4) return;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);

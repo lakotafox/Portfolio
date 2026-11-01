@@ -29,6 +29,10 @@ const MAPS = {
   puffHappy: ["....OOOO....", "..OOHHCCOO..", ".OHHCCCCCCO.", ".OHCCCCCCCO.", "OCCECCCCECCO", "OCECECCECECO", "OCKCCCCCCKCO", "OCCCECCECCCO", ".OCCCEECCCO.", ".ODCCCCCCDO.", "..OODDDDOO..", "....OOOO...."],
   kayak: ["....OOOO....OOOO......", "...OWHHHO..OWHHHO.....", "...OHEHEO..OHEHEO.....", "...OKHHKO..OKHHKO.....", ".OOOOOOOOOOOOOOOOOOOO.", "OHHHHHHHHHHHHHHHHHHHHO", "OCCCCCCCCCCCCCCCCCCCCO", ".OCCCCCCCCCCCCCCCCCCO.", "..ODDDDDDDDDDDDDDDDO..", "...OOOOOOOOOOOOOOOO..."],
   sparkle: ["..W..", "..W..", "WWYWW", "..W..", "..W.."],
+  // ── Sky's power-ups, for the doodle vote's free starting item (tanks / propeller hat / balloons) ──
+  tanks: ["..OOO..OOO..", ".OWGGOOWGGO.", ".OWGGOOWGGO.", ".OGGSOOGGSO.", ".OGGSOOGGSO.", ".OGGSOOGGSO.", ".OGGSOOGGSO.", "..OOOOOOOO..", "...OO..OO...", "...RY..RY...", "...RR..RR...", "....R...R..."],
+  hat: ["..OOOOOOO..", ".....O.....", "....OYO....", "..OOOOOOO..", ".ORRBBBRRO.", "ORRBBBBBRRO", "ORRRBBBRRRO", "OOOOOOOOOOO", "OyyyyyyyyyO", ".OOOOOOOOO."],
+  balloons: ["..OOO...OOO..", ".ORRWO.OBBWO.", ".ORRRO.OBBBO.", ".ORRRO.OBBBO.", "..ORO.O.OBO..", "...O.OYO.O...", "....OYYWO....", "....OYYYO....", "....OYYYO....", ".....OYO.....", "......O......", ".....O.O.....", "....O...O....", "......O......"],
   // ── the phone's character / drawing / READY screens ──
   check: ["........CC", ".......CCC", "......CCC.", "CC...CCC..", "CCC.CCC...", ".CCCCC....", "..CCC.....", "...C......"],
   arrowL: ["...C...", "..CC...", ".CCCCCC", "CCCCCCC", ".CCCCCC", "..CC...", "...C..."],

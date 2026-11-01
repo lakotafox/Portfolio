@@ -552,6 +552,7 @@ function startRound(playContext, chars) {
     players: players.map((p) => {
       const pl = { playerId: p.playerId, isBot: p.type === "bot" };
       if (chars[p.playerId]) pl.h = chars[p.playerId].h;
+      if (p.startItem) pl.startJet = p.startItem; // party extension: the doodle vote's winner starts flying their pick
       return pl;
     }),
     seed: Number(seed) >>> 0,

@@ -42,7 +42,7 @@ import { createDrawPad } from "./draw.js";
 import { isP2P, ready as netReady, openSocket, api } from "./net.js";
 import { createRowPad } from "./row-pad.js";
 import { createCapPad } from "./cap-pad.js";
-import { createLandscape } from "./landscape.js";
+import { createLandscape, createTurnHint, turnedDelta } from "./landscape.js";
 import { crownedPuff, cryingPuff, sprite } from "./pixel-art.js";
 import { createPhoneSounds } from "./phone-sounds.js";
 
@@ -98,7 +98,7 @@ saveMe();
 let curScreen = null;
 function showScreen(id) {
   curScreen = id;
-  for (const s of ["name-screen", "char-screen", "crop-screen", "draw-screen", "ready-screen", "pad-screen"]) $(s).classList.toggle("show", s === id);
+  for (const s of ["name-screen", "char-screen", "crop-screen", "draw-screen", "ready-screen", "vote-screen", "pad-screen"]) $(s)?.classList.toggle("show", s === id);
   if (typeof syncExtras === "function") syncExtras();
 }
 
@@ -411,8 +411,9 @@ stage.addEventListener("pointermove", (ev) => {
     const [a, b] = [...crop.pointers.values()];
     setZoom(crop.pinch.zoom * (Math.hypot(a.x - b.x, a.y - b.y) / crop.pinch.d));
   } else if (crop.pointers.size === 1) {
-    crop.ox += cur.x - prev.x;
-    crop.oy += cur.y - prev.y;
+    const d = turnedDelta(stage, cur.x - prev.x, cur.y - prev.y); // (the cropper may be turned sideways: landscape.js)
+    crop.ox += d.dx;
+    crop.oy += d.dy;
     clampCrop();
     drawCrop();
   }
@@ -658,6 +659,136 @@ function sendSky() {
   sky.sentAt = Date.now();
   sendRaw({ t: "skyReady", setupId: sky.id, picked: sky.picked, ready: sky.ready });
 }
+
+// ── Sky Scramble: the doodle vote (Lakota, Nov 1) ───────────────────────────────────────────────────────
+// The TV runs it (host.js skyVote*): everyone's ready and 2+ people play their own drawing → this screen (sideways like
+// Sky's others): the doodles big, tap your favourite (never your own); a tie: a drumroll; the winner picks a free
+// starting item (Sky's jetpack items) and starts the round flying it; everyone sees who won and what they picked.
+// lastStatus.skyVote = { id, step: vote | tie | pick | won, cands: [{ id, char, name, mine, n? }], my, voted, voters, left,
+// tied, winner, winnerName, item, items }. Sends {t:"game", m:{type:"vote", vote, for}} / {type:"vitem", vote, item}.
+const VOTE_STEPS = ["vote", "tie", "pick", "won"];
+const VOTE_ITEM_LABEL = { tanks: "TANKS", hat: "HAT", balloons: "BALLOONS" };
+const VOTE_CSS = `
+#vote-screen.show { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 10px; }
+#vote-screen .vs-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 4px 0; min-width: 0; }
+#vote-screen .vs-title { margin: 0; text-align: left; font-size: 13px; line-height: 1.4; min-width: 0; }
+#vote-screen .vs-time { flex: none; font-size: 13px; min-width: 34px; text-align: center; }
+#vote-screen .vs-time:empty { visibility: hidden; }
+#vote-screen .vs-gal { display: flex; align-items: stretch; justify-content: center; gap: 16px; min-height: 0; overflow-x: auto; overflow-y: hidden;
+  padding: 6px 8px 12px; touch-action: pan-x; overscroll-behavior: contain; }
+#vote-screen .vs-gal[hidden], #vote-screen .vs-items[hidden] { display: none; }
+#vote-screen .vs-card { position: relative; flex: none; height: 100%; aspect-ratio: 3 / 4; max-width: 46%; box-sizing: border-box; display: flex;
+  flex-direction: column; align-items: stretch; gap: 6px; margin: 0; padding: 8px 8px 9px; border: 0; border-radius: 0; background: #1b1d3a;
+  color: #fff9f1; font: inherit; box-shadow: 0 0 0 3px #fff9f1, 0 5px 0 3px #04050e; cursor: pointer; touch-action: manipulation; }
+#vote-screen .vs-pic { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background-color: #fff;
+  background-image: linear-gradient(45deg, #e8edf4 25%, transparent 25%, transparent 75%, #e8edf4 75%), linear-gradient(45deg, #e8edf4 25%, transparent 25%, transparent 75%, #e8edf4 75%);
+  background-size: 14px 14px; background-position: 0 0, 7px 7px; overflow: hidden; }
+#vote-screen .vs-pic img { max-width: 92%; max-height: 92%; }
+#vote-screen .vs-name { font-family: var(--px-soft); font-size: 16px; line-height: 1.1; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#vote-screen .vs-tag { position: absolute; top: 6px; left: 6px; font-family: var(--px-font); font-size: 8px; line-height: 1; padding: 4px 5px;
+  color: #0a1428; background: #c9d2e6; box-shadow: 0 0 0 2px #0a1428; }
+#vote-screen .vs-tag:empty { display: none; }
+#vote-screen .vs-card.mine { opacity: 0.5; cursor: default; }
+#vote-screen .vs-card.on { background: #2a2410; box-shadow: 0 0 0 4px #ffd23f, 0 5px 0 4px #04050e; }
+#vote-screen .vs-card.on .vs-tag, #vote-screen .vs-card.win .vs-tag { background: #ffd23f; }
+#vote-screen .vs-card:not(.mine):active { transform: translateY(3px); }
+#vote-screen .vs-card.win { background: #2a2410; box-shadow: 0 0 0 4px #ffd23f, 0 5px 0 4px #04050e; }
+#vote-screen .vs-card.out { opacity: 0.4; }
+#vote-screen .vs-card.drum { animation: vs-drum calc(var(--n, 2) * 0.22s) steps(1, end) infinite; animation-delay: calc(var(--i, 0) * 0.22s); }
+#vote-screen .vs-items { display: flex; align-items: stretch; justify-content: center; gap: 16px; min-height: 0; padding: 6px 8px 12px; }
+#vote-screen .vs-item { flex: 1; max-width: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  margin: 0; border: 0; border-radius: 0; color: #0a1428; background: var(--px-gold, #ffd23f); font: 12px/1.2 var(--px-font);
+  box-shadow: 0 0 0 3px #0a1428, 0 6px 0 3px #04050e, inset 0 -5px 0 #e3a51a, inset 0 4px 0 #fff3b0; cursor: pointer; touch-action: manipulation; }
+#vote-screen .vs-item:active { transform: translateY(3px); }
+#vote-screen .vs-item.on { background: #35d07f; box-shadow: 0 0 0 3px #0a1428, 0 6px 0 3px #04050e, inset 0 -5px 0 #1f9e5b, inset 0 4px 0 #b6f5d2; }
+#vote-screen .vs-foot { font-family: var(--px-font); font-size: 9px; line-height: 1.6; color: #c9c8df; text-align: center; padding: 0 4px 2px; }
+@keyframes vs-drum { 0% { background: #2a2410; box-shadow: 0 0 0 4px #ffd23f, 0 5px 0 4px #04050e; } 50% { background: #1b1d3a; box-shadow: 0 0 0 3px #fff9f1, 0 5px 0 3px #04050e; } }
+@media (prefers-reduced-motion: reduce) { #vote-screen .vs-card.drum { animation: none; } }
+`;
+const voteScreen = (() => {
+  const css = document.createElement("style");
+  css.id = "vote-screen-css";
+  css.textContent = VOTE_CSS;
+  document.head.append(css);
+  const sec = document.createElement("section");
+  sec.id = "vote-screen";
+  sec.className = "screen pxs";
+  sec.dataset.test = "vote-screen";
+  sec.innerHTML = `<div class="vs-head"><h2 class="px-title vs-title"></h2><span class="vs-time px-chip gold" data-test="vote-time"></span></div>
+    <div class="vs-gal" data-test="vote-gallery"></div><div class="vs-items" data-test="vote-items" hidden></div><div class="vs-foot" data-test="vote-foot"></div>`;
+  $("ready-screen").after(sec);
+  const el = { title: sec.querySelector(".vs-title"), time: sec.querySelector(".vs-time"), gal: sec.querySelector(".vs-gal"), items: sec.querySelector(".vs-items"), foot: sec.querySelector(".vs-foot") };
+  let mine = { vote: null, voteAt: 0, item: null, itemAt: 0 }; // what this phone just sent (shown at once; the TV confirms)
+  const up = (t) => String(t || "").toUpperCase();
+  const pic = (c, color) => {
+    const ch = charList && charList.get(c.char);
+    return ch && ch.src ? `<img src="${escHtml(ch.src)}" alt="">` : sprite("puff", 6, { color });
+  };
+  function render() {
+    const sv = lastStatus && lastStatus.skyVote;
+    if (!sv || !VOTE_STEPS.includes(sv.step)) return;
+    const left = Math.max(0, Math.ceil(sv.left - (Date.now() - lastStatus.at) / 1000));
+    const iWon = !!sv.winner && sv.winner === me.id;
+    const myVote = sv.step === "vote" && mine.vote && Date.now() - mine.voteAt < 2500 ? mine.vote : sv.my;
+    const title = sv.step === "vote" ? "VOTE FOR THE BEST DOODLE" : sv.step === "tie" ? "IT'S A TIE! DRUMROLL..."
+      : sv.step === "pick" ? (iWon ? "YOUR DOODLE WON! PICK A FREE ITEM" : `${up(sv.winnerName)}'S DOODLE WON!`)
+      : `${up(sv.winnerName)}'S DOODLE WINS · PICKS ${VOTE_ITEM_LABEL[sv.item] || ""}`;
+    const time = (sv.step === "vote" || sv.step === "pick") && left > 0 ? String(left) : "";
+    if (el.title.textContent !== title) el.title.textContent = title;
+    if (el.time.textContent !== time) el.time.textContent = time;
+    const showItems = sv.step === "pick" && iWon;
+    el.items.hidden = !showItems;
+    el.gal.hidden = showItems;
+    if (showItems) {
+      const picked = mine.item && Date.now() - mine.itemAt < 2500 ? mine.item : null;
+      const html = (sv.items || []).map((it) => `<button type="button" class="vs-item${picked === it ? " on" : ""}" data-item="${escHtml(it)}" data-test="vote-item-${escHtml(it)}">${sprite(it, 5)}<span>${VOTE_ITEM_LABEL[it] || up(it)}</span></button>`).join("");
+      if (el.items.dataset.html !== html) { el.items.innerHTML = html; el.items.dataset.html = html; }
+    } else {
+      const tied = sv.tied || [];
+      const html = sv.cands.map((c) => {
+        const i = tied.indexOf(c.id);
+        const cls = sv.step === "vote" ? (c.mine ? "mine" : myVote === c.id ? "on" : "")
+          : sv.step === "tie" ? (i >= 0 ? "drum" : "out") : c.id === sv.winner ? "win" : "out";
+        const tag = sv.step === "vote" ? (c.mine ? "YOURS" : myVote === c.id ? "YOUR VOTE" : "")
+          : sv.step !== "tie" && c.id === sv.winner ? "WINNER" : typeof c.n === "number" ? `${c.n} VOTE${c.n === 1 ? "" : "S"}` : "";
+        const color = (lobbyState?.players || []).find((q) => q.id === c.id)?.color || "#8a94a6";
+        const style = i >= 0 && sv.step === "tie" ? ` style="--i:${i};--n:${tied.length}"` : "";
+        return `<button type="button" class="vs-card ${cls}" data-player="${escHtml(c.id)}" data-test="vote-card"${style}${c.mine ? " aria-disabled=\"true\"" : ""}><span class="vs-tag">${tag}</span><span class="vs-pic">${pic(c, color)}</span><span class="vs-name">${escHtml(c.name)}</span></button>`;
+      }).join("");
+      if (el.gal.dataset.html !== html) { el.gal.innerHTML = html; el.gal.dataset.html = html; }
+    }
+    const foot = sv.step === "vote" ? `${myVote ? "VOTED! TAP ANOTHER TO CHANGE IT" : "TAP YOUR FAVOURITE · NOT YOUR OWN"} · ${sv.voted}/${sv.voters} VOTED`
+      : sv.step === "tie" ? "A RANDOM ONE OF THE TIED WINS"
+      : sv.step === "pick" ? (iWon ? "YOU START THE ROUND FLYING IT" : `${up(sv.winnerName)} IS PICKING A FREE ITEM TO START WITH...`)
+      : "GET READY!";
+    if (el.foot.textContent !== foot) el.foot.textContent = foot;
+  }
+  el.gal.addEventListener("click", (e) => {
+    const card = e.target.closest(".vs-card");
+    const sv = lastStatus && lastStatus.skyVote;
+    if (!card || !sv || sv.step !== "vote") return;
+    const c = sv.cands.find((q) => q.id === card.dataset.player);
+    if (!c || c.mine) return;
+    mine = { ...mine, vote: c.id, voteAt: Date.now() };
+    sendRaw({ t: "game", m: { type: "vote", vote: sv.id, for: c.id } });
+    render();
+  });
+  el.items.addEventListener("click", (e) => {
+    const b = e.target.closest(".vs-item");
+    const sv = lastStatus && lastStatus.skyVote;
+    if (!b || !sv || sv.step !== "pick" || sv.winner !== me.id) return;
+    mine = { ...mine, item: b.dataset.item, itemAt: Date.now() };
+    sendRaw({ t: "game", m: { type: "vitem", vote: sv.id, item: b.dataset.item } });
+    render();
+  });
+  setInterval(() => { if (curScreen === "vote-screen") render(); }, 250); // the clock
+  return { render };
+})();
+/** The doodle vote while it's on (the TV's skyVote for this phone), else null. */
+function skyVote() {
+  const sv = skySetup() && lastStatus.skyVote;
+  return sv && VOTE_STEPS.includes(sv.step) ? sv : null;
+}
 function syncSky() {
   const away = replaced || !ws || ws.readyState !== 1 || !hostUp;
   // a dropped connection keeps the screen (we'll hear from the TV again; READY says so meanwhile);
@@ -669,7 +800,7 @@ function syncSky() {
   const ss = skySetup();
   if (!ss) {
     // the setup is over (the countdown, a round, back to the lobby): the controller again
-    if (curScreen === "ready-screen" || (curScreen === "char-screen" && sky.auto)) showScreen("pad-screen");
+    if (curScreen === "ready-screen" || curScreen === "vote-screen" || (curScreen === "char-screen" && sky.auto)) showScreen("pad-screen");
     sky.auto = false;
     return;
   }
@@ -686,6 +817,18 @@ function syncSky() {
     sky.ready = !!ss.ready && sky.picked;
     if (!!ss.picked !== sky.picked) sendSky();
   }
+  // the doodle vote (everyone ready, 2+ own drawings): its screen over READY / the picker, until it's over
+  const sv = skyVote();
+  if (sv) {
+    if (curScreen === "ready-screen" || curScreen === "char-screen" || curScreen === "pad-screen") {
+      release();
+      showScreen("vote-screen");
+      fetchCharacters().then(() => voteScreen.render()); // the doodles' pictures (drawn after our last look)
+    }
+    if (curScreen === "vote-screen") voteScreen.render();
+    return;
+  }
+  if (curScreen === "vote-screen") return showReady(); // the vote is over: READY until the countdown
   // the controller is never the screen during the setup: the picker, or READY once picked
   if (curScreen === "pad-screen") {
     if (sky.picked) showReady();
@@ -951,7 +1094,10 @@ function onMessage(msg) {
       replaced = true;
       break;
     case "game": // FoxBox party extension: the running game's message for this phone (TEE TIME)
+      if (foxGameMsg(msg)) break; // WHOSFOX: the WHO'S THE FOX? module's
       if (knightGameMsg(msg)) break; // KNIGHT: the knight module's (Knight Platformer is the hub's game)
+      if (kartGameMsg(msg)) break; // KART: the kart module's (FOX KART is the hub's game)
+      if (mode.id === "snowball" && msg.m && msg.m.type === "round") { roundCue(msg.m); break; } // SNOWBALL: best of three
       if (msg.m && typeof msg.m === "object") {
         if (golfPad) golfPad.onMessage(msg.m);
         else {
@@ -961,6 +1107,33 @@ function onMessage(msg) {
       }
       break;
   }
+}
+
+// ── SNOWBALL: best of three — a round's start on the phone too (the game's {type:"round", text, sub}: ROUND 2 · GO!) ──
+function roundCue(m) {
+  let el = $("round-cue");
+  if (!el) {
+    const st = document.createElement("style");
+    st.textContent = "#round-cue{position:absolute;left:50%;top:40%;z-index:60;transform:translate(-50%,-50%);pointer-events:none;text-align:center;" +
+      "font-family:var(--px-font,ui-monospace,monospace);font-size:44px;line-height:1.15;color:#fff9f1;text-shadow:0 4px 0 #1d2a7a,0 6px 16px #000a;white-space:nowrap;opacity:0}" +
+      "#round-cue small{display:block;margin-top:8px;font-size:30px;color:#ffd23f}#round-cue.on{animation:round-cue 1.6s ease-out forwards}" +
+      "@keyframes round-cue{0%{opacity:0;transform:translate(-50%,-50%) scale(1.3)}14%{opacity:1;transform:translate(-50%,-50%) scale(1)}72%{opacity:1}100%{opacity:0}}";
+    document.head.append(st);
+    el = document.createElement("div");
+    el.id = "round-cue";
+    el.dataset.test = "round-cue";
+    $("pad-screen").append(el);
+  }
+  el.textContent = String(m.text || "").slice(0, 24);
+  if (m.sub) {
+    const s = document.createElement("small");
+    s.textContent = String(m.sub).slice(0, 24);
+    el.append(s);
+  }
+  el.dataset.round = String(m.round || "");
+  el.classList.remove("on");
+  void el.offsetWidth; // (restart the animation)
+  el.classList.add("on");
 }
 
 // ── TEE TIME (golf) ─────────────────────────────────────────────────────────────
@@ -1047,6 +1220,126 @@ function syncKnight() {
   if (on) $("bonk-wrap").hidden = cover;
 }
 // ── end KNIGHT ──
+
+// ── KART (FOX KART) ──
+// The kart controller is a module of its own (dev/party/kart/kart-pad.js, synced from fox-kart/phone/), loaded the first
+// time kart is the hub's game. It covers the screen (#kart, pad.html) during the kart setup (the racer picker, READY),
+// the countdown and the race (the phone held sideways: tilt steers, GAS + ITEM), and talks to the TV with {t:"game", m}
+// both ways (fox-kart CONTRACT.md "Phone protocol"). pad.js keeps the plain lobby and the results; the BOTS toggle stays
+// the shell's (the host phone's PARTY sheet).
+var kartPad = null; // var: onMessage / renderStatus may run before this line during start-up
+var kartLoad = null;
+var kartInbox = [];
+var kartFails = 0; // failed loads of the module (a network blip, a stale cache): retried with a fresh URL
+var kartRetryAt = 0;
+/** onMessage(): a {t:"game"} message while kart is the hub's game goes to the kart module (buffered until loaded). */
+function kartGameMsg(msg) {
+  if (mode.id !== "kart" || !msg.m || typeof msg.m !== "object") return false;
+  if (kartPad) kartPad.onMessage(msg.m);
+  else {
+    kartInbox.push(msg.m);
+    if (kartInbox.length > 32) kartInbox.shift();
+  }
+  return true;
+}
+function loadKartPad() {
+  // a failed import() is remembered for its URL: a retry needs a fresh one
+  const url = kartFails ? `./kart/kart-pad.js?retry=${Date.now()}` : "./kart/kart-pad.js";
+  kartLoad = import(url)
+    .then((m) => {
+      kartPad = m.createKartPad($("kart"), {
+        send: (m2) => sendRaw({ t: "game", m: m2 }),
+        me: () => ({ id: me.id, name: me.name }),
+      });
+      for (const msg of kartInbox.splice(0)) kartPad.onMessage(msg);
+      renderStatus();
+    })
+    .catch((e) => {
+      kartFails++;
+      console.warn(`[foxbox] kart controller didn't load (try ${kartFails})`, e);
+      kartRetryAt = Date.now() + Math.min(8000, 1500 * kartFails);
+      kartLoad = null; // renderStatus (every message, every 0.5 s in the lobby) tries again after kartRetryAt
+      renderStatus();
+    });
+}
+function syncKart() {
+  const on = mode.id === "kart";
+  if (on && !kartPad && !kartLoad && Date.now() >= kartRetryAt) loadKartPad();
+  if (on) $("steer").hidden = true; // no stick: START in the plain lobby, the module's own tilt wheel in a race
+  // the controller didn't load (yet): no plain START (it would skip READY and can't steer) — say so, with RELOAD
+  const failed = on && !kartPad && kartFails > 0;
+  let reload = $("kart-reload");
+  if (failed && !reload) {
+    reload = document.createElement("button");
+    reload.id = "kart-reload";
+    reload.type = "button";
+    reload.dataset.test = "kart-reload";
+    reload.textContent = "RELOAD";
+    reload.onclick = () => location.reload();
+    $("status").appendChild(reload);
+  }
+  if (reload) reload.hidden = !failed;
+  if (failed) {
+    $("bonk-wrap").hidden = true;
+    $("status-big").textContent = "The kart controller didn't load";
+    $("status-small").textContent = "Trying again… or tap RELOAD";
+  }
+  if (!kartPad) return;
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  try {
+    kartPad.sync({ status: on ? lastStatus : null, lobby: lobbyState, connected, screen: curScreen });
+  } catch (e) {
+    console.warn("[foxbox] kart sync failed", e);
+  }
+  const cover = on && !!kartPad.active; // the module shows #kart itself; pad.js's START steps aside meanwhile
+  document.body.classList.toggle("kart-on", cover);
+  if (on) $("bonk-wrap").hidden = cover;
+}
+// ── end KART ──
+// ── WHOSFOX (WHO'S THE FOX?) ──
+// The game's phone module (dev/party/whosfox/whosfox-pad.js, from the whos-the-fox repo), loaded the first time it's the hub's
+// game. It covers the phone (#whosfox, pad.html; portrait) from the game's setup (the picker's START, "needs 3+ players")
+// through the whole game, and talks to the TV with {t:"game", m} both ways. pad.js keeps the plain lobby and the results.
+var foxPad = null; // var: onMessage / renderStatus may run before this line during start-up
+var foxLoad = null;
+var foxInbox = [];
+function foxGameMsg(msg) {
+  if (mode.id !== "whosfox" || !msg.m || typeof msg.m !== "object") return false;
+  if (foxPad) foxPad.onMessage(msg.m);
+  else {
+    foxInbox.push(msg.m);
+    if (foxInbox.length > 32) foxInbox.shift();
+  }
+  return true;
+}
+function syncFox() {
+  const on = mode.id === "whosfox";
+  if (on && !foxLoad) {
+    foxLoad = import("./whosfox/whosfox-pad.js")
+      .then((m) => {
+        foxPad = m.createFoxPad($("whosfox"), {
+          send: (m2) => sendRaw({ t: "game", m: m2 }),
+          me: () => ({ id: me.id, name: me.name }),
+          start: () => sendRaw({ t: "start" }),
+        });
+        for (const msg of foxInbox.splice(0)) foxPad.onMessage(msg);
+        renderStatus();
+      })
+      .catch((e) => console.warn("[foxbox] whosfox controller didn't load", e));
+  }
+  if (on) $("steer").hidden = true; // no stick: the module has the buttons
+  if (!foxPad) return;
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  try {
+    foxPad.sync({ status: on ? lastStatus : null, lobby: lobbyState, connected, screen: curScreen });
+  } catch (e) {
+    console.warn("[foxbox] whosfox sync failed", e);
+  }
+  const cover = on && !!foxPad.active;
+  document.body.classList.toggle("whosfox-on", cover);
+  if (on) $("bonk-wrap").hidden = cover;
+}
+// ── end WHOSFOX ──
 
 // ── Lobby v2 ────────────────────────────────────────────────────────────────────
 // The TV sends {t:"lobby", s} with everyone's roles; a phone UI (lobby2) talks back through
@@ -1366,6 +1659,8 @@ function renderStatus() {
   $("cap-seat").hidden = !(mode.seats && lastStatus && lastStatus.state === "lobby");
   syncGolf();
   syncKnight(); // KNIGHT
+  syncKart(); // KART
+  syncFox(); // WHOSFOX
   syncExtras();
 }
 
@@ -1373,14 +1668,36 @@ function renderStatus() {
 // During a round the controller is full screen and landscape (landscape.js). The web version
 // (globalThis.FOXBOX_LOBBY2 = the lobby2 bundle's URL) also covers the lobby phase with the
 // FoxBox lobby screens and gives the controllers the rolled look (lobby2-pad.js).
+// Sky Scramble on the website (Lakota: like NONAME's setup): once Sky is picked every Sky screen is sideways: the
+// picker, the selfie cropper, the drawing, READY, and the controller from the countdown to the results' countdown. A
+// portrait window turns them with CSS and says TURN YOUR PHONE SIDEWAYS once per Sky session (landscape.js). The FoxBox
+// lobby before a pick stays as it is.
 let lobby2Pad = null;
+let skyLand = null; // Sky's setup screens' sideways turners (set up next to `land` below)
+let turnHint = null, turnSeen = false, skyTurnShown = false; // (KNIGHT: the knight pad shows the same hint itself)
+const SKY_PAD_STATES = ["countdown", "playing", "out", "waiting", "results"];
 function syncExtras() {
   const st = lastStatus && lastStatus.state;
   const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
   const playing = connected && curScreen === "pad-screen" && (st === "countdown" || st === "playing");
+  const web = globalThis.FOXBOX_LANDSCAPE === true;
+  const sky = web && mode.id === "sky";
+  const skyPad = sky && connected && curScreen === "pad-screen" && SKY_PAD_STATES.includes(st);
   // TEE TIME is left alone: it has its own portrait + sideways layouts (golf-pad.js) and is swung like a club,
   // and turned with CSS a portrait phone would use the portrait layout in a sideways box (SWING cut off)
-  if (typeof land !== "undefined") land.set(playing && globalThis.FOXBOX_LANDSCAPE === true && mode.id !== "golf" && mode.id !== "knight"); // on with the next release · KNIGHT: the knight pad turns itself
+  if (typeof land !== "undefined") land.set((playing && web && mode.id !== "golf" && mode.id !== "knight" && mode.id !== "kart" && mode.id !== "whosfox") || skyPad); // on with the next release · KNIGHT: the knight pad turns itself · KART: so does the kart pad · WHOSFOX: portrait
+  if (skyLand) {
+    for (const [id, l] of Object.entries(skyLand)) l.set(sky && curScreen === id);
+    const skyScreen = sky && (curScreen in skyLand || skyPad);
+    const turned = skyScreen && !!(land.angle || Object.values(skyLand).some((l) => l.angle));
+    if (turned && !turnSeen) {
+      turnSeen = true; // once per Sky session, when a Sky screen first comes up turned (a tap hides it)
+      turnHint.show(4500);
+      skyTurnShown = true;
+    }
+    if (!turned && skyTurnShown) { turnHint.hide(); skyTurnShown = false; } // only the one Sky showed (NONAME's setup shows it too)
+    if (!skyScreen) turnSeen = false;
+  }
   if (lobby2Pad) {
     try {
       lobby2Pad.sync({ screen: curScreen, state: st, connected, gameId: mode.id, seats: !!mode.seats, role: role || null, lobby: lobbyState });
@@ -1429,6 +1746,14 @@ function flush() {
 
 const steer = $("steer");
 const land = createLandscape($("pad-screen"));
+skyLand = {
+  "char-screen": createLandscape($("char-screen")),
+  "crop-screen": createLandscape($("crop-screen")),
+  "draw-screen": createLandscape($("draw-screen"), { onLayout: () => draw.layout() }), // the canvas sizes itself again
+  "ready-screen": createLandscape($("ready-screen")),
+  "vote-screen": createLandscape($("vote-screen")), // the doodle vote
+};
+turnHint = createTurnHint();
 const knob = $("knob");
 const halfL = steer.querySelector(".half.l");
 const halfR = steer.querySelector(".half.r");
@@ -1603,6 +1928,7 @@ function release() {
   }
   if (golfPad) golfPad.release(); // TEE TIME: let go of a held aim arrow
   if (knightPad) knightPad.release(); // KNIGHT: let go of every held button
+  if (kartPad) kartPad.release(); // KART: let go of GAS / ITEM
 }
 window.addEventListener("blur", release);
 
@@ -1612,7 +1938,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   padScreen.addEventListener(
     type,
     (e) => {
-      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones)
+      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button, #kart [data-native]")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones; KART: the kart pad's)
       if (padScreen.classList.contains("row-setup") && !e.target.closest("#cap-aim, #cap-fire")) return; // Row setup scrolls
       e.preventDefault();
     },
@@ -1620,7 +1946,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   );
 }
 document.addEventListener("touchmove", (e) => {
-  if (!e.target.closest("input, #char-grid, #crop-stage, #fbx2-pad, #pad-screen.row-setup")) e.preventDefault();
+  if (!e.target.closest("input, #char-grid, #crop-stage, #fbx2-pad, #pad-screen.row-setup, #vote-screen .vs-gal")) e.preventDefault();
 }, { passive: false });
 for (const type of ["gesturestart", "gesturechange", "gestureend", "dblclick", "contextmenu", "selectstart"]) {
   document.addEventListener(type, (e) => {
@@ -1630,6 +1956,7 @@ for (const type of ["gesturestart", "gesturechange", "gestureend", "dblclick", "
 window.addEventListener("resize", () => {
   setXY(x, y);
   draw.layout();
+  syncExtras(); // a phone turned sideways: the TURN YOUR PHONE SIDEWAYS hint goes (the turned screens re-layout themselves)
 });
 // Full screen where the browser allows a page to ask (Android, iPad): once, on the first tap that
 // isn't typing. iPhone Safari never does; there the Home Screen icon opens it full screen (pad.html).

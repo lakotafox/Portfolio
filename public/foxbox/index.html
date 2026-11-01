@@ -682,6 +682,69 @@
       #golf-map[hidden] {
         display: none;
       }
+      /* ── WHOSFOX (WHO'S THE FOX?) setup: 3+ players (same pixel panel as TEE TIME's map; host.js places and fills it) ── */
+      #whosfox-setup {
+        position: fixed;
+        z-index: 65;
+        left: 48px;
+        top: 700px;
+        width: 330px;
+        box-sizing: border-box;
+        padding: 16px 16px 18px;
+        background: #0d1322;
+        color: #fff;
+        box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428, 0 10px 0 0 #040a188c, inset 0 4px 0 0 #ffffff14, inset 0 -4px 0 0 #00000038;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        pointer-events: none;
+      }
+      #whosfox-setup[hidden] {
+        display: none;
+      }
+      #whosfox-setup .wf-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 14px;
+        font-size: 13px;
+        line-height: 1.4;
+        color: #ffd23f;
+        text-shadow: 3px 3px 0 #0a1428;
+      }
+      #whosfox-setup .wf-who {
+        color: #ffffff;
+        font-size: 10px;
+      }
+      #whosfox-setup .wf-need {
+        font-size: 18px;
+        line-height: 1.5;
+        text-align: center;
+        text-shadow: 3px 3px 0 #0a1428;
+      }
+      #whosfox-setup .wf-need.ok {
+        color: #35d07f;
+      }
+      #whosfox-setup .wf-need.no {
+        color: #ff9864;
+      }
+      #whosfox-setup .wf-need small {
+        font-size: 11px;
+        color: #c9c8df;
+      }
+      #whosfox-setup .wf-hint {
+        margin-top: 14px;
+        font-size: 9px;
+        line-height: 1.7;
+        color: #8d9bbb;
+        text-align: center;
+      }
+      #whosfox-setup.nudge {
+        animation: wf-nudge 0.4s steps(4) 2;
+      }
+      @keyframes wf-nudge {
+        25% { transform: translateX(-8px); }
+        75% { transform: translateX(8px); }
+      }
       /* BOTS: FILL / OFF (the host's setting for every game): a small label by the party info (web: under the
          multi-TV party chip), clickable on a TV with a mouse */
       #bots-toggle {
@@ -874,6 +937,72 @@
       #knight-setup.crowd .ks-pic { width: 40px; height: 40px; }
       #knight-setup.crowd .ks-name { font-size: 16px; }
       /* ── end KNIGHT ── */
+      /* ── KART (FOX KART) setup: TRACK + READY CHECK, the same pixel panel as the knight's (host.js renderKartSetup) ── */
+      #kart-setup {
+        position: fixed;
+        z-index: 65;
+        left: 48px;
+        top: 700px;
+        width: 330px;
+        box-sizing: border-box;
+        padding: 14px 16px 16px;
+        overflow: hidden;
+        background: #0d1322;
+        color: #fff;
+        box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428, 0 10px 0 0 #040a188c, inset 0 4px 0 0 #ffffff14, inset 0 -4px 0 0 #00000038;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        pointer-events: none;
+      }
+      #kart-setup[hidden] { display: none; }
+      #kart-setup .fk-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; font-size: 13px; line-height: 1.4; color: #ffd23f; text-shadow: 3px 3px 0 #0a1428; }
+      #kart-setup .fk-who { color: #ffffff; font-size: 10px; }
+      #kart-setup .fk-track { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 14px; align-items: center; }
+      #kart-setup .fk-map { display: block; width: 128px; height: 72px; image-rendering: pixelated; box-shadow: 0 0 0 4px #0a1428; }
+      #kart-setup .fk-tname { font-size: 14px; line-height: 1.5; color: #ffd23f; text-shadow: 3px 3px 0 #0a1428; }
+      #kart-setup .fk-tname small { display: block; margin-top: 6px; font-size: 9px; color: #ffffff; }
+      #kart-setup .fk-others { display: flex; flex-direction: column; gap: 6px; margin: 12px 0 0; }
+      #kart-setup .fk-other { font-size: 8px; line-height: 1.6; color: #8d9bbb; }
+      #kart-setup .fk-other b { margin-left: 8px; padding: 2px 5px; font-weight: 400; color: #0a1428; background: #6c7a99; }
+      #kart-setup .fk-rhead { margin-top: 16px; }
+      #kart-setup .fk-count { color: #ffffff; }
+      #kart-setup.all .fk-count { color: #35d07f; }
+      #kart-setup ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+      #kart-setup li { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 52px; padding: 2px 8px 2px 2px; background: #00000038; }
+      #kart-setup li.away { opacity: 0.45; }
+      #kart-setup .fk-pic { display: block; width: 48px; height: 48px; image-rendering: pixelated; box-shadow: inset 0 -3px 0 0 var(--kc, #ffd23f); }
+      #kart-setup .fk-who2 { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+      #kart-setup .fk-name { font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif; font-weight: 700; font-size: 21px; line-height: 1.05; color: var(--kc, #ffffff); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 2px 2px 0 #0a1428; }
+      #kart-setup .fk-what { font-size: 7px; line-height: 1.4; color: #8d9bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      #kart-setup .fk-badge { font-size: 10px; line-height: 1; padding: 6px 7px; white-space: nowrap; color: #0a1428; background: #c9d2e6; box-shadow: 0 -2px 0 0 #0a1428, 0 2px 0 0 #0a1428, -2px 0 0 0 #0a1428, 2px 0 0 0 #0a1428; }
+      #kart-setup .ready .fk-badge { background: #35d07f; }
+      #kart-setup .picking .fk-badge { background: #ffd23f; }
+      #kart-setup .bot .fk-badge { background: #8d9bbb; }
+      #kart-setup li.bot { background: #0000001f; }
+      #kart-setup .fk-hint { margin-top: 14px; font-size: 9px; line-height: 1.7; color: #8d9bbb; }
+      /* four or more rows: two columns (badge under the name) so eight still fit under the join card */
+      #kart-setup.many ol { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 8px; }
+      #kart-setup.many li { grid-template-columns: 48px minmax(0, 1fr); gap: 8px; padding-right: 4px; }
+      #kart-setup.many .fk-track { grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
+      #kart-setup.many .fk-map { width: 96px; height: 54px; }
+      #kart-setup.many .fk-tname { font-size: 12px; }
+      #kart-setup.many .fk-others { flex-direction: row; flex-wrap: wrap; gap: 4px 10px; margin-top: 10px; }
+      #kart-setup.many .fk-other { font-size: 7px; }
+      #kart-setup.many .fk-rhead { margin-top: 12px; }
+      #kart-setup.many .fk-name { font-size: 17px; }
+      #kart-setup.many .fk-what { display: none; }
+      #kart-setup.many .fk-badge { grid-column: 2; grid-row: 1; align-self: end; justify-self: start; margin-bottom: 4px; font-size: 7px; padding: 3px 4px; }
+      #kart-setup.many .fk-who2 { grid-column: 2; grid-row: 1; align-self: start; margin-top: 6px; }
+      #kart-setup.many .fk-hint { display: none; }
+      #kart-setup.crowd { padding: 12px 14px 12px; }
+      #kart-setup.crowd .fk-others { display: none; }
+      #kart-setup.crowd .fk-track { grid-template-columns: 80px minmax(0, 1fr); }
+      #kart-setup.crowd .fk-map { width: 80px; height: 45px; }
+      #kart-setup.crowd .fk-head { margin-bottom: 8px; }
+      #kart-setup.crowd .fk-rhead { margin-top: 10px; }
+      #kart-setup.crowd ol { gap: 5px 8px; }
+      #kart-setup.crowd li { min-height: 50px; }
+      #kart-setup.crowd .fk-name { font-size: 16px; }
+      /* ── end KART ── */
 
       /* ── In-round HUD (the platform's HUD, mocked; TV-sized) ───────────── */
       #hud {
@@ -1114,7 +1243,12 @@
     <button id="bots-toggle" type="button" data-test="bots-toggle" hidden></button>
     <!-- KNIGHT (Knight Platformer) SETUP: the level the picker chose + who's ready (host.js renderKnightSetup) -->
     <div id="knight-setup" data-test="knight-setup" hidden></div>
+    <!-- WHOSFOX (WHO'S THE FOX?): its setup panel ("NEEDS 3+ PLAYERS" / ready); host.js renderWhosfoxSetup() fills it -->
+    <div id="whosfox-setup" data-test="whosfox-setup" hidden></div>
     <!-- end KNIGHT -->
+    <!-- KART (FOX KART) SETUP: the track + who's ready, every racer in their slot colour (host.js renderKartSetup) -->
+    <div id="kart-setup" data-test="kart-setup" hidden></div>
+    <!-- end KART -->
 
     <!-- COUNTDOWN -->
     <section id="countdown" class="screen">
