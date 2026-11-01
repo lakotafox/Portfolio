@@ -6,9 +6,13 @@
  * changes (x −1..1 in 0.05 steps, b 0|1), plus a {t:"hb"} heartbeat every 2 s.
  * The TV host answers with {t:"status", state, color, …} which drives the screen.
  *
- * Character: after the name step (and from "Change character" between rounds) the phone
- * shows a picker — the default bouncy ball plus every drawn character from /api/characters.
- * The pick is remembered in localStorage and sent with join as `character` (id or null).
+ * Character: the picker (from "Change character" between rounds, the lobby's Character button, and
+ * by itself in Sky Scramble's setup) — the default puffball plus every drawn character from
+ * /api/characters. The pick is remembered in localStorage and sent with join as `character` (id or null).
+ *
+ * Sky Scramble's setup (status.skySetup: the TV has Sky picked): the phone goes straight to the
+ * picker, then to a READY screen (the character big, READY, CHANGE CHARACTER) and tells the TV with
+ * {t:"skyReady", setupId, picked, ready}; the TV starts the countdown once everyone is ready.
  * "Take a selfie" opens the camera (<input type=file capture=user> — works over plain http,
  * unlike getUserMedia), shows a circle cropper (drag to move, pinch / slider to zoom), and
  * uploads a 512×512 PNG of the square around the circle to POST /api/selfie. The server lists
@@ -88,9 +92,22 @@ saveMe();
 let curScreen = null;
 function showScreen(id) {
   curScreen = id;
-  for (const s of ["name-screen", "char-screen", "crop-screen", "draw-screen", "pad-screen"]) $(s).classList.toggle("show", s === id);
+  for (const s of ["name-screen", "char-screen", "crop-screen", "draw-screen", "ready-screen", "pad-screen"]) $(s).classList.toggle("show", s === id);
   if (typeof syncExtras === "function") syncExtras();
 }
+
+// The pixel icons in the markup: <i class="ico" data-sprite="pencil" data-scale="2" data-color="#…">
+for (const el of document.querySelectorAll(".ico[data-sprite]")) {
+  el.innerHTML = sprite(el.dataset.sprite, Number(el.dataset.scale) || 2, { color: el.dataset.color || "#0a1428" });
+}
+/** A pixel sprite as an element (for the picker tiles / the READY screen). */
+function spriteEl(name, scale, color) {
+  const t = document.createElement("template");
+  t.innerHTML = sprite(name, scale, { color });
+  return t.content.firstElementChild;
+}
+/** This phone's colour on the TV (the puffball's colour), grey until the TV gives one. */
+const myColor = () => (lastStatus && lastStatus.color && lastStatus.color.base) || "#8a94a6";
 
 // ── Character picker ────────────────────────────────────────────────────────────
 /** id → { id, name, src } from /api/characters (null until fetched). */
@@ -128,75 +145,66 @@ function renderMeBall() {
   else if (c) ball.style.backgroundImage = `url("${c.src}")`;
 }
 
+/** A picker tile: the picture on a little pixel sky, the name under it; your current pick is gold. */
 function cardEl(id, name, pic) {
   const b = document.createElement("button");
   b.type = "button";
-  b.className = "char-card" + ((me.character || null) === id ? " sel" : "");
-  const box = document.createElement("div");
+  const sel = (me.character || null) === id;
+  b.className = "char-card" + (sel ? " sel" : "");
+  b.dataset.test = "char-tile";
+  b.dataset.char = id || "";
+  const box = document.createElement("span");
   box.className = "pic";
   box.append(pic);
-  const nm = document.createElement("div");
+  const nm = document.createElement("span");
   nm.className = "nm";
   nm.textContent = name;
   b.append(box, nm);
+  if (sel) {
+    const mark = document.createElement("span");
+    mark.className = "selmark";
+    mark.append(spriteEl("check", 2, "#0a1428"));
+    b.append(mark);
+  }
   b.addEventListener("click", () => chooseCharacter(id));
   return b;
 }
 
 const mySelfieId = () => "selfie-" + me.id.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 32);
 const myDrawingId = () => "drawn-" + me.id.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 32);
+/** What a character is called on the tiles and the READY screen. */
+const charLabel = (c) => (!c ? "Puffball" : c.id === myDrawingId() ? "My drawing" : c.id === mySelfieId() ? "My selfie" : c.name || "Drawing");
 
-/** The "Take a selfie" tile: a <label> for the camera file input (the most reliable way to open it on iOS). */
-function selfieTile() {
-  const has = !!(charList && charList.has(mySelfieId()));
-  const tile = document.createElement("label");
-  tile.className = "char-card selfie";
-  tile.htmlFor = "selfie-input";
-  const box = document.createElement("div");
-  box.className = "pic";
-  const cam = document.createElement("div");
-  cam.className = "cam";
-  cam.textContent = "📸";
-  box.append(cam);
-  const nm = document.createElement("div");
-  nm.className = "nm";
-  nm.textContent = has ? "Retake selfie" : "Take a selfie";
-  tile.append(box, nm);
-  return tile;
-}
+// SELFIE is a <label> for the camera file input (the most reliable way to open it on iOS); DRAW opens draw.js
+$("draw-tile").addEventListener("click", () => openDraw());
 
-/** The "Draw your own" tile — "Edit my drawing" once this phone has one (the drawing itself is its own card). */
-function drawTile() {
-  const mine = charList && charList.get(myDrawingId());
-  const b = document.createElement("button");
-  b.type = "button";
-  b.id = "draw-tile";
-  b.className = "char-card selfie drawtile";
-  const box = document.createElement("div");
-  box.className = "pic";
-  const ic = document.createElement("div");
-  ic.className = "cam";
-  ic.textContent = mine ? "✏️" : "🖍️";
-  box.append(ic);
-  const nm = document.createElement("div");
-  nm.className = "nm";
-  nm.textContent = mine ? "Edit my drawing" : "Draw your own";
-  b.append(box, nm);
-  b.addEventListener("click", () => openDraw());
-  return b;
+/** Where the picker's BACK goes: "pad" (the controller), "ready" (Sky's READY screen) or nowhere (hidden). */
+let pickerBackTo = null;
+function syncPickerBack() {
+  // in Sky's setup there's only a way back once you've picked (CHANGE CHARACTER brought you here)
+  pickerBackTo = skySetup() ? (sky.hadPick ? "ready" : null) : "pad";
+  $("char-back").hidden = !pickerBackTo;
 }
+$("char-back").addEventListener("click", () => {
+  if (pickerBackTo === "ready" && skySetup()) {
+    // keep the character you had: back to READY
+    sky.picked = true;
+    sky.ready = false;
+    sendSky();
+    showReady();
+  } else showScreen("pad-screen");
+  renderStatus();
+});
 
 async function showPicker() {
   release();
+  sky.auto = !!skySetup(); // opened by Sky's setup: it closes with it
   showScreen("char-screen");
+  syncPickerBack();
   const grid = $("char-grid");
-  const draw = () => {
+  const fill = () => {
     grid.innerHTML = "";
-    const ball = document.createElement("div");
-    ball.className = "ballpic";
-    grid.append(cardEl(null, "Bouncy ball", ball));
-    grid.append(selfieTile());
-    grid.append(drawTile());
+    grid.append(cardEl(null, charLabel(null), spriteEl("puff", 6, myColor())));
     // my own drawing and selfie first, then everything else
     const list = charList ? [...charList.values()] : [];
     const mine = (c) => (c.id === myDrawingId() ? 2 : c.id === mySelfieId() ? 1 : 0);
@@ -204,7 +212,7 @@ async function showPicker() {
     for (const c of list) {
       let pic;
       if (c.hitbox && c.hitbox.ball) {
-        pic = document.createElement("div");
+        pic = document.createElement("span");
         pic.className = "ballpic photo";
         circleCrop(pic, c);
       } else {
@@ -213,15 +221,15 @@ async function showPicker() {
         pic.alt = "";
         pic.decoding = "async";
       }
-      grid.append(cardEl(c.id, c.name, pic));
+      grid.append(cardEl(c.id, charLabel(c), pic));
     }
   };
-  draw();
+  fill();
   $("char-note").textContent = charList ? "" : "Loading drawings…";
   await fetchCharacters();
   if (!$("char-screen").classList.contains("show")) return;
-  $("char-note").textContent = charList ? "" : "Couldn't load the drawings — the ball it is!";
-  draw();
+  $("char-note").textContent = charList ? "" : "Couldn't load the drawings — the puffball it is!";
+  fill();
 }
 
 // ── Selfie: camera → circle cropper → upload ───────────────────────────────────
@@ -558,11 +566,159 @@ function chooseCharacter(id) {
   me.character = id && charList && charList.has(id) ? id : null;
   saveMe();
   renderMeBall();
-  showScreen("pad-screen");
-  if (ws && ws.readyState === 1) sendJoin();
+  const inSky = !!skySetup();
+  if (ws && ws.readyState === 1) sendJoin(); // the TV gets the character first…
   else connect();
+  if (inSky) {
+    // …then, in Sky's setup, that it's picked: on to READY
+    sky.picked = true;
+    sky.ready = false;
+    sky.hadPick = true;
+    sendSky();
+    showReady();
+  } else showScreen("pad-screen");
   renderStatus();
 }
+
+// ── Sky Scramble setup: pick a character → READY ───────────────────────────────
+// While the TV is in Sky's setup (status.skySetup) this phone is on its character picker (or the
+// selfie / drawing screens it opens) or its READY screen — never the controller. `sky` is what this
+// phone told the TV for that setup; the TV's word wins for a new setup (or after a reload here).
+const sky = { id: null, picked: false, ready: false, hadPick: false, sentAt: 0, auto: false };
+/** The TV's skySetup for this phone while Sky's setup is on (and we can hear the TV), else null. */
+function skySetup() {
+  const ss = lastStatus && lastStatus.state === "lobby" ? lastStatus.skySetup : null;
+  return ss && ws && ws.readyState === 1 && hostUp && !replaced ? ss : null;
+}
+function sendSky() {
+  if (!sky.id) return;
+  sky.sentAt = Date.now();
+  sendRaw({ t: "skyReady", setupId: sky.id, picked: sky.picked, ready: sky.ready });
+}
+function syncSky() {
+  const away = replaced || !ws || ws.readyState !== 1 || !hostUp;
+  // a dropped connection keeps the screen (we'll hear from the TV again; READY says so meanwhile);
+  // "paused" (another tab took over) shows on the controller
+  if (away && !replaced) {
+    if (curScreen === "ready-screen") renderReady();
+    return;
+  }
+  const ss = skySetup();
+  if (!ss) {
+    // the setup is over (the countdown, a round, back to the lobby): the controller again
+    if (curScreen === "ready-screen" || (curScreen === "char-screen" && sky.auto)) showScreen("pad-screen");
+    sky.auto = false;
+    return;
+  }
+  if (ss.id !== sky.id) {
+    // a new setup (Sky was just picked), or this page just loaded into one: the TV knows our step
+    sky.id = ss.id;
+    sky.picked = !!ss.picked;
+    sky.ready = !!ss.ready;
+    sky.hadPick = sky.picked;
+    sky.sentAt = 0;
+  } else if (Date.now() - sky.sentAt > 1500) {
+    // the TV un-readied us (a round called off, a drawing opened): believe it about READY; a pick
+    // it doesn't know about (a message lost while reconnecting) it hears again
+    sky.ready = !!ss.ready && sky.picked;
+    if (!!ss.picked !== sky.picked) sendSky();
+  }
+  // the controller is never the screen during the setup: the picker, or READY once picked
+  if (curScreen === "pad-screen") {
+    if (sky.picked) showReady();
+    else showPicker();
+  } else if (curScreen === "ready-screen") renderReady();
+}
+function showReady() {
+  release();
+  sky.auto = false;
+  showScreen("ready-screen");
+  renderReady();
+}
+function renderReady() {
+  const ss = skySetup() || {};
+  // your character, standing on a cloud (the puffball in your colour if you kept the default)
+  const c = me.character && charList && charList.get(me.character);
+  const box = $("rdy-char");
+  const key = c ? `${c.id}|${c.src}` : `puff|${myColor()}`;
+  if (box.dataset.key !== key) {
+    box.dataset.key = key;
+    box.innerHTML = "";
+    if (!c) box.append(spriteEl("puff", 10, myColor()));
+    else if (c.hitbox && c.hitbox.ball) {
+      const ball = document.createElement("div");
+      ball.className = "ballpic";
+      circleCrop(ball, c);
+      box.append(ball);
+    } else {
+      const im = document.createElement("img");
+      im.src = c.src;
+      im.alt = "";
+      box.append(im);
+    }
+  }
+  if ($("rdy-name").textContent !== me.name) $("rdy-name").textContent = me.name;
+  $("rdy-as").textContent = charLabel(c || null).toUpperCase();
+  const ready = sky.ready;
+  $("ready-screen").classList.toggle("is-ready", ready);
+  const go = $("rdy-go");
+  go.classList.toggle("on", ready);
+  go.setAttribute("aria-pressed", String(ready));
+  $("rdy-go-label").textContent = ready ? "READY!" : "READY";
+  const ico = ready ? "check" : "";
+  if ($("rdy-go-ico").dataset.ico !== ico) {
+    $("rdy-go-ico").dataset.ico = ico;
+    $("rdy-go-ico").innerHTML = ready ? sprite("check", 3, { color: "#0a1428" }) : "";
+  }
+  // everyone's step comes with the lobby state; the count with this phone's status
+  const players = ((lobbyState && lobbyState.players) || []).filter((q) => q.connected !== false);
+  const total = ss.totalCount ?? players.length;
+  const readyN = ss.readyCount ?? players.filter((q) => q.setup === "ready").length;
+  const live = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  const all = live && total > 0 && readyN === total;
+  // lost the TV for a moment: say so, and READY waits (the pick is kept and re-sent on reconnect)
+  const sockUp = !!(ws && ws.readyState === 1);
+  $("rdy-count").textContent = live ? `${readyN}/${total} READY` : sockUp ? "WAITING FOR THE TV" : "RECONNECTING...";
+  $("rdy-count").classList.toggle("go", all);
+  $("rdy-count").classList.toggle("gold", (live && !all) || (!live && sockUp));
+  $("rdy-count").classList.toggle("bad", !live && !sockUp);
+  go.disabled = !live;
+  $("ready-screen").classList.toggle("offline", !live);
+  // the game picker can still back out to the game cards (like "Switch game" on the controller)
+  $("rdy-switch").hidden = !(live && mode.count > 1 && (!lobbyState || iAmPicker()));
+  const waiting = players.filter((q) => q.id !== me.id && q.setup && q.setup !== "ready").map((q) => String(q.name || "?").toUpperCase());
+  let line = "";
+  if (!live) line = "HANG ON, YOUR PICK IS SAVED";
+  else if (ready) line = !waiting.length ? "EVERYONE'S READY!" : waiting.length <= 2 ? `WAITING FOR ${waiting.join(" & ")}` : `WAITING FOR ${waiting.length} PLAYERS`;
+  else line = players.length > 1 && !waiting.length ? "EVERYONE ELSE IS READY!" : "TAP READY WHEN YOU ARE";
+  const html = escHtml(line) + ((ready && waiting.length) || !live ? '<span class="cur">_</span>' : "");
+  if ($("rdy-wait").dataset.html !== html) {
+    $("rdy-wait").innerHTML = html;
+    $("rdy-wait").dataset.html = html;
+  }
+}
+$("rdy-go").addEventListener("click", () => {
+  if (!skySetup() || !sky.picked) return;
+  sky.ready = !sky.ready; // tap again: not ready after all
+  sendSky();
+  renderReady();
+  if (sky.ready && navigator.vibrate) {
+    try {
+      navigator.vibrate(25);
+    } catch {}
+  }
+});
+$("rdy-switch").addEventListener("click", () => sendRaw({ t: "pick" }));
+$("rdy-change").addEventListener("click", () => {
+  if (skySetup()) {
+    // back to the picker: not ready (and not picked) until you pick again
+    sky.picked = false;
+    sky.ready = false;
+    sky.hadPick = true;
+    sendSky();
+  }
+  showPicker();
+});
 
 $("name-form").addEventListener("submit", (e) => {
   e.preventDefault();
@@ -584,12 +740,15 @@ $("name-form").addEventListener("submit", (e) => {
 });
 $("change-char").addEventListener("click", () => showPicker());
 $("switch-game").addEventListener("click", () => sendRaw({ t: "pick" }));
+// the host's phone only (the TV says which: lobby state hostId): BOTS FILL / OFF for every game
+$("bots-host").addEventListener("click", () => window.foxboxLobby.bots());
 $("edit-name").addEventListener("click", () => {
   release();
   $("name-input").value = me.name;
   showScreen("name-screen");
   setTimeout(() => $("name-input").focus(), 50);
 });
+$("me-chip").addEventListener("click", () => $("edit-name").click()); // the lobby card's name: tap to change it
 
 // ── Connection ──────────────────────────────────────────────────────────────────
 let ws = null;
@@ -605,6 +764,13 @@ function setConn(kind, text) {
   const el = $("conn");
   el.className = kind;
   el.textContent = text;
+  // Lakota (day 2): no header; a slim strip at the very top only while not connected (gone once connected)
+  const strip = $("reconn");
+  if (strip) {
+    strip.hidden = kind === "ok";
+    const t = kind === "ok" ? "" : text === "Connecting" ? "Connecting…" : text === "Reconnecting" ? "Reconnecting…" : text;
+    if (strip.textContent !== t) strip.textContent = t;
+  }
 }
 
 function connect() {
@@ -620,6 +786,7 @@ function connect() {
     lastRx = Date.now();
     setConn("ok", "Connected");
     sendJoin();
+    sendSky(); // back after a blip mid-setup: our pick / READY again (an old setup's is ignored)
   };
   sock.onmessage = (ev) => {
     lastRx = Date.now();
@@ -697,6 +864,7 @@ function onMessage(msg) {
       break;
     case "host":
       hostUp = !!msg.up;
+      if (hostUp) sendSky(); // the TV (re)loaded: remind it of our step in Sky's setup
       renderStatus();
       break;
     case "status":
@@ -719,8 +887,103 @@ function onMessage(msg) {
     case "replaced":
       replaced = true;
       break;
+    case "game": // FoxBox party extension: the running game's message for this phone (TEE TIME)
+      if (knightGameMsg(msg)) break; // KNIGHT: the knight module's (Knight Platformer is the hub's game)
+      if (msg.m && typeof msg.m === "object") {
+        if (golfPad) golfPad.onMessage(msg.m);
+        else {
+          golfInbox.push(msg.m);
+          if (golfInbox.length > 16) golfInbox.shift();
+        }
+      }
+      break;
   }
 }
+
+// ── TEE TIME (golf) ─────────────────────────────────────────────────────────────
+// The golf controller is a module of its own (dev/party/golf/golf-pad.js, synced from
+// topgolf-range/phone/), loaded the first time golf is the hub's game. It owns #golf during the
+// countdown and the round, and talks to the TV game with {t:"game", m} both ways
+// (topgolf-range/CONTRACT.md). The lobby keeps the plain START button; results stay pad.js's.
+var golfPad = null; // var: onMessage / renderStatus may run before this line during start-up
+var golfLoad = null;
+var golfInbox = [];
+function syncGolf() {
+  const golf = mode.id === "golf";
+  if (golf && !golfLoad) {
+    golfLoad = import("./golf/golf-pad.js")
+      .then((m) => {
+        golfPad = m.createGolfPad($("golf"), {
+          send: (m2) => sendRaw({ t: "game", m: m2 }),
+          me: () => ({ id: me.id, name: me.name }),
+        });
+        for (const msg of golfInbox.splice(0)) golfPad.onMessage(msg);
+        renderStatus();
+      })
+      .catch((e) => console.warn("[foxbox] golf controller didn't load", e));
+  }
+  const st = lastStatus && lastStatus.state;
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  const on = golf && connected && curScreen === "pad-screen" && (st === "countdown" || st === "playing");
+  $("pad-screen").classList.toggle("golf", on);
+  $("golf").hidden = !on;
+  if (golf) $("bonk-wrap").hidden = on;
+  if (golfPad) golfPad.show(on, lastStatus);
+  // golf's setup (before START): the picker chooses the map, everyone sees it (golf-pad.js fills #golf-setup)
+  const setupOn = golf && connected && !on && curScreen === "pad-screen" && !!lobbyState && lobbyState.phase === "setup" && !!lobbyState.golf;
+  const box = $("golf-setup");
+  if (box) {
+    box.hidden = !setupOn;
+    $("pad-screen").classList.toggle("golf-setup", setupOn);
+    if (golfPad && golfPad.setup) golfPad.setup(setupOn ? { el: box, lobby: lobbyState, picker: lobbyState.pickerId === me.id } : null);
+  }
+}
+
+// ── KNIGHT (Knight Platformer) ──
+// The knight controller is a module of its own (dev/party/knight/knight-pad.js, synced from knight-platformer/phone/),
+// loaded the first time knight is the hub's game. It covers the screen (#knight, pad.html) during the knight setup (the
+// knight + sword picker, READY, the picker's LEVEL), the countdown and the round, and talks to the TV with {t:"game", m}
+// both ways (knight-platformer CONTRACT.md "Phone protocol"). pad.js keeps the plain lobby and the results.
+var knightPad = null; // var: onMessage / renderStatus may run before this line during start-up
+var knightLoad = null;
+var knightInbox = [];
+/** onMessage(): a {t:"game"} message while knight is the hub's game goes to the knight module (buffered until loaded). */
+function knightGameMsg(msg) {
+  if (mode.id !== "knight" || !msg.m || typeof msg.m !== "object") return false;
+  if (knightPad) knightPad.onMessage(msg.m);
+  else {
+    knightInbox.push(msg.m);
+    if (knightInbox.length > 32) knightInbox.shift();
+  }
+  return true;
+}
+function syncKnight() {
+  const on = mode.id === "knight";
+  if (on && !knightLoad) {
+    knightLoad = import("./knight/knight-pad.js")
+      .then((m) => {
+        knightPad = m.createKnightPad($("knight"), {
+          send: (m2) => sendRaw({ t: "game", m: m2 }),
+          me: () => ({ id: me.id, name: me.name }),
+        });
+        for (const msg of knightInbox.splice(0)) knightPad.onMessage(msg);
+        renderStatus();
+      })
+      .catch((e) => console.warn("[foxbox] knight controller didn't load", e));
+  }
+  if (on) $("steer").hidden = true; // no stick: START in the plain lobby, the module's own gamepad in a round
+  if (!knightPad) return;
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  try {
+    knightPad.sync({ status: on ? lastStatus : null, lobby: lobbyState, connected, screen: curScreen });
+  } catch (e) {
+    console.warn("[foxbox] knight sync failed", e);
+  }
+  const cover = on && !!knightPad.active; // the module shows #knight itself; pad.js's BONK steps aside meanwhile
+  document.body.classList.toggle("knight-on", cover);
+  if (on) $("bonk-wrap").hidden = cover;
+}
+// ── end KNIGHT ──
 
 // ── Lobby v2 ────────────────────────────────────────────────────────────────────
 // The TV sends {t:"lobby", s} with everyone's roles; a phone UI (lobby2) talks back through
@@ -752,6 +1015,11 @@ window.foxboxLobby = {
   roll: () => sendRaw({ t: "roll" }),
   skipTurn: (role) => sendRaw({ t: "skipTurn", role: role === "roller" ? "roller" : "picker" }),
   start: () => sendRaw({ t: "start" }),
+  /** The host's phone only: switch BOTS FILL / OFF for every game (the TV checks it's the host's phone). */
+  bots() {
+    if (!lobbyState || lobbyState.hostId !== me.id) return;
+    sendRaw({ t: "game", m: { type: "bots", mode: lobbyState.bots === "fill" ? "off" : "fill" } });
+  },
 };
 const iAmPicker = () => !!lobbyState && lobbyState.pickerId === me.id;
 const iAmRoller = () => !!lobbyState && lobbyState.rollerId === me.id;
@@ -790,7 +1058,7 @@ function applyMode(g) {
   mode = { ...mode, ...g, seats: !!g.seats };
   $("bonk").textContent = mode.button;
   const rowing = mode.stick === "motion";
-  steer.hidden = rowing;
+  steer.hidden = rowing || mode.id === "golf"; // TEE TIME: START in the lobby, its own module in play (syncGolf)
   $("bonk-wrap").hidden = rowing;
   steer.classList.toggle("xy", mode.stick === "xy");
   $("steer-label").textContent = mode.stick === "xy" ? "drag to roll" : "slide to steer";
@@ -884,13 +1152,24 @@ function renderStatus() {
   applyRole();
   syncRowSetup();
   renderBoats();
+  syncSky();
   if (lastStatus && lastStatus.hub) document.title = `${lastStatus.hub} — Controller`;
-  // Between rounds you can switch character (it applies from the next round).
+  // Between rounds you can switch character (it applies from the next round). Not on the results:
+  // those count down back to the lobby (where Sky's setup has its own picker).
   const st0 = lastStatus && lastStatus.state;
-  const between = !!(ws && ws.readyState === 1 && hostUp && !replaced && ["lobby", "results", "waiting", "out"].includes(st0));
+  const between = !!(ws && ws.readyState === 1 && hostUp && !replaced && ["lobby", "waiting", "out"].includes(st0));
   $("change-char").hidden = !between || mode.id !== "sky"; // characters are a Sky Scramble thing (for now)
   $("change-char").textContent = me.character ? "Change character" : "Set up your character";
   $("switch-game").hidden = !(between && st0 === "lobby" && mode.count > 1 && (!lobbyState || iAmPicker()));
+  // your name in the lobby card (the header is gone): tap it to change it
+  const chip = $("me-chip");
+  chip.hidden = !(between && st0 === "lobby");
+  if ($("me-chip-name").textContent !== me.name) $("me-chip-name").textContent = me.name || "Name";
+  const botsHost = $("bots-host");
+  botsHost.hidden = !(between && st0 === "lobby" && !!lobbyState && lobbyState.hostId === me.id);
+  const botsTxt = `🤖 BOTS: ${lobbyState && lobbyState.bots === "fill" ? "FILL" : "OFF"}`;
+  if (botsHost.textContent !== botsTxt) botsHost.textContent = botsTxt;
+  botsHost.dataset.mode = lobbyState && lobbyState.bots === "fill" ? "fill" : "off";
   const seatNow = mySeat();
   $("game-name").textContent = seatNow ? `${mode.name} · ${SEAT_LABEL[seatNow.seat] || "CREW"} · ${seatNow.boatName} boat` : mode.name;
   const big = $("status-big");
@@ -975,11 +1254,15 @@ function renderStatus() {
   if (rows) {
     // the arcade high-score table: RANK · BOAT · CREW (team games) or RANK · NAME; your row in green
     const team = !!rows[0]?.team;
-    const html = `<div class="r hd${team ? "" : " solo"}"><span>RANK</span><span>${team ? "BOAT" : "NAME"}</span>${team ? "<span>CREW</span>" : ""}</div>` +
-      rows.map((r, i) => `<div class="r${i === 0 ? " first" : ""}${r.mine ? " mine" : ""}${team ? "" : " solo"}"><span class="rk">${ordinal(i + 1).toUpperCase()}</span>` +
+    const vals = !team && rows.some((r) => r.value != null); // a score column (TEE TIME: "247 PTS")
+    const solo = team ? "" : vals ? " solo vals" : " solo";
+    // a bot's name carries a BOT tag (the host's BOTS setting: FILL)
+    const nm = (r, k) => escHtml((r.names || [])[k] || "") + (Array.isArray(r.bots) && r.bots[k] ? ' <span class="bot-tag">BOT</span>' : "");
+    const html = `<div class="r hd${solo}"><span>RANK</span><span>${team ? "BOAT" : "NAME"}</span>${team ? "<span>CREW</span>" : vals ? '<span class="val">SCORE</span>' : ""}</div>` +
+      rows.map((r, i) => `<div class="r${i === 0 ? " first" : ""}${r.mine ? " mine" : ""}${solo}"><span class="rk">${ordinal(i + 1).toUpperCase()}</span>` +
         (team
-          ? `<span>${escHtml(String(r.team || "").replace(/ boat$/i, "").toUpperCase())}</span><span class="crew">${escHtml((r.names || []).join(" · "))}</span>`
-          : `<span class="crew">${escHtml((r.names || [])[0] || "")}</span>`) + `</div>`).join("");
+          ? `<span>${escHtml(String(r.team || "").replace(/ boat$/i, "").toUpperCase())}</span><span class="crew">${(r.names || []).map((_, k) => nm(r, k)).join(" · ")}</span>`
+          : `<span class="crew">${nm(r, 0)}</span>${vals ? `<span class="val">${escHtml(r.value ?? "")}</span>` : ""}`) + `</div>`).join("");
     if ($("res-mini").dataset.html !== html) {
       $("res-mini").innerHTML = html;
       $("res-mini").dataset.html = html;
@@ -996,10 +1279,13 @@ function renderStatus() {
       $("res-art").dataset.html = art;
     }
   }
+  renderBack();
   // the captain's sideways screen hides #status: mirror it in the middle column
   const capLine = b === "You're in!" ? s : s ? `${b} · ${s}` : b;
   if ($("cap-status").textContent !== capLine) $("cap-status").textContent = capLine;
   $("cap-seat").hidden = !(mode.seats && lastStatus && lastStatus.state === "lobby");
+  syncGolf();
+  syncKnight(); // KNIGHT
   syncExtras();
 }
 
@@ -1012,7 +1298,9 @@ function syncExtras() {
   const st = lastStatus && lastStatus.state;
   const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
   const playing = connected && curScreen === "pad-screen" && (st === "countdown" || st === "playing");
-  if (typeof land !== "undefined") land.set(playing && globalThis.FOXBOX_LANDSCAPE === true); // on with the next release
+  // TEE TIME is left alone: it has its own portrait + sideways layouts (golf-pad.js) and is swung like a club,
+  // and turned with CSS a portrait phone would use the portrait layout in a sideways box (SWING cut off)
+  if (typeof land !== "undefined") land.set(playing && globalThis.FOXBOX_LANDSCAPE === true && mode.id !== "golf" && mode.id !== "knight"); // on with the next release · KNIGHT: the knight pad turns itself
   if (lobby2Pad) {
     try {
       lobby2Pad.sync({ screen: curScreen, state: st, connected, gameId: mode.id, seats: !!mode.seats, role: role || null, lobby: lobbyState });
@@ -1025,6 +1313,21 @@ function syncExtras() {
 setInterval(() => {
   if (lastStatus && lastStatus.state === "lobby") renderStatus();
 }, 500);
+
+/** The results: "BACK TO THE LOBBY IN N..." like the TV's line, counted down from the TV's backIn. */
+function renderBack() {
+  const st = lastStatus;
+  const on = !!(st && st.state === "results" && typeof st.backIn === "number" && ws && ws.readyState === 1 && !replaced);
+  const el = $("res-back");
+  if (el.hidden === on) el.hidden = !on;
+  if (!on) return;
+  const left = Math.max(0, Math.ceil(st.backIn - (Date.now() - st.at) / 1000));
+  const txt = `BACK TO THE LOBBY IN ${left}...`;
+  if (el.textContent !== txt) el.textContent = txt;
+}
+setInterval(() => {
+  if (lastStatus && lastStatus.state === "results") renderBack();
+}, 200);
 
 // ── Controls ────────────────────────────────────────────────────────────────────
 let x = 0;
@@ -1218,6 +1521,8 @@ function release() {
     setX(0);
     setB(0);
   }
+  if (golfPad) golfPad.release(); // TEE TIME: let go of a held aim arrow
+  if (knightPad) knightPad.release(); // KNIGHT: let go of every held button
 }
 window.addEventListener("blur", release);
 
@@ -1227,7 +1532,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   padScreen.addEventListener(
     type,
     (e) => {
-      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready")) return; // let real buttons click (incl. Switch game)
+      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones)
       if (padScreen.classList.contains("row-setup") && !e.target.closest("#cap-aim, #cap-fire")) return; // Row setup scrolls
       e.preventDefault();
     },

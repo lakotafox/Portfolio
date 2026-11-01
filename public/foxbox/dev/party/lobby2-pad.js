@@ -38,11 +38,11 @@ export async function initLobby2Pad({ url, myId, editName, changeCharacter, lobb
   host.style.cssText = "position:absolute;inset:0;";
   layer.append(host);
 
-  // name / character, one tap away
+  // name / character (and, on the host's phone only, BOTS FILL / OFF), one tap away
   const bar = document.createElement("div");
   bar.className = "fbx2-padbar";
   bar.style.cssText =
-    "position:absolute;right:max(10px, env(safe-area-inset-right));top:max(10px, env(safe-area-inset-top));z-index:5;display:flex;gap:8px;";
+    "position:absolute;right:max(10px, env(safe-area-inset-right));top:max(10px, env(safe-area-inset-top));z-index:5;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;max-width:calc(100vw - 20px);";
   const mk = (label, test, fn) => {
     const b = document.createElement("button");
     b.type = "button";
@@ -54,8 +54,11 @@ export async function initLobby2Pad({ url, myId, editName, changeCharacter, lobb
     bar.append(b);
     return b;
   };
-  mk("✏️ Name", "lobby-edit-name", () => editName());
+  const nameBtn = mk("✏️ Name", "lobby-edit-name", () => editName()); // shows your name: tap it to change it
   const charBtn = mk("🧍 Character", "lobby-character", () => changeCharacter());
+  // the host's BOTS setting for every game (the TV says which phone is the host's: lobby state hostId)
+  const botsBtn = mk("🤖 BOTS: OFF", "lobby-bots", () => lobby.bots && lobby.bots());
+  botsBtn.hidden = true;
   layer.append(bar);
   document.body.append(layer);
 
@@ -69,6 +72,13 @@ export async function initLobby2Pad({ url, myId, editName, changeCharacter, lobb
       document.body.classList.toggle("fbx2-lobby-on", show);
       if (!st) return;
       charBtn.hidden = st.currentGameId !== "sky";
+      const mine = (st.players || []).find((q) => q.id === myId());
+      const nm = `✏️ ${(mine && mine.name) || "Name"}`;
+      if (nameBtn.textContent !== nm) nameBtn.textContent = nm;
+      botsBtn.hidden = !(st.hostId && st.hostId === myId());
+      const bt = `🤖 BOTS: ${st.bots === "fill" ? "FILL" : "OFF"}`;
+      if (botsBtn.textContent !== bt) botsBtn.textContent = bt;
+      botsBtn.dataset.mode = st.bots === "fill" ? "fill" : "off";
       const json = JSON.stringify(st);
       if (json !== lastJson) {
         lastJson = json;

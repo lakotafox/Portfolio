@@ -23,7 +23,8 @@ const MASK_A = 24; // alpha above this counts as "drawn"
 const MIN_BOX = 24; // a whole-body box is at least this many px each way
 const MIN_BALL_R = 40;
 const TAU = Math.PI * 2;
-const FONT = '"Arial Rounded MT Bold", ui-rounded, system-ui, sans-serif';
+const FONT = '"FoxBox Soft", "Arial Rounded MT Bold", ui-rounded, system-ui, sans-serif'; // the pixel look's soft face
+const PIXEL_FONT = '"FoxBox Pixel", ui-monospace, monospace';
 
 /** Two rows of seven: black/white, the Gaming Couch player colours (+ orange), three skin tones. */
 export const COLORS = [
@@ -349,7 +350,7 @@ export function createDrawPad(el, hooks) {
   el.done.addEventListener("click", () => {
     if (locked) return;
     if (!box) {
-      note("Draw something first! ✏️");
+      note("Draw something first!");
       return;
     }
     hooks.onDone();
@@ -444,7 +445,7 @@ export function createDrawPad(el, hooks) {
       gg.textAlign = "center";
       gg.font = `44px ${FONT}`;
       gg.fillStyle = "rgba(40, 90, 200, 0.28)";
-      gg.fillText("Draw your player here!", N / 2, N * 0.45);
+      gg.fillText("Draw your doodle here!", N / 2, N * 0.45);
     }
     gg.restore();
     if (body === "box" && box) {
@@ -704,6 +705,12 @@ export function createDrawPad(el, hooks) {
   // iOS: no magnifier / callout / double-tap zoom on the canvas
   for (const type of ["touchstart", "touchmove", "touchend"]) board.addEventListener(type, (e) => e.preventDefault(), { passive: false });
 
+  // the guide's words are in FoxBox Soft: once that face is in, draw the guide (and preview) again
+  try {
+    document.fonts?.load(`44px ${FONT}`).then(() => { drawOverlay(); schedulePreview(); }, () => {});
+    document.fonts?.load(`7px ${PIXEL_FONT}`).then(() => schedulePreview(), () => {});
+  } catch {}
+
   // ── layout: the biggest square that fits ──
   function layout() {
     const scr = el.screen;
@@ -715,7 +722,7 @@ export function createDrawPad(el, hooks) {
     scr.classList.toggle("wide", landscape);
     if (landscape) scr.style.setProperty("--sq", `${Math.floor(Math.min(availH, availW * 0.56))}px`);
     else scr.style.removeProperty("--sq");
-    const s = Math.floor(Math.min(el.stage.clientWidth, el.stage.clientHeight));
+    const s = Math.floor(Math.min(el.stage.clientWidth - 8, el.stage.clientHeight - 14));
     if (s > 0) {
       board.style.width = board.style.height = `${s}px`;
     }
@@ -737,28 +744,35 @@ export function createDrawPad(el, hooks) {
     const W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
     const c = cv.getContext("2d");
-    const sky = c.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, "#5b8def");
-    sky.addColorStop(1, "#bfe3ff");
-    c.fillStyle = sky;
-    c.fillRect(0, 0, W, H);
-    // a cloud to stand on
-    const cy = H * 0.86, cw = Math.min(W * 0.7, H * 2.2);
+    // the sky in hard bands, like the pixel screens
+    const bands = ["#4a82e8", "#6198f0", "#81b0f6", "#a9cbfb"];
+    bands.forEach((col, i) => {
+      c.fillStyle = col;
+      c.fillRect(0, Math.floor((H * i) / bands.length), W, Math.ceil(H / bands.length) + 1);
+    });
+    // a blocky cloud to stand on
+    const cy = H * 0.86, cw = Math.min(W * 0.7, H * 2.2), u = Math.max(2, Math.round(cw / 22));
+    const cx0 = Math.round(W / 2 - cw / 2);
     c.fillStyle = "#ffffff";
-    for (const [dx, dy, rr] of [[-0.32, 0.02, 0.2], [-0.1, -0.06, 0.26], [0.14, -0.03, 0.23], [0.34, 0.03, 0.17]]) {
-      c.beginPath(); c.arc(W / 2 + dx * cw, cy + dy * cw, rr * cw * 0.55, 0, TAU); c.fill();
-    }
-    c.fillRect(W / 2 - cw * 0.42, cy, cw * 0.84, H - cy);
-    c.fillStyle = "rgba(255,255,255,0.9)";
-    c.font = `${Math.round(11 * dpr)}px ${FONT}`;
-    c.textAlign = "left";
-    c.fillText("In the game", 8 * dpr, 15 * dpr);
+    for (const [x, y, w] of [[3, 2, 6], [11, 1, 6], [1, 3, 20], [0, 4, 22]]) c.fillRect(cx0 + x * u, Math.round(cy - (4 - y) * u), w * u, H);
+    const label = () => {
+      c.font = `${Math.round(7 * dpr)}px ${PIXEL_FONT}`;
+      c.textAlign = "left";
+      c.textBaseline = "alphabetic";
+      // bottom-left, on the ground under the feet line (the doodle stands above it)
+      const tw = c.measureText("IN THE GAME").width, th = Math.round(13 * dpr);
+      c.fillStyle = "#0a1428";
+      c.fillRect(0, H - th, Math.ceil(tw + 10 * dpr), th);
+      c.fillStyle = "#ffffff";
+      c.fillText("IN THE GAME", 5 * dpr, H - 3 * dpr);
+    };
     const baked = box ? bakeDrawing(g.getImageData(0, 0, N, N), body, ball, paper) : null;
     if (!baked) {
-      c.fillStyle = "rgba(255,255,255,0.85)";
+      c.fillStyle = "rgba(255,255,255,0.9)";
       c.font = `${Math.round(14 * dpr)}px ${FONT}`;
       c.textAlign = "center";
-      c.fillText("Your player shows here", W / 2, H * 0.45);
+      c.fillText("Your doodle shows here", W / 2, H * 0.62);
+      label();
       return;
     }
     const hb = baked.hitbox, bw = baked.width, bh = baked.height;
@@ -775,6 +789,7 @@ export function createDrawPad(el, hooks) {
     c.imageSmoothingQuality = "high";
     c.drawImage(baked.canvas, x0, y0, bw * k, bh * k);
     c.restore();
+    label();
   }
 
   let noteTimer = null;

@@ -48,6 +48,7 @@
  *   platform.x0/range/off  drift clouds: anchor, half-travel and current offset (x = x0 + off)
  *   bounce event .boost  0..1 updraft strength of that bounce (bigger puff of air?)
  *   stomp event .bonk    true when the stomper was bonk-diving (the big one)
+ *   state.jet, player.jet, player.jetKind  the jetpack power-ups (createSim({ jetpack: true }); see "Jetpack" below)
  *
  * ── Extra helpers ─────────────────────────────────────────────────────────────
  *   heightMetres(state, player) best height in whole metres above the start cloud
@@ -72,19 +73,19 @@ export const UNITS_PER_METRE = 50;
 // Gravity + a fixed bounce velocity. With the discrete (semi-implicit Euler) step a
 // normal bounce really rises ~250 px; the level generator keeps every gap well under
 // that (see MAX_GAP).
-export const GRAVITY = 2400; // px/s²
-export const JUMP_H = 260; // nominal bounce height, px
-export const JUMP_VY = Math.sqrt(2 * GRAVITY * JUMP_H); // ≈ 1117 px/s
-export const SPRING_VY = Math.sqrt(2 * GRAVITY * JUMP_H * 3); // ≈ 1935 px/s (3× height)
+export let GRAVITY = 2400; // px/s²  (the tunables below are `let`: setFeel() swaps them, see FEELS)
+export let JUMP_H = 260; // nominal bounce height, px
+export let JUMP_VY = Math.sqrt(2 * GRAVITY * JUMP_H); // ≈ 1117 px/s
+export let SPRING_VY = Math.sqrt(2 * GRAVITY * JUMP_H * 3); // ≈ 1935 px/s (3× height)
 // Landing on a spring pins you, squashed, for a moment ("springLoad"), then launches
 // you ("spring"). Someone stomping you meanwhile cancels it.
 export const SPRING_HOLD_TICKS = 3; // 0.05 s: a quick squash before the launch
-export const STOMP_VY = Math.sqrt(2 * GRAVITY * JUMP_H * 1.6); // plain head-stomp bounce (1.6× height)
-export const BONK_STOMP_VY = Math.sqrt(2 * GRAVITY * JUMP_H * 2.2); // bonk-dive stomp: 2.2× height
-const MAX_FALL = 2300; // terminal fall speed, px/s
-export const MAX_VX = 700; // horizontal top speed at full stick, px/s
-const AIR_ACCEL = 3400; // px/s² toward the stick's target speed
-const AIR_DRAG = 2000; // px/s² back toward 0 when the stick is centred
+export let STOMP_VY = Math.sqrt(2 * GRAVITY * JUMP_H * 1.6); // plain head-stomp bounce (1.6× height)
+export let BONK_STOMP_VY = Math.sqrt(2 * GRAVITY * JUMP_H * 2.2); // bonk-dive stomp: 2.2× height
+let MAX_FALL = 2300; // terminal fall speed, px/s
+export let MAX_VX = 700; // horizontal top speed at full stick, px/s
+let AIR_ACCEL = 3400; // px/s² toward the stick's target speed
+let AIR_DRAG = 2000; // px/s² back toward 0 when the stick is centred
 const CONTROL_BONK = 0.3; // air-control multiplier while diving
 const CONTROL_DAZED = 0.2; // …and while tumbling after a stomp
 
@@ -128,7 +129,7 @@ const STOMP_RAMP_TICKS = 1800; // 30 s
 // together (a stomped or lagging player can scramble back) without ever making a
 // bounce WEAKER, so level reachability is unaffected. Bounce events carry `boost` 0..1.
 export const UPDRAFT_ZONE = 0.55; // fraction of the screen height, from the bottom
-export const UPDRAFT_BOOST = 1.2; // extra bounce height at the very bottom (+120%)
+export let UPDRAFT_BOOST = 1.2; // extra bounce height at the very bottom (+120%)
 
 // ── Camera ────────────────────────────────────────────────────────────────────
 // Holds still for CAM_START_TICKS, then rises at CAM_V0 and ramps up by CAM_RAMP
@@ -159,15 +160,127 @@ export const CAM_CALM_TICKS = 360; // ramping up to the full cap over the first 
 // placed so the NEXT lane platform is reachable from them too — so there are no dead
 // ends. Difficulty 0→1 over HARD_HEIGHT px: bigger gaps, narrower clouds, more
 // drift/puff, fewer extras.
-const LANES = 3;
+let LANES = 3;
 const HARD_HEIGHT = 14000;
-const MAX_GAP = 205; // < the ~250 px a discrete bounce really rises
-const GAP_MIN0 = 135; // lane step range at the bottom…
-const GAP_MAX0 = 165;
-const GAP_MIN1 = 170; // …and at HARD_HEIGHT (max is MAX_GAP)
+let MAX_GAP = 205; // < the ~250 px a discrete bounce really rises
+let GAP_MIN0 = 135; // lane step range at the bottom…
+let GAP_MAX0 = 165;
+let GAP_MIN1 = 170; // …and at HARD_HEIGHT (max is MAX_GAP)
+let EXTRAS0 = 0.75; // extra clouds per lane step at the bottom…
+let EXTRAS1 = 0.2; // …and at HARD_HEIGHT
+let TIDY = false; // true: no two clouds may overlap on screen (checked against the drawn cloud, see VIS_UP)
+let PUFF_FULL = false; // true: breakable puffs are as wide as normal clouds
+// the drawn cloud (assets/plat_cloud.png, 0.55 tall per width): the walkable top sits at its first row of
+// pixels and the solid part ends ~0.32·w below it (the art's top 30% and last rows are empty)
+const VIS_UP = 0.03, VIS_DOWN = 0.33;
 const GEN_REACH = 0.55; // fraction of MAX_VX air-time reach the generator relies on
 const GEN_AHEAD = 700; // generate this far above the top screen edge
+
+// ── Feel presets (being tried out: 1 / 2 / 3 on the TV) ──────────────────────
+// classic = the tuning above. floaty and doodle only change the BOUNCE (higher, longer
+// hang: less gravity) and the CLOUDS (spaced out: fewer lanes and extras) so the screen
+// reads like Doodle Jump; steering stays the same. Gaps stay under each real bounce height.
+export const FEELS = {
+  classic: { label: "CLASSIC", gravity: 2400, jumpH: 260, maxVx: 700, airAccel: 3400, airDrag: 2000, maxFall: 2300, spring: 3, updraft: 1.2, lanes: 3, gaps: [135, 165, 170, 205], extras: [0.75, 0.2] },
+  floaty: { label: "FLOATY", gravity: 2000, jumpH: 320, maxVx: 700, airAccel: 3400, airDrag: 2000, maxFall: 2000, spring: 2.6, updraft: 1.0, lanes: 3, gaps: [170, 205, 215, 255], extras: [0.5, 0.15], tidy: true, puffFull: true },
+  // doodle: easy, closer-packed clouds low down that thin out to the sparse "space" levels up high
+  doodle: { label: "DOODLE", gravity: 1650, jumpH: 380, maxVx: 700, airAccel: 3400, airDrag: 2000, maxFall: 1800, spring: 2.2, updraft: 1.0, lanes: 2, gaps: [150, 190, 255, 310], extras: [0.9, 0.1], tidy: true, puffFull: true },
+};
+export let FEEL = "classic";
+/** Switch the movement + cloud-spacing preset (takes hold at once; new clouds use the new spacing). */
+export function setFeel(name) {
+  const f = FEELS[name];
+  if (!f) return false;
+  FEEL = name;
+  GRAVITY = f.gravity;
+  JUMP_H = f.jumpH;
+  JUMP_VY = Math.sqrt(2 * GRAVITY * JUMP_H);
+  SPRING_VY = Math.sqrt(2 * GRAVITY * JUMP_H * f.spring);
+  STOMP_VY = Math.sqrt(2 * GRAVITY * JUMP_H * 1.6);
+  BONK_STOMP_VY = Math.sqrt(2 * GRAVITY * JUMP_H * 2.2);
+  MAX_FALL = f.maxFall;
+  MAX_VX = f.maxVx;
+  AIR_ACCEL = f.airAccel;
+  AIR_DRAG = f.airDrag;
+  UPDRAFT_BOOST = f.updraft;
+  LANES = f.lanes;
+  [GAP_MIN0, GAP_MAX0, GAP_MIN1, MAX_GAP] = f.gaps;
+  [EXTRAS0, EXTRAS1] = f.extras;
+  TIDY = !!f.tidy;
+  PUFF_FULL = !!f.puffFull;
+  GEN_MAX_GAP = MAX_GAP;
+  return true;
+}
 const DROP_BELOW = 400; // forget platforms this far below the bottom edge
+
+// ── Jetpack power-ups (opt-in: createSim({ jetpack: true }); the game turns it on, ?jetpack=0 off) ─
+// Lakota: "doesn't boost ahead, just lets player fly near top height of screen floating going the
+// min speed needed to maintain that spot so they don't insta kill others".
+// Three items, a random one each time (Lakota, Oct 31: "back pack tanks, balloons and the hat … they
+// all are different, not just looks"): A backpack tanks, C propeller hat, D balloons. The rules are
+// shared: touch one and you fly up to near the top of the screen (JET_HOVER) and hover there for
+// JET_TICKS, rising with the screen (never ahead of it), steering left / right as usual. While flying
+// you can't stomp or be stomped, bonk or land on clouds, and the camera ignores you (a flyer never
+// speeds the screen up on the others). The last JET_SPUTTER_TICKS are the end warning — the tanks
+// cough, the propeller winds down, the balloons pop one by one — and you sink to below the camera's
+// follow line; then gravity takes over again. What differs (JET_KINDS, small on purpose): how briskly
+// you climb, how much you bob, the balloons' sideways sway, and the shape of the sink at the end.
+// Where they come from (rare: none in the first JET_FIRST_TICKS, never two at once, JET_GAP_TICKS+
+// apart, not while someone flies; away from the leader, so they're a catch-up), half and half:
+//   a bubble  floats in low on the screen (JET_BAND), holding its place there, drifting sideways;
+//   a cloud   the item sits on a cloud in the middle of the screen (JET_CLOUD_BAND) and rides it down
+//             as the screen scrolls (gone when the cloud leaves the screen).
+// Either way you see which item it is before you touch it (the renderer draws it).
+// Testing: createSim({ jetpack: "often" }) (?jetpack=often): one every few seconds, up to two out at
+// once, even while someone flies, taking turns A → C → D and bubble ↔ cloud; { item: "D" } (or
+// { often: true, item: "D" }; ?jetitem=D) makes every one that item.
+// Extra state: state.jet = { items, nextAt, nextId, often, force } (null when off); an item is
+//   { id, kind, on: "bubble", x, y, frac, vx, age }  or  { id, kind, on: "cloud", x, y, pid, dx, age }
+// (pid = the cloud's platform id, dx = where on it); player.jet = flight ticks left (0 = not flying),
+// player.jetKind = the item being flown ("A" | "C" | "D"; null when not flying).
+// Events (all carry kind): jetSpawn (+ on), jetGet, jetSputter, jetPop (balloons), jetEnd, jetGone (+ off
+// when its cloud scrolled away unseen).
+export const JET_TICKS = 300; // 5 s of flight
+export const JET_SPUTTER_TICKS = 60; // the last second of it
+export const JET_ITEM_R = 44; // an item's touch radius (the bubble's size)
+export const JET_ITEM_TICKS = 480; // an item nobody takes goes after 8 s
+export const JET_ITEM_ARM_TICKS = 36; // 0.6 s to see a new item before it can be taken
+export const JET_SIT = 44; // a cloud item's centre, above its cloud's top (it sits on the cloud)
+export const JET_KIND_KEYS = ["A", "C", "D"];
+const JET_DEFAULT_KIND = "A"; // a flight or item without a kind (older QA scripts set player.jet by hand)
+const JET_FIRST_TICKS = 900; // none in the first 15 s
+const JET_GAP_TICKS = 1200; // ≥ 20 s (+ up to 8 s) from one item going to the next appearing
+const JET_CLOUD_SHARE = 0.5; // this share of them sit on a cloud (the rest float in in a bubble)
+const JET_BAND = [0.28, 0.4]; // a bubble floats at this height on the screen (fraction, from the bottom)…
+const JET_X = [300, 1860]; // …and between these x (it turns back at them: clear of the TV's standings on the left)
+const JET_CLOUD_BAND = [0.42, 0.66]; // a cloud item's cloud top starts in this band (then rides down with it)
+const JET_OFTEN = { first: 180, every: 240, max: 2 }; // ?jetpack=often: first at 3 s, then every 4 s, ≤ 2 out
+const JET_HOVER = 0.72; // flying: feet at 72 % of the screen height…
+const JET_SINK = 0.56; // …easing down to 56 % at the end (head under the follow line for a puffball)
+const JET_SINK_VY = 260; // px/s: fastest sink, relative to the screen
+const JET_DROP_VY = 150; // px/s: every flight lets go sinking this fast (relative to the screen); then gravity
+/**
+ * How each item flies. climbVy = fastest rise toward the hover height relative to the screen (px/s),
+ * k = how briskly it settles there (1/s), bob = up-and-down (px) at bobHz, sway = side-to-side (px) at
+ * swayHz. Bob and sway are smooth position offsets (fed forward, so they never add up to a drift).
+ * room = how far the worn item reaches above the head (jetpack-look.js art: the propeller 7 art px, the
+ * balloons 21.5): a tall doodle hovers that much lower if it must, so the item never pokes off the top.
+ * The end (the last second): tanks sink straight down, coughing; the propeller winds down (its bob
+ * fading); the balloons drop a step at each pop (jetBalloons).
+ */
+export const JET_KINDS = {
+  A: { name: "tanks", climbVy: 900, k: 5, bob: 2, bobHz: 2.4, sway: 0, swayHz: 0, room: 0 }, // steady, solid, a bit quicker up
+  C: { name: "hat", climbVy: 720, k: 4, bob: 9, bobHz: 0.9, sway: 0, swayHz: 0, room: 41 }, // floaty, a gentle bob
+  D: { name: "balloons", climbVy: 560, k: 3.2, bob: 16, bobHz: 0.55, sway: 30, swayHz: 0.3, room: 124 }, // the most bob + a sway
+};
+const JET_TOP_GAP = 10; // px kept free above the highest point of a flyer (body + item + bob)
+const JET_RAMP_S = 0.8; // bob / sway ease in over the first 0.8 s of a flight
+export const JET_POP_AT = 29; // balloons: the 1st pops with jetSputter, the 2nd at this many ticks left, the 3rd with jetEnd
+const JET_NAMES = { A: "A", C: "C", D: "D", TANKS: "A", PACK: "A", BACKPACK: "A", HAT: "C", BEANIE: "C", PROPELLER: "C", BALLOONS: "D", BALLOON: "D" };
+/** "A" | "C" | "D" (or a name: tanks, hat, balloons…) → the item key; anything else → null. */
+export const jetKindKey = (v) => JET_NAMES[String(v == null ? "" : v).trim().toUpperCase()] || null;
+/** Balloons still up for a balloon flight with `left` ticks to go: 3, then 2, then 1, then 0 at the end. */
+export const jetBalloons = (left) => (left >= JET_SPUTTER_TICKS ? 3 : left > JET_POP_AT ? 2 : left > 0 ? 1 : 0);
 
 // ── Bots ──────────────────────────────────────────────────────────────────────
 // Bots pick the highest platform they can still land on (springs liked, puffs and
@@ -187,6 +300,7 @@ const BOT_AGGRO_RAMP_TICKS = 1500; // …and reach full aggression by 25 s
 
 const clamp = (n, lo, hi) => (n < lo ? lo : n > hi ? hi : n);
 const lerp = (a, b, t) => a + (b - a) * t;
+const TAU = Math.PI * 2;
 
 /** Wrap an x coordinate into [0, WORLD_W). */
 function wrapX(x) {
@@ -259,7 +373,7 @@ export function genReach(gap) {
 }
 
 /** The maximum vertical gap the generator will ever leave between linked clouds. */
-export const GEN_MAX_GAP = MAX_GAP;
+export let GEN_MAX_GAP = MAX_GAP;
 
 /** Updraft strength 0..1 for a cloud at world height y (1 = at the bottom edge). */
 export function updraft(state, y) {
@@ -284,10 +398,15 @@ function addPlatform(state, x, y, w, kind, d) {
 }
 
 /** Does a new cloud at (x, y, w) visually overlap an existing one? */
-function overlaps(state, x, y, w) {
+function overlaps(state, x, y, w, ownRange = 0) {
   for (const p of state.platforms) {
-    if (Math.abs(p.y - y) > 46) continue;
-    const reach = (p.w + w) / 2 + 30 + (p.range || 0);
+    if (TIDY) {
+      // the drawn cloud reaches VIS_UP·w above its walkable top and VIS_DOWN·w below it (+ springs' coil)
+      const top = y + VIS_UP * w, bot = y - VIS_DOWN * w;
+      const pTop = p.y + VIS_UP * p.w + (p.kind === "spring" ? 70 : 0), pBot = p.y - VIS_DOWN * p.w;
+      if (bot >= pTop + 12 || pBot >= top + 12) continue;
+    } else if (Math.abs(p.y - y) > 46) continue;
+    const reach = (p.w + w) / 2 + 30 + (p.range || 0) + ownRange;
     if (Math.abs(wrapDelta(p.x - x)) < reach) return true;
   }
   return false;
@@ -317,26 +436,28 @@ function generateUpTo(state, topY) {
     const driftBudget = kind === "drift" ? lerp(60, 130, d) : 0;
     const reach = Math.max(40, genReach(gap) - lane.range - driftBudget);
     let x = lane.x;
-    for (let tries = 0; tries < 5; tries++) {
+    for (let tries = 0; tries < (TIDY ? 14 : 5); tries++) {
       const sign = rand(state) < 0.5 ? -1 : 1;
       x = wrapX(lane.x + sign * reach * (0.15 + 0.85 * rand(state)));
-      if (!overlaps(state, x, y, w)) break;
+      if (!overlaps(state, x, y, w, driftBudget)) break;
     }
     const p = addPlatform(state, x, y, w, kind, d);
 
     // Extras between the previous lane cloud and this one, each within reach of `p`.
-    const extras = lerp(0.75, 0.2, d) + rand(state);
+    const extras = lerp(EXTRAS0, EXTRAS1, d) + rand(state);
     for (let i = 1; i <= extras; i++) {
       const ey = lane.y + gap * (0.15 + 0.7 * rand(state)) - 70 * (i - 1);
       if (y - ey > MAX_GAP - 10) break; // keep the climb to `p` within one bounce
       const er = rand(state);
       const ekind =
         er < 0.04 ? "spring" : er < 0.04 + lerp(0.2, 0.6, d) ? "puff" : er < 0.06 + lerp(0.3, 0.85, d) ? "drift" : "cloud";
-      const ew = (ekind === "puff" ? lerp(190, 130, d) : lerp(240, 150, d)) * (0.85 + 0.3 * rand(state));
+      const ew = (ekind === "puff" ? (PUFF_FULL ? lerp(290, 165, d) : lerp(190, 130, d)) : lerp(240, 150, d)) * (0.85 + 0.3 * rand(state));
       const eDrift = ekind === "drift" ? lerp(60, 130, d) : 0;
       const er2 = Math.max(0, genReach(y - ey) - eDrift - (p.range || 0));
-      const ex = wrapX(p.x + (rand(state) * 2 - 1) * er2);
-      if (overlaps(state, ex, ey, ew)) continue;
+      // tidy feels: a few tries to find a free spot before giving the extra up
+      let ex = wrapX(p.x + (rand(state) * 2 - 1) * er2);
+      for (let tries = 1; TIDY && tries < 6 && overlaps(state, ex, ey, ew, eDrift); tries++) ex = wrapX(p.x + (rand(state) * 2 - 1) * er2);
+      if (overlaps(state, ex, ey, ew, eDrift)) continue;
       addPlatform(state, ex, ey, ew, ekind, d);
     }
 
@@ -362,13 +483,178 @@ function moveDrifts(state) {
   }
 }
 
+/** Ticks from one jetpack item going (taken / gone) to the next one appearing. */
+function jetGap(state) {
+  return JET_GAP_TICKS + Math.round(hash01(state.seed ^ 0x9a9, state.tick, 3) * 480);
+}
+
+/**
+ * A flight's wobble with `left` ticks to go: vertical offset `by` (+ its speed `bv`) and the sideways
+ * speed `sv` (the sway's offset is never stored: x just gets its derivative). Pure: same in, same out.
+ */
+function jetWobble(kind, left) {
+  const K = JET_KINDS[kind] || JET_KINDS[JET_DEFAULT_KIND];
+  const t = (JET_TICKS - left) * TICK; // seconds flown
+  const ramp = Math.min(1, t / JET_RAMP_S);
+  let bob = K.bob * ramp, hz = K.bobHz;
+  if (left < JET_SPUTTER_TICKS) {
+    const u = left / JET_SPUTTER_TICKS;
+    if (kind === "A") { bob = 6 * u; hz = 5; } // the tanks cough: little jerks, dying away
+    else if (kind === "C") bob *= u; // the propeller runs down: the bob fades out
+    else bob *= jetBalloons(left) / 3; // fewer balloons, less bob
+  }
+  const w = TAU * hz, ws = TAU * K.swayHz;
+  return {
+    by: bob * Math.sin(w * t),
+    bv: bob * w * Math.cos(w * t),
+    sv: K.sway * ramp * ws * Math.cos(ws * t),
+  };
+}
+
+/**
+ * 1 = hovering, 0 = sunk: how far down the end warning has brought a flight with `left` ticks to go.
+ * Tanks and hat sink steadily (coughing / gliding); the balloons drop a step at each pop. All of them end
+ * at about the same height (and jetEnd lets go at JET_DROP_VY), so no item leaves you better placed.
+ */
+function jetLift(kind, left) {
+  if (left >= JET_SPUTTER_TICKS) return 1;
+  if (kind === "D") return [0.12, 0.12, 0.55, 1][jetBalloons(left)];
+  return left / JET_SPUTTER_TICKS;
+}
+
+/** Where a new item goes on the screen: a bubble spot (always) away from `leader`. */
+function jetBubbleSpot(state, leader) {
+  let bx = 0, far = -1;
+  for (let k = 0; k < 4; k++) {
+    const x = lerp(JET_X[0] + 20, JET_X[1] - 20, hash01(state.seed ^ 0x1e7ac, state.tick, k));
+    const d = leader ? Math.abs(wrapDelta(x - leader.x)) : 0;
+    if (d > far) {
+      far = d;
+      bx = x;
+    }
+  }
+  const frac = Math.round(lerp(JET_BAND[0], JET_BAND[1], hash01(state.seed ^ 0x2f00d, state.tick, 7)) * 1000) / 1000;
+  const vx = (hash01(state.seed ^ 0x3b0b, state.tick, 9) < 0.5 ? -1 : 1) * Math.round(lerp(25, 55, hash01(state.seed ^ 0x3b0b, state.tick, 11)));
+  return { on: "bubble", x: Math.round(bx), y: state.cameraY + VIEW_H * frac, frac, vx };
+}
+
+/**
+ * …or a cloud spot: a solid cloud (plain or drifting; not the start cloud, a spring or a puff) whose top
+ * is in JET_CLOUD_BAND of the screen and that stays clear of the standings, the one farthest from the
+ * leader; somewhere near its middle. null when none fits (then it's a bubble after all).
+ */
+function jetCloudSpot(state, leader) {
+  let best = null, far = -1;
+  for (const c of state.platforms) {
+    if (c.broken || c.base || (c.kind !== "cloud" && c.kind !== "drift")) continue;
+    const frac = (c.y - state.cameraY) / VIEW_H;
+    if (frac < JET_CLOUD_BAND[0] || frac > JET_CLOUD_BAND[1]) continue;
+    const reach = (c.range || 0) + 30;
+    const cx = c.kind === "drift" ? c.x0 : c.x;
+    if (cx - reach < JET_X[0] || cx + reach > JET_X[1]) continue;
+    if (state.jet.items.some((it) => it.pid === c.id)) continue;
+    const d = leader ? Math.abs(wrapDelta(c.x - leader.x)) : 0;
+    if (d > far) {
+      far = d;
+      best = c;
+    }
+  }
+  if (!best) return null;
+  const half = Math.max(0, best.w / 2 - 50);
+  const dx = Math.round((hash01(state.seed ^ 0x5c1d, state.tick, 19) * 2 - 1) * half * 0.6);
+  return { on: "cloud", x: wrapX(best.x + dx), y: best.y + JET_SIT, pid: best.id, dx };
+}
+
+/** A new item: which one (forced, taking turns when often, else random) and where (bubble / cloud). */
+function jetSpawn(state, events) {
+  const J = state.jet;
+  const n = J.nextId;
+  const kind = J.force || (J.often ? JET_KIND_KEYS[n % 3] : JET_KIND_KEYS[Math.floor(hash01(state.seed ^ 0x6b1d, state.tick, 13) * 3)]);
+  const cloud = J.often ? n % 2 === 1 : hash01(state.seed ^ 0x70e, state.tick, 17) < JET_CLOUD_SHARE;
+  // away from the leader, so it's a catch-up
+  let leader = null;
+  for (const p of state.players) if (p.alive && (!leader || p.y > leader.y)) leader = p;
+  const spot = (cloud && jetCloudSpot(state, leader)) || jetBubbleSpot(state, leader);
+  const it = { id: J.nextId++, kind, ...spot, age: 0 };
+  J.items.push(it);
+  events.push({ type: "jetSpawn", id: it.id, kind, on: it.on, x: it.x, y: it.y });
+}
+
+/** The jetpack items: appear (rarely), float / ride their cloud, get taken by a touch, go when old. */
+function stepJet(state, events) {
+  const J = state.jet;
+  const ps = state.players;
+  if (J.often) {
+    // testing: every few seconds, a couple out at once, flyers or not
+    if (state.tick >= J.nextAt && J.items.length < JET_OFTEN.max) {
+      jetSpawn(state, events);
+      J.nextAt = state.tick + JET_OFTEN.every;
+    }
+  } else if (!J.items.length && state.tick >= J.nextAt && !ps.some((p) => p.alive && p.jet > 0)) {
+    // a new one: none out, nobody flying, and its time has come
+    jetSpawn(state, events);
+  }
+  for (let i = J.items.length - 1; i >= 0; i--) {
+    const it = J.items[i];
+    it.age++;
+    let off = false;
+    if (it.on === "cloud") {
+      // riding its cloud (drifts too); gone once the cloud has scrolled off the bottom (or broke / was dropped)
+      let c = null;
+      for (const q of state.platforms) if (q.id === it.pid) { c = q; break; }
+      if (!c || c.broken || c.y + JET_SIT + JET_ITEM_R < state.cameraY) off = true;
+      else {
+        it.x = wrapX(c.x + it.dx);
+        it.y = c.y + JET_SIT;
+      }
+    } else {
+      it.x += it.vx * TICK;
+      if ((it.x < JET_X[0] && it.vx < 0) || (it.x > JET_X[1] && it.vx > 0)) it.vx = -it.vx;
+      it.y = state.cameraY + VIEW_H * it.frac; // it keeps its place on the screen
+    }
+    // taken by whoever touches it (body box vs. item), once it has been visible a moment
+    let taker = null, best = Infinity;
+    if (!off && it.age >= JET_ITEM_ARM_TICKS) {
+      for (const p of ps) {
+        if (!p.alive || p.jet > 0 || p.dazedTicks > 0 || p.springHold > 0) continue;
+        const half = bodyH(p) / 2;
+        const dx = Math.abs(wrapDelta(p.x - it.x));
+        const dy = Math.abs(p.y - PLAYER_R + half - it.y);
+        if (dx > PLAYER_R + JET_ITEM_R * 0.8 || dy > half + JET_ITEM_R * 0.8) continue;
+        if (dx + dy < best) {
+          best = dx + dy;
+          taker = p;
+        }
+      }
+    }
+    const kind = jetKindKey(it.kind) || JET_DEFAULT_KIND;
+    if (taker) {
+      taker.jet = JET_TICKS;
+      taker.jetKind = kind;
+      taker.bonkTicks = 0;
+      taker.stompSafeTicks = 0;
+      taker.squash = 1;
+      J.items.splice(i, 1);
+      if (!J.often) J.nextAt = state.tick + jetGap(state);
+      events.push({ type: "jetGet", id: it.id, kind, on: it.on || "bubble", playerId: taker.playerId, x: it.x, y: it.y });
+    } else if (off || it.age >= JET_ITEM_TICKS) {
+      J.items.splice(i, 1);
+      if (!J.often) J.nextAt = state.tick + jetGap(state);
+      events.push({ type: "jetGone", id: it.id, kind, on: it.on || "bubble", x: it.x, y: it.y, ...(off ? { off: true } : {}) });
+    }
+  }
+}
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 /**
- * Build a fresh round. players: [{ playerId, isBot }], seed: number.
+ * Build a fresh round. players: [{ playerId, isBot }], seed: number, jetpack: true for the jetpack
+ * power-ups (off unless asked for, so a plain round is exactly as before); "often" (or { often: true })
+ * for testing, { item: "A" | "C" | "D" } to make every one that item (see "Jetpack" above).
  * Everyone spawns spread out on a wide starting cloud at the bottom of the screen.
  */
-export function createSim({ players, seed }) {
+export function createSim({ players, seed, jetpack = false }) {
+  const jo = jetpack === "often" ? { often: true } : jetpack && typeof jetpack === "object" ? jetpack : jetpack ? {} : null;
   const state = {
     tick: 0,
     seed: seed >>> 0,
@@ -382,6 +668,7 @@ export function createSim({ players, seed }) {
     platforms: [],
     nextId: 0,
     gen: { lanes: [] },
+    jet: jo ? { items: [], nextAt: jo.often ? JET_OFTEN.first : JET_FIRST_TICKS, nextId: 0, often: !!jo.often, force: jetKindKey(jo.item) } : null,
   };
 
   // The starting cloud: wide enough that nobody misses it.
@@ -415,6 +702,8 @@ export function createSim({ players, seed }) {
       bestY: y,
       stomps: 0,
       stompedBy: null,
+      jet: 0,
+      jetKind: null,
     });
   });
 
@@ -475,8 +764,9 @@ export function stepSim(state, inputs) {
       continue;
     }
 
-    // Bonk on the rising edge of the button.
-    if (bonk && !p.bonkHeld && p.bonkCooldown === 0 && p.dazedTicks === 0) {
+    // Bonk on the rising edge of the button (not while flying a jetpack).
+    const jetting = p.jet > 0;
+    if (!jetting && bonk && !p.bonkHeld && p.bonkCooldown === 0 && p.dazedTicks === 0) {
       p.bonkTicks = BONK_TICKS;
       p.bonkCooldown = BONK_COOLDOWN_TICKS;
       p.vy = Math.min(p.vy, -BONK_VY);
@@ -492,13 +782,37 @@ export function stepSim(state, inputs) {
     if (ux > 0.2) p.facing = 1;
     else if (ux < -0.2) p.facing = -1;
 
-    // Vertical: gravity; a dive holds at least BONK_VY downward.
-    p.vy -= GRAVITY * TICK;
-    if (p.bonkTicks > 0) {
-      p.vy = Math.min(p.vy, -BONK_VY);
-      p.bonkTicks--;
+    if (jetting) {
+      // Jetpack: settle on the hover height near the top of the screen and ride up with it — the
+      // screen's own speed plus only what it takes to get there (never ahead of it once there), plus
+      // the item's own bob / sway (smooth offsets around that spot, see JET_KINDS).
+      p.jet--;
+      const kind = jetKindKey(p.jetKind) || JET_DEFAULT_KIND;
+      const K = JET_KINDS[kind];
+      const w = jetWobble(kind, p.jet);
+      // near the top: 72 % (a tall doodle with balloons a bit lower, so they stay on the screen)
+      const hover = Math.min(JET_HOVER, (VIEW_H - JET_TOP_GAP - bodyH(p) - K.room - K.bob) / VIEW_H);
+      const frac = lerp(JET_SINK, hover, jetLift(kind, p.jet));
+      const target = state.cameraY + VIEW_H * frac + PLAYER_R + w.by; // where the centre (feet + r) should be
+      p.vy = state.camVy + w.bv + clamp((target - p.y) * K.k, -JET_SINK_VY, K.climbVy);
+      p.x += w.sv * TICK; // the balloons' sway (on top of the steering)
+      const ev = { playerId: p.playerId, kind, x: p.x, y: p.y };
+      if (p.jet === JET_SPUTTER_TICKS - 1) events.push({ type: "jetSputter", ...ev });
+      if (kind === "D" && p.jet === JET_POP_AT) events.push({ type: "jetPop", ...ev, left: 1 });
+      if (p.jet === 0) {
+        events.push({ type: "jetEnd", ...ev });
+        p.jetKind = null;
+        p.vy = state.camVy - JET_DROP_VY; // everyone lets go the same way, whatever they flew
+      }
+    } else {
+      // Vertical: gravity; a dive holds at least BONK_VY downward.
+      p.vy -= GRAVITY * TICK;
+      if (p.bonkTicks > 0) {
+        p.vy = Math.min(p.vy, -BONK_VY);
+        p.bonkTicks--;
+      }
+      if (p.vy < -MAX_FALL) p.vy = -MAX_FALL;
     }
-    if (p.vy < -MAX_FALL) p.vy = -MAX_FALL;
 
     p.x = wrapX(p.x + p.vx * TICK);
     p.y += p.vy * TICK;
@@ -510,11 +824,11 @@ export function stepSim(state, inputs) {
   const stomper = new Array(ps.length).fill(false);
   for (let i = 0; i < ps.length; i++) {
     const a = ps[i];
-    if (!a.alive || a.dazedTicks > 0 || stomped[i]) continue;
+    if (!a.alive || a.dazedTicks > 0 || stomped[i] || a.jet > 0) continue; // flyers can't stomp…
     for (let j = 0; j < ps.length; j++) {
       if (j === i || stomped[j] || stomper[j]) continue;
       const b = ps[j];
-      if (!b.alive || b.stompSafeTicks > 0) continue;
+      if (!b.alive || b.stompSafeTicks > 0 || b.jet > 0) continue; // …or be stomped
       const relPrev = prevY[i] - prevY[j];
       const relNow = a.y - b.y;
       const th = headTh(b);
@@ -551,7 +865,7 @@ export function stepSim(state, inputs) {
   // 3. Platform landings: falling feet that crossed a cloud's top = automatic bounce.
   for (let i = 0; i < ps.length; i++) {
     const p = ps[i];
-    if (!p.alive || stomper[i] || p.vy > 0 || p.springHold > 0) continue;
+    if (!p.alive || stomper[i] || p.vy > 0 || p.springHold > 0 || p.jet > 0) continue; // flyers fly through
     const feetPrev = prevY[i] - PLAYER_R;
     const feet = p.y - PLAYER_R;
     let best = null;
@@ -595,7 +909,7 @@ export function stepSim(state, inputs) {
     state.cameraY += state.camSpeed * TICK;
   }
   let leaderY = -Infinity;
-  for (const p of ps) if (p.alive && p.y > leaderY) leaderY = p.y;
+  for (const p of ps) if (p.alive && !(p.jet > 0) && p.y > leaderY) leaderY = p.y; // a flyer never pulls the screen up
   const over = leaderY - CAM_FOLLOW_LINE - state.cameraY;
   if (over > 0) {
     const cap = lerp(CAM_FOLLOW_VMIN, CAM_FOLLOW_VMAX, Math.min(1, state.tick / CAM_CALM_TICKS));
@@ -613,6 +927,9 @@ export function stepSim(state, inputs) {
       events.push({ type: "out", playerId: p.playerId, x: p.x, y: state.cameraY });
     }
   }
+
+  // 6b. Jetpack bubbles: appear, float, get taken, pop.
+  if (state.jet) stepJet(state, events);
 
   // 7. Level: generate ahead, forget what's far below.
   generateUpTo(state, state.cameraY + VIEW_H + GEN_AHEAD);
@@ -665,12 +982,26 @@ function botSkill(state, playerId) {
   return lerp(BOT_SKILL_MIN, 1, hash01(state.seed, playerId, 0x51c1));
 }
 
+/** Does this bot go after jetpack items this round? (fixed per bot: sharper bots more often) */
+function jetKeen(state, playerId, skill) {
+  return hash01(state.seed ^ 0x6e7, playerId, 0x51) < 0.35 + 0.65 * skill;
+}
+
+/** The jetpack item sitting on cloud `c` that a bot could still take, or null. */
+function jetItemOn(state, c) {
+  const J = state.jet;
+  if (!J) return null;
+  for (const it of J.items) if (it.on === "cloud" && it.pid === c.id && it.age < JET_ITEM_TICKS - 30) return it;
+  return null;
+}
+
 /**
  * Choose the cloud to land on next: the best-scoring one this bot can still reach
  * before its feet fall past it. Returns { plat, t, cx } or null.
  */
 function chooseTarget(state, p, skill) {
   const feet = p.y - PLAYER_R;
+  const keen = !!(state.jet && state.jet.items.length) && jetKeen(state, p.playerId, skill);
   const fumble = hash01(state.seed ^ 0x7f4a7c15, state.tick, p.playerId) < BOT_FUMBLE * (1 - skill);
   // Judgement noise per cloud; a weak bot occasionally misjudges badly (fumble).
   const noiseAmp = fumble ? 700 : lerp(160, 25, skill);
@@ -693,6 +1024,7 @@ function chooseTarget(state, p, skill) {
     if (c.kind === "spring") score += 260;
     if (c.kind === "puff") score -= 90;
     if (c.kind === "drift") score -= 25;
+    if (keen && jetItemOn(state, c)) score += 220; // a jetpack item sits on it
     // Where will the bottom edge be when we land? Skip clouds it will have passed,
     // and dislike ones that will be uncomfortably close to it.
     const camAt = state.cameraY + state.camVy * t;
@@ -735,6 +1067,23 @@ function nextCloudUp(state, c) {
 export function botInput(state, playerId) {
   const p = state.players.find((q) => q.playerId === playerId);
   if (!p || !p.alive || state.finished) return { x: 0, bonk: 0 };
+  // Flying a jetpack: no bonks; toward the end, drift over a cloud below for the drop.
+  if (p.jet > 0) {
+    let x = 0;
+    if (p.jet < JET_SPUTTER_TICKS + 30) {
+      let near = null, nd = Infinity;
+      for (const c of state.platforms) {
+        if (c.broken || c.kind === "puff" || c.y > p.y - PLAYER_R - 40 || c.y < state.cameraY + 140) continue;
+        const d = Math.abs(wrapDelta(c.x - p.x)) - c.w * 0.4 + (p.y - c.y) * 0.3;
+        if (d < nd) {
+          nd = d;
+          near = c;
+        }
+      }
+      if (near) x = clamp(wrapDelta(near.x - p.x) / 160, -1, 1);
+    }
+    return { x, bonk: 0 };
+  }
   const skill = botSkill(state, playerId);
   const ai = p.ai || (p.ai = { targetId: -1, thinkAt: 0, aimOff: 0 });
   const feet = p.y - PLAYER_R;
@@ -757,7 +1106,9 @@ export function botInput(state, playerId) {
       const next = nextCloudUp(state, c);
       const lean = next ? clamp(wrapDelta(next.x - c.x), -half, half) : 0;
       const err = (hash01(state.seed, state.tick, playerId ^ 0x3c3c) - 0.5) * c.w * lerp(0.6, 0.2, skill);
-      ai.aimOff = clamp(lean + err, -half - 10, half + 10);
+      const item = jetItemOn(state, c);
+      // a jetpack item on it: land on the item (a keen bot), else on the side toward the next cloud up
+      ai.aimOff = item && jetKeen(state, playerId, skill) ? clamp(item.dx + err * 0.3, -half - 10, half + 10) : clamp(lean + err, -half - 10, half + 10);
     }
     ai.targetId = newId;
     target = pick ? pick.plat : null;
@@ -786,11 +1137,29 @@ export function botInput(state, playerId) {
     if (near) x = clamp(wrapDelta(near.x - p.x) / 120, -1, 1);
   }
 
+  // A jetpack item (bubble or on a cloud) this bounce surely reaches on the way up: go for it (sharper
+  // bots more often).
+  const J = state.jet;
+  if (J && J.items.length && p.vy > 0 && p.dazedTicks === 0 && jetKeen(state, playerId, skill)) {
+    for (const it of J.items) {
+      const dyc = it.y - (p.y - PLAYER_R + bodyH(p) / 2); // item above the body's middle
+      const disc = p.vy * p.vy - 2 * GRAVITY * dyc;
+      if (it.age < JET_ITEM_ARM_TICKS - 20 || dyc <= -30 || disc < 0) continue;
+      const t1 = Math.max(0.05, (p.vy - Math.sqrt(disc)) / GRAVITY); // until we're level with it, rising
+      const dx = wrapDelta(it.x - p.x);
+      if (Math.abs(dx) < airReach(Math.sign(dx) * p.vx, t1) * 0.85 + PLAYER_R) {
+        const want = clamp(dx / t1, -MAX_VX, MAX_VX);
+        x = clamp(want / MAX_VX + (want - p.vx) / 900, -1, 1);
+        break;
+      }
+    }
+  }
+
   // Bonk: dive at a rival lined up below, if it's safe to spend the height.
   let bonk = 0;
   if (p.bonkCooldown === 0 && p.bonkTicks === 0 && p.dazedTicks === 0 && p.y - 520 > state.cameraY + 160) {
     for (const r of state.players) {
-      if (r === p || !r.alive || r.dazedTicks > 0 || r.stompSafeTicks > 0) continue;
+      if (r === p || !r.alive || r.dazedTicks > 0 || r.stompSafeTicks > 0 || r.jet > 0) continue;
       const dy = p.y - r.y;
       if (dy < HEAD_TH + 10 || dy > 430) continue;
       const tHit = (dy - HEAD_TH) / Math.max(300, BONK_VY + r.vy);
