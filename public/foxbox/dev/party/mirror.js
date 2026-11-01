@@ -10,7 +10,8 @@
  *   livePlayer(view, {game, own, onOver})  the same for LIVE games (Sky, Snowball, Row: view.live): every tick goes
  *                                     straight to view.push(tick, w) (the game predicts this TV's own players
  *                                     and smooths everyone else itself), this TV's phones' input to
- *                                     view.input(playerId, {a0, a1, b0, b1}) the moment it arrives
+ *                                     view.input(playerId, {a0, a1, b0, b1}) the moment it arrives; a phone's
+ *                                     {t:"game"} input (NONAME) to view.fromPhone(playerId, m) via player.game()
  *   screenUi({game})                  an extra TV's own notes: "CONNECTED TO …'S GAME" corner tag, the TV chip in the
  *                                     lobby, and a card for waiting / switching / ended
  *   bossBadge({lobby, room, party, tvs, max})  the main TV's lobby chip: public / private, the invite code + link
@@ -150,6 +151,19 @@ export function livePlayer(view, { game = "", own = [], onOver = null } = {}) {
         console.error("[mirror] view.input failed", e);
       }
     },
+    /** KNIGHT: an own phone's {t:"game"} message for a view that takes them (view.fromPhone, NONAME's {type:"in"}):
+     *  returns the main TV's tick the view applied it at (host.js → net-p2p.js stamps it as m.at), else null. */
+    game(pid, m, how) {
+      if (stopped || typeof view.fromPhone !== "function") return null;
+      stats.inputs++;
+      try {
+        const at = view.fromPhone(pid, m, how);
+        return typeof at === "number" && Number.isFinite(at) ? Math.round(at) : null;
+      } catch (e) {
+        console.error("[mirror] view.fromPhone failed", e);
+        return null;
+      }
+    },
     stop() {
       stopped = true;
       clearInterval(watch);
@@ -166,6 +180,7 @@ const CSS = `
 .fbx-tv2-chip b { color: #ffd23f; font-weight: 400; }
 .fbx-tv2-live { left: 1.5rem; top: 1.5rem; padding: 0.55rem 0.9rem; font-size: 0.75rem; }
 .fbx-tv2-live.fbx-tv2-top { left: 50%; top: 0.8rem; transform: translateX(-50%); }
+.fbx-tv2-live.fbx-tv2-bottom { top: auto; bottom: 1.2rem; } /* KNIGHT: NONAME's HUD has the whole top band */
 body.golf-overhead .fbx-tv2-live.fbx-tv2-top { top: calc(8.4vh + 0.4rem); } /* golf's BIRD'S EYE label has the top middle (its screen view sets the class) */
 .fbx-tv2-live::before { content: ""; display: inline-block; width: 0.7rem; height: 0.7rem; margin-right: 0.6rem; background: #ff5a3c; vertical-align: -0.05rem; }
 .fbx-tv2-card { left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 2.2rem 2.8rem; font-size: 1.5rem; line-height: 1.6; text-align: center; max-width: 70rem; pointer-events: auto; }
@@ -279,6 +294,7 @@ export function screenUi({ game = "" } = {}) {
       if (name == null) return;
       chip.hidden = true;
       live.classList.toggle("fbx-tv2-top", at === "top");
+      live.classList.toggle("fbx-tv2-bottom", at === "bottom"); // KNIGHT
       // Lakota: "CONNECTED TO <HOST NAME>'S GAME" (the host's name from the HOST steps)
       live.textContent = name ? `CONNECTED TO ${String(name).toUpperCase()}’S GAME`
         : group ? `CONNECTED TO ${String(group).toUpperCase()}` : "CONNECTED TO THE HOST’S GAME";

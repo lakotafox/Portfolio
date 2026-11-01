@@ -104,8 +104,8 @@ const GAMES = [
       { id: "caves", name: "CRYSTAL CAVES", open: false },
     ],
     knights: ["A", "B", "C", "D", "E", "F", "G", "I"], // the art's ids (CONTRACT "Art APIs"); default = by slot, like game.js
-    // multi-TV: single-TV for now (no playMirror): an extra TV shows this card during the round (mirror.js elsewhere)
-    elsewhere: "NONAME plays on the host's TV for now",
+    // multi-TV: the module's playMirror shows the round live on every TV (own knights predicted on their own TV); its
+    // phones' {type:"in"} reach that TV's view first (FOXBOX_HOUSE_GAME, see mirrorGameInput) and the main TV with m.at
     swords: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
     card: {
       chip: "Co-op Platformer",
@@ -2333,6 +2333,7 @@ async function initTwoTvs() {
     return;
   }
   if (mirror) mirror.ui = mirrorKit.screenUi({ game: GAME.name });
+  if (mirror) globalThis.FOXBOX_HOUSE_GAME = mirrorGameInput; // KNIGHT: own phones' game input → this TV's live view first
 }
 function mirrorMsg(msg) {
   switch (msg.t) {
@@ -2493,7 +2494,7 @@ function mirrorRound(m) {
   mirror.own = new Set(own);
   // "CONNECTED TO <HOST>'S GAME": the host's name from the HOST steps (golf's banner has the corner: top middle there);
   // no host name (web TV mode, or left blank): "CONNECTED TO <GROUP>"
-  mirror.ui.playing(mirror.party?.host || houseName("") || "", { at: GAME.id === "golf" ? "top" : "corner", group: mirror.party?.group || "" });
+  mirror.ui.playing(mirror.party?.host || houseName("") || "", { at: GAME.id === "golf" ? "top" : GAME.id === "knight" ? "bottom" : "corner", group: mirror.party?.group || "" }); // KNIGHT: bottom left
   $("cd-num").textContent = "GO!";
   $("cd-sub").textContent = "";
   show("countdown");
@@ -2509,6 +2510,26 @@ function mirrorInput(msg) {
   if (pid == null || !mirror.own.has(pid)) return;
   if (mirror.player && mirror.player.input) mirror.player.input(pid, msg);
 }
+// ── KNIGHT (multi-TV) ──
+/**
+ * One of THIS TV's phones sent the running game a {t:"game"} message that its live view takes (NONAME's {type:"in"}
+ * buttons). net-p2p.js calls this (globalThis.FOXBOX_HOUSE_GAME) synchronously, before it passes the phone's message
+ * on to the main TV: the view moves its knight at once (view.fromPhone) and returns the main TV's tick it applied the
+ * input at; net-p2p.js adds that as m.at, and the main TV (the referee) applies it at that same tick. how = "p2p" (the
+ * message goes on stamped) | "relay" (the phone's link is the relay: the main TV already has its own copy, unstamped).
+ * null = not this TV's player in a live round (the message goes on unchanged).
+ */
+function mirrorGameInput(id, gm, how) {
+  if (!mirror || !mirror.view || !mirror.view.live || phase !== "playing" || !round || !gm || typeof gm !== "object") return null;
+  const p = roster.get(id);
+  if (!p || p.house !== mirror.id) return null;
+  const pid = [...round.humanIdByPid].find(([, cid]) => cid === id)?.[0];
+  if (pid == null || !mirror.own.has(pid)) return null;
+  window.__foxboxLastInputAt = Date.now();
+  if (!mirror.player || typeof mirror.player.game !== "function") return null;
+  return mirror.player.game(pid, gm, how);
+}
+// ── end KNIGHT ──
 /** The main TV's finish order (+ score values) and/or the replay reaching its last tick: results once both are in (or 3 s after the order). */
 function mirrorResults(r, ids, replayed, values) {
   if (!r || r !== round || r.ended) return;

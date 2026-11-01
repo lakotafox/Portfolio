@@ -12,6 +12,11 @@
  * On the aim screen the golfer up has a BIRD'S EYE button: {type:"birdseye", on} toggles the TV's overhead view
  * (the swing always cuts back behind the golfer). Both go through the {t:"game"} path, so the web build works too.
  *
+ * No shot clock. The page tells the TV when it is hidden (locked / another app): {type:"hidden", on} (and hello
+ * carries `hidden`), so the TV shows COME BACK, <NAME>! with a 30 s countdown instead of skipping at once. When the
+ * TV's countdown runs because the golfer up hasn't touched the phone for a minute (view.comeBack.why "idle"), the
+ * phone buzzes and shows a big I'M HERE! button ({type:"here"}); any aim / SWING tap counts too.
+ *
  * The turn, Lakota's design:
  *   1. AIM: the gyro is OFF; the arrow buttons turn the aim line on the TV (tap = 1 degree, hold = sweep).
  *   2. SWING (a real click: it asks iOS for motion access): the gyro turns ON and the phone teaches the
@@ -138,12 +143,13 @@ const CSS = `
 #golf .gp-aimval { min-width: 92px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
 #golf .gp-aimval b { font-size: 26px; color: #fff; text-shadow: 3px 3px 0 #0a1428; font-weight: 400; }
 #golf .gp-swing { width: 100%; min-height: 128px; font-size: clamp(26px, 9vw, 40px); letter-spacing: 0.06em; --gp-bg: #35d07f; }
-#golf .gp-info { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; font-size: 10px; line-height: 1.5; }
+#golf .gp-info { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px; font-size: 10px; line-height: 1.5; }
 #golf .gp-info .gp-aim-goal { text-align: center; }
 #golf .gp-wind { display: flex; align-items: center; gap: 8px; }
 #golf .gp-wind-ar { display: inline-block; }
-#golf .gp-clock { font-size: 18px; color: #fff; }
-#golf .gp-clock.low { color: #ff5a3c; }
+#golf .gp-here { width: calc(100% - 8px); margin: 0 4px; padding: 14px 10px; font-size: clamp(16px, 5.4vw, 24px); line-height: 1.4; --gp-bg: #ffd23f;
+  animation: gp-flash 0.6s steps(2, end) infinite; }
+#golf .gp-here[hidden] { display: none; }
 #golf .gp-goal { font-size: 11px; line-height: 1.6; color: #ffd23f; }
 #golf .gp-pose-pic { display: flex; justify-content: center; }
 #golf .gp-pose-pic .gp-px { width: min(30vw, 128px); height: auto; }
@@ -229,6 +235,7 @@ export function createGolfPad(root, { send, me }) {
   root.innerHTML = `
   <div class="gp" data-test="golf-screen" data-screen="wait">
     <div class="gp-head gp-frame"><span class="gp-game">TEE TIME</span><span class="gp-score" data-test="golf-score"></span></div>
+    <button type="button" class="gp-btn gp-here" data-test="golf-here" data-native hidden>I'M HERE!</button>
     <section class="gp-s gp-wait">
       <div class="gp-turnpic"></div>
       <div class="gp-name gp-turnname" data-test="golf-turn"></div>
@@ -247,7 +254,6 @@ export function createGolfPad(root, { send, me }) {
       <div class="gp-info gp-frame">
         <span class="gp-wind"></span>
         <span class="gp-goal gp-aim-goal"></span>
-        <span class="gp-clock" data-test="golf-clock"></span>
       </div>
       <div class="gp-row">
         <button type="button" class="gp-btn gp-arrow" data-test="golf-left" aria-label="Aim left">${sprite("arrowL", 6)}</button>
@@ -294,7 +300,7 @@ export function createGolfPad(root, { send, me }) {
     gp: $(".gp"), game: $(".gp-game"), score: $(".gp-score"),
     turnpic: $(".gp-turnpic"), turnname: $(".gp-turnname"), turnsub: $(".gp-turnsub"), next: $(".gp-next"), last: $(".gp-last"),
     introNo: $(".gp-intro-no"), introName: $(".gp-intro-name"), introSub: $(".gp-intro-sub"), introHint: $(".gp-intro-hint"), introFirst: $(".gp-intro-first"),
-    wind: $(".gp-wind"), goal: $(".gp-aim-goal"), clock: $(".gp-clock"), aimDeg: $(".gp-aim-deg"), left: $('[data-test="golf-left"]'), right: $('[data-test="golf-right"]'),
+    wind: $(".gp-wind"), goal: $(".gp-aim-goal"), here: $(".gp-here"), aimDeg: $(".gp-aim-deg"), left: $('[data-test="golf-left"]'), right: $('[data-test="golf-right"]'),
     swing: $(".gp-swing"), eye: $(".gp-eye"), eyeTxt: $(".gp-eye-txt"), posePic: $(".gp-pose-pic"), ready: $(".gp-ready"), note: $(".gp-note"), enable: $(".gp-enable"), pass: $(".gp-pass"), back: $(".gp-back"),
     flightTier: $(".gp-flight-tier"), resWho: $(".gp-res-who"), resLabel: $(".gp-res-label"), resDetail: $(".gp-res-detail"), resPts: $(".gp-res-pts"),
     resSec: $(".gp-result"), stTitle: $(".gp-st-title"), board: $(".gp-board"), stMe: $(".gp-st-me"),
@@ -307,6 +313,7 @@ export function createGolfPad(root, { send, me }) {
   let turnKey = ""; // roundId:gameIndex:turnIndex of my current turn
   let lastSwing = null, swings = 0;
   let armSentAt = 0; // when SWING last sent {type:"arm"}
+  let hereSentAt = 0, comeBackKey = ""; // I'M HERE! tapped; the COME BACK countdown we last buzzed for
   const ARM_RESEND_MS = 1500;
 
   // ── sound: a whoosh for the swing, a tick when READY, a chime when it's your turn (phone only) ──
@@ -591,6 +598,17 @@ export function createGolfPad(root, { send, me }) {
     permission = needsPermission ? "unknown" : "granted";
     motionOn();
   });
+  el.here.addEventListener("click", () => {
+    if (!view?.isYourTurn || !view.comeBack) return;
+    send({ type: "here" }); // any message from the golfer up ends an idle COME BACK countdown
+    hereSentAt = performance.now();
+    buzz(30);
+    render();
+  });
+  // the page hidden (phone locked / another app) or back: the TV shows COME BACK instead of skipping at once
+  document.addEventListener("visibilitychange", () => {
+    if (shown) send({ type: "hidden", on: !!document.hidden });
+  });
 
   // ── the TV's view → the screen ──
   function myTurnKey(v) {
@@ -614,6 +632,14 @@ export function createGolfPad(root, { send, me }) {
       buzz(80);
     }
     if (!key) turnKey = "";
+    // the TV's COME BACK countdown for me while I'm here but idle: buzz + chime once, the I'M HERE! button shows
+    const cb = v.isYourTurn && v.comeBack ? `${key}:${v.comeBack.why}` : "";
+    if (cb && cb !== comeBackKey && v.comeBack.why === "idle") {
+      tone(988, 0.12, { gain: 0.06 });
+      tone(988, 0.12, { gain: 0.06, delay: 0.2 });
+      buzz([120, 80, 120]);
+    }
+    comeBackKey = cb;
     view = v;
     // the TV moved on (shot taken, time up, turn over): follow it
     if (!v.isYourTurn || !["aim", "armed"].includes(v.phase)) {
@@ -663,9 +689,14 @@ export function createGolfPad(root, { send, me }) {
       set(el.turnsub, "LOOK AT THE TV");
       el.next.hidden = true;
       el.last.hidden = true;
+      el.here.hidden = true;
       return;
     }
     const g = v.game || {};
+    // COME BACK (the TV's countdown) for the golfer up: a big I'M HERE! button (hidden a moment after a tap)
+    const cbMe = !!(v.isYourTurn && v.comeBack && (screen === "aim" || screen === "armed") && performance.now() - hereSentAt > 1200);
+    el.here.hidden = !cbMe;
+    if (cbMe) set(el.here, `I'M HERE! (${v.comeBack.left})`);
     set(el.game, `${(g.index ?? 0) + 1}/${g.count || 3} ${g.name || ""}`);
     set(el.score, v.you ? `${v.you.total} PTS ${ordinal(v.you.rank).toUpperCase()}` : "");
 
@@ -674,7 +705,7 @@ export function createGolfPad(root, { send, me }) {
       html(el.turnpic, t ? sprite("golfer", 5, t.color) : "");
       set(el.turnname, t ? `${t.name} IS UP` : "WATCH THE TV");
       el.turnname.style.color = t?.color || "#fff";
-      set(el.turnsub, !t ? "" : v.phase === "armed" ? (v.ready ? "READY TO SWING..." : "GETTING READY...") : v.phase === "flight" ? "THERE IT GOES!" : "AIMING...");
+      set(el.turnsub, !t ? "" : v.comeBack ? `COME BACK! ${v.comeBack.left}` : v.phase === "armed" ? (v.ready ? "READY TO SWING..." : "GETTING READY...") : v.phase === "flight" ? "THERE IT GOES!" : "AIMING...");
       el.next.hidden = !v.youreNext;
       const last = v.last;
       el.last.hidden = !last;
@@ -691,9 +722,6 @@ export function createGolfPad(root, { send, me }) {
       html(el.goal, tg ? `TARGET ${tg.yards} YD<br>${tg.pts} PTS` : pin ? `PIN ${pin.yards} YD<br>${esc(g.hint || "")}` : esc(g.hint || ""));
       const d = v.aim?.deg || 0;
       set(el.aimDeg, Math.abs(d) < 0.5 ? "0" : `${d < 0 ? "L" : "R"}${Math.round(Math.abs(d))}`);
-      const left = v.clock?.left;
-      set(el.clock, left != null ? String(left) : "");
-      el.clock.classList.toggle("low", left != null && left <= 5);
       el.left.disabled = d <= (v.aim?.min ?? -25) + 0.01;
       el.right.disabled = d >= (v.aim?.max ?? 25) - 0.01;
       const on = performance.now() - eyeSentAt < 1500 ? eyeOn : !!v.birdseye; // our tap wins until the TV echoes it
@@ -785,7 +813,7 @@ export function createGolfPad(root, { send, me }) {
       status = st || null;
       const was = shown;
       shown = !!on;
-      if (shown && !was) send({ type: "hello" }); // the game answers with this phone's view at once
+      if (shown && !was) send({ type: "hello", hidden: !!document.hidden }); // the game answers with this phone's view at once
       if (!shown && was) {
         aimStop();
         motionOff();
