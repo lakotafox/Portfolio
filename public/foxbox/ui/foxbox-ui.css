@@ -208,3 +208,8 @@ html[data-foxbox-web="pad"] #name-go { background: var(--fbx-entry-accent); colo
 @media (max-width: 760px) { .fbx-choices { grid-template-columns: 1fr; } .fbx-lobby-row { flex-direction: column; align-items: flex-start; } }
 .fbx-steps .fbx-p b { text-transform: uppercase; }
 .fbx-join-card>.fbx-btn.fbx-ghost { align-self: center; min-width: 220px; }
+/* TV mode (?tv=1, the living-room kiosk): the lobby's party chip is read from the couch: bigger, with the invite code on
+   its own line (mirror.js draws the chip; it stays clear of the FOXBOX title at 1080p). */
+html[data-foxbox-tv] .fbx-tv2-chip { font-size: 1.05rem; line-height: 1.6; max-width: 38rem; padding: 0.95rem 1.2rem; }
+html[data-foxbox-tv] .fbx-tv2-chip [data-test="tv2-invite"] { display: block; margin: 0.2rem 0 0.15rem; font-size: 1.75em; letter-spacing: 0.08em; }
+html[data-foxbox-tv] .fbx-tv2-chip .fbx-tv2-dim { font-size: 0.9rem; }

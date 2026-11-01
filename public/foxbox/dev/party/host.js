@@ -576,6 +576,7 @@ function onGolfMap(msg) {
 function onGameMsg(msg) {
   if (msg.m && typeof msg.m === "object" && msg.m.type === "map") return onGolfMap(msg); // TEE TIME's setup
   if (msg.m && typeof msg.m === "object" && msg.m.type === "bots") return onBotsMsg(msg); // the host phone's BOTS toggle
+  if (msg.m && typeof msg.m === "object" && msg.m.type === "party") return onPartyMsg(msg); // web TV mode: the host phone's group name / public
   if (onKnightMsg(msg)) return; // KNIGHT: the knight setup's kpick / klevel / kother (the module isn't running yet)
   const p = roster.get(msg.id);
   if (!p || !p.connected || phase !== "playing" || !inRound(p) || !msg.m || typeof msg.m !== "object") return;
@@ -1040,6 +1041,7 @@ function lobbyState() {
     ...(golfSetupActive() ? { golf: { map: lob.golf.map, maps: GAME.maps } } : {}), // TEE TIME's map choice
     bots: mirror ? mirror.bots || "off" : botsOn() ? "fill" : "off", // the host's BOTS setting (FILL / OFF)
     hostId: hostPhoneId(), // the host's phone: the only one with the BOTS toggle
+    ...(partyEditable() ? { party: { group: partyInfo.group || "", pub: !!partyInfo.pub } } : {}), // web TV mode: its GROUP NAME + PUBLIC / PRIVATE too
     ...(knightSetupActive() ? { knight: knightLobby() } : {}), // KNIGHT: the knight setup (level, picks, who's ready)
     pickerId: lob.pickerId,
     rollerId: lob.rollerId,
@@ -1256,6 +1258,27 @@ function hostPhoneId() {
 function onBotsMsg(msg) {
   if (mirror || !(phase === "lobby" || phase === "boot") || msg.id !== hostPhoneId()) return;
   setBotsMode(msg.m.mode === "fill" ? "fill" : "off");
+}
+/** Web TV mode (?tv=1: no HOST steps on the TV, Lakota): the host's phone is the remote for the party's setup. net-p2p.js
+ * marks the party info `edit`; the lobby state then carries {group, pub} and the host's phone shows GROUP NAME +
+ * PUBLIC / PRIVATE next to its BOTS toggle (lobby2-pad.js). */
+function partyEditable() {
+  return !mirror && !!(partyInfo && partyInfo.edit);
+}
+/** {t:"game", m:{type:"party", group?, pub?}} from the host's phone: net-p2p.js checks the name (the HOST step's rules) and
+ * tells the relay (the JOIN list of a public party); the TV chip, the extra TVs and the phones follow from the party info
+ * it hands back. */
+function onPartyMsg(msg) {
+  if (!partyEditable() || !(phase === "lobby" || phase === "boot") || msg.id !== hostPhoneId()) return;
+  if (typeof globalThis.FOXBOX_PARTY_EDIT !== "function") return;
+  const change = {};
+  if (typeof msg.m.group === "string") change.group = msg.m.group;
+  if (typeof msg.m.pub === "boolean") change.pub = msg.m.pub;
+  const res = globalThis.FOXBOX_PARTY_EDIT(change);
+  if (!res || !res.ok || !res.party || typeof res.party !== "object") return; // (a name the rules refuse: the phone shows the old one again)
+  partyInfo = res.party;
+  syncTvB(true);
+  publishLobby();
 }
 /** The lobby's "BOTS: FILL / OFF" label (#bots-toggle) by the party info: under the multi-TV party chip on the web,
  * else in the top-left corner. Clickable on the main TV (a TV with a mouse); an extra TV shows the main TV's. */
@@ -1932,6 +1955,7 @@ function onHudPlayers(r, list) {
   }
   if (hudPanelHidden()) return; // eliminations/placement above still count; just no panel
   const ordered = [...list].sort((a, b) => a.placement - b.placement);
+  $("scoreboard").classList.toggle("many", ordered.length >= 7); // a game whose HUD leaves less room tightens them (golf)
   $("scoreboard").innerHTML = ordered
     .map((p) => {
       const c = r.colorById.get(p.playerId) || colorSet(0);
@@ -2459,8 +2483,9 @@ function mirrorRound(m) {
   // …a view that didn't take them (ctx.late is optional) gets them through its player, before its next frame
   if (lateM && !(mirror.view && mirror.view.lateApplied)) mirror.player.push({ t: "m:ticks", q: lateM.q, w: lateM.w, k: lateM.k });
   mirror.own = new Set(own);
-  // "CONNECTED TO <HOST>'S GAME": the host's name from the HOST steps (golf's banner has the corner: top middle there)
-  mirror.ui.playing(mirror.party?.host || houseName("") || "", { at: GAME.id === "golf" ? "top" : "corner" });
+  // "CONNECTED TO <HOST>'S GAME": the host's name from the HOST steps (golf's banner has the corner: top middle there);
+  // no host name (web TV mode, or left blank): "CONNECTED TO <GROUP>"
+  mirror.ui.playing(mirror.party?.host || houseName("") || "", { at: GAME.id === "golf" ? "top" : "corner", group: mirror.party?.group || "" });
   $("cd-num").textContent = "GO!";
   $("cd-sub").textContent = "";
   show("countdown");
@@ -2568,6 +2593,7 @@ function switchGame(dir, toId) {
 
 function renderHub() {
   document.title = `${HUB_NAME} — ${GAME.name}`;
+  $("hud").dataset.game = GAME.id; // per-game HUD layout (index.html: golf's player stack keeps clear of its panels)
   $("hub-title").textContent = HUB_NAME.toUpperCase();
   $("tagline").textContent = HUB_TAGLINE;
   $("game-blurb").textContent = GAME.tagline;

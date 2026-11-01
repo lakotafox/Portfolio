@@ -272,14 +272,16 @@ export function screenUi({ game = "" } = {}) {
       if (chip.innerHTML !== html) chip.innerHTML = html;
       chip.hidden = !lobby || !room;
     },
-    /** at: "corner" (top left) or "top" (top middle, for a game whose HUD has the corner: golf) */
-    playing(name, { at = "corner" } = {}) {
+    /** at: "corner" (top left) or "top" (top middle, for a game whose HUD has the corner: golf); group: the party's name,
+     * the main TV's label when it has no host name (web TV mode skips the HOST steps) */
+    playing(name, { at = "corner", group = "" } = {}) {
       live.hidden = name == null;
       if (name == null) return;
       chip.hidden = true;
       live.classList.toggle("fbx-tv2-top", at === "top");
       // Lakota: "CONNECTED TO <HOST NAME>'S GAME" (the host's name from the HOST steps)
-      live.textContent = name ? `CONNECTED TO ${String(name).toUpperCase()}’S GAME` : "CONNECTED TO THE HOST’S GAME";
+      live.textContent = name ? `CONNECTED TO ${String(name).toUpperCase()}’S GAME`
+        : group ? `CONNECTED TO ${String(group).toUpperCase()}` : "CONNECTED TO THE HOST’S GAME";
     },
   };
 }

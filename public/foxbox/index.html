@@ -938,6 +938,30 @@
         text-decoration: line-through;
         color: #ef4444;
       }
+      /* TEE TIME draws its own HUD into a 1920x1080 canvas (object-fit: contain, so 120rem x 67.5rem here, centred):
+         the mini-game panel top left ends at y 140 (8.75rem), the golfer's turn panel bottom left starts at y 884
+         (55.25rem). The player stack stays between the two (1rem clear of each), centred in that band; with 7-8
+         players the cards tighten so they all fit (8 regular cards ran into the turn panel). */
+      #hud[data-game="golf"] #scoreboard {
+        top: calc(50% - 24rem);
+        bottom: calc(50% - 20.5rem);
+        transform: none;
+        justify-content: center;
+      }
+      #hud[data-game="golf"] #scoreboard.many {
+        gap: 0.4rem;
+      }
+      #hud[data-game="golf"] #scoreboard.many .player-box {
+        gap: 0;
+        padding: 0.4rem 0.9rem;
+      }
+      #hud[data-game="golf"] #scoreboard.many .name {
+        font-size: 1.3rem;
+      }
+      #hud[data-game="golf"] #scoreboard.many .score {
+        font-size: 1.6rem;
+        line-height: 1.15;
+      }
       #screen-points {
         position: absolute;
         inset: 0;

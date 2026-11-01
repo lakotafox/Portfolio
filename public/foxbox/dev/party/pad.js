@@ -1020,6 +1020,15 @@ window.foxboxLobby = {
     if (!lobbyState || lobbyState.hostId !== me.id) return;
     sendRaw({ t: "game", m: { type: "bots", mode: lobbyState.bots === "fill" ? "off" : "fill" } });
   },
+  /** The host's phone only, web TV mode (the lobby state has `party`): rename the party ({group}) or list it publicly or
+   * not ({pub}). The TV checks it's the host's phone and the name. */
+  party(change) {
+    if (!lobbyState || lobbyState.hostId !== me.id || !lobbyState.party || !change || typeof change !== "object") return;
+    const m = { type: "party" };
+    if (typeof change.group === "string") m.group = change.group.slice(0, 60);
+    if (typeof change.pub === "boolean") m.pub = change.pub;
+    if (m.group != null || m.pub != null) sendRaw({ t: "game", m });
+  },
 };
 const iAmPicker = () => !!lobbyState && lobbyState.pickerId === me.id;
 const iAmRoller = () => !!lobbyState && lobbyState.rollerId === me.id;
