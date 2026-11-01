@@ -5,6 +5,8 @@
 //
 // Quiet by default (the platform plays music). The AudioContext is created lazily on
 // the first play()/unlock() and resumed on the first user gesture. Never throws.
+// The jetpack items make no sound here: Lakota (Oct 31) wants them on the flyer's phone (host.js sends
+// each phone its flight in the status, dev/party/phone-sounds.js plays it).
 
 const MASTER = 0.25;
 
@@ -187,6 +189,7 @@ export function createSfx(opts = {}) {
       tone({ type: 'square', f0: 1240, f1: 760, dur: 0.05, peak: 0.05, t: 0.005 });
       return 0.25;
     },
+    // (the jetpack items' sounds play on the flyer's own phone — dev/party/phone-sounds.js — not on the TV)
     out() {
       tone({ type: 'sine', f0: 1300, f1: 180, dur: 0.85, peak: 0.32, attack: 0.02, vib: 18, vibRate: 7 });
       tone({ type: 'triangle', f0: 120, f1: 60, dur: 0.25, peak: 0.25, t: 0.82 });
@@ -228,6 +231,7 @@ export function createSfx(opts = {}) {
       lastByType[ev.type] = t;
       const dur = SOUNDS[ev.type](ev);
       voice(dur || 0.2);
+      if (Array.isArray(globalThis.__skySfxLog)) globalThis.__skySfxLog.push({ type: ev.type, at: Date.now() }); // QA: what the TV played
     } catch (e) { /* never break the game for sound */ }
   }
 

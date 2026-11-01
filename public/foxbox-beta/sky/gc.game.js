@@ -29,6 +29,8 @@ import * as Sim from "./sim.js";
 import { createRenderer, worldToNorm } from "./render.js";
 import { createSfx } from "./sfx.js";
 import { characterFit, loadCharacterImage } from "./character.js";
+// Multi-TV (relay parties only): the referee's ticks for the other TVs, and the live view on those TVs.
+import { bossTap, traceDrawn, playMirror as startLiveView, stopMirror, pauseMirror } from "./multitv.js";
 
 // ── Tuning ──────────────────────────────────────────────────────────────────────
 
@@ -44,6 +46,8 @@ const MAX_FRAME_GAP = 0.25;
 
 /** Gap (world units) between the top of a puffball and its overhead HUD anchor. */
 const OVERHEAD_GAP = 16;
+/** …plus, while flying the propeller hat, its height (jetpack-look.js), so the name tag doesn't sit on the propeller. */
+const JET_HAT_ROOM = 44;
 
 /** Fallback bonk cooldown (ticks) when the sim neither exports one nor exposes it per player. */
 const FALLBACK_BONK_COOLDOWN_TICKS = 90; // ~1.5 s
@@ -226,7 +230,7 @@ function pushScreenPoints(r) {
     // Body height feet → top of head: 2·r for a puffball, taller for a drawn character.
     const bodyH = Number.isFinite(p.h) && p.h > 0 ? p.h : radius * 2;
     const feet = p.y - radius;
-    const head = worldToNorm(r.state, p.x, feet + bodyH + OVERHEAD_GAP);
+    const head = worldToNorm(r.state, p.x, feet + bodyH + OVERHEAD_GAP + (p.jet > 0 && p.jetKind === "C" ? JET_HAT_ROOM : 0));
     const body = worldToNorm(r.state, p.x, feet + bodyH / 2);
     const aboveTop = feet > top; // entirely above the visible area
     points.push({
@@ -287,8 +291,10 @@ function frame(r, now) {
     while (r.acc >= STEP && steps < MAX_STEPS_PER_FRAME && !r.state.finished) {
       const inputs = gatherInputs(r);
       const evs = stepSim(r.state, inputs) || [];
+      if (r.tap) r.tap(inputs); // multi-TV: this tick for the other TVs (multitv.js; never throws)
       for (const ev of evs) {
         if (ev && ev.type === "bonk") r.lastBonkTick.set(ev.playerId, r.state.tick);
+        if (ev && JET_PHASE[ev.type]) tellJet(r, ev); // jetpack sounds on the flyer's phone (below)
         events.push(ev);
       }
       r.acc -= STEP;
@@ -308,6 +314,7 @@ function frame(r, now) {
 
   for (const ev of events) safeCall(() => r.sfx && r.sfx.play(ev), "sfx.play");
   drawFrame(r, events, alpha);
+  if (globalThis.__MTV_TRACE === true) traceDrawn(r.state, alpha); // QA trace (multitv.js)
   pushPlayersHud(r);
 
   if (r.state.finished) {
@@ -354,6 +361,68 @@ function endRound(r) {
 
 // ── Gaming Couch module ─────────────────────────────────────────────────────────
 
+// ── Feel presets: Sky plays FEEL_DEFAULT (Lakota's pick). ?feel=classic|floaty|doodle in the TV's URL tries
+// another one and brings back the corner tag + the 1 / 2 / 3 keys for switching while testing.
+const FEEL_DEFAULT = "doodle";
+const FEEL_KEYS = { Digit1: "classic", Digit2: "floaty", Digit3: "doodle" };
+function initFeel() {
+  if (typeof Sim.setFeel !== "function" || !Sim.FEELS) return;
+  let want = null;
+  try {
+    want = new URLSearchParams(location.search).get("feel");
+  } catch {}
+  Sim.setFeel(want && Sim.FEELS[want] ? want : FEEL_DEFAULT);
+  if (!want) return; // no tag, no feel keys on a normal TV
+  const tag = document.createElement("div");
+  tag.id = "sky-feel";
+  Object.assign(tag.style, {
+    position: "fixed", left: "18px", bottom: "16px", zIndex: "60", pointerEvents: "none",
+    font: "14px 'FoxBox Pixel', ui-monospace, monospace", color: "#ffffff", textShadow: "3px 3px 0 #0a1428",
+    transition: "font-size 0.15s steps(3)",
+  });
+  document.body.appendChild(tag);
+  const show = () => { tag.textContent = `FEEL: ${Sim.FEELS[Sim.FEEL].label}  (keys 1 2 3)`; };
+  show();
+  window.addEventListener("keydown", (e) => {
+    const name = FEEL_KEYS[e.code];
+    if (!name || e.repeat) return;
+    Sim.setFeel(name);
+    show();
+    tag.style.fontSize = "30px";
+    clearTimeout(tag.flash);
+    tag.flash = setTimeout(() => (tag.style.fontSize = "14px"), 1400);
+  });
+}
+
+// ── Jetpack power-ups: on unless the page URL says ?jetpack=0 (sim.js "Jetpack"). For trying them out:
+// ?jetpack=often brings one every few seconds, ?jetitem=A|C|D makes every one that item (A tanks, C hat,
+// D balloons; the old ?jetlook= works the same).
+const URL_OPTS = (() => {
+  try {
+    const q = new URLSearchParams(location.search);
+    const often = q.get("jetpack") === "often", item = q.get("jetitem") || q.get("jetlook");
+    return { jetpack: q.get("jetpack") === "0" ? false : often || item ? { often, item } : true };
+  } catch {
+    return { jetpack: true };
+  }
+})();
+
+// ── Jetpack sounds on the flyer's phone (party mode; Lakota, Oct 31: "the Jetpack sound should play per
+// player's phone, not on the TV"). Each flight's phase goes to the host's phones.jet(playerId, info) right at
+// the tick it happens: info = { kind, phase: "fly" | "warn" | "end", t: the tick the flight began (its id),
+// left: seconds of flight to go }. The host puts it in that player's status; their phone plays the sounds.
+// On the Gaming Couch platform there is no phones.jet: nothing happens.
+const JET_PHASE = { jetGet: "fly", jetSputter: "warn", jetEnd: "end" };
+function tellJet(r, ev) {
+  const phones = r.phones;
+  if (!phones || typeof phones.jet !== "function") return;
+  const p = r.state.players.find((q) => q.playerId === ev.playerId);
+  if (!p) return;
+  const total = Number.isFinite(Sim.JET_TICKS) ? Sim.JET_TICKS : 300;
+  const info = { kind: ev.kind, phase: JET_PHASE[ev.type], t: r.state.tick - (total - p.jet), left: Math.round(p.jet * STEP * 10) / 10 };
+  safeCall(() => phones.jet(ev.playerId, info), "phones.jet");
+}
+
 export default {
   gameProtocolVersion: 1,
   gcGameModuleVersion: "0.1.0",
@@ -380,6 +449,7 @@ export default {
       document.body.appendChild(canvas);
       stage = { canvas, sfx: null };
       window.addEventListener("resize", resizeCanvas);
+      initFeel();
     }
     resizeCanvas();
 
@@ -392,6 +462,7 @@ export default {
    */
   play(playContext) {
     if (!stage) throw new Error("[sky-scramble] play() called before setup()");
+    stopMirror(); // multi-TV: a live view of another TV's round gives way
 
     // Tear down any previous round (stops its loop; stale rAF callbacks see round !== r).
     if (round) {
@@ -445,6 +516,7 @@ export default {
 
   /** pause — stop / restart the loop. The platform draws its own pause UI. */
   pause(isPaused) {
+    if (pauseMirror(isPaused)) return; // multi-TV: this page shows another TV's round live
     if (!round) {
       if (playToken) pendingPause = !!isPaused; // a round is still loading its characters
       return;
@@ -452,6 +524,17 @@ export default {
     round.paused = !!isPaused;
     if (round.paused) stopLoop(round);
     else startLoop(round);
+  },
+
+  /** playMirror — multi-TV: show the main TV's round here, own players live (multitv.js, MULTITV-SPEC.md). */
+  playMirror(ctx) {
+    if (!stage) throw new Error("[sky-scramble] playMirror() called before setup()");
+    if (round) {
+      stopLoop(round);
+      round.ended = true;
+    }
+    round = playToken = pendingPause = null;
+    return startLiveView(ctx, { stage, pushPlayersHud, pushScreenPoints, resolveColors });
   },
 };
 
@@ -469,9 +552,11 @@ function startRound(playContext, chars) {
     players: players.map((p) => {
       const pl = { playerId: p.playerId, isBot: p.type === "bot" };
       if (chars[p.playerId]) pl.h = chars[p.playerId].h;
+      if (p.startItem) pl.startJet = p.startItem; // party extension: the doodle vote's winner starts flying their pick
       return pl;
     }),
     seed: Number(seed) >>> 0,
+    jetpack: URL_OPTS.jetpack,
   });
 
   const characters = {};
@@ -483,6 +568,7 @@ function startRound(playContext, chars) {
     state,
     renderer,
     sfx: stage.sfx,
+    phones: playContext.phones || null, // party mode: the host's phone channel (jetpack sounds, tellJet)
     hud,
     gameOver,
     // Height 0 m = where the lowest player starts.
@@ -501,6 +587,10 @@ function startRound(playContext, chars) {
   };
   round = r;
   pendingPause = null;
+  // read-only peek for QA scripts (the round's live sim state; nothing in the game reads it)
+  globalThis.__skySim = { get state() { return round ? round.state : null; } };
+  // multi-TV (relay parties only): the header for the other TVs now, then every tick (multitv.js)
+  if (playContext.onMirrorHeader || playContext.onMirrorTick) r.tap = bossTap(playContext, r, URL_OPTS, colors);
 
   // Standings first, then size + draw the first frame (+ screen points) immediately,
   // so a paused start still shows the scene.

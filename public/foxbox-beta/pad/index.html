@@ -1,10 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-foxbox-web="pad">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
+    <!-- iPhone Safari can't hide its bars from a page: Add to Home Screen opens the controller full screen -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="FoxBox" />
+    <link rel="manifest" href="../dev/party/pad-manifest.json" />
+    <link rel="apple-touch-icon" href="../dev/party/foxbox-icon-180.png" />
     <meta name="theme-color" content="#14213d" />
     <meta name="format-detection" content="telephone=no" />
     <title>FoxBox — Controller</title>
@@ -127,23 +132,169 @@
         }
       }
 
+      /* ── The pixel screens: character picker, selfie cropper, drawing, READY ──────────────
+         The FoxBox pixel look (lobby2's pixel panels / dice key): FoxBox Pixel for labels and
+         buttons, FoxBox Soft for names and sentences, square panels with stepped 4px ink frames
+         (box-shadow copies; the missing corners make the steps), chunky keys with a hard drop. */
+      :root {
+        --px-ink: #0a1428;
+        --px-drop: #050a16;
+        --px-gold: #ffd23f;
+        --px-gold-d: #e3a51a;
+        --px-gold-l: #fff3b0;
+        --px-green: #35d07f;
+        --px-green-d: #1f9d5c;
+        --px-green-l: #b4f3d0;
+        --px-purple: #6a3fd0;
+        --px-purple-d: #4a2a9e;
+        --px-purple-l: #9d7bf0;
+        --px-red: #ff5a3c;
+        --px-red-d: #c7361d;
+        --px-red-l: #ffb3a3;
+        --px-paper: #f4f7ff;
+        --px-paper-d: #c9d2e6;
+        --px-font: "FoxBox Pixel", ui-monospace, monospace;
+        --px-soft: "FoxBox Soft", ui-rounded, system-ui, sans-serif;
+        --px-frame: 0 -4px 0 0 var(--px-ink), 0 4px 0 0 var(--px-ink), -4px 0 0 0 var(--px-ink), 4px 0 0 0 var(--px-ink);
+        --px-frame3: 0 -3px 0 0 var(--px-ink), 0 3px 0 0 var(--px-ink), -3px 0 0 0 var(--px-ink), 3px 0 0 0 var(--px-ink);
+        /* a daytime pixel sky in hard bands (the game is up in the clouds) */
+        --px-sky: linear-gradient(180deg, #4a82e8 0 30%, #6198f0 30% 55%, #81b0f6 55% 78%, #a9cbfb 78%);
+      }
+      /* the night-sky backdrop with pixel stars (ids: foxbox-ui.css paints these screens otherwise) */
+      #char-screen.pxs.screen,
+      #crop-screen.pxs.screen,
+      #draw-screen.pxs.screen,
+      #ready-screen.pxs.screen {
+        background:
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' shape-rendering='crispEdges'%3E%3Cg fill='%23ffffff' fill-opacity='.5'%3E%3Crect x='14' y='18' width='3' height='3'/%3E%3Crect x='86' y='9' width='3' height='3'/%3E%3Crect x='52' y='66' width='3' height='3'/%3E%3Crect x='104' y='94' width='3' height='3'/%3E%3Crect x='27' y='101' width='3' height='3'/%3E%3C/g%3E%3Cg fill='%23ffd23f' fill-opacity='.55'%3E%3Crect x='71' y='41' width='3' height='3'/%3E%3Crect x='9' y='72' width='3' height='3'/%3E%3C/g%3E%3Cg fill='%23ffffff' fill-opacity='.22'%3E%3Crect x='40' y='31' width='2' height='2'/%3E%3Crect x='97' y='58' width='2' height='2'/%3E%3Crect x='63' y='108' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 120px 120px,
+          linear-gradient(180deg, #1a2a55 0%, #0d1730 100%);
+        color: #fff;
+      }
+      .pxs .ico,
+      .pxbtn .ico,
+      .tbtn .ico {
+        display: inline-flex;
+        flex: none;
+        line-height: 0;
+        pointer-events: none;
+      }
+      .px-title {
+        margin: 0;
+        font-family: var(--px-font);
+        font-weight: 400;
+        font-size: clamp(14px, 4.3vw, 18px);
+        line-height: 1.5;
+        letter-spacing: 0;
+        color: var(--px-gold);
+        text-shadow: 3px 3px 0 var(--px-ink);
+        text-transform: uppercase;
+      }
+      .pxs .sub {
+        margin: 0;
+        font-family: var(--px-soft);
+        font-weight: 600;
+        font-size: 17px;
+        line-height: 1.2;
+        color: #c9d2e6;
+      }
+      /* a chunky key: square, stepped ink frame, hard drop shadow, pressed = it goes down */
+      .pxbtn {
+        --bg: var(--px-gold);
+        --bg-d: var(--px-gold-d);
+        --bg-l: var(--px-gold-l);
+        --fg: var(--px-ink);
+        --drop: 8px;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 52px;
+        padding: 0 16px;
+        border: 0;
+        border-radius: 0;
+        font-family: var(--px-font);
+        font-weight: 400;
+        font-size: 13px;
+        line-height: 1.25;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        text-shadow: none;
+        color: var(--fg) !important;
+        background: var(--bg);
+        box-shadow: var(--px-frame), 0 var(--drop) 0 0 var(--px-drop), inset 0 -5px 0 0 var(--bg-d), inset 0 4px 0 0 var(--bg-l);
+        cursor: pointer;
+        touch-action: manipulation;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      .pxbtn:active:not(:disabled),
+      .pxbtn.on {
+        transform: translateY(calc(var(--drop) - 3px));
+        box-shadow: var(--px-frame), 0 3px 0 0 var(--px-drop), inset 0 -5px 0 0 var(--bg-d), inset 0 4px 0 0 var(--bg-l);
+      }
+      .pxbtn:disabled {
+        filter: grayscale(0.7) brightness(0.75);
+        cursor: default;
+      }
+      .pxbtn:focus-visible,
+      .tbtn:focus-visible,
+      .char-card:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: 7px;
+      }
+      .pxbtn-paper {
+        --bg: var(--px-paper);
+        --bg-d: var(--px-paper-d);
+        --bg-l: #ffffff;
+      }
+      .pxbtn-purple {
+        --bg: var(--px-purple);
+        --bg-d: var(--px-purple-d);
+        --bg-l: var(--px-purple-l);
+        --fg: #ffffff;
+      }
+      .pxbtn-green {
+        --bg: var(--px-green);
+        --bg-d: var(--px-green-d);
+        --bg-l: var(--px-green-l);
+      }
+      .pxbtn-red {
+        --bg: var(--px-red);
+        --bg-d: var(--px-red-d);
+        --bg-l: var(--px-red-l);
+        --fg: #ffffff;
+      }
+      .pxbtn-sm {
+        --drop: 6px;
+        min-height: 40px;
+        padding: 0 10px;
+        gap: 6px;
+        font-size: 10px;
+      }
+      .pxbtn[hidden] {
+        display: none;
+      }
+
       /* ── Character picker ─────────────────────────────────────────────── */
       #char-screen {
         flex-direction: column;
-        gap: 12px;
-        background: linear-gradient(180deg, #3d8bfd 0%, #8cc4ff 100%);
+        gap: 10px;
         text-align: center;
       }
-      #char-screen h2 {
-        margin: 4px 0 0;
-        font-size: clamp(30px, 9vw, 44px);
-        line-height: 1.05;
-        text-shadow: 0 3px 0 #1d5fd1;
+      #char-head {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 10px;
+        min-height: 54px;
+        padding: 6px 4px 0;
       }
-      #char-screen .sub {
-        margin: 0;
-        font-size: 18px;
-        color: #0e3a86;
+      #char-back {
+        justify-self: start;
+      }
+      #char-title {
+        grid-column: 2;
       }
       #char-grid {
         flex: 1;
@@ -153,105 +304,132 @@
         overscroll-behavior: contain;
         touch-action: pan-y;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         grid-auto-rows: min-content;
-        gap: 14px;
-        padding: 6px 4px 12px;
+        align-content: start;
+        align-items: start; /* (a row with my drawing's EDIT key doesn't stretch the other tiles) */
+        gap: 22px 18px;
+        /* room for the tiles' frames, the lift of the picked one and their drop inside the scroller */
+        padding: 12px 10px 18px;
       }
       .char-card {
+        position: relative;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
         gap: 6px;
-        padding: 10px 8px 12px;
-        border-radius: 24px;
-        background: rgba(255, 255, 255, 0.92);
-        color: #12325f;
-        font-size: 22px;
-        border: 5px solid transparent;
-        box-shadow: 0 6px 0 rgba(14, 58, 134, 0.35);
+        min-width: 0;
+        padding: 6px 6px 9px;
+        border: 0;
+        border-radius: 0;
+        font: inherit;
+        color: var(--px-ink);
+        background: var(--px-paper);
+        box-shadow: var(--px-frame), 0 8px 0 0 var(--px-drop), inset 0 -4px 0 0 var(--px-paper-d);
         touch-action: pan-y;
-      }
-      .char-card.sel {
-        border-color: #ff5a3c;
-        box-shadow: 0 6px 0 #c7361d;
+        cursor: pointer;
+        text-align: center;
       }
       .char-card:active {
-        transform: translateY(3px);
+        transform: translateY(5px);
+        box-shadow: var(--px-frame), 0 3px 0 0 var(--px-drop), inset 0 -4px 0 0 var(--px-paper-d);
       }
       .char-card .pic {
-        width: 100%;
-        height: 210px;
+        position: relative;
+        aspect-ratio: 1;
         display: flex;
         align-items: center;
         justify-content: center;
+        background: var(--px-sky);
+        overflow: hidden;
         pointer-events: none;
       }
       .char-card .pic img {
-        max-width: 100%;
-        max-height: 100%;
+        max-width: 86%;
+        max-height: 86%;
         object-fit: contain;
       }
-      .char-card .pic .ballpic {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 35% 30%, var(--l), var(--c) 55%, var(--d));
-        border: 5px solid #fff;
-        box-shadow: 0 0 0 3px var(--d);
-        position: relative;
-      }
-      .char-card .pic .ballpic::before,
-      .char-card .pic .ballpic::after {
-        content: "";
-        position: absolute;
-        top: 38px;
-        width: 16px;
-        height: 24px;
-        border-radius: 50%;
-        background: #111;
-      }
-      .char-card .pic .ballpic::before {
-        left: 34px;
-      }
-      .char-card .pic .ballpic::after {
-        right: 34px;
+      .char-card .pic > .px-sprite {
+        width: 70%;
+        height: auto;
       }
       .char-card .pic .ballpic.photo {
-        width: 150px;
-        height: 150px;
+        width: 78%;
+        aspect-ratio: 1;
+        border-radius: 50%;
         background-color: #fff;
         background-repeat: no-repeat;
-      }
-      .char-card .pic .ballpic.photo::before,
-      .char-card .pic .ballpic.photo::after {
-        content: none;
+        box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--px-ink);
       }
       .char-card .nm {
         max-width: 100%;
+        font-family: var(--px-soft);
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 1.1;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .char-card.selfie .pic .cam {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
+      /* the one you're playing as: a gold tile, lifted, with a green check badge */
+      .char-card.sel {
+        background: var(--px-gold);
+        transform: translateY(-4px);
+        box-shadow: var(--px-frame), 0 12px 0 0 var(--px-drop), inset 0 -4px 0 0 var(--px-gold-d), inset 0 4px 0 0 var(--px-gold-l);
+      }
+      .char-card.sel:active {
+        transform: translateY(3px);
+        box-shadow: var(--px-frame), 0 5px 0 0 var(--px-drop), inset 0 -4px 0 0 var(--px-gold-d), inset 0 4px 0 0 var(--px-gold-l);
+      }
+      .char-card .selmark {
+        position: absolute;
+        right: 9px;
+        top: 9px;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        background: var(--px-green);
+        box-shadow: var(--px-frame3);
+        pointer-events: none;
+      }
+      #char-make {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 64px;
-        background: radial-gradient(circle at 35% 30%, #fff3c4, #ffc93d 60%, #e09a00);
-        border: 5px solid #fff;
-        box-shadow: 0 0 0 3px #b07800;
+        gap: 18px;
+        padding: 6px 6px 10px;
       }
-      .char-card.drawtile .pic .cam {
-        background: radial-gradient(circle at 35% 30%, #e6f7ff, #7fd0ff 60%, #2a8fd6);
-        box-shadow: 0 0 0 3px #1d6fb0;
+      #char-make .pxbtn {
+        flex: 1;
+        min-width: 0;
+        min-height: 60px;
+        font-size: 14px;
       }
-      .char-card.drawtile .nm {
-        white-space: normal;
-        line-height: 1.05;
+      #char-make .pxbtn span {
+        text-align: center;
+      }
+      /* my own drawing: its tile with an EDIT key under it */
+      .char-slot {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-width: 0;
+      }
+      .char-slot .char-edit {
+        --drop: 5px;
+        min-height: 34px;
+        padding: 0 6px;
+        gap: 6px;
+        font-size: 11px;
+      }
+      #char-note {
+        font-family: var(--px-soft);
+        font-size: 16px;
+        color: #ffd27a;
+        min-height: 1em;
+      }
+      #char-note:empty {
+        display: none;
       }
       #selfie-input {
         position: absolute;
@@ -260,24 +438,273 @@
         opacity: 0;
         pointer-events: none;
       }
+      @media (orientation: landscape) and (max-height: 500px) {
+        #char-screen.show {
+          display: grid;
+          grid-template-columns: minmax(190px, 34%) minmax(0, 1fr);
+          grid-template-rows: auto auto minmax(0, 1fr) auto;
+          grid-template-areas: "head grid" "sub grid" "note grid" "make grid";
+          column-gap: 16px;
+          row-gap: 8px;
+        }
+        #char-head {
+          grid-area: head;
+          grid-template-columns: auto minmax(0, 1fr);
+          min-height: 44px;
+          padding: 4px 4px 0;
+        }
+        #char-title {
+          grid-column: auto;
+          font-size: clamp(11px, 1.7vw, 14px);
+        }
+        #char-back + #char-title {
+          text-align: left;
+        }
+        #char-screen .sub {
+          grid-area: sub;
+          font-size: 15px;
+        }
+        #char-note {
+          grid-area: note;
+          align-self: start;
+          font-size: 14px;
+        }
+        #char-grid {
+          grid-area: grid;
+          grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+          padding: 12px 10px 16px;
+        }
+        #char-make {
+          grid-area: make;
+          flex-direction: column;
+          gap: 16px;
+          padding: 4px 6px 10px;
+        }
+        #char-make .pxbtn {
+          flex: none;
+          min-height: 46px;
+          font-size: 12px;
+        }
+      }
+
+      /* ── READY (Sky Scramble's setup): your character, READY, CHANGE CHARACTER ── */
+      #ready-screen {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        text-align: center;
+      }
+      #rdy-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 6px 4px 0;
+      }
+      .px-chip {
+        display: inline-block;
+        font-family: var(--px-font);
+        font-size: 10px;
+        line-height: 1;
+        padding: 7px 9px;
+        color: #ffffff;
+        background: var(--px-purple);
+        box-shadow: var(--px-frame3);
+        white-space: nowrap;
+      }
+      .px-chip.gold {
+        color: var(--px-ink);
+        background: var(--px-gold);
+      }
+      .px-chip.go {
+        color: var(--px-ink);
+        background: var(--px-green);
+      }
+      .px-chip.bad {
+        color: #ffffff;
+        background: var(--px-red);
+      }
+      #rdy-stage {
+        position: relative;
+        flex: 1;
+        min-height: 150px;
+        margin: 4px 4px 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        background: var(--px-sky);
+        box-shadow: var(--px-frame), 0 10px 0 0 var(--px-drop);
+        overflow: hidden;
+      }
+      #rdy-char {
+        --px: 4px;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        width: 76%;
+        height: 66%;
+        margin-bottom: -14px; /* feet on the cloud */
+        transform-origin: 50% 100%;
+      }
+      #rdy-char img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+      #rdy-char .ballpic {
+        height: 100%;
+        max-width: 100%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background-color: #fff;
+        background-repeat: no-repeat;
+        box-shadow: 0 0 0 4px #fff, 0 0 0 8px var(--px-ink);
+      }
+      #rdy-char > .px-sprite {
+        height: 82%;
+        width: auto;
+        max-width: 100%;
+      }
+      #rdy-cloud {
+        width: min(86%, 300px);
+        line-height: 0;
+        margin-bottom: 6%;
+      }
+      #rdy-cloud .px-sprite {
+        width: 100%;
+        height: auto;
+      }
+      #rdy-side {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      #rdy-name {
+        font-family: var(--px-soft);
+        font-weight: 700;
+        font-size: 30px;
+        line-height: 1.05;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      #rdy-as {
+        margin-top: -6px;
+        font-family: var(--px-font);
+        font-size: 10px;
+        line-height: 1.4;
+        color: #c9d2e6;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      #rdy-go {
+        min-height: 74px;
+        margin: 0 4px;
+        font-size: 24px;
+        gap: 14px;
+      }
+      #rdy-go.on {
+        --bg: var(--px-green);
+        --bg-d: var(--px-green-d);
+        --bg-l: var(--px-green-l);
+      }
+      #rdy-change {
+        min-height: 50px;
+        margin: 6px 4px 0;
+        font-size: 12px;
+      }
+      #rdy-wait {
+        min-height: 1.6em;
+        margin-top: 4px;
+        font-family: var(--px-font);
+        font-size: 10px;
+        line-height: 1.6;
+        color: var(--px-green);
+      }
+      #rdy-wait .cur {
+        animation: px-blink 1s steps(1, end) infinite;
+      }
+      #ready-screen.offline #rdy-wait {
+        color: var(--px-gold);
+      }
+      /* the game picker's way back to the game cards (Sky picked by mistake) */
+      #rdy-switch {
+        align-self: center;
+        margin-top: 2px;
+      }
+      @keyframes px-blink {
+        50% { opacity: 0; }
+      }
+      /* ready: your character hops on its cloud */
+      #ready-screen.is-ready #rdy-char {
+        animation: px-hop 0.9s steps(1, end) infinite;
+      }
+      @media (orientation: landscape) and (max-height: 500px) {
+        #ready-screen.show {
+          display: grid;
+          grid-template-columns: minmax(0, 44%) minmax(0, 1fr);
+          grid-template-rows: auto minmax(0, 1fr);
+          grid-template-areas: "stage head" "stage side";
+          column-gap: 22px;
+          row-gap: 6px;
+        }
+        #rdy-head {
+          grid-area: head;
+          padding: 4px 4px 0;
+        }
+        #rdy-stage {
+          grid-area: stage;
+          min-height: 0;
+          margin: 4px 4px 10px;
+        }
+        #rdy-side {
+          grid-area: side;
+          justify-content: center;
+          gap: 8px;
+        }
+        #rdy-name {
+          font-size: 24px;
+        }
+        #rdy-as {
+          margin-top: -4px;
+        }
+        #rdy-go {
+          min-height: 56px;
+          font-size: 18px;
+        }
+        #rdy-change {
+          min-height: 42px;
+          margin-top: 4px;
+          font-size: 10px;
+        }
+        #rdy-wait {
+          margin-top: 2px;
+          font-size: 9px;
+        }
+      }
+      @media (orientation: landscape) and (max-height: 340px) {
+        #rdy-go {
+          min-height: 48px;
+        }
+        #rdy-change {
+          min-height: 38px;
+        }
+      }
 
       /* ── Selfie cropper ───────────────────────────────────────────────── */
       #crop-screen {
         flex-direction: column;
         align-items: center;
         gap: 12px;
-        background: linear-gradient(180deg, #23345e 0%, #0b1020 100%);
         text-align: center;
       }
       #crop-screen h2 {
-        margin: 4px 0 0;
-        font-size: clamp(28px, 8vw, 40px);
-        line-height: 1.05;
-      }
-      #crop-screen .sub {
-        margin: 0;
-        font-size: 17px;
-        opacity: 0.85;
+        margin-top: 6px;
       }
       #crop-stage {
         position: relative;
@@ -285,9 +712,9 @@
         aspect-ratio: 1;
         flex: none;
         touch-action: none;
-        border-radius: 24px;
         overflow: hidden;
         background: #000;
+        box-shadow: 0 -4px 0 0 #fff, 0 4px 0 0 #fff, -4px 0 0 0 #fff, 4px 0 0 0 #fff;
       }
       #crop-canvas {
         width: 100%;
@@ -298,30 +725,26 @@
       #crop-zoom {
         width: min(100%, 56vh);
         height: 40px;
-        accent-color: #ffc93d;
+        accent-color: var(--px-gold);
       }
       #crop-screen .row {
         display: flex;
-        gap: 12px;
+        gap: 14px;
         width: min(100%, 56vh);
+        padding: 0 4px;
       }
-      #crop-screen .row button {
+      #crop-screen .row .pxbtn {
         flex: 1;
-        font-size: 21px;
-        padding: 14px 8px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.16);
+        min-width: 0;
+        padding: 0 6px;
+        font-size: 11px;
       }
       #crop-screen .row #crop-use {
-        flex: 1.6;
-        background: #ff5a3c;
-        box-shadow: inset 0 -5px 0 #c7361d;
-      }
-      #crop-screen .row button:disabled {
-        opacity: 0.5;
+        flex: 1.5;
       }
       #crop-note {
         min-height: 1.2em;
+        font-family: var(--px-soft);
         font-size: 17px;
         color: #ffd27a;
       }
@@ -342,7 +765,7 @@
         }
         #crop-stage {
           width: auto;
-          height: calc(100vh - 40px);
+          height: calc(100vh - 48px);
         }
         #crop-zoom,
         #crop-screen .row {
@@ -356,14 +779,9 @@
         #crop-side {
           display: flex;
           flex-direction: column;
-          gap: 10px;
+          gap: 12px;
           width: 40%;
         }
-      }
-      #char-note {
-        font-size: 16px;
-        color: #0e3a86;
-        min-height: 1em;
       }
       #me-ball.roundpic {
         background-color: #fff;
@@ -383,6 +801,7 @@
         text-transform: uppercase;
         margin-top: 4px;
       }
+      #status #bots-host,
       #status #switch-game,
       #status #change-char {
         margin-top: 10px;
@@ -398,15 +817,10 @@
           font-size: 15px;
           padding: 5px 10px;
         }
-        .char-card .pic {
-          height: 140px;
-        }
       }
 
       /* ── Draw your own ─────────────────────────────────────────────────── */
       #draw-screen {
-        background: linear-gradient(180deg, #3d8bfd 0%, #8cc4ff 100%);
-        color: #12325f;
         touch-action: none;
       }
       #draw-screen.show {
@@ -414,72 +828,47 @@
         grid-template-columns: minmax(0, 1fr);
         grid-template-rows: auto minmax(0, 1fr) auto;
         grid-template-areas: "top" "stage" "panel";
-        gap: 8px;
+        gap: 12px;
       }
       #draw-screen.wide.show {
         grid-template-columns: var(--sq, 50%) minmax(0, 1fr);
         grid-template-rows: auto minmax(0, 1fr);
         grid-template-areas: "stage top" "stage panel";
-        column-gap: 12px;
-        row-gap: 6px;
+        column-gap: 18px;
+        row-gap: 8px;
       }
       #draw-screen button {
         touch-action: manipulation;
-        font-weight: normal;
-      }
-      #draw-screen button:disabled {
-        opacity: 0.4;
       }
       #draw-top {
         grid-area: top;
         position: relative;
         display: flex;
         align-items: center;
-        gap: 8px;
-        min-height: 48px;
+        gap: 10px;
+        min-height: 46px;
+        padding: 4px 4px 2px;
       }
       #draw-title {
         flex: 1;
         min-width: 0;
         text-align: center;
-        font-size: clamp(19px, 5.4vw, 26px);
-        color: #fff;
-        text-shadow: 0 2px 0 #1d5fd1;
+        font-size: 10px;
         white-space: nowrap;
         overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .dbtn {
-        flex: none;
-        height: 46px;
-        padding: 0 14px;
-        border-radius: 16px;
-        font-size: 19px;
-        background: rgba(255, 255, 255, 0.92);
-        color: #12325f !important;
-        box-shadow: 0 4px 0 rgba(14, 58, 134, 0.35);
-      }
-      .dbtn:active {
-        transform: translateY(2px);
-        box-shadow: 0 2px 0 rgba(14, 58, 134, 0.35);
-      }
-      @media (max-width: 479px) {
-        #draw-title {
-          visibility: hidden; /* no room next to Back / Undo / Clear */
-        }
       }
       #draw-confirm {
         position: absolute;
-        inset: 0;
+        inset: 0 0 4px;
+        z-index: 2;
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        gap: 8px;
-        padding-left: 10px;
-        border-radius: 16px;
-        background: #fff4e0;
-        font-size: 19px;
-        box-shadow: 0 0 0 3px #ff5a3c;
+        gap: 12px;
+        padding: 0 8px 0 12px;
+        background: var(--px-paper);
+        color: var(--px-ink);
+        box-shadow: var(--px-frame), 0 8px 0 0 var(--px-drop);
       }
       #draw-confirm[hidden] {
         display: none;
@@ -487,11 +876,10 @@
       #draw-confirm span {
         flex: 1;
         min-width: 0;
-      }
-      #draw-clear-yes {
-        background: #ff5a3c;
-        color: #fff !important;
-        box-shadow: inset 0 -4px 0 #c7361d;
+        font-family: var(--px-font);
+        font-size: 10px;
+        line-height: 1.4;
+        color: var(--px-red-d);
       }
       #draw-stage {
         grid-area: stage;
@@ -505,7 +893,6 @@
         position: relative;
         width: 300px;
         height: 300px;
-        border-radius: 18px;
         overflow: hidden;
         touch-action: none;
         background-color: #fff;
@@ -514,7 +901,7 @@
           linear-gradient(45deg, #e8edf4 25%, transparent 25%, transparent 75%, #e8edf4 75%);
         background-size: 24px 24px;
         background-position: 0 0, 12px 12px;
-        box-shadow: 0 0 0 4px #fff, 0 6px 0 4px rgba(14, 58, 134, 0.35);
+        box-shadow: 0 -4px 0 0 #fff, 0 4px 0 0 #fff, -4px 0 0 0 #fff, 4px 0 0 0 #fff, 0 10px 0 0 var(--px-drop);
       }
       #draw-board canvas {
         position: absolute;
@@ -535,172 +922,257 @@
         grid-area: panel;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 13px;
         min-height: 0;
+        padding: 3px 4px 0;
       }
       .seg {
         display: flex;
-        gap: 6px;
+        gap: 12px;
       }
-      .seg button {
+      /* a tool key: paper when idle, gold and pushed in when it's the one in use */
+      .tbtn {
         flex: 1;
         min-width: 0;
-        height: 54px;
-        border-radius: 16px;
-        background: rgba(255, 255, 255, 0.55);
-        border: 3px solid transparent;
+        height: 50px;
+        padding: 0 2px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        gap: 5px;
+        border: 0;
+        border-radius: 0;
+        font-family: var(--px-font);
+        font-weight: 400;
+        font-size: 8px;
         line-height: 1;
-        font-size: 24px;
-        color: #12325f !important;
+        letter-spacing: 0;
+        color: var(--px-ink) !important;
+        background: var(--px-paper);
+        box-shadow: var(--px-frame3), 0 7px 0 0 var(--px-drop), inset 0 -4px 0 0 var(--px-paper-d);
+        cursor: pointer;
       }
-      .seg button span {
-        font-size: 14px;
-        margin-top: 3px;
+      .tbtn span {
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
       }
-      .seg button[aria-pressed="true"] {
-        background: #fff;
-        border-color: #ff5a3c;
-        box-shadow: 0 3px 0 #c7361d;
+      .tbtn:active:not(:disabled) {
+        transform: translateY(3px);
+        box-shadow: var(--px-frame3), 0 4px 0 0 var(--px-drop), inset 0 -4px 0 0 var(--px-paper-d);
+      }
+      .tbtn[aria-pressed="true"] {
+        background: var(--px-gold);
+        transform: translateY(4px);
+        box-shadow: var(--px-frame3), 0 3px 0 0 var(--px-drop), inset 0 4px 0 0 var(--px-gold-d);
+      }
+      .tbtn:disabled {
+        filter: grayscale(0.8);
+        opacity: 0.5;
       }
       #draw-colors {
         display: grid;
         grid-template-columns: repeat(7, minmax(0, 1fr));
-        grid-auto-rows: 44px;
-        gap: 6px;
+        grid-auto-rows: 32px;
+        gap: 12px 11px;
+        padding: 3px;
       }
       #draw-colors .sw {
-        border-radius: 14px;
-        border: 3px solid rgba(255, 255, 255, 0.9);
-        box-shadow: 0 0 0 1px rgba(14, 58, 134, 0.25);
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        box-shadow: var(--px-frame3), inset 0 -4px 0 0 rgba(0, 0, 0, 0.2), inset 0 3px 0 0 rgba(255, 255, 255, 0.35);
+        cursor: pointer;
       }
+      /* the colour in use: a white inner edge, a gold outer frame, lifted a little */
       #draw-colors .sw[aria-pressed="true"] {
-        border: 4px solid #fff;
-        box-shadow: 0 0 0 4px #12325f;
-        transform: scale(1.06);
+        transform: translateY(-3px);
+        box-shadow:
+          inset 0 0 0 3px #fff,
+          var(--px-frame3),
+          0 -6px 0 0 var(--px-gold),
+          0 6px 0 0 var(--px-gold),
+          -6px 0 0 0 var(--px-gold),
+          6px 0 0 0 var(--px-gold);
       }
-      #draw-row {
-        display: flex;
-        gap: 10px;
-      }
-      #draw-sizes {
-        flex: 1;
-      }
+      #draw-row,
       #draw-row2 {
         display: flex;
-        gap: 10px;
+        gap: 16px;
       }
-      #draw-preview {
-        flex: 1.5;
-        min-width: 0;
-        height: 76px;
-        border-radius: 16px;
-        box-shadow: inset 0 0 0 2px rgba(14, 58, 134, 0.18);
-        background: #8fc4f5;
+      #draw-sizes {
+        flex: none;
       }
-      #draw-paper-seg {
-        flex: 1;
+      #draw-sizes .tbtn {
+        flex: none;
+        width: 46px;
       }
-      #draw-paper-seg button {
-        height: 76px;
+      #draw-sizes .tbtn i {
+        display: block;
+        background: var(--dot, #1d1b2e);
+        box-shadow: 0 0 0 2px var(--px-ink);
       }
-      .seg button:disabled {
-        opacity: 0.4;
+      #draw-sizes .tbtn[data-size="0"] i {
+        width: 6px;
+        height: 6px;
+      }
+      #draw-sizes .tbtn[data-size="1"] i {
+        width: 12px;
+        height: 12px;
+      }
+      #draw-sizes .tbtn[data-size="2"] i {
+        width: 20px;
+        height: 20px;
       }
       #draw-body {
-        flex: 1.5;
+        flex: 1;
       }
-      #draw-sizes button i {
-        display: block;
-        border-radius: 50%;
-        background: var(--dot, #1d1b2e);
-        box-shadow: 0 0 0 2px rgba(14, 58, 134, 0.35);
+      #draw-preview {
+        flex: 1;
+        min-width: 0;
+        height: 54px;
+        background: #8fc4f5;
+        box-shadow: var(--px-frame3);
       }
-      #draw-sizes button[data-size="0"] i {
-        width: 8px;
-        height: 8px;
+      #draw-paper-seg {
+        flex: none;
       }
-      #draw-sizes button[data-size="1"] i {
-        width: 16px;
-        height: 16px;
-      }
-      #draw-sizes button[data-size="2"] i {
-        width: 28px;
-        height: 28px;
+      #draw-paper-seg .tbtn {
+        width: 58px;
+        height: 54px;
       }
       #draw-done {
-        height: 58px;
         flex: none;
-        border-radius: 20px;
-        font-size: 26px;
-        background: #ff5a3c;
-        color: #fff;
-        box-shadow: inset 0 -6px 0 #c7361d;
-      }
-      #draw-done:active {
-        transform: translateY(3px);
-        box-shadow: inset 0 -3px 0 #c7361d;
+        min-width: 112px;
+        min-height: 54px;
+        font-size: 14px;
       }
       #draw-note {
         min-height: 1.2em;
-        font-size: 16px;
+        margin-top: -4px;
+        font-family: var(--px-soft);
+        font-size: 15px;
+        line-height: 1.2;
         text-align: center;
-        color: #0e3a86;
+        color: #ffd27a;
       }
       /* short portrait phones: tighter panel so the canvas stays big */
-      @media (orientation: portrait) and (max-height: 700px) {
-        .seg button {
-          height: 46px;
-          font-size: 21px;
+      @media (orientation: portrait) and (max-height: 640px) {
+        #draw-panel {
+          gap: 11px;
         }
-        .seg button span {
-          font-size: 12px;
+        .tbtn {
+          height: 44px;
         }
         #draw-colors {
-          grid-auto-rows: 38px;
+          grid-auto-rows: 26px;
+          gap: 10px 10px;
         }
+        #draw-preview,
+        #draw-paper-seg .tbtn,
         #draw-done {
-          height: 50px;
-          font-size: 22px;
+          height: 48px;
+          min-height: 48px;
         }
       }
       /* landscape: the canvas on the left, everything else on the right */
       #draw-screen.wide #draw-top {
         min-height: 42px;
       }
-      #draw-screen.wide .dbtn {
-        height: 40px;
-        font-size: 17px;
-        padding: 0 12px;
-      }
-      #draw-screen.wide #draw-title {
-        font-size: 20px;
-      }
       #draw-screen.wide #draw-panel {
-        gap: 6px;
+        gap: 11px;
         justify-content: space-between;
       }
-      #draw-screen.wide .seg button {
-        height: 46px;
-        font-size: 20px;
-      }
-      #draw-screen.wide .seg button span {
-        font-size: 12px;
+      #draw-screen.wide .tbtn {
+        height: 44px;
       }
       #draw-screen.wide #draw-colors {
-        grid-auto-rows: 36px;
-        gap: 5px;
+        grid-auto-rows: 24px;
+        gap: 10px 10px;
       }
+      #draw-screen.wide #draw-preview,
+      #draw-screen.wide #draw-paper-seg .tbtn,
       #draw-screen.wide #draw-done {
-        height: 48px;
-        font-size: 22px;
+        height: 44px;
+        min-height: 44px;
       }
       #draw-screen.wide #draw-note {
-        font-size: 14px;
-        min-height: 1.1em;
+        font-size: 13px;
+        min-height: 0;
+      }
+      @media (max-height: 340px) {
+        #draw-screen.wide #draw-top {
+          min-height: 36px;
+          padding-top: 4px;
+        }
+        #draw-screen.wide .pxbtn-sm {
+          min-height: 32px;
+        }
+        #draw-screen.wide #draw-panel {
+          gap: 9px;
+        }
+        #draw-screen.wide .tbtn {
+          height: 36px;
+          gap: 3px;
+        }
+        #draw-screen.wide .tbtn .ico svg {
+          height: 14px;
+          width: auto;
+        }
+        #draw-screen.wide #draw-colors {
+          grid-auto-rows: 18px;
+          gap: 9px 9px;
+        }
+        #draw-screen.wide #draw-preview,
+        #draw-screen.wide #draw-paper-seg .tbtn,
+        #draw-screen.wide #draw-done {
+          height: 38px;
+          min-height: 38px;
+        }
+        #draw-screen.wide #draw-note:empty {
+          display: none;
+        }
+      }
+      /* the winner's crowned puffball hops (pixel steps: squash on landing, ~5 sprite pixels up, the
+         crown lagging one pixel behind); also your character on the READY screen once you're ready */
+      .px-hop {
+        transform-origin: 50% 100%;
+        animation: px-hop 0.9s steps(1, end) infinite;
+      }
+      .px-hop .px-crown {
+        animation: px-crown-bob 0.9s steps(1, end) infinite;
+      }
+      /* the crown sits on the head: two puff pixels down over it, drawn on top */
+      .px-crowned .px-crown {
+        position: relative;
+        z-index: 1;
+        margin-bottom: calc(var(--px, 4px) * -2);
+      }
+      @keyframes px-hop {
+        0% { transform: translateY(0) scale(1.1, 0.9); }
+        11% { transform: translateY(0) scale(1, 1); }
+        22% { transform: translateY(calc(var(--px) * -2)) scale(0.95, 1.06); }
+        33% { transform: translateY(calc(var(--px) * -4)) scale(1, 1); }
+        44% { transform: translateY(calc(var(--px) * -5)) scale(1, 1); }
+        55% { transform: translateY(calc(var(--px) * -5)) scale(1, 1); }
+        66% { transform: translateY(calc(var(--px) * -4)) scale(1, 1); }
+        77% { transform: translateY(calc(var(--px) * -2)) scale(0.95, 1.06); }
+        88%, 100% { transform: translateY(0) scale(1.1, 0.9); }
+      }
+      /* the crown lags a pixel on the way up (sits deeper on the head), never lifts off it */
+      @keyframes px-crown-bob {
+        0%, 11% { transform: translateY(0); }
+        22%, 33% { transform: translateY(var(--cpx, 2px)); }
+        44%, 100% { transform: translateY(0); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .px-hop,
+        .px-hop .px-crown,
+        #ready-screen.is-ready #rdy-char,
+        #rdy-wait .cur {
+          animation: none;
+        }
       }
 
       /* ── Controller ───────────────────────────────────────────────────── */
@@ -725,6 +1197,63 @@
         align-items: center;
         gap: 10px;
         min-height: 44px;
+      }
+      /* Lakota (day 2): no always-on phone header ("ugly asf, we don't need it"). #top stays in the DOM (pad.js keeps
+         filling it) but never shows: the name is edited from the lobby (#me-chip here, the lobby bar's name button)
+         and the connection shows only while it's down (#reconn). */
+      #top,
+      #pad-screen #top,
+      #pad-screen.captain #top {
+        display: none !important;
+      }
+      /* the lobby card's name chip: your ball + name, tap to change the name */
+      #me-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        max-width: 100%;
+        margin: 0 auto 6px;
+        padding: 6px 12px 6px 6px;
+        border-radius: 999px;
+        border: 2px solid rgba(255, 255, 255, 0.45);
+        background: rgba(0, 0, 0, 0.25);
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+      }
+      #me-chip[hidden] {
+        display: none;
+      }
+      #me-chip-ball {
+        flex: none;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, var(--l), var(--c) 55%, var(--d));
+        border: 2px solid #fff;
+      }
+      #me-chip-name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      /* the connection, only while it's not connected: a slim strip at the very top */
+      #reconn {
+        position: fixed;
+        z-index: 200;
+        left: 0;
+        right: 0;
+        top: 0;
+        padding: max(4px, env(safe-area-inset-top)) 12px 4px;
+        background: #f5b400;
+        color: #0b1020;
+        font: 700 13px/1.3 ui-rounded, system-ui, sans-serif;
+        text-align: center;
+        pointer-events: none;
+      }
+      #reconn[hidden] {
+        display: none;
       }
       #me-ball {
         flex: none;
@@ -941,6 +1470,8 @@
         display: none;
       }
       #boats-head {
+        display: block;
+        width: 100%;
         text-align: center;
         font-size: 17px;
         opacity: 0.85;
@@ -1006,26 +1537,6 @@
         align-items: center;
         gap: 8px;
         height: 42px;
-      }
-      #cap-left,
-      #cap-right {
-        width: 54px;
-        height: 42px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.1);
-        font-size: 22px;
-        opacity: 0.45;
-        touch-action: none;
-      }
-      #cap.buttons #cap-left,
-      #cap.buttons #cap-right {
-        opacity: 1;
-        background: rgba(255, 255, 255, 0.2);
-      }
-      #cap-left.on,
-      #cap-right.on {
-        opacity: 1;
-        background: var(--c);
       }
       #cap-steer {
         flex: 1;
@@ -1144,7 +1655,8 @@
         font-size: 16px;
         line-height: 1.2;
       }
-      #cap-enable {
+      #cap-enable,
+      #cap-ready {
         font-size: 16px;
         padding: 10px 12px;
         border-radius: 14px;
@@ -1223,6 +1735,8 @@
       #cap.portrait #cap-turn {
         display: flex;
       }
+      #cap.portrait.motion-setup #cap-turn { display: none; }
+      /* Setup permission and Ready remain reachable before motion determines the physical hold. */
       /* the captain plays sideways: give the controls the whole screen while a round is on */
       @media (orientation: landscape) {
         #pad-screen.captain #status {
@@ -1272,7 +1786,7 @@
         opacity: 0.85;
         line-height: 1.25;
       }
-      /* Row Row Rumble: the phone is a kayak paddle (motion), or two big paddle buttons */
+      /* Row Row Rumble: motion-only paddle practice and readiness */
       #row {
         flex: 1;
         display: flex;
@@ -1283,8 +1797,7 @@
       #controls [hidden] {
         display: none !important;
       }
-      #row-motion,
-      #row-buttons {
+      #row-motion {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -1433,33 +1946,12 @@
         background: #ff5a3c;
         box-shadow: 0 4px 0 #c7361d;
       }
+      #row-ready:disabled, #cap-ready:disabled { opacity: 0.55; }
       .row-link {
         padding: 8px 16px;
         border-radius: 14px;
         font-size: 15px;
         background: rgba(255, 255, 255, 0.14);
-      }
-      #row-buttons .oars {
-        flex: 1;
-        width: 100%;
-        display: flex;
-        gap: 12px;
-      }
-      #oar {
-        flex: 1;
-        border-radius: 26px;
-        font-size: clamp(40px, 13vw, 72px);
-        line-height: 1.1;
-        background: radial-gradient(circle at 40% 30%, var(--l), var(--c) 55%, var(--d));
-        border: 5px solid #fff;
-        box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.4);
-        text-shadow: 0 3px 4px rgba(0, 0, 0, 0.45);
-        touch-action: none;
-        transition: transform 0.05s;
-      }
-      #oar.down {
-        transform: scale(0.94);
-        filter: brightness(1.15);
       }
       #row-note {
         text-align: center;
@@ -1519,9 +2011,274 @@
           font-size: 44px;
         }
       }
+
+      /* Row Row Rumble setup (lobby): seat, motion test and Ready on one phone screen. Once you're
+         seated the seat picker folds to one line (tap it to change seats), and the controller
+         scrolls if a small phone still can't fit it all. */
+      #pad-screen.row-setup {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+      }
+      #pad-screen.row-setup > * {
+        flex: none;
+      }
+      #pad-screen.row-setup #status {
+        padding: 8px 10px;
+      }
+      #pad-screen.row-setup #status-big,
+      #pad-screen.row-setup #game-name,
+      #pad-screen.row-setup #clook-heading {
+        display: none;
+      }
+      #pad-screen.row-setup #status-small {
+        margin-top: 0;
+        font-size: 15px;
+      }
+      #pad-screen.row-setup #status button {
+        margin-top: 6px;
+        font-size: 16px;
+        padding: 6px 12px;
+      }
+      #pad-screen.row-setup:not(.picking) #boats.seated {
+        padding: 6px 10px;
+      }
+      #pad-screen.row-setup:not(.picking) #boats.seated #boats-head {
+        margin: 0;
+        padding: 4px 0;
+        opacity: 1;
+      }
+      #pad-screen.row-setup:not(.picking) #boats.seated #boats-grid {
+        display: none;
+      }
+      #pad-screen.row-setup #controls {
+        height: auto;
+      }
+      #pad-screen.row-setup #row-motion {
+        flex: none;
+        padding: 10px;
+        gap: 8px;
+        touch-action: pan-y;
+      }
+      #pad-screen.row-setup #row-boat {
+        transform: scale(0.75);
+        margin: -11px 0;
+      }
+      #pad-screen.row-setup #row-count-wrap b {
+        font-size: 40px;
+      }
+      /* the first mate with the phone upright: the setup column first, aim + FIRE underneath */
+      #pad-screen.row-setup #cap.portrait #cap-main {
+        flex-wrap: wrap;
+        row-gap: 10px;
+      }
+      #pad-screen.row-setup #cap.portrait #cap-mid {
+        order: -1;
+        width: 100%;
+      }
+      #pad-screen.row-setup #cap.portrait #cap-aim,
+      #pad-screen.row-setup #cap.portrait #cap-fire-wrap {
+        height: 140px;
+      }
+      /* After a round: the TV's arcade high-score screen, phone-sized (pad.js fills it); the controls wait */
+      #pad-screen.results #boats,
+      #pad-screen.results #controls,
+      #pad-screen.results #game-name,
+      #pad-screen.results #clook-heading {
+        display: none !important;
+      }
+      #pad-screen.results #status {
+        display: flex !important;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow-y: auto;
+        padding: 18px 14px;
+        border: 0;
+        border-radius: 0;
+        background-color: #05070f;
+        background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 4px);
+        box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428;
+      }
+      #pad-screen.results #status-big {
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        font-size: clamp(18px, 6vw, 26px);
+        line-height: 1.4;
+        color: #35d07f;
+      }
+      #pad-screen.results #status-big::after {
+        content: "_";
+        animation: res-blink 1s steps(1, end) infinite;
+      }
+      #pad-screen.results #status-small {
+        margin-top: 10px;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        font-size: 10px;
+        line-height: 1.6;
+        color: #c9d2e6;
+        opacity: 1;
+      }
+      @keyframes res-blink {
+        50% { opacity: 0; }
+      }
+      #res-art {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 14px;
+      }
+      #res-art[hidden] {
+        display: none;
+      }
+      #res-art .px-crowned {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #res-art .px-sprite {
+        display: block;
+      }
+      /* out of the top three: the puffball sobs (a one-pixel hop) and two tears drop in pixel steps */
+      #res-art .px-cry {
+        position: relative;
+        display: block;
+        animation: px-sob 0.8s steps(1, end) infinite;
+      }
+      #res-art .px-tear {
+        position: absolute;
+        left: calc(var(--px) * 3);
+        top: calc(var(--px) * 7);
+        width: var(--px);
+        height: calc(var(--px) * 2);
+        background: linear-gradient(#bfeaff 50%, #4aa3ff 50%);
+        animation: px-tear 1.2s steps(5, end) infinite;
+      }
+      #res-art .px-tear.r {
+        left: calc(var(--px) * 8);
+        animation-delay: -0.6s;
+      }
+      @keyframes px-tear {
+        0% { transform: translateY(0); opacity: 1; }
+        70% { opacity: 1; }
+        100% { transform: translateY(calc(var(--px) * 5)); opacity: 0; }
+      }
+      @keyframes px-sob {
+        50% { transform: translateY(calc(var(--px) * -1)); }
+      }
+      #res-mini {
+        margin-top: 20px;
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        font-size: 10px;
+        text-align: left;
+      }
+      #res-mini .bot-tag {
+        display: inline-block;
+        margin-left: 4px;
+        padding: 0 4px;
+        background: #3a4466;
+        color: #dfe6ff;
+        font-size: 0.7em;
+        letter-spacing: 0.06em;
+        vertical-align: 0.15em;
+      }
+      #res-mini[hidden] {
+        display: none;
+      }
+      #res-mini .r {
+        display: grid;
+        grid-template-columns: 52px 66px minmax(0, 1fr);
+        gap: 8px;
+        align-items: baseline;
+        color: #ffffff;
+      }
+      #res-mini .r.solo {
+        grid-template-columns: 52px minmax(0, 1fr);
+      }
+      /* a game's score column (TEE TIME: "247 PTS") */
+      #res-mini .r.solo.vals {
+        grid-template-columns: 52px minmax(0, 1fr) 84px;
+      }
+      #res-mini .val {
+        text-align: right;
+      }
+      /* TEE TIME: during a round the golf module (dev/party/golf/golf-pad.js) owns the controls area */
+      #golf {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 0;
+      }
+      #pad-screen.golf #status,
+      #pad-screen.golf #boats {
+        display: none !important;
+      }
+      #res-mini .r.hd {
+        color: #6c7a99;
+        font-size: 8px;
+      }
+      #res-mini .r.first {
+        color: #ffd23f;
+      }
+      #res-mini .r.mine {
+        color: #35d07f;
+      }
+      /* your row: a ">" hangs in the margin so the ranks stay lined up */
+      #res-mini .rk {
+        position: relative;
+      }
+      #res-mini .r.mine .rk::before {
+        content: ">";
+        position: absolute;
+        right: calc(100% + 3px);
+      }
+      #res-mini .crew {
+        font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      /* the winner hops: room above it for the jump, inside the scrolling results card */
+      #res-art .px-hop {
+        margin-top: calc(var(--px) * 5);
+      }
+      /* the TV's "back to the lobby in N…", counting down on the phone too (pad.js ticks it) */
+      #res-back {
+        margin-top: 20px;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        font-size: 10px;
+        line-height: 1.6;
+        color: #35d07f;
+        text-align: center;
+      }
+      #res-back[hidden] {
+        display: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #pad-screen.results #status-big::after { animation: none; }
+        #res-art .px-cry,
+        #res-art .px-tear { animation: none; }
+      }
+      @media (orientation: portrait) {
+        /* upright, #status and the seat line already say these */
+        #pad-screen.row-setup:not(.cap-rot) #cap-role,
+        #pad-screen.row-setup:not(.cap-rot) #cap-status,
+        #pad-screen.row-setup:not(.cap-rot) #cap-seat {
+          display: none;
+        }
+      }
     </style>
+      <link id="fbx-ui-css" rel="stylesheet" href="../ui/foxbox-ui.css">
   </head>
   <body>
+    <div id="reconn" data-test="reconnecting" role="status" aria-live="polite" hidden>Connecting…</div>
     <section id="name-screen" class="screen">
       <h1>FoxBox</h1>
       <p>What's your name?</p>
@@ -1531,39 +2288,65 @@
       </form>
     </section>
 
-    <section id="char-screen" class="screen">
-      <h2>Pick your player!</h2>
-      <p class="sub">Tap one to bounce as it</p>
-      <div id="char-grid"></div>
+    <section id="char-screen" class="screen pxs">
+      <div id="char-head">
+        <button id="char-back" class="pxbtn pxbtn-paper pxbtn-sm" type="button" data-test="char-back" hidden><i class="ico" data-sprite="arrowL" data-scale="2"></i>BACK</button>
+        <h2 id="char-title" class="px-title">PICK YOUR<br />CHARACTER</h2>
+      </div>
+      <p class="sub">Tap one to play as it</p>
+      <div id="char-grid" data-test="char-grid"></div>
       <div id="char-note"></div>
+      <div id="char-make">
+        <label id="selfie-tile" class="pxbtn pxbtn-purple" for="selfie-input" data-test="selfie"><i class="ico" data-sprite="camera" data-scale="2"></i><span>SELFIE</span></label>
+        <button id="draw-tile" class="pxbtn" type="button" data-test="draw"><i class="ico" data-sprite="pencil" data-scale="2"></i><span>NEW DRAWING</span></button>
+      </div>
       <input id="selfie-input" type="file" accept="image/*" capture="user" tabindex="-1" />
     </section>
 
-    <section id="crop-screen" class="screen">
-      <h2>Line up your face</h2>
+    <section id="ready-screen" class="screen pxs" data-test="ready-screen">
+      <div id="rdy-head">
+        <span id="rdy-game" class="px-chip">SKY SCRAMBLE</span>
+        <span id="rdy-count" class="px-chip gold" data-test="ready-count"></span>
+      </div>
+      <div id="rdy-stage">
+        <div id="rdy-char" data-test="ready-character"></div>
+        <div id="rdy-cloud"><i class="ico" data-sprite="cloud" data-scale="6"></i></div>
+      </div>
+      <div id="rdy-side">
+        <div id="rdy-name"></div>
+        <div id="rdy-as"></div>
+        <button id="rdy-go" class="pxbtn" type="button" data-test="ready"><i class="ico" id="rdy-go-ico"></i><span id="rdy-go-label">READY</span></button>
+        <button id="rdy-change" class="pxbtn pxbtn-purple" type="button" data-test="change-character">CHANGE CHARACTER</button>
+        <div id="rdy-wait" data-test="ready-wait" aria-live="polite"></div>
+        <button id="rdy-switch" class="pxbtn pxbtn-paper pxbtn-sm" type="button" data-test="ready-switch-game" hidden>PICK ANOTHER GAME</button>
+      </div>
+    </section>
+
+    <section id="crop-screen" class="screen pxs">
+      <h2 class="px-title">LINE UP<br />YOUR FACE</h2>
       <p class="sub">Drag to move · pinch or slide to zoom</p>
       <div id="crop-stage"><canvas id="crop-canvas"></canvas></div>
       <div id="crop-side">
         <input id="crop-zoom" type="range" min="1" max="4" step="0.01" value="1" aria-label="Zoom" />
         <div class="row">
-          <button id="crop-back" type="button">Back</button>
-          <button id="crop-retake" type="button">Retake</button>
-          <button id="crop-use" type="button">Use this</button>
+          <button id="crop-back" class="pxbtn pxbtn-paper" type="button"><i class="ico" data-sprite="arrowL" data-scale="2"></i>BACK</button>
+          <button id="crop-retake" class="pxbtn pxbtn-paper" type="button">RETAKE</button>
+          <button id="crop-use" class="pxbtn pxbtn-green" type="button">USE THIS</button>
         </div>
         <div id="crop-note"></div>
       </div>
     </section>
 
-    <section id="draw-screen" class="screen">
+    <section id="draw-screen" class="screen pxs">
       <div id="draw-top">
-        <button id="draw-back" class="dbtn" type="button">◀ Back</button>
-        <div id="draw-title">Draw your player</div>
-        <button id="draw-undo" class="dbtn" type="button" aria-label="Undo">↶ Undo</button>
-        <button id="draw-clear" class="dbtn" type="button">Clear</button>
+        <button id="draw-back" class="pxbtn pxbtn-paper pxbtn-sm" type="button" data-test="draw-back"><i class="ico" data-sprite="arrowL" data-scale="2"></i>BACK</button>
+        <div id="draw-title" class="px-title">DRAW YOUR<br />DOODLE</div>
+        <button id="draw-undo" class="pxbtn pxbtn-paper pxbtn-sm" type="button" aria-label="Undo">UNDO</button>
+        <button id="draw-clear" class="pxbtn pxbtn-paper pxbtn-sm" type="button">CLEAR</button>
         <div id="draw-confirm" hidden>
-          <span>Clear it all?</span>
-          <button id="draw-clear-yes" class="dbtn" type="button">Yes, clear</button>
-          <button id="draw-clear-no" class="dbtn" type="button">No</button>
+          <span>CLEAR IT ALL?</span>
+          <button id="draw-clear-yes" class="pxbtn pxbtn-red pxbtn-sm" type="button">YES</button>
+          <button id="draw-clear-no" class="pxbtn pxbtn-paper pxbtn-sm" type="button">NO</button>
         </div>
       </div>
       <div id="draw-stage">
@@ -1574,30 +2357,30 @@
       </div>
       <div id="draw-panel">
         <div id="draw-tools" class="seg">
-          <button type="button" data-tool="pen">✏️<span>Pen</span></button>
-          <button type="button" data-tool="crayon">🖍️<span>Crayon</span></button>
-          <button type="button" data-tool="fill">🪣<span>Fill</span></button>
-          <button type="button" data-tool="eraser">🧽<span>Eraser</span></button>
+          <button type="button" class="tbtn" data-tool="pen"><i class="ico" data-sprite="pencil" data-scale="2"></i><span>PEN</span></button>
+          <button type="button" class="tbtn" data-tool="crayon"><i class="ico" data-sprite="crayon" data-scale="2" data-color="#f33f5e"></i><span>CRAYON</span></button>
+          <button type="button" class="tbtn" data-tool="fill"><i class="ico" data-sprite="bucket" data-scale="2" data-color="#35d07f"></i><span>FILL</span></button>
+          <button type="button" class="tbtn" data-tool="eraser"><i class="ico" data-sprite="eraser" data-scale="2"></i><span>ERASER</span></button>
         </div>
         <div id="draw-colors"></div>
         <div id="draw-row">
           <div id="draw-sizes" class="seg">
-            <button type="button" data-size="0" aria-label="Small"><i></i><span>S</span></button>
-            <button type="button" data-size="1" aria-label="Medium"><i></i><span>M</span></button>
-            <button type="button" data-size="2" aria-label="Large"><i></i><span>L</span></button>
+            <button type="button" class="tbtn" data-size="0" aria-label="Small"><i></i></button>
+            <button type="button" class="tbtn" data-size="1" aria-label="Medium"><i></i></button>
+            <button type="button" class="tbtn" data-size="2" aria-label="Large"><i></i></button>
           </div>
           <div id="draw-body" class="seg">
-            <button type="button" data-body="box">🧍<span>Whole body</span></button>
-            <button type="button" data-body="ball">⚽<span>Ball</span></button>
+            <button type="button" class="tbtn" data-body="box" aria-label="Whole body"><i class="ico" data-sprite="body" data-scale="2" data-color="#0a1428"></i><span>BODY</span></button>
+            <button type="button" class="tbtn" data-body="ball" aria-label="Ball"><i class="ico" data-sprite="ball" data-scale="2" data-color="#0a1428"></i><span>BALL</span></button>
           </div>
         </div>
         <div id="draw-row2">
           <canvas id="draw-preview" aria-label="Preview of your player in the game"></canvas>
           <div class="seg" id="draw-paper-seg">
-            <button type="button" id="draw-paper" aria-pressed="true">📄<span>White paper</span></button>
+            <button type="button" class="tbtn" id="draw-paper" aria-pressed="true" aria-label="White paper"><i class="ico" data-sprite="paper" data-scale="2"></i><span>PAPER</span></button>
           </div>
+          <button id="draw-done" class="pxbtn pxbtn-green" type="button" data-test="draw-done"><i class="ico" data-sprite="check" data-scale="2" data-color="#0a1428"></i><span>DONE</span></button>
         </div>
-        <button id="draw-done" type="button">Done ✓</button>
         <div id="draw-note"></div>
       </div>
     </section>
@@ -1610,21 +2393,25 @@
         <div id="conn">…</div>
       </div>
       <div id="status">
+        <button id="me-chip" data-test="me-chip" type="button" hidden><span id="me-chip-ball"></span><span id="me-chip-name"></span><span aria-hidden="true">✏️</span></button><!-- the lobby: tap your name to change it -->
+        <div id="res-art" aria-hidden="true" hidden></div>
         <div id="status-big">Connecting…</div>
         <div id="status-small"></div>
+        <div id="res-mini" data-test="results-list" hidden></div>
+        <div id="res-back" data-test="results-back" hidden></div>
         <div id="game-name"></div>
         <div><button id="change-char" type="button" hidden>Change character</button> <button id="switch-game" data-test="switch-game" type="button" hidden>🎮 Switch game</button></div>
+        <div><button id="bots-host" data-test="bots-host" type="button" hidden>BOTS: OFF</button></div><!-- the host's phone only: BOTS FILL / OFF -->
       </div>
       <div id="boats" hidden>
-        <div id="boats-head">Pick your boat</div>
+        <button id="boats-head" type="button">Pick your boat</button>
         <div id="boats-grid" data-test="boats"></div>
       </div>
+      <div id="golf-setup" data-test="golf-setup" hidden></div><!-- TEE TIME: the map choice in setup (golf-pad.js fills it) -->
       <div id="controls">
         <div id="cap" hidden>
           <div id="cap-top">
-            <button id="cap-left" type="button" aria-label="Steer left">◀</button>
             <div id="cap-steer"><div id="cap-steer-fill"></div><span id="cap-steer-hint"></span></div>
-            <button id="cap-right" type="button" aria-label="Steer right">▶</button>
           </div>
           <div id="cap-main">
             <div id="cap-aim" data-test="aim"><div id="cap-aim-ring"></div><div id="cap-aim-arrow"></div><div id="cap-aim-knob"></div><span>aim</span></div>
@@ -1633,12 +2420,12 @@
               <div id="cap-status"></div>
               <button id="cap-seat" class="row-link" type="button" data-test="change-seat" hidden>⇄ Change seat</button>
               <button id="cap-enable" type="button" hidden>Enable tilt</button>
-              <button id="cap-use-buttons" class="row-link" type="button">◀ ▶ buttons</button>
+              <button id="cap-ready" type="button" hidden>Ready!</button>
               <div id="cap-note"></div>
             </div>
             <div id="cap-fire-wrap"><button id="cap-fire" data-test="fire" type="button"><span id="cap-ring"></span><b id="cap-fire-label">FIRE</b></button></div>
           </div>
-          <div id="cap-turn">📱↻<br>Turn your phone sideways<br><small>Captain: tilt to steer · thumbs to aim &amp; fire</small></div>
+          <div id="cap-turn">📱↻<br>Turn your phone sideways<br><small>First mate: tilt to steer · thumbs to aim &amp; fire</small></div>
         </div>
         <div id="steer" data-test="stick">
           <div class="half l">◀</div>
@@ -1656,20 +2443,22 @@
             <div id="row-sens" class="row-links" aria-label="Sensitivity"><span>Sensitivity</span><button type="button" class="row-link" data-s="low">Low</button><button type="button" class="row-link" data-s="med">Med</button><button type="button" class="row-link" data-s="high">High</button></div>
             <button id="row-enable" type="button" hidden>Enable motion</button>
             <button id="row-ready" type="button" hidden>Ready!</button>
-            <div class="row-links"><button id="row-use-buttons" class="row-link" type="button">Use the button</button></div>
-          </div>
-          <div id="row-buttons" hidden>
-            <div class="oars">
-              <button id="oar" data-test="paddle" type="button">PADDLE</button>
-            </div>
-            <button id="row-use-motion" class="row-link" type="button" hidden>Use motion instead</button>
           </div>
           <div id="row-note"></div>
         </div>
+        <div id="golf" data-test="golf" hidden></div>
       </div>
     </section>
 
-    <script>if (!location.pathname.endsWith("/")) location.replace(location.pathname + "/" + location.search + location.hash); globalThis.FOXBOX_NET = "p2p"; globalThis.FOXBOX_ROLE = "pad";</script>
+    <!-- KNIGHT (Knight Platformer): the knight module's screen (setup, countdown, round); dev/party/knight/knight-pad.js fills it -->
+    <div id="knight" data-test="knight" hidden></div>
+    <!-- WHOSFOX (WHO'S THE FOX?): the game's phone screens (setup, role card, task, DONE, vote); dev/party/whosfox/whosfox-pad.js fills it -->
+    <div id="whosfox" data-test="whosfox" hidden></div>
+    <!-- end KNIGHT -->
+    <!-- KART (FOX KART): the kart module's screen (setup, countdown, race); dev/party/kart/kart-pad.js fills it -->
+    <div id="kart" data-test="kart" hidden></div>
+    <!-- end KART -->
+    <script>if (!location.pathname.endsWith("/")) location.replace(location.pathname + "/" + location.search + location.hash); globalThis.FOXBOX_NET = "p2p"; globalThis.FOXBOX_ROLE = "pad"; globalThis.FOXBOX_LOBBY2 = "../lobby2/dist/main.js"; globalThis.FOXBOX_LANDSCAPE = true;</script>
     <script type="module" src="../dev/party/pad.js"></script>
   </body>
 </html>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-foxbox-web="host">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -290,8 +290,17 @@
         filter: grayscale(0.6);
       }
       /* Row Row Rumble v2: a chip per boat seat (boat colour); empty seats go to bots */
+      .chip.seat .seat-person {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex: 1;
+        min-width: 0;
+        gap: 0.3rem;
+      }
       .chip.seat .nm {
         flex: 1;
+        width: 100%;
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -299,6 +308,7 @@
       }
       .chip.seat .tag {
         font-size: 1.4rem;
+        line-height: 1.2;
       }
       .chip.botseat {
         opacity: 0.55;
@@ -413,65 +423,586 @@
       }
 
       /* ── Results ───────────────────────────────────────────────────────── */
+      /* Results: an arcade high-score screen (the pixel look). The winner's puffball wears the crown. */
       #results {
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        background: rgba(8, 14, 34, 0.72);
-        backdrop-filter: blur(0.3rem);
+        background-color: #05070f;
+        background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 0.3rem, transparent 0.3rem 0.6rem);
         z-index: 40;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
       }
       #res-title {
-        font-size: 7rem;
         margin: 0;
-        text-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2.4rem;
+        font-size: 4.4rem;
+        font-weight: 400;
+        line-height: 1.3;
+        color: #35d07f;
+        text-align: center;
       }
-      #res-title .w {
-        color: var(--c);
-        -webkit-text-stroke: 0.15rem rgba(255, 255, 255, 0.9);
+      .px-sprite {
+        display: block;
+        flex: none;
+      }
+      .px-crowned {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .res-cursor {
+        animation: res-blink 1s steps(1, end) infinite;
+      }
+      @keyframes res-blink {
+        50% { opacity: 0; }
       }
       #res-list {
-        margin-top: 2.6rem;
-        display: grid;
-        grid-template-columns: repeat(2, 36rem);
-        grid-auto-flow: column;
-        grid-template-rows: repeat(4, auto);
-        gap: 1rem 3rem;
+        margin-top: 4rem;
+        width: min(120rem, 88vw);
+        display: flex;
+        flex-direction: column;
+        gap: 1.8rem;
+        font-size: 2.2rem;
       }
       .res-row {
-        display: flex;
-        align-items: center;
-        gap: 1.2rem;
-        font-size: 2.8rem;
-        padding: 0.8rem 1.4rem;
-        border-radius: 1.6rem;
-        background: rgba(255, 255, 255, 0.08);
-        border-left: 1rem solid var(--c);
+        display: grid;
+        grid-template-columns: 10rem 18rem minmax(0, 1fr);
+        align-items: baseline;
+        gap: 2.4rem;
+        color: #ffffff;
       }
-      .res-row .pl {
-        width: 4.2rem;
-        text-align: center;
-        font-size: 2.4rem;
-        opacity: 0.9;
+      #res-list.solo .res-row {
+        grid-template-columns: 10rem minmax(0, 1fr);
+      }
+      /* a game's score column (gameOver extra.values, TEE TIME: "247 PTS") */
+      #res-list.solo.vals .res-row {
+        grid-template-columns: 10rem minmax(0, 1fr) 20rem;
+      }
+      .res-row .val {
+        text-align: right;
+      }
+      .res-row.res-hd {
+        color: #6c7a99;
+        font-size: 1.6rem;
       }
       .res-row.first {
-        background: rgba(255, 215, 64, 0.22);
+        color: #ffd23f;
       }
-      .res-row .nm {
-        flex: 1;
+      .res-row .crew {
+        font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif;
+        font-size: 2.8rem;
+        font-weight: 700;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .res-row .bot {
-        font-size: 1.5rem;
-        opacity: 0.6;
-      }
       #res-sub {
-        margin-top: 2.6rem;
-        font-size: 2.6rem;
-        opacity: 0.85;
+        margin-top: 4.4rem;
+        font-size: 1.8rem;
+        line-height: 1.6;
+        color: #35d07f;
+        text-align: center;
       }
+      /* the winner's crowned puffball hops in pixel steps: squash on landing, ~5 sprite pixels up,
+         the crown a pixel behind on the way up, always on the head (pixel-art.js crownedPuff) */
+      .px-hop {
+        transform-origin: 50% 100%;
+        animation: px-hop 0.9s steps(1, end) infinite;
+      }
+      #res-title .px-hop {
+        margin-top: calc(var(--px) * 5);
+      }
+      .px-hop .px-crown {
+        animation: px-crown-bob 0.9s steps(1, end) infinite;
+      }
+      /* the crown sits on the head: two puff pixels down over it, drawn on top */
+      .px-crowned .px-crown {
+        position: relative;
+        z-index: 1;
+        margin-bottom: calc(var(--px, 4px) * -2);
+      }
+      @keyframes px-hop {
+        0% { transform: translateY(0) scale(1.1, 0.9); }
+        11% { transform: translateY(0) scale(1, 1); }
+        22% { transform: translateY(calc(var(--px) * -2)) scale(0.95, 1.06); }
+        33% { transform: translateY(calc(var(--px) * -4)) scale(1, 1); }
+        44% { transform: translateY(calc(var(--px) * -5)) scale(1, 1); }
+        55% { transform: translateY(calc(var(--px) * -5)) scale(1, 1); }
+        66% { transform: translateY(calc(var(--px) * -4)) scale(1, 1); }
+        77% { transform: translateY(calc(var(--px) * -2)) scale(0.95, 1.06); }
+        88%, 100% { transform: translateY(0) scale(1.1, 0.9); }
+      }
+      /* the crown lags a pixel on the way up (sits deeper on the head), never lifts off it */
+      @keyframes px-crown-bob {
+        0%, 11% { transform: translateY(0); }
+        22%, 33% { transform: translateY(var(--cpx, 2px)); }
+        44%, 100% { transform: translateY(0); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .res-cursor,
+        .px-hop,
+        .px-hop .px-crown { animation: none; }
+      }
+
+      /* ── Sky Scramble setup: who's ready, a pixel panel over the lobby screens under the join card
+         (host.js places and fills it; Row's seats lobby has its own) ── */
+      #sky-ready {
+        position: fixed;
+        z-index: 65;
+        left: 48px;
+        top: 700px;
+        width: 330px;
+        box-sizing: border-box;
+        padding: 16px 16px 18px;
+        overflow: hidden;
+        background: #0d1322;
+        color: #fff;
+        box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428, 0 10px 0 0 #040a188c, inset 0 4px 0 0 #ffffff14, inset 0 -4px 0 0 #00000038;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        pointer-events: none;
+      }
+      #sky-ready[hidden] {
+        display: none;
+      }
+      #sky-ready .sr-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 14px;
+        font-size: 13px;
+        line-height: 1.4;
+        color: #ffd23f;
+        text-shadow: 3px 3px 0 #0a1428;
+      }
+      #sky-ready .sr-count {
+        color: #ffffff;
+      }
+      #sky-ready.all .sr-count {
+        color: #35d07f;
+      }
+      #sky-ready ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      #sky-ready li {
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        min-height: 48px;
+        padding: 4px 8px 4px 4px;
+        background: #00000038;
+      }
+      #sky-ready li.away {
+        opacity: 0.45;
+      }
+      #sky-ready .sr-pic {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: linear-gradient(180deg, #4a82e8 0 40%, #6198f0 40% 72%, #81b0f6 72%);
+      }
+      #sky-ready .sr-pic img {
+        max-width: 92%;
+        max-height: 92%;
+        object-fit: contain;
+      }
+      #sky-ready .sr-pic .round {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background-color: #fff;
+        background-repeat: no-repeat;
+      }
+      #sky-ready .sr-pic .px-sprite {
+        width: 32px;
+        height: 32px;
+      }
+      #sky-ready .sr-name {
+        font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif;
+        font-weight: 700;
+        font-size: 22px;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      #sky-ready .sr-badge {
+        font-size: 10px;
+        line-height: 1;
+        padding: 6px 7px;
+        white-space: nowrap;
+        color: #0a1428;
+        background: #c9d2e6;
+        box-shadow: 0 -2px 0 0 #0a1428, 0 2px 0 0 #0a1428, -2px 0 0 0 #0a1428, 2px 0 0 0 #0a1428;
+      }
+      #sky-ready .ready .sr-badge {
+        background: #35d07f;
+      }
+      #sky-ready .picking .sr-badge {
+        background: #ffd23f;
+      }
+      #sky-ready .drawing .sr-badge {
+        background: #6a3fd0;
+        color: #ffffff;
+      }
+      #sky-ready .sr-hint {
+        margin-top: 16px;
+        font-size: 9px;
+        line-height: 1.7;
+        color: #8d9bbb;
+      }
+      /* ── TEE TIME setup: the MAP panel (same pixel panel as Sky's ready check; host.js places and fills it) ── */
+      #golf-map {
+        position: fixed;
+        z-index: 65;
+        left: 48px;
+        top: 700px;
+        width: 330px;
+        box-sizing: border-box;
+        padding: 16px 16px 18px;
+        background: #0d1322;
+        color: #fff;
+        box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428, 0 10px 0 0 #040a188c, inset 0 4px 0 0 #ffffff14, inset 0 -4px 0 0 #00000038;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        pointer-events: none;
+      }
+      #golf-map[hidden] {
+        display: none;
+      }
+      /* ── WHOSFOX (WHO'S THE FOX?) setup: 3+ players (same pixel panel as TEE TIME's map; host.js places and fills it) ── */
+      #whosfox-setup {
+        position: fixed;
+        z-index: 65;
+        left: 48px;
+        top: 700px;
+        width: 330px;
+        box-sizing: border-box;
+        padding: 16px 16px 18px;
+        background: #0d1322;
+        color: #fff;
+        box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428, 0 10px 0 0 #040a188c, inset 0 4px 0 0 #ffffff14, inset 0 -4px 0 0 #00000038;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        pointer-events: none;
+      }
+      #whosfox-setup[hidden] {
+        display: none;
+      }
+      #whosfox-setup .wf-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 14px;
+        font-size: 13px;
+        line-height: 1.4;
+        color: #ffd23f;
+        text-shadow: 3px 3px 0 #0a1428;
+      }
+      #whosfox-setup .wf-who {
+        color: #ffffff;
+        font-size: 10px;
+      }
+      #whosfox-setup .wf-need {
+        font-size: 18px;
+        line-height: 1.5;
+        text-align: center;
+        text-shadow: 3px 3px 0 #0a1428;
+      }
+      #whosfox-setup .wf-need.ok {
+        color: #35d07f;
+      }
+      #whosfox-setup .wf-need.no {
+        color: #ff9864;
+      }
+      #whosfox-setup .wf-need small {
+        font-size: 11px;
+        color: #c9c8df;
+      }
+      #whosfox-setup .wf-hint {
+        margin-top: 14px;
+        font-size: 9px;
+        line-height: 1.7;
+        color: #8d9bbb;
+        text-align: center;
+      }
+      #whosfox-setup.nudge {
+        animation: wf-nudge 0.4s steps(4) 2;
+      }
+      @keyframes wf-nudge {
+        25% { transform: translateX(-8px); }
+        75% { transform: translateX(8px); }
+      }
+      /* BOTS: FILL / OFF (the host's setting for every game): a small label by the party info (web: under the
+         multi-TV party chip), clickable on a TV with a mouse */
+      #bots-toggle {
+        position: fixed;
+        z-index: 96;
+        left: 1.5rem;
+        top: 1.5rem;
+        padding: 0.45rem 0.75rem;
+        border: 0.2rem solid #fff9f1;
+        background: #101125e6;
+        color: #fff9f1;
+        box-shadow: 0 0.3rem 0 #08091980;
+        font: 0.75rem/1.3 "FoxBox Pixel", ui-monospace, monospace;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+      }
+      #bots-toggle[hidden] {
+        display: none;
+      }
+      #bots-toggle[data-mode="fill"] {
+        color: #ffd23f;
+      }
+      #bots-toggle.bt-ro {
+        cursor: default;
+      }
+      .bot-tag {
+        display: inline-block;
+        margin-left: 6px;
+        padding: 1px 6px;
+        background: #3a4466;
+        color: #dfe6ff;
+        font-size: 0.55em;
+        letter-spacing: 0.08em;
+        vertical-align: 0.2em;
+      }
+      #golf-map .gm-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 12px;
+        font-size: 13px;
+        line-height: 1.4;
+        color: #ffd23f;
+        text-shadow: 3px 3px 0 #0a1428;
+      }
+      #golf-map .gm-who {
+        color: #ffffff;
+        font-size: 10px;
+      }
+      #golf-map .gm-pic {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        image-rendering: pixelated;
+        box-shadow: 0 0 0 4px #0a1428;
+      }
+      #golf-map .gm-name {
+        margin-top: 14px;
+        font-size: 18px;
+        line-height: 1.3;
+        text-align: center;
+        color: #ffd23f;
+        text-shadow: 3px 3px 0 #0a1428;
+      }
+      #golf-map .gm-pips {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      #golf-map .gm-pips i {
+        width: 12px;
+        height: 12px;
+        background: #3a4466;
+        box-shadow: 0 0 0 2px #0a1428;
+      }
+      #golf-map .gm-pips i.on {
+        background: #ffd23f;
+      }
+      #golf-map .gm-hint {
+        margin-top: 14px;
+        font-size: 9px;
+        line-height: 1.7;
+        color: #8d9bbb;
+        text-align: center;
+      }
+      /* five or more players: compact rows so eight still fit under the join card */
+      #sky-ready.many {
+        padding: 12px 14px 14px;
+      }
+      #sky-ready.many .sr-head {
+        margin-bottom: 10px;
+      }
+      #sky-ready.many li {
+        grid-template-columns: 30px minmax(0, 1fr) auto;
+        min-height: 32px;
+        gap: 10px;
+        padding: 1px 8px 1px 1px;
+      }
+      #sky-ready.many ol {
+        gap: 5px;
+      }
+      #sky-ready.many .sr-pic {
+        width: 30px;
+        height: 30px;
+      }
+      #sky-ready.many .sr-pic .round {
+        width: 26px;
+        height: 26px;
+      }
+      #sky-ready.many .sr-pic .px-sprite {
+        width: 24px;
+        height: 24px;
+      }
+      #sky-ready.many .sr-name {
+        font-size: 18px;
+      }
+      #sky-ready.many .sr-badge {
+        font-size: 9px;
+        padding: 4px 6px;
+      }
+      #sky-ready.many .sr-hint {
+        display: none;
+      }
+      /* ── KNIGHT (Knight Platformer) setup: LEVEL + READY CHECK, the same pixel panel as Sky's (host.js renderKnightSetup) ── */
+      #knight-setup {
+        position: fixed;
+        z-index: 65;
+        left: 48px;
+        top: 700px;
+        width: 330px;
+        box-sizing: border-box;
+        padding: 14px 16px 16px;
+        overflow: hidden;
+        background: #0d1322;
+        color: #fff;
+        box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428, 0 10px 0 0 #040a188c, inset 0 4px 0 0 #ffffff14, inset 0 -4px 0 0 #00000038;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        pointer-events: none;
+      }
+      #knight-setup[hidden] { display: none; }
+      #knight-setup .ks-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; font-size: 13px; line-height: 1.4; color: #ffd23f; text-shadow: 3px 3px 0 #0a1428; }
+      #knight-setup .ks-who { color: #ffffff; font-size: 10px; }
+      #knight-setup .ks-level { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 14px; align-items: center; }
+      #knight-setup .ks-thumb { display: block; width: 128px; height: 72px; image-rendering: pixelated; box-shadow: 0 0 0 4px #0a1428; }
+      #knight-setup .ks-lvname { font-size: 14px; line-height: 1.5; color: #ffd23f; text-shadow: 3px 3px 0 #0a1428; }
+      #knight-setup .ks-others { display: flex; flex-direction: column; gap: 6px; margin: 12px 0 0; }
+      #knight-setup .ks-other { font-size: 8px; line-height: 1.6; color: #8d9bbb; }
+      #knight-setup .ks-other b { margin-left: 8px; padding: 2px 5px; font-weight: 400; color: #0a1428; background: #6c7a99; }
+      #knight-setup .ks-rhead { margin-top: 16px; }
+      #knight-setup .ks-count { color: #ffffff; }
+      #knight-setup.all .ks-count { color: #35d07f; }
+      #knight-setup ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+      #knight-setup li { display: grid; grid-template-columns: 51px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 54px; padding: 2px 8px 2px 2px; background: #00000038; }
+      #knight-setup li.away { opacity: 0.45; }
+      #knight-setup .ks-pic { display: block; width: 51px; height: 51px; image-rendering: pixelated; background: linear-gradient(180deg, #0f1d3c 0 60%, #18294f 60%); box-shadow: inset 0 -3px 0 0 var(--kc, #ffd23f); }
+      #knight-setup .ks-who2 { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+      #knight-setup .ks-name { font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif; font-weight: 700; font-size: 21px; line-height: 1.05; color: var(--kc, #ffffff); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 2px 2px 0 #0a1428; }
+      #knight-setup .ks-what { font-size: 7px; line-height: 1.4; color: #8d9bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      #knight-setup .ks-badge { font-size: 10px; line-height: 1; padding: 6px 7px; white-space: nowrap; color: #0a1428; background: #c9d2e6; box-shadow: 0 -2px 0 0 #0a1428, 0 2px 0 0 #0a1428, -2px 0 0 0 #0a1428, 2px 0 0 0 #0a1428; }
+      #knight-setup .ready .ks-badge { background: #35d07f; }
+      #knight-setup .picking .ks-badge { background: #ffd23f; }
+      #knight-setup .bot .ks-badge { background: #8d9bbb; }
+      #knight-setup li.bot { background: #0000001f; }
+      #knight-setup .ks-hint { margin-top: 14px; font-size: 9px; line-height: 1.7; color: #8d9bbb; }
+      /* five or more players: two columns (badge under the name) so eight still fit under the join card */
+      #knight-setup.many ol { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 8px; }
+      #knight-setup.many li { grid-template-columns: 51px minmax(0, 1fr); gap: 8px; padding-right: 4px; }
+      #knight-setup.many .ks-level { grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
+      #knight-setup.many .ks-thumb { width: 96px; height: 54px; }
+      #knight-setup.many .ks-lvname { font-size: 12px; }
+      #knight-setup.many .ks-others { flex-direction: row; flex-wrap: wrap; gap: 4px 10px; margin-top: 10px; }
+      #knight-setup.many .ks-other { font-size: 7px; }
+      #knight-setup.many .ks-rhead { margin-top: 12px; }
+      #knight-setup.many .ks-name { font-size: 17px; }
+      #knight-setup.many .ks-what { display: none; }
+      #knight-setup.many .ks-badge { grid-column: 2; grid-row: 1; align-self: end; justify-self: start; margin-bottom: 4px; font-size: 7px; padding: 3px 4px; }
+      #knight-setup.many .ks-who2 { grid-column: 2; grid-row: 1; align-self: start; margin-top: 6px; }
+      #knight-setup.many .ks-hint { display: none; }
+      #knight-setup.crowd { padding: 12px 14px 12px; }
+      #knight-setup.crowd .ks-others { display: none; }
+      #knight-setup.crowd .ks-level { grid-template-columns: 80px minmax(0, 1fr); }
+      #knight-setup.crowd .ks-thumb { width: 80px; height: 45px; }
+      #knight-setup.crowd .ks-head { margin-bottom: 8px; }
+      #knight-setup.crowd .ks-rhead { margin-top: 10px; }
+      #knight-setup.crowd ol { gap: 5px 8px; }
+      #knight-setup.crowd li { grid-template-columns: 40px minmax(0, 1fr); min-height: 44px; }
+      #knight-setup.crowd .ks-pic { width: 40px; height: 40px; }
+      #knight-setup.crowd .ks-name { font-size: 16px; }
+      /* ── end KNIGHT ── */
+      /* ── KART (FOX KART) setup: TRACK + READY CHECK, the same pixel panel as the knight's (host.js renderKartSetup) ── */
+      #kart-setup {
+        position: fixed;
+        z-index: 65;
+        left: 48px;
+        top: 700px;
+        width: 330px;
+        box-sizing: border-box;
+        padding: 14px 16px 16px;
+        overflow: hidden;
+        background: #0d1322;
+        color: #fff;
+        box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428, 0 10px 0 0 #040a188c, inset 0 4px 0 0 #ffffff14, inset 0 -4px 0 0 #00000038;
+        font-family: "FoxBox Pixel", ui-monospace, monospace;
+        pointer-events: none;
+      }
+      #kart-setup[hidden] { display: none; }
+      #kart-setup .fk-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; font-size: 13px; line-height: 1.4; color: #ffd23f; text-shadow: 3px 3px 0 #0a1428; }
+      #kart-setup .fk-who { color: #ffffff; font-size: 10px; }
+      #kart-setup .fk-track { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 14px; align-items: center; }
+      #kart-setup .fk-map { display: block; width: 128px; height: 72px; image-rendering: pixelated; box-shadow: 0 0 0 4px #0a1428; }
+      #kart-setup .fk-tname { font-size: 14px; line-height: 1.5; color: #ffd23f; text-shadow: 3px 3px 0 #0a1428; }
+      #kart-setup .fk-tname small { display: block; margin-top: 6px; font-size: 9px; color: #ffffff; }
+      #kart-setup .fk-others { display: flex; flex-direction: column; gap: 6px; margin: 12px 0 0; }
+      #kart-setup .fk-other { font-size: 8px; line-height: 1.6; color: #8d9bbb; }
+      #kart-setup .fk-other b { margin-left: 8px; padding: 2px 5px; font-weight: 400; color: #0a1428; background: #6c7a99; }
+      #kart-setup .fk-rhead { margin-top: 16px; }
+      #kart-setup .fk-count { color: #ffffff; }
+      #kart-setup.all .fk-count { color: #35d07f; }
+      #kart-setup ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+      #kart-setup li { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 52px; padding: 2px 8px 2px 2px; background: #00000038; }
+      #kart-setup li.away { opacity: 0.45; }
+      #kart-setup .fk-pic { display: block; width: 48px; height: 48px; image-rendering: pixelated; box-shadow: inset 0 -3px 0 0 var(--kc, #ffd23f); }
+      #kart-setup .fk-who2 { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+      #kart-setup .fk-name { font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif; font-weight: 700; font-size: 21px; line-height: 1.05; color: var(--kc, #ffffff); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 2px 2px 0 #0a1428; }
+      #kart-setup .fk-what { font-size: 7px; line-height: 1.4; color: #8d9bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      #kart-setup .fk-badge { font-size: 10px; line-height: 1; padding: 6px 7px; white-space: nowrap; color: #0a1428; background: #c9d2e6; box-shadow: 0 -2px 0 0 #0a1428, 0 2px 0 0 #0a1428, -2px 0 0 0 #0a1428, 2px 0 0 0 #0a1428; }
+      #kart-setup .ready .fk-badge { background: #35d07f; }
+      #kart-setup .picking .fk-badge { background: #ffd23f; }
+      #kart-setup .bot .fk-badge { background: #8d9bbb; }
+      #kart-setup li.bot { background: #0000001f; }
+      #kart-setup .fk-hint { margin-top: 14px; font-size: 9px; line-height: 1.7; color: #8d9bbb; }
+      /* four or more rows: two columns (badge under the name) so eight still fit under the join card */
+      #kart-setup.many ol { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 8px; }
+      #kart-setup.many li { grid-template-columns: 48px minmax(0, 1fr); gap: 8px; padding-right: 4px; }
+      #kart-setup.many .fk-track { grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
+      #kart-setup.many .fk-map { width: 96px; height: 54px; }
+      #kart-setup.many .fk-tname { font-size: 12px; }
+      #kart-setup.many .fk-others { flex-direction: row; flex-wrap: wrap; gap: 4px 10px; margin-top: 10px; }
+      #kart-setup.many .fk-other { font-size: 7px; }
+      #kart-setup.many .fk-rhead { margin-top: 12px; }
+      #kart-setup.many .fk-name { font-size: 17px; }
+      #kart-setup.many .fk-what { display: none; }
+      #kart-setup.many .fk-badge { grid-column: 2; grid-row: 1; align-self: end; justify-self: start; margin-bottom: 4px; font-size: 7px; padding: 3px 4px; }
+      #kart-setup.many .fk-who2 { grid-column: 2; grid-row: 1; align-self: start; margin-top: 6px; }
+      #kart-setup.many .fk-hint { display: none; }
+      #kart-setup.crowd { padding: 12px 14px 12px; }
+      #kart-setup.crowd .fk-others { display: none; }
+      #kart-setup.crowd .fk-track { grid-template-columns: 80px minmax(0, 1fr); }
+      #kart-setup.crowd .fk-map { width: 80px; height: 45px; }
+      #kart-setup.crowd .fk-head { margin-bottom: 8px; }
+      #kart-setup.crowd .fk-rhead { margin-top: 10px; }
+      #kart-setup.crowd ol { gap: 5px 8px; }
+      #kart-setup.crowd li { min-height: 50px; }
+      #kart-setup.crowd .fk-name { font-size: 16px; }
+      /* ── end KART ── */
 
       /* ── In-round HUD (the platform's HUD, mocked; TV-sized) ───────────── */
       #hud {
@@ -536,6 +1067,30 @@
         text-decoration: line-through;
         color: #ef4444;
       }
+      /* TEE TIME draws its own HUD into a 1920x1080 canvas (object-fit: contain, so 120rem x 67.5rem here, centred):
+         the mini-game panel top left ends at y 140 (8.75rem), the golfer's turn panel bottom left starts at y 884
+         (55.25rem). The player stack stays between the two (1rem clear of each), centred in that band; with 7-8
+         players the cards tighten so they all fit (8 regular cards ran into the turn panel). */
+      #hud[data-game="golf"] #scoreboard {
+        top: calc(50% - 24rem);
+        bottom: calc(50% - 20.5rem);
+        transform: none;
+        justify-content: center;
+      }
+      #hud[data-game="golf"] #scoreboard.many {
+        gap: 0.4rem;
+      }
+      #hud[data-game="golf"] #scoreboard.many .player-box {
+        gap: 0;
+        padding: 0.4rem 0.9rem;
+      }
+      #hud[data-game="golf"] #scoreboard.many .name {
+        font-size: 1.3rem;
+      }
+      #hud[data-game="golf"] #scoreboard.many .score {
+        font-size: 1.6rem;
+        line-height: 1.15;
+      }
       #screen-points {
         position: absolute;
         inset: 0;
@@ -557,6 +1112,12 @@
         background: var(--c);
         box-shadow: 0 0.15rem 0.4rem rgba(0, 0, 0, 0.35);
         text-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.5);
+      }
+      .overhead .oh-label {
+        font-size: 1.1rem;
+        line-height: 1;
+        color: #fff;
+        text-shadow: 0 0.1rem 0.25rem rgba(0, 0, 0, 0.8);
       }
       .overhead .oh-meter {
         width: 6rem;
@@ -637,6 +1198,7 @@
         font-weight: 600;
       }
     </style>
+      <link id="fbx-ui-css" rel="stylesheet" href="./ui/foxbox-ui.css">
   </head>
   <body>
     <!-- LOBBY -->
@@ -669,6 +1231,25 @@
       </div>
     </section>
 
+    <!-- SKY SCRAMBLE SETUP: who's ready (host.js) -->
+    <div id="sky-ready" data-test="ready-check" hidden>
+      <div class="sr-head"><span>READY CHECK</span><span class="sr-count" id="sky-ready-count"></span></div>
+      <ol id="sky-ready-list"></ol>
+      <div class="sr-hint">PICK A CHARACTER ON YOUR PHONE, THEN TAP READY</div>
+    </div>
+
+    <!-- TEE TIME SETUP: the map the picker chooses on their phone (host.js renderGolfMap) -->
+    <div id="golf-map" data-test="golf-map" hidden></div>
+    <button id="bots-toggle" type="button" data-test="bots-toggle" hidden></button>
+    <!-- KNIGHT (Knight Platformer) SETUP: the level the picker chose + who's ready (host.js renderKnightSetup) -->
+    <div id="knight-setup" data-test="knight-setup" hidden></div>
+    <!-- WHOSFOX (WHO'S THE FOX?): its setup panel ("NEEDS 3+ PLAYERS" / ready); host.js renderWhosfoxSetup() fills it -->
+    <div id="whosfox-setup" data-test="whosfox-setup" hidden></div>
+    <!-- end KNIGHT -->
+    <!-- KART (FOX KART) SETUP: the track + who's ready, every racer in their slot colour (host.js renderKartSetup) -->
+    <div id="kart-setup" data-test="kart-setup" hidden></div>
+    <!-- end KART -->
+
     <!-- COUNTDOWN -->
     <section id="countdown" class="screen">
       <div id="cd-num">3</div>
@@ -689,7 +1270,7 @@
       <div id="paused">Paused</div>
     </div>
 
-    <script>if (!location.pathname.endsWith("/")) location.replace(location.pathname + "/" + location.search + location.hash); globalThis.FOXBOX_NET = "p2p"; globalThis.FOXBOX_ROLE = "host";</script>
+    <script>if (!location.pathname.endsWith("/")) location.replace(location.pathname + "/" + location.search + location.hash); globalThis.FOXBOX_NET = "p2p"; globalThis.FOXBOX_ROLE = "host"; globalThis.FOXBOX_LOBBY2 = "./lobby2/dist/main.js";</script>
     <script type="module" src="./dev/party/host.js"></script>
   </body>
 </html>
