@@ -421,6 +421,61 @@
           opacity: 1;
         }
       }
+      /* IN-GAME COUNTDOWN (Lakota): 3-2-1-GO! over the game's own scene (host.js beginIntro). No card: the round's
+         scene and HUD show through; the number pops in the FoxBox pixel font with a thick dark outline. */
+      #countdown.ingame {
+        background: none;
+        pointer-events: none;
+        z-index: 40;
+      }
+      #countdown.ingame #cd-num {
+        font-family: "FoxBox Pixel", "Press Start 2P", ui-monospace, monospace;
+        font-size: 15rem;
+        line-height: 1;
+        color: #fff9f1;
+        -webkit-text-stroke: 0.09em #101125;
+        paint-order: stroke fill;
+        text-shadow:
+          0 0.07em 0 #101125,
+          0 0.16em 0.3em rgba(8, 9, 25, 0.55);
+        animation: cd-pop 1s steps(6, end) both;
+      }
+      #countdown.ingame #cd-num.ready { font-size: 8rem; }
+      /* TEE TIME draws its own challenge card in the middle (GAME 1 OF 3 · LONGEST DRIVE): READY… goes on the range below */
+      #countdown.ingame[data-game="golf"] { justify-content: flex-end; padding-bottom: 12vh; }
+      /* Row Row Rumble: the kayaks wait on the start line in the middle: the number goes in the open river above them */
+      #countdown.ingame[data-game="row"] { justify-content: flex-start; padding-top: 14vh; }
+      #countdown.ingame #cd-num.go { color: #ffd23f; font-size: 17rem; }
+      #countdown.ingame #cd-sub {
+        font-family: "FoxBox Pixel", "Press Start 2P", ui-monospace, monospace;
+        font-size: 1.5rem;
+        line-height: 1.4;
+        margin-top: 2.2rem;
+        padding: 0.7rem 1.3rem;
+        color: #fff9f1;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-shadow: none;
+        background: rgba(16, 17, 37, 0.72);
+        border-radius: 0.4rem;
+      }
+      #countdown.ingame #cd-sub:empty { display: none; }
+      @keyframes cd-pop {
+        from {
+          transform: scale(1.6);
+          opacity: 0;
+        }
+        25% {
+          transform: scale(0.94);
+          opacity: 1;
+        }
+        40% {
+          transform: scale(1);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #countdown.ingame #cd-num { animation: none; }
+      }
 
       /* ── Results ───────────────────────────────────────────────────────── */
       /* Results: an arcade high-score screen (the pixel look). The winner's puffball wears the crown. */

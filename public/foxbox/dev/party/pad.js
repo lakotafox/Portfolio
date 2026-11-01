@@ -45,6 +45,7 @@ import { createCapPad } from "./cap-pad.js";
 import { createLandscape, createTurnHint, turnedDelta } from "./landscape.js";
 import { crownedPuff, cryingPuff, sprite } from "./pixel-art.js";
 import { createPhoneSounds } from "./phone-sounds.js";
+import { createRowTrainPad, S as ROW_TRAIN } from "./row-train-pad.js"; // ROWTRAIN: Row Row Rumble's TRAINING overlay
 
 const phoneSounds = createPhoneSounds({
   onReady: (audioReady) => queueMicrotask(() => sendRaw({ t: "state", drawing: drawOpen, audioReady: audioReady === true })),
@@ -59,6 +60,8 @@ const DEADZONE = 0.12;
 const FULL_AT = 0.65; // fraction of the half-width where steering hits ±1
 
 const $ = (id) => document.getElementById(id);
+// ROWTRAIN: Row Row Rumble's TRAINING overlay (row-train-pad.js); renderStatus feeds it the state + seat
+const rowTrain = createRowTrainPad({ screen: $("pad-screen"), onChange: () => renderStatus() });
 
 // ── Identity ────────────────────────────────────────────────────────────────────
 function loadMe() {
@@ -1097,6 +1100,7 @@ function onMessage(msg) {
       if (foxGameMsg(msg)) break; // WHOSFOX: the WHO'S THE FOX? module's
       if (knightGameMsg(msg)) break; // KNIGHT: the knight module's (Knight Platformer is the hub's game)
       if (kartGameMsg(msg)) break; // KART: the kart module's (FOX KART is the hub's game)
+      if (mode.id === "row" && msg.m && msg.m.type === "rowTrain") { rowTrain.onMessage(msg.m); renderStatus(); break; } // ROWTRAIN: the controls check
       if (mode.id === "snowball" && msg.m && msg.m.type === "round") { roundCue(msg.m); break; } // SNOWBALL: best of three
       if (msg.m && typeof msg.m === "object") {
         if (golfPad) golfPad.onMessage(msg.m);
@@ -1523,6 +1527,7 @@ $("boats-head").addEventListener("click", () => {
 function renderStatus() {
   if (lastStatus && lastStatus.game) applyMode(lastStatus.game);
   applyRole();
+  rowTrain.sync({ state: mode.id === "row" && lastStatus ? lastStatus.state : null, seat: role || null, connected: !!(ws && ws.readyState === 1 && hostUp && !replaced) }); // ROWTRAIN
   syncRowSetup();
   renderBoats();
   syncSky();
@@ -1590,6 +1595,11 @@ function renderStatus() {
         s = "Look at the TV 👀";
         break;
       case "playing":
+        if (mode.id === "row" && rowTrain.visible()) { // ROWTRAIN: the controls check before the race (then ALL SET!)
+          b = rowTrain.on() ? ROW_TRAIN.status : ROW_TRAIN.done.big;
+          s = rowTrain.statusLine();
+          break;
+        }
         b = "GO GO GO!";
         s = role === "captain"
           ? "Tilt to steer · aim and FIRE at the other boats"

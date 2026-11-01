@@ -39,7 +39,7 @@ export function tickPlayer(view, { game = "", onOver = null } = {}) {
   Object.assign(stats, { game, ticksReceived: 0, ticksApplied: 0, bufferTicks: 0, delayMs: null, gaps: 0, skipped: 0, holds: 0, tickBytes: 0, firstTickAt: 0, lastTickAt: 0, live: null, inputs: 0, own: [] });
   stats.delays.length = 0;
   const q = []; // { t: tick, w: the boss's wall-clock ms when it made that tick }
-  let lastSeq = 0, acc = 0, last = 0, started = false, over = false, stopped = false, raf = 0;
+  let lastSeq = 0, acc = 0, last = 0, started = false, over = false, stopped = false, raf = 0, first = true;
   function push(m) {
     const k = Array.isArray(m && m.k) ? m.k : [];
     if (lastSeq && m.q !== lastSeq + 1) stats.gaps++; // fine: every tick carries the whole view
@@ -56,6 +56,13 @@ export function tickPlayer(view, { game = "", onOver = null } = {}) {
     raf = requestAnimationFrame(frame);
     const dt = last ? Math.min(250, now - last) : 0;
     last = now;
+    // the round's first tick at once (its start frame: a held start sends just that one until GO), then the buffer fills
+    if (first && q.length && !over) {
+      first = false;
+      view.applyTick(q.shift().t);
+      stats.ticksApplied++;
+      stats.bufferTicks = q.length;
+    }
     if (!started && q.length * TICK_MS >= TARGET_MS) started = true;
     if (started && !over) {
       if (q.length * TICK_MS > SKIP_MS) stats.skipped += q.splice(0, q.length - Math.ceil(TARGET_MS / TICK_MS)).length;

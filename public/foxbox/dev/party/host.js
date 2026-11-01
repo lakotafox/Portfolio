@@ -71,6 +71,7 @@ const GAMES = [
     module: "../../games/golf/gc.game.js", props: "../../games/golf/gc.properties.json",
     tagline: "Swing your phone like a club!",
     minPlayers: 1, maxPlayers: 8, controls: "Aim with the arrows · swing your phone like a club",
+    intro: "ready", // turn-based: a short READY… GO! over the range (the in-game countdown, see beginIntro)
     // TEE TIME's setup: the game picker chooses the map on their phone (golf-pad.js setup cards, {t:"game", m:{type:"map"}});
     // the TV shows it (#golf-map) and play() gets it as ctx.options.map ("random" = the game draws one)
     maps: [{ id: "sunny", name: "SUNNY RANGE" }, { id: "sunset", name: "SUNSET LINKS" }, { id: "night", name: "NIGHT LIGHTS" }, { id: "candy", name: "CANDY COURSE" }, { id: "random", name: "RANDOM" }],
@@ -135,10 +136,9 @@ const GAMES = [
     minPlayers: 1, maxPlayers: 8, controls: "Tilt to steer · GAS · ITEM (phone sideways)",
     racers: ["fox", "puff", "cat", "frog", "knight", "penguin", "bunny", "raccoon"], // the art's ids (CONTRACT "Art APIs"); default = by slot, like game.js
     tracks: [{ id: "rampart", name: "RAMPART RUN", laps: 3, open: true }],
-    // ONE countdown (the game runs its own grid swoop + start lights): the shell's countdown card is a short READY!
-    // (no 3-2-1, no phone cues) and there's no GO! card (startCountdown / startRound read these)
-    countdownMs: 1000,
-    countdownLabel: "READY!",
+    // ONE countdown (the game runs its own grid swoop + start lights): intro "own" = no shell countdown at all (no
+    // 3-2-1, no phone cues, no GO! card): play() starts unpaused and the start lights are the countdown
+    intro: "own",
     card: {
       chip: "Kart Racer",
       motion: true,
@@ -164,6 +164,9 @@ const GAMES = [
     module: "../../games/whosfox/gc.game.js", props: "../../games/whosfox/gc.properties.json",
     tagline: "Secret tasks on your phone · one of you is faking it · find the fox!",
     minPlayers: 3, maxPlayers: 8, bots: false, controls: "Your phone: a secret task, the camera, the mic, DONE, then vote",
+    // not a reflex game, and its round opens with its own title sweep (WHO'S THE FOX? + the rules): that IS its start
+    // (a held first frame froze the sweep half-drawn under READY…), so no shell countdown, like FOX KART's lights
+    intro: "own",
     card: {
       chip: "Secret Tasks + Vote",
       rules: [
@@ -720,6 +723,7 @@ function allRowReady() {
 }
 function cancelRowCountdown() {
   if (GAME.id !== "row" || phase !== "countdown") return;
+  if (round && !round.ended) return; // IN-GAME COUNTDOWN: a round exists (training / 3-2-1): nothing to call off
   clearInterval(countdownTimer);
   phase = "lobby";
   autoStartAt = null;
@@ -1028,6 +1032,7 @@ function onSkyReady(msg) {
 /** Someone new joined during the everyone's-ready countdown: back to the setup for them. */
 function cancelSkyCountdown() {
   if (GAME.id !== "sky" || phase !== "countdown" || countdownWhy !== "ready") return;
+  if (round && !round.ended) return; // IN-GAME COUNTDOWN: a round exists (training / 3-2-1): nothing to call off
   clearInterval(countdownTimer);
   phase = "lobby";
   autoStartAt = null;
@@ -1147,6 +1152,7 @@ function maybeStartKnight() {
 /** Someone new joined during the everyone's-ready countdown: back to the setup for them. */
 function cancelKnightCountdown() {
   if (GAME.id !== "knight" || phase !== "countdown" || countdownWhy !== "ready") return;
+  if (round && !round.ended) return; // IN-GAME COUNTDOWN: a round exists (training / 3-2-1): nothing to call off
   clearInterval(countdownTimer);
   phase = "lobby";
   autoStartAt = null;
@@ -1286,6 +1292,7 @@ function maybeStartKart() {
 /** Someone new joined during the everyone's-ready countdown: back to the setup for them. */
 function cancelKartCountdown() {
   if (GAME.id !== "kart" || phase !== "countdown" || countdownWhy !== "ready") return;
+  if (round && !round.ended) return; // IN-GAME COUNTDOWN: a round exists (training / 3-2-1): nothing to call off
   clearInterval(countdownTimer);
   phase = "lobby";
   autoStartAt = null;
@@ -1768,8 +1775,8 @@ function statusFor(p) {
       ...(held ? { hold: "drawing" } : {}),
     };
   }
-  if (phase === "countdown") return { ...base, state: "countdown" };
   if (!round || round.humanIdByPid.get(p.slot + 1) !== p.id) return { ...base, state: "waiting" };
+  if (phase === "countdown") return { ...base, state: "countdown" }; // the in-game 3-2-1 (the round's people)
   const pid = p.slot + 1;
   if (phase === "results" && round.placement) {
     // the TV's results list (crew members share their boat's place), shown on the phone as well
@@ -1817,7 +1824,8 @@ function show(id) {
   queueMicrotask(publishLobby);
   for (const s of ["lobby", "countdown", "results"]) $(s).classList.toggle("show", s === id);
   lobbyUI()?.visible(id === "lobby");
-  $("hud").classList.toggle("show", phase === "playing" || phase === "results");
+  // the round's HUD stays up under the in-game countdown (a round exists in phase "countdown" now)
+  $("hud").classList.toggle("show", phase === "playing" || phase === "results" || (phase === "countdown" && !!round && !round.ended));
   renderSkyReady();
   renderSkyVote();
   renderGolfMap();
@@ -2494,6 +2502,8 @@ function toLobby(afterRound = false) {
   kartToLobby(afterRound); // KART: after the results the FoxBox lobby; called off: back to the kart setup (picks kept, nobody ready)
   clearTimeout(resultsTimer);
   clearInterval(countdownTimer);
+  clearInterval(introTimer); // IN-GAME COUNTDOWN: Esc / a call-off during the 3-2-1 or the Row training
+  $("countdown").classList.remove("ingame");
   if (round && !round.ended) {
     // Aborted mid-round: freeze the game; the next play() tears it down.
     round.ended = true;
@@ -2512,7 +2522,10 @@ function toLobby(afterRound = false) {
   broadcastLobby();
 }
 
-/** why: "ready" = Sky's everyone-tapped-READY start; "start" = BONK / the TV's Enter / the picker. */
+/** why: "ready" = Sky's everyone-tapped-READY start; "start" = BONK / the TV's Enter / the picker.
+ * IN-GAME COUNTDOWN (Lakota): no pre-game card any more. The round starts at once, paused on its start frame, and
+ * the 3-2-1-GO runs over the game's own scene (beginIntro); FOX KART's start lights are its own countdown (intro
+ * "own"); Row Row Rumble first runs its TRAINING (the game), then the countdown. */
 function startCountdown(byPlayer, why = "start") {
   if (phase !== "lobby" || !setupDone) return;
   if (GAME.id === "row" && !allRowReady()) return;
@@ -2520,50 +2533,99 @@ function startCountdown(byPlayer, why = "start") {
   if (GAME.id === "whosfox" && whosfoxPeople() < WHOSFOX_MIN) return whosfoxNeedMore(); // WHOSFOX: people only, 3+
   // Somebody has to be able to play: not everyone may be busy drawing.
   if (![...roster.values()].some((p) => p.connected && !p.drawing)) return;
-  phase = "countdown";
   countdownWhy = why;
   autoStartAt = null;
   drawHoldUntil = null;
-  const ends = Date.now() + (GAME.countdownMs ?? COUNTDOWN_MS); // KART: a short card (the game counts down itself)
   countdownCueId = `${Date.now()}-${stats.rounds + 1}`;
-  $("cd-sub").textContent = GAME.id === "row" || why === "ready" ? "Everyone’s ready!" : byPlayer ? `${byPlayer.name} pressed ${GAME.button} — get ready!` : "Get ready!";
+  introSub = GAME.id === "row" ? "" : why === "ready" ? "Everyone’s ready!" : byPlayer ? `${byPlayer.name} pressed ${GAME.button} — get ready!` : "Get ready!";
+  startRound();
+}
+
+// ── IN-GAME COUNTDOWN ──────────────────────────────────────────────────────────
+// GAMES[].intro: "321" (default) = 3-2-1 then GO!; "ready" = READY… then GO! (turn-based games); "own" = the game counts
+// down itself (FOX KART). The round's game is running paused on its start frame (play({isPaused: true})); #countdown
+// (class ingame: no background) draws the number over it, the phones get their spoken cues as before, and at GO the
+// game resumes (pause(false)) and every phone's held input goes in. Extra TVs: m:round { hold, intro } + m:intro, timed
+// on the boss clock (mirrorIntro). QA: __party.phase "countdown" while it runs, __party.intro.
+const INTRO_MS = { "321": COUNTDOWN_MS, ready: 1500 };
+const GO_MS = 700; // GO! stays over the running game this long
+const introOf = (g) => (g.intro === "ready" || g.intro === "own" ? g.intro : "321");
+let introSub = "";
+let introTimer = null;
+/** The #countdown overlay's text: label "3" / "READY…" / "GO!" (pops when it changes) + the small line. */
+function introDraw(label, sub) {
+  const num = $("cd-num");
+  $("countdown").classList.add("ingame");
+  $("countdown").dataset.game = GAME.id; // per-game placement (index.html: golf's sits under its challenge card)
+  if ($("cd-sub").textContent !== sub) $("cd-sub").textContent = sub;
+  if (num.textContent === label) return false;
+  num.textContent = label;
+  num.classList.toggle("go", label === "GO!");
+  num.classList.toggle("ready", label.startsWith("READY"));
+  num.style.animation = "none";
+  void num.offsetWidth;
+  num.style.animation = "";
+  return true;
+}
+function introLabel(mode, left) {
+  return mode === "ready" ? "READY…" : String(Math.max(1, left));
+}
+/** The main TV: the round is running paused on its start frame (or the Row training just ended): 3-2-1-GO over it. */
+function beginIntro(r) {
+  if (round !== r || r.ended || r.intro) return;
+  const mode = introOf(GAME);
+  r.hold = true;
+  r.training = false;
+  r.intro = { mode, goAt: Date.now() + INTRO_MS[mode], sub: introSub };
+  try { game.pause(true); } catch {} // (Row has paused itself already: again is fine)
+  phase = "countdown";
+  isPaused = false;
+  $("paused").classList.remove("show");
+  flushTvB(); // the start frame's tick (a batch of 2 would hold it until GO): the extra TVs draw it during the countdown
+  toTvB({ t: "m:intro", goAt: r.intro.goAt, mode, sub: r.intro.sub });
+  const cueTargets = [...roster.values()]
+    .filter((p) => p.connected && !p.drawing && (!globalThis.FOXBOX_LOBBY2 || p.audioReady))
+    .sort((a, b) => a.slot - b.slot).map((p) => p.id);
   const tick = () => {
-    if (GAME.id === "row" && !allRowReady()) { cancelRowCountdown(); return; }
-    const left = Math.ceil((ends - Date.now()) / 1000);
-    if (left <= 0) {
-      clearInterval(countdownTimer);
-      startRound();
-      return;
-    }
-    const label = GAME.countdownLabel || String(left); // KART: READY! instead of 3-2-1 (its start lights count down)
-    if ($("cd-num").textContent !== label) {
-      $("cd-num").textContent = label;
-      const available = [...roster.values()]
-        .filter((p) => p.connected && !p.drawing && (!globalThis.FOXBOX_LOBBY2 || p.audioReady))
-        .sort((a, b) => a.slot - b.slot).map((p) => p.id);
-      const cue = GAME.countdownLabel ? null : { 3: "three", 2: "two", 1: "one" }[left]; // KART: no phone 3-2-1 cues
-      if (cue && available.length) {
-        const targetId = available[(3 - left) % available.length];
+    if (round !== r || r.ended || phase !== "countdown") return clearInterval(introTimer);
+    const left = Math.ceil((r.intro.goAt - Date.now()) / 1000);
+    if (left <= 0) return introGo(r);
+    if (introDraw(introLabel(mode, left), r.intro.sub) && mode === "321") {
+      const cue = { 3: "three", 2: "two", 1: "one" }[left];
+      if (cue && cueTargets.length) {
+        const targetId = cueTargets[(3 - left) % cueTargets.length];
         wsSend({ t: "all", m: { t: "soundCue", id: `${countdownCueId}-${cue}`, cue, targetId } });
       }
-      // restart the pop animation
-      $("cd-num").style.animation = "none";
-      void $("cd-num").offsetWidth;
-      $("cd-num").style.animation = "";
     }
   };
   $("cd-num").textContent = "";
   show("countdown");
   broadcastLobby();
+  clearInterval(introTimer);
   tick();
-  countdownTimer = setInterval(tick, 100);
+  introTimer = setInterval(tick, 100);
 }
+/** GO: the game runs, GO! over it for a moment, every phone's input goes in. */
+function introGo(r) {
+  clearInterval(introTimer);
+  if (round !== r || r.ended) return;
+  stats.introGoLateMs = Date.now() - r.intro.goAt; // QA: how late GO came (the 100 ms timer)
+  r.intro = null;
+  r.hold = false;
+  if (tvBRound) tvBRound = { ...tvBRound, hold: false, intro: null }; // a TV that links from now on starts it running
+  phase = "playing";
+  try { game.pause(false); } catch (e) { console.error("[party] pause(false) threw", e); }
+  introDraw("GO!", "");
+  show("countdown");
+  wsSend({ t: "all", m: { t: "soundCue", id: `${countdownCueId}-go`, cue: "go" } });
+  setTimeout(() => { if (round === r && phase === "playing" && $("cd-num").textContent === "GO!") show(null); }, GO_MS);
+  for (const p of roster.values()) forwardInput(p); // whatever the phones are holding right now
+  broadcastLobby();
+}
+// ── end IN-GAME COUNTDOWN ──
 
 function startRound() {
-  if (GAME.id === "row" && (phase !== "countdown" || !allRowReady())) {
-    cancelRowCountdown();
-    return;
-  }
+  if (phase !== "lobby" || (GAME.id === "row" && !allRowReady())) return;
   const now = Date.now();
   // Someone still drawing sits this round out (they'd play a half-finished drawing). A Sky round
   // that started because everyone was ready takes the ready ones (someone who dropped out before
@@ -2656,20 +2718,27 @@ function startRound() {
     seed: Math.floor(Math.random() * 0x7fffffff),
   };
   const r = round;
+  // IN-GAME COUNTDOWN: the game starts paused on its start frame (hold) unless it counts down itself ("own") or
+  // trains first (Row: TRAINING, then the countdown from onTrained). ?train=0 on the TV URL = no training (dev/tests).
+  r.training = GAME.id === "row" && new URLSearchParams(location.search).get("train") !== "0";
+  r.hold = introOf(GAME) !== "own" && !r.training;
+  r.intro = null;
   stats.rounds++;
-  phase = "playing";
+  phase = r.hold ? "countdown" : "playing";
   isPaused = false;
+  clearInterval(countdownTimer);
+  $("paused").classList.remove("show");
   $("scoreboard").innerHTML = "";
   // A game can ask for no player panel (Snowball Sumo: hud.setup({players:{hidden:true}})).
   $("scoreboard").style.display = hudPanelHidden() ? "none" : "";
   $("screen-points").innerHTML = "";
 
   const started = game.play({
-    isPaused: false,
+    isPaused: r.hold,
     seed: r.seed,
     // FoxBox party extension: the game's setup choices (TEE TIME: the map the picker chose; every game: the
     // BOTS setting — Row Row Rumble leaves boats with nobody aboard out when it's "off")
-    options: { bots: botsOn() ? "fill" : "off", ...(GAME.id === "golf" && lob.golf ? { map: lob.golf.map } : {}), ...knightOptions(), ...kartOptions() }, // KNIGHT: + the picker's level · KART: + the track
+    options: { bots: botsOn() ? "fill" : "off", ...(GAME.id === "golf" && lob.golf ? { map: lob.golf.map } : {}), ...knightOptions(), ...kartOptions(), ...(r.training ? { training: true } : {}) }, // KNIGHT: + the picker's level · KART: + the track · ROW: + training
     players,
     gameProperties,
     hud: {
@@ -2716,6 +2785,13 @@ function startRound() {
     },
     // gameOver(ids best → worst, extra?): extra.values = { [playerId]: "247 PTS" } (party extension) adds a
     // score column to the TV's and the phones' results
+    // ROW TRAINING (party extension): the game's controls check is over and its race is ready, paused on its start
+    // frame: the in-game countdown, then the race (deferred: the game may call this from inside its own frame)
+    ...(r.training ? {
+      onTrained() {
+        setTimeout(() => { if (round === r && !r.ended && r.training) beginIntro(r); }, 0);
+      },
+    } : {}),
     gameOver(ids, extra) {
       if (round !== r || r.ended) {
         stats.contractErrors.push("gameOver after round ended");
@@ -2729,22 +2805,15 @@ function startRound() {
     ...(GAME.id === "kart" ? { ownIds: [...r.humanIdByPid].filter(([, id]) => { const h = roster.get(id)?.house; return !h || !linkedTvs.has(h); }).map(([pid]) => pid) } : {}),
     // end KART MTV
   });
-  // With drawn characters play() first loads their images and returns a Promise: keep the
-  // countdown up until the round is really running, so the TV never shows a stale frame.
+  // With drawn characters play() first loads their images and returns a Promise: the countdown starts once the
+  // round's start frame is really drawn (until then the lobby stays up, so the TV never shows a stale frame).
   const go = () => {
-    if (round !== r || phase !== "playing") return;
-    if (GAME.countdownLabel) { // KART: no GO! card (the game's start lights say GO): straight to the game
-      show(null);
-      for (const p of humans) forwardInput(p);
-      return;
-    }
-    $("cd-num").textContent = "GO!";
-    $("cd-sub").textContent = "";
-    show("countdown");
-    wsSend({ t: "all", m: { t: "soundCue", id: `${countdownCueId}-go`, cue: "go" } });
-    setTimeout(() => { if (round === r && phase === "playing") show(null); }, 350);
-    // Push whatever the phones are holding right now.
+    if (round !== r || r.ended) return;
+    if (r.hold) return beginIntro(r); // the in-game 3-2-1-GO over the start frame
+    // ROW TRAINING / FOX KART ("own"): the game runs now; the training ends in onTrained → the countdown
+    show(null);
     for (const p of humans) forwardInput(p);
+    broadcastLobby();
   };
   if (started && typeof started.then === "function") started.then(go, go);
   else go();
@@ -2904,7 +2973,7 @@ setInterval(() => {
     if (!busy || now >= drawHoldUntil) {
       if (drawHoldUntil != null && !busy) drawHoldUntil = null;
       startCountdown(null);
-      if (phase === "countdown") return;
+      if (phase !== "lobby") return; // started (the in-game countdown, a Row training, FOX KART's lights)
       // nobody free to play (everyone's drawing): try again shortly
       autoStartAt = now + 5_000;
       drawHoldUntil = null;
@@ -2931,6 +3000,9 @@ window.addEventListener("keydown", (e) => {
   } else if ((e.key === "Enter" || e.code === "Space") && phase === "lobby") {
     e.preventDefault();
     startCountdown(null);
+  } else if ((e.key === "Enter" || e.code === "Space") && phase === "playing" && round && !round.ended && round.training) {
+    e.preventDefault(); // ROW TRAINING: the TV skips the controls check (everyone passes)
+    if (typeof game.skipTraining === "function") try { game.skipTraining(); } catch (err) { console.warn("[party] skipTraining threw", err); }
   } else if (e.key === "Enter" && phase === "results") {
     toLobby(true);
   } else if (e.code === "KeyP" && phase === "playing") {
@@ -3086,7 +3158,10 @@ function onTvB(msg) {
   tvPicSent.delete(msg.id); // (re)linked or gone: it gets every picture again on its next lobby sync
   syncTvB(true);
   broadcastLobby(); // the lobby state's TV count
-  if (msg.on === false || !round || !tvBRound || (phase !== "playing" && phase !== "results")) return;
+  if (msg.on === false || !round || !tvBRound || (phase !== "playing" && phase !== "results" && phase !== "countdown")) return;
+  // IN-GAME COUNTDOWN: a TV linking during the 3-2-1 gets it with the round (it starts paused and counts down too)
+  const intro = round.intro && !round.ended ? { goAt: round.intro.goAt, mode: round.intro.mode, sub: round.intro.sub } : null;
+  const head = { ...tvBRound, hold: !!tvBRound.hold && !!(intro || round.hold), intro };
   // a round in progress: that TV mirrors it from here, starting at once — the header carries the ticks since the
   // last full-state one (Sky kf, golf k; any tick of Row / Snowball is full), applied before its first frame
   let from = tvBRecent.length - 1;
@@ -3095,7 +3170,7 @@ function onTvB(msg) {
   // a game with keyframes (Sky kfEvery, golf key) that hasn't made one yet: the header is the keyframe, so all ticks since
   const h = tvBRound.header || {};
   if (!marked && (h.kfEvery || h.key) && tvBRecentWhole) from = 0;
-  toTv1(msg.id, from >= 0 ? { ...tvBRound, late: { q: tvBSeq, w: Date.now(), k: tvBRecent.slice(from) } } : tvBRound);
+  toTv1(msg.id, from >= 0 ? { ...head, late: { q: tvBSeq, w: Date.now(), k: tvBRecent.slice(from) } } : head);
   if (phase === "results" && round.placement) toTv1(msg.id, { t: "m:results", ids: round.placement, ...(round.values ? { values: round.values } : {}) });
 }
 /** The extra play() hooks for a relay party whose game can be mirrored (else none). */
@@ -3109,7 +3184,10 @@ function tvBHooks(r) {
       tvBRecent = [];
       tvBRecentWhole = true;
       tvBBatch = header && header.batch === 1 ? 1 : 2;
-      tvBRound = { t: "m:round", header, players: r.players.map(({ character, ...pl }) => pl), names: [...r.nameById], humans: [...r.humanIdByPid], seats: [...r.seatByPid] };
+      // IN-GAME COUNTDOWN: hold = the view starts paused on its start frame (the 3-2-1 comes as m:intro). ROW TRAINING:
+      // the training's header carries `train` (runs at once); the race's header (sent when the training ends) holds
+      const hold = r.training ? !(header && header.train) : !!r.hold;
+      tvBRound = { t: "m:round", header, players: r.players.map(({ character, ...pl }) => pl), names: [...r.nameById], humans: [...r.humanIdByPid], seats: [...r.seatByPid], hold, intro: hold ? r.intro || null : null };
       toTvB(tvBRound);
     },
     // WHOSFOX (multi-TV): a game's side messages for the extra TVs (WHO'S THE FOX? takes: photos, clips, voice takes),
@@ -3156,6 +3234,9 @@ function mirrorMsg(msg) {
   switch (msg.t) {
     case "m:lobby": return mirrorLobby(msg);
     case "m:round": return mirrorRound(msg);
+    case "m:intro": // IN-GAME COUNTDOWN: the main TV's 3-2-1 started (goAt on the boss clock)
+      if (mirrorPending) return void (mirrorPending.intro = msg); // the game is still setting up: once its view is up
+      return mirrorIntro(round, msg);
     case "m:ticks":
       if (mirrorPending) return void mirrorPending.ticks.push(msg); // the game is still setting up: keep them
       return void (mirror.player && mirror.player.push(msg));
@@ -3229,9 +3310,9 @@ function mirrorLobby(m) {
       phase = "lobby";
       show("lobby");
     }
-  } else if (m.phase === "countdown" && phase === "lobby") mirrorCountdown();
+  } // (phase "countdown": the in-game countdown of a round whose m:round + m:intro this TV gets: no card here)
   // "playing" a game this TV can't draw: its lobby + a card saying where it is ("results" come with the replay)
-  const elsewhere = m.phase === "playing" && typeof game.playMirror !== "function";
+  const elsewhere = (m.phase === "playing" || m.phase === "countdown") && typeof game.playMirror !== "function";
   if (elsewhere && phase !== "lobby") {
     mirrorLeaveRound();
     phase = "lobby";
@@ -3242,25 +3323,38 @@ function mirrorLobby(m) {
   renderLobby();
   publishLobby();
 }
-function mirrorCountdown() {
+/** An extra TV: the main TV's in-game countdown over this TV's view of the round (started paused by m:round hold),
+ * timed by the boss clock: at goAt the view runs (game.pause(false)) and GO! shows, like the main TV. */
+function mirrorIntro(r, m) {
+  if (!r || round !== r || r.ended || !m) return;
+  const clock = globalThis.FOXBOX_CLOCK || { bossNow: () => Date.now() };
+  const mode = m.mode === "ready" ? "ready" : "321";
+  const goAt = Number.isFinite(m.goAt) ? m.goAt : clock.bossNow();
+  r.intro = { mode, goAt, sub: typeof m.sub === "string" ? m.sub.slice(0, 120) : "", localGoAt: Date.now() + (goAt - clock.bossNow()) };
+  r.hold = true;
   phase = "countdown";
-  const ends = Date.now() + (GAME.countdownMs ?? COUNTDOWN_MS); // KART: the main TV's short card
-  $("cd-sub").textContent = GAME.id === "row" ? "Everyone’s ready!" : "Get ready!";
+  try { game.pause(true); } catch {}
   const tick = () => {
-    const left = Math.ceil((ends - Date.now()) / 1000);
-    if (left <= 0) return clearInterval(countdownTimer);
-    const label = GAME.countdownLabel || String(left); // KART: READY! (no 3-2-1)
-    if ($("cd-num").textContent === label) return;
-    $("cd-num").textContent = label;
-    $("cd-num").style.animation = "none";
-    void $("cd-num").offsetWidth;
-    $("cd-num").style.animation = "";
+    if (round !== r || r.ended) return clearInterval(introTimer);
+    const left = Math.ceil((r.intro.goAt - clock.bossNow()) / 1000);
+    if (left > 0) return void introDraw(introLabel(mode, left), r.intro.sub);
+    clearInterval(introTimer);
+    stats.introGoLateMs = Math.round(clock.bossNow() - r.intro.goAt); // QA: how late GO came here (boss clock)
+    r.intro = null;
+    r.hold = false;
+    phase = "playing";
+    try { game.pause(false); } catch (e) { console.warn("[party] pause(false) threw", e); }
+    introDraw("GO!", "");
+    show("countdown");
+    setTimeout(() => { if (round === r && phase === "playing" && $("cd-num").textContent === "GO!") show(null); }, GO_MS);
   };
-  clearInterval(countdownTimer);
+  clearInterval(introTimer);
   $("cd-num").textContent = "";
-  show("countdown");
   tick();
-  countdownTimer = setInterval(tick, 100);
+  if (r.intro) {
+    show("countdown");
+    introTimer = setInterval(tick, 100);
+  }
 }
 /** A round header that came before game.setup() finished (Snowball's setup is async), + the ticks since. */
 let mirrorPending = null;
@@ -3275,7 +3369,8 @@ function mirrorRound(m) {
   const colorById = new Map(players.map((pl) => [pl.playerId, GAME.seats ? colorSet(COLOR_KEYS.indexOf(BOAT_KEYS[pl.boat])) : colorSet(pl.playerId - 1)]));
   round = { players, nameById: new Map(m.names), colorById, humanIdByPid: new Map(m.humans), seatByPid: new Map(m.seats), out: new Set(), hudById: new Map(), placement: null, ended: false, seed: m.header.seed, ids: null, replayed: false };
   const r = round;
-  phase = "playing";
+  r.hold = !!m.hold; // IN-GAME COUNTDOWN: the view starts paused on its start frame; m:intro counts it down
+  phase = r.hold ? "countdown" : "playing";
   $("scoreboard").innerHTML = "";
   $("scoreboard").style.display = hudPanelHidden() ? "none" : "";
   $("screen-points").innerHTML = "";
@@ -3291,7 +3386,7 @@ function mirrorRound(m) {
   const viewPlayers = players.map((pl) => (chars[pl.playerId] ? { ...pl, character: chars[pl.playerId] } : pl));
   try {
     mirror.view = game.playMirror({
-      players: viewPlayers, gameProperties, header: m.header, own, clock, isPaused: false, late,
+      players: viewPlayers, gameProperties, header: m.header, own, clock, isPaused: r.hold, late,
       hud: {
         updatePlayers(data) { if (round === r) onHudPlayers(r, data.players || []); },
         updateScreenPoints(data) { if (round === r) renderScreenPoints(r, data.points || []); },
@@ -3318,13 +3413,10 @@ function mirrorRound(m) {
   // "CONNECTED TO <HOST>'S GAME": the host's name from the HOST steps (golf's banner has the corner: top middle there);
   // no host name (web TV mode, or left blank): "CONNECTED TO <GROUP>"
   mirror.ui.playing(mirror.party?.host || houseName("") || "", { at: GAME.id === "golf" ? "top" : GAME.id === "knight" ? "bottom" : "corner", group: mirror.party?.group || "" }); // KNIGHT: bottom left
-  // KART MTV: a game with its own start lights (countdownLabel: FOX KART) gets no GO! card here either, like the main TV
-  if (GAME.countdownLabel) { show(null); return; }
-  // end KART MTV
-  $("cd-num").textContent = "GO!";
-  $("cd-sub").textContent = "";
-  show("countdown");
-  setTimeout(() => { if (round === r && phase === "playing") show(null); }, 350);
+  // IN-GAME COUNTDOWN: a held round counts down with the main TV (m:intro, or the intro that came with a late header);
+  // a running one (FOX KART's own lights, Row's training, a TV linking mid-round) just shows
+  show(null);
+  if (r.hold && m.intro) mirrorIntro(r, m.intro);
 }
 /** One of THIS TV's phones moved (it sends its input here as well as to the main TV): its player, at once. */
 function mirrorInput(msg) {
@@ -3374,6 +3466,7 @@ function mirrorResults(r, ids, replayed, values) {
 function mirrorLeaveRound() {
   mirrorPending = null;
   clearInterval(countdownTimer);
+  clearInterval(introTimer);
   if (round) clearTimeout(round.wait);
   if (mirror.player) mirror.player.stop();
   if (mirror.view) mirror.view.stop();
@@ -3420,6 +3513,14 @@ window.__party = {
   },
   get countdownWhy() {
     return countdownWhy;
+  },
+  /** IN-GAME COUNTDOWN: { mode: "321" | "ready", goAt (this TV's clock), label } while it runs, else null. */
+  get intro() {
+    return round && round.intro ? { mode: round.intro.mode, goAt: round.intro.localGoAt || round.intro.goAt, label: $("cd-num").textContent } : null;
+  },
+  /** ROW TRAINING: the round is in its controls check. */
+  get training() {
+    return !!(round && !round.ended && round.training);
   },
   /** KNIGHT: the knight setup { id, level, picks: {id: {knight, sword, ready}} } or null. */
   get knight() {
@@ -3550,6 +3651,7 @@ async function boot() {
         mirrorPending = null;
         mirrorRound(pend.m);
         for (const t of pend.ticks) if (mirror.player) mirror.player.push(t);
+        if (pend.intro) mirrorIntro(round, pend.intro); // IN-GAME COUNTDOWN: an m:intro that came meanwhile
       }
     },
   });

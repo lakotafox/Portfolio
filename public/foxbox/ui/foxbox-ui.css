@@ -134,11 +134,12 @@ html[data-foxbox-web] :is(button:disabled, [aria-disabled="true"]) { cursor: def
 .fbx-slot-tag { margin-left: auto; flex: none; padding: .4em .7em; font-size: 1.3em; border-radius: .7em; background: #ffffff16; color: var(--ink-soft); }
 .fbx-status { flex: none; max-width: 100%; font-size: 2.2em; padding: .7em 1.3em; border: 1px solid #ffffff25; border-radius: 1em; background: #111429a6; color: var(--ink); text-align: center; }
 
-/* Web-only paint for native shells exposed during loading, seat setup and countdown.
+/* Web-only paint for native shells exposed during loading and seat setup (the countdown is in the game now:
+   #countdown.ingame keeps the game's scene visible, so the old card paint leaves it alone).
    No selectors change controller geometry, input targets, or game canvases. */
 html[data-foxbox-web] body { background: var(--fbx-entry-bg); }
 html[data-foxbox-web="host"] #lobby,
-html[data-foxbox-web="host"] #countdown { background: var(--fbx-entry-scene); color: var(--fbx-entry-ink); }
+html[data-foxbox-web="host"] #countdown:not(.ingame) { background: var(--fbx-entry-scene); color: var(--fbx-entry-ink); }
 html[data-foxbox-web="host"] #lobby>.cloud,
 html[data-foxbox-web="host"] #tagline { display: none; }
 html[data-foxbox-web="host"] #lobby .title { color: var(--fbx-entry-ink); transform: none; font-weight: 950; text-shadow: 0 .05em 0 var(--fbx-entry-accent); }
@@ -147,7 +148,7 @@ html[data-foxbox-web="host"] #lobby :is(.players-head, #game-blurb, #auto-text, 
 html[data-foxbox-web="host"] #lobby :is(.join-card h2, #pad-url, #join-hint, #room-code) { display: none !important; }
 html[data-foxbox-web="host"] #lobby .join-card canvas { border-radius: 14px; }
 html[data-foxbox-web="host"] #start-text { background: #ffffff16; border: 1px solid #ffffff35; color: var(--fbx-entry-ink); box-shadow: none; }
-html[data-foxbox-web="host"] #countdown :is(#cd-num, #cd-sub) { color: var(--fbx-entry-ink); text-shadow: 0 .06em 0 #08091955; }
+html[data-foxbox-web="host"] #countdown:not(.ingame) :is(#cd-num, #cd-sub) { color: var(--fbx-entry-ink); text-shadow: 0 .06em 0 #08091955; }
 /* results: the arcade high-score screen (see index.html) */
 html[data-foxbox-web="host"] #results { background: #05070f repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 0.3rem, transparent 0.3rem 0.6rem); color: #fff; }
 html[data-foxbox-web="pad"] :is(#name-screen, #char-screen, #crop-screen),
