@@ -1299,6 +1299,11 @@ function renderBotsToggle() {
   const chip = document.querySelector(".fbx-tv2-chip"), r = chip && !chip.hidden && chip.getBoundingClientRect();
   el.style.top = r && r.height > 0 ? `${Math.round(r.bottom + 10)}px` : "";
   el.style.left = r && r.height > 0 ? `${Math.round(r.left)}px` : "";
+  // the chip grows after this ran (its pixel font loading, a longer group name): the label follows it
+  if (chip && !chip.dataset.botsFollow && typeof ResizeObserver === "function") {
+    chip.dataset.botsFollow = "1";
+    new ResizeObserver(() => renderBotsToggle()).observe(chip);
+  }
 }
 
 /** TEE TIME's setup on the TV: the MAP panel under the join card (the picker chooses on their phone). */
@@ -1658,7 +1663,10 @@ async function refreshInfo() {
       if (!mirror && info.party && typeof info.party === "object") {
         const changed = JSON.stringify(info.party) !== JSON.stringify(partyInfo);
         partyInfo = info.party;
-        if (changed) syncTvB(true);
+        if (changed) {
+          syncTvB(true);
+          renderBotsToggle(); // the chip is drawn now (web TV mode shows the lobby before it): the BOTS label goes under it
+        }
       }
       // web version: a room code to type in, and where to type it
       if (info.room) {
@@ -2146,7 +2154,7 @@ window.addEventListener("pointerdown", () => renderLobby());
 //   m:switch   the main TV is reloading into another game; the extra TVs follow
 // Phones from an extra TV's QR (same room + &house=<that TV's id>) join THIS party and play like everyone
 // else; their stick input also goes straight to their own TV, which predicts its own players in live games
-// (Sky, Snowball: game.playMirror's view.live). Every game with game.playMirror shows on every TV; others
+// (Sky, Snowball, Row: game.playMirror's view.live). Every game with game.playMirror shows on every TV; others
 // show a card there.
 const MAX_TVS = 8; // this TV + 7 extra (net-p2p.js and the relay have the same cap)
 function toTvB(m) {

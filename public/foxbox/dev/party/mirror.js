@@ -2,12 +2,12 @@
  * mirror.js — multi-TV (web build + relay only): the bits host.js loads for an extra TV and for the
  * main TV it mirrors. See the "Multi-TV" section of host.js and MULTI-TV.md.
  *
- *   tickPlayer(view, {game, onOver})  an extra TV's replay buffer for MIRRORED games (Row, golf): the main
+ *   tickPlayer(view, {game, onOver})  an extra TV's replay buffer for MIRRORED games (golf): the main
  *                                     TV's ticks go in (push(m:ticks)), view.applyTick(tick) comes out at
  *                                     60 a second about TARGET_MS behind, faster when the buffer runs full
  *                                     (up to 20 %, a jump past SKIP_MS), holding the last frame when it runs
  *                                     dry; view.draw() every animation frame
- *   livePlayer(view, {game, own, onOver})  the same for LIVE games (Sky, Snowball: view.live): every tick goes
+ *   livePlayer(view, {game, own, onOver})  the same for LIVE games (Sky, Snowball, Row: view.live): every tick goes
  *                                     straight to view.push(tick, w) (the game predicts this TV's own players
  *                                     and smooths everyone else itself), this TV's phones' input to
  *                                     view.input(playerId, {a0, a1, b0, b1}) the moment it arrives
@@ -145,7 +145,7 @@ export function livePlayer(view, { game = "", own = [], onOver = null } = {}) {
       if (stopped || typeof view.input !== "function") return;
       stats.inputs++;
       try {
-        view.input(pid, { a0: Number(msg.x) || 0, a1: Number(msg.y) || 0, b0: msg.b ? 1 : 0, b1: msg.c ? 1 : 0 });
+        view.input(pid, { a0: Number(msg.x) || 0, a1: Number(msg.y) || 0, a2: Number(msg.s) || 0, b0: msg.b ? 1 : 0, b1: msg.c ? 1 : 0 }); // a2: a Row first mate's tilt
       } catch (e) {
         console.error("[mirror] view.input failed", e);
       }
