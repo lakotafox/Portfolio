@@ -98,10 +98,14 @@ const GAMES = [
     module: "../../games/knight/gc.game.js", props: "../../games/knight/gc.properties.json",
     tagline: "Run, jump, dash and swing · grab the coins · first to the flag!",
     minPlayers: 1, maxPlayers: 8, controls: "◀ ▶ run · JUMP · DASH · SWORD (phone sideways)",
+    // the picker's level cards (knight-platformer src/levels/index.js PICKS; Lakota, Nov 1: "I like Night and Day, let's
+    // just have those 2 options"): the castle's NIGHT and DAY looks are two levels, the same map (level) in its look
+    // (castle). Forest / Caves wait here, hidden (not built: not on the phones' cards nor the TV panel).
     levels: [
-      { id: "castle", name: "CASTLE RAMPARTS", open: true },
-      { id: "forest", name: "ENCHANTED FOREST", open: false },
-      { id: "caves", name: "CRYSTAL CAVES", open: false },
+      { id: "castle-night", name: "CASTLE RAMPARTS · NIGHT", level: "castle", castle: "night", open: true },
+      { id: "castle-day", name: "CASTLE RAMPARTS · DAY", level: "castle", castle: "day", open: true },
+      { id: "forest", name: "ENCHANTED FOREST", open: false, hidden: true },
+      { id: "caves", name: "CRYSTAL CAVES", open: false, hidden: true },
     ],
     knights: ["A", "B", "C", "D", "E", "F", "G", "I"], // the art's ids (CONTRACT "Art APIs"); default = by slot, like game.js
     // multi-TV: the module's playMirror shows the round live on every TV (own knights predicted on their own TV); its
@@ -1036,9 +1040,10 @@ function cancelSkyCountdown() {
 // ── Knight Platformer setup: a knight + a sword, READY; the game picker picks the LEVEL ──────────
 // Once Knight Platformer is picked (lobby phase "setup") every phone's knight module (dev/party/knight/knight-pad.js)
 // shows its knight + sword picker, then a READY screen; the picker also gets the LEVEL cards + PICK ANOTHER GAME.
-// lob.knight = { id, level, picks: { [clientId]: { knight, sword, ready } } }, saved with the lobby (a TV reload keeps it).
+// lob.knight = { id, level (the card: castle-night | castle-day), castle (its look), picks: { [clientId]: { knight, sword, ready } } }, saved with the lobby (a TV reload keeps it).
 // Phone → TV ({t:"game", m}): {type:"kpick", setupId, knight, sword, ready} on every change · the picker only:
-// {type:"klevel", id} (an open level) and {type:"kother"} (PICK ANOTHER GAME: back to the game cards). The countdown
+// {type:"klevel", id} (a level card: castle-night | castle-day; an older pad's {type:"kcastle", castle} picks the card with
+// that look) and {type:"kother"} (PICK ANOTHER GAME: back to the game cards). The countdown
 // starts once every connected player is ready (a not-ready player who just dropped gets KNIGHT_DROP_WAIT_MS); Enter on
 // the TV starts at once (no pick = the default by slot). After the results: back here, picks kept, nobody ready.
 const KNIGHT = GAMES.find((g) => g.id === "knight");
@@ -1071,12 +1076,36 @@ function knightDressBots(players) {
     pl.knight = { knight: pk.knight, sword: pk.sword };
   }
 }
-/** The castle's look (DAY / NIGHT on the picker's level card), remembered on this TV; night until someone picks. */
+/** The castle's look (the NIGHT / DAY level card the picker picked), remembered on this TV; night until someone picks. */
 const KNIGHT_CASTLE_KEY = "foxbox-knight-castle";
 const knightCastleSaved = () => { try { return localStorage.getItem(KNIGHT_CASTLE_KEY) === "day" ? "day" : "night"; } catch { return "night"; } };
-const knightCastleOf = (s) => (s && (s.castle === "day" || s.castle === "night") ? s.castle : knightCastleSaved());
-/** startRound(): the game's options get the picker's level and the castle's look. */
-const knightOptions = () => (GAME.id === "knight" ? { level: (lob.knight && lob.knight.level) || "castle", castle: knightCastleOf(lob.knight) } : {});
+const knightLook = (v) => (v === "day" || v === "night" ? v : null);
+/** The level cards a picker can pick (open, not hidden). */
+const knightCards = () => KNIGHT.levels.filter((l) => l.open && !l.hidden);
+/** A setup's level card: its level id (castle-night / castle-day); an older value ("castle" + castle) → the matching card;
+ *  no setup → the look this TV remembers. */
+function knightCardOf(s) {
+  const cards = knightCards(), id = s && s.level;
+  const hit = cards.find((l) => l.id === id);
+  if (hit) return hit;
+  const look = knightLook(s && s.castle) || knightCastleSaved();
+  return cards.find((l) => (l.level || l.id) === id && l.castle === look) || cards.find((l) => l.castle === look) || cards[0];
+}
+const knightCastleOf = (s) => { const c = knightCardOf(s); return knightLook(c && c.castle) || knightLook(s && s.castle) || knightCastleSaved(); };
+/** Pick a level card (the picker's klevel, or an older pad's kcastle): the level + its look, remembered on this TV. */
+function knightSetCard(card) {
+  lob.knight.level = card.id;
+  if (knightLook(card.castle)) {
+    lob.knight.castle = card.castle; // (kept in step: anything reading lob.knight.castle sees the card's look)
+    try { localStorage.setItem(KNIGHT_CASTLE_KEY, card.castle); } catch {}
+  }
+}
+/** startRound(): the game's options get the card's map ("castle", what every module version knows) and its look. */
+const knightOptions = () => {
+  if (GAME.id !== "knight") return {};
+  const c = knightCardOf(lob.knight);
+  return { level: (c && (c.level || c.id)) || "castle", castle: knightCastleOf(lob.knight) };
+};
 function knightSetupActive() {
   return GAME.id === "knight" && lob.selectedGameId === "knight" && !!lob.knight && (phase === "lobby" || phase === "boot");
 }
@@ -1085,9 +1114,9 @@ const validKnightSetup = (s) => !!s && typeof s === "object" && typeof s.id === 
 function newKnightSetup(keep) {
   const picks = {};
   if (keep) for (const [id, pk] of Object.entries(keep.picks)) if (roster.has(id) && pk) picks[id] = { knight: pk.knight, sword: pk.sword, ready: false };
-  const open = KNIGHT.levels.filter((l) => l.open);
   const bots = Array.from({ length: MAX_PLAYERS }, (_, slot) => ({ slot, ...knightRandomPick() })); // re-rolled per setup
-  lob.knight = { id: newRowSetupId(), level: keep && open.some((l) => l.id === keep.level) ? keep.level : open[0].id, picks, bots, castle: knightCastleOf(keep) };
+  const card = knightCardOf(keep); // the same level card as last time (none: this TV's last look)
+  lob.knight = { id: newRowSetupId(), level: card.id, picks, bots, castle: knightCastleOf({ level: card.id, castle: keep && keep.castle }) };
 }
 /** No pick yet: the default for this slot (the same as game.js: knight by slot, sword by slot). */
 const knightDefault = (p) => ({ knight: KNIGHT.knights[p.slot % KNIGHT.knights.length], sword: KNIGHT.swords[p.slot % KNIGHT.swords.length] });
@@ -1129,7 +1158,7 @@ function cancelKnightCountdown() {
 function knightLobby() {
   const picks = {};
   for (const [id, pk] of Object.entries(lob.knight.picks)) if (roster.has(id) && pk) picks[id] = { knight: pk.knight, sword: pk.sword, ready: !!pk.ready, step: pk.step || "knight" };
-  return { id: lob.knight.id, level: lob.knight.level, levels: KNIGHT.levels, castle: knightCastleOf(lob.knight), picks, bots: knightBotSlots().length, ...knightReadiness() };
+  return { id: lob.knight.id, level: knightCardOf(lob.knight).id, levels: KNIGHT.levels, castle: knightCastleOf(lob.knight), picks, bots: knightBotSlots().length, ...knightReadiness() };
 }
 /** pickGame(): a fresh setup when the knight game is picked (unless it already is the pick); none for other games. */
 function knightOnPick(g) {
@@ -1150,12 +1179,17 @@ function onKnightMsg(msg) {
     lob.knight.picks[p.id] = { knight: knightId(m.knight, KNIGHT.knights) || d.knight, sword: knightId(m.sword, KNIGHT.swords) || d.sword, ready: m.ready === true, step };
   } else if (!mayPick(p.id)) return true; // the level and PICK ANOTHER GAME are the game picker's
   else if (m.type === "klevel") {
-    if (!KNIGHT.levels.some((l) => l.id === m.id && l.open)) return true; // COMING SOON
-    lob.knight.level = m.id;
+    // a level card (castle-night / castle-day); an older pad's "castle" keeps the current look
+    const card = knightCards().find((l) => l.id === m.id) || knightCards().find((l) => (l.level || l.id) === m.id && l.castle === knightCastleOf(lob.knight));
+    if (!card) return true; // COMING SOON / hidden / unknown
+    knightSetCard(card);
   } else if (m.type === "kcastle") {
+    // an older pad's DAY / NIGHT toggle: the card with that look on the same map
     if (m.castle !== "day" && m.castle !== "night") return true;
-    lob.knight.castle = m.castle; // DAY / NIGHT: this round and the next setups on this TV
-    try { localStorage.setItem(KNIGHT_CASTLE_KEY, m.castle); } catch {}
+    const map = knightCardOf(lob.knight).level || "castle";
+    const card = knightCards().find((l) => (l.level || l.id) === map && l.castle === m.castle);
+    if (!card) return true;
+    knightSetCard(card); // this round and the next setups on this TV
   } else {
     // kother, PICK ANOTHER GAME: back to the game cards (the TV stays on this game until the picker picks one)
     lob.knight = null;
@@ -1975,11 +2009,11 @@ function renderKnightSetup(force = false) {
       .then((m) => { knightArt = m; renderKnightSetup(true); })
       .catch((e) => { knightArt = false; knightWarn("art not loaded (placeholders)", e); });
   }
-  const lv = KNIGHT.levels.find((l) => l.id === lob.knight.level) || KNIGHT.levels[0];
+  const lv = knightCardOf(lob.knight), look = knightCastleOf(lob.knight);
   const picker = roster.get(lob.pickerId);
   const { readyCount, totalCount } = knightReadiness();
   const list = [...roster.values()].sort((a, b) => (b.connected - a.connected) || a.slot - b.slot);
-  const others = KNIGHT.levels.filter((l) => l !== lv).map((l) => `<span class="ks-other${l.open ? "" : " soon"}" data-level="${esc(l.id)}">${esc(l.name)}${l.open ? "" : "<b>COMING SOON</b>"}</span>`).join("");
+  const others = KNIGHT.levels.filter((l) => l !== lv && !l.hidden).map((l) => `<span class="ks-other${l.open ? "" : " soon"}" data-level="${esc(l.id)}">${esc(l.name)}${l.open ? "" : "<b>COMING SOON</b>"}</span>`).join("");
   const nameOf = (list, id) => ((knightArt && Array.isArray(knightArt[list]) && knightArt[list].find((q) => q.id === id)) || {}).name || "";
   const rows = list.map((p) => {
     const st = knightState(p), pk = knightPickOf(p), c = colorSet(p.slot).base;
@@ -1996,7 +2030,7 @@ function renderKnightSetup(force = false) {
       + `<span class="ks-who2"><span class="ks-name">BOT ${i + 1}</span><span class="ks-what">${esc(what.toUpperCase())}</span></span><span class="ks-badge">BOT</span></li>`;
   });
   const html = `<div class="ks-head"><span>LEVEL</span><span class="ks-who">${esc(picker ? `${picker.name} PICKS` : "THE PICKER PICKS").toUpperCase()}</span></div>`
-    + `<div class="ks-level"><canvas class="ks-thumb" width="320" height="180" data-level="${esc(lv.id)}"></canvas><div class="ks-lvname" data-level="${esc(lv.id)}" data-castle="${knightCastleOf(lob.knight)}">${esc(lv.name)} · ${knightCastleOf(lob.knight) === "day" ? "DAY" : "NIGHT"}</div></div>`
+    + `<div class="ks-level"><canvas class="ks-thumb" width="320" height="180" data-level="${esc(lv.id)}" data-map="${esc(lv.level || lv.id)}" data-castle="${look}"></canvas><div class="ks-lvname" data-level="${esc(lv.id)}" data-castle="${look}">${esc(String(lv.name).replace(/\s*·\s*(DAY|NIGHT)\s*$/, ""))}${lv.castle ? ` <b class="ks-look">${look === "day" ? "DAY" : "NIGHT"}</b>` : ""}</div></div>`
     + `<div class="ks-others">${others}</div>`
     + `<div class="ks-head ks-rhead"><span>READY CHECK</span><span class="ks-count" data-test="knight-ready-count">${readyCount}/${totalCount}</span></div>`
     + `<ol class="ks-list" data-test="knight-ready-list">${rows}${botRows.join("")}</ol><div class="ks-hint">PICK A KNIGHT + A SWORD ON YOUR PHONE, THEN TAP READY</div>`;
@@ -2029,7 +2063,7 @@ function drawKnightThumb(box) {
   const g = cv.getContext("2d"), W = cv.width, H = cv.height;
   g.imageSmoothingEnabled = false;
   if (knightArt && typeof knightArt.drawLevelThumb === "function") {
-    try { return void knightArt.drawLevelThumb(g, cv.dataset.level, W, H, { castle: knightCastleOf(lob.knight) }); } catch (e) { knightWarn("drawLevelThumb threw", e); } // (art without the look ignores it)
+    try { return void knightArt.drawLevelThumb(g, cv.dataset.map || "castle", W, H, { castle: cv.dataset.castle === "day" ? "day" : "night" }); } catch (e) { knightWarn("drawLevelThumb threw", e); } // (art without the look ignores it)
   }
   ["#091228", "#0c1730", "#0f1d3c", "#142546", "#18294f"].forEach((c, i) => { g.fillStyle = c; g.fillRect(0, i * 30, W, 31); });
   g.fillStyle = "#fff3b0";
