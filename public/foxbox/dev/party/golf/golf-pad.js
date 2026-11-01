@@ -206,6 +206,47 @@ const CSS = `
   #pad-screen.golf-setup #bonk { font-size: 26px !important; }
 }
 @keyframes gp-flash { 50% { color: #ffffff; } }
+/* SKINS: the pixel pad (only with a pad: #golf.gp-skin-on; CLASSIC never gets these classes) */
+#golf .gp-skin { position: fixed; inset: 0; z-index: 3; background: var(--sk-body, #000); touch-action: none; }
+#golf .gp-skin-host { position: absolute; left: 0; right: 0; bottom: 0; top: var(--gp-safe-t, 0px); overflow: hidden; }
+#golf .gp.gp-skinned { position: fixed; z-index: 4; left: var(--gp-sx, 8px); top: var(--gp-sy, 80px); width: var(--gp-sw, calc(100% - 16px)); height: var(--gp-sh, 70%);
+  box-sizing: border-box; padding: calc(var(--u) * 2) calc(var(--u) * 3); gap: 8px; overflow: hidden; color: var(--sk-lcd-ink); pointer-events: none; }
+#golf .gp.gp-skinned:not(.gp-placed), #golf .gp.gp-skinned[data-screen="aim"] { visibility: hidden; }
+#golf .gp.gp-skinned .gp-btn { pointer-events: auto; }
+#golf .gp.gp-skinned .gp-head { display: none; }
+#golf .gp.gp-skinned .gp-s { gap: 10px; }
+#golf .gp.gp-skinned .gp-frame { background: transparent; margin: 2px; box-shadow: inset 0 0 0 2px var(--sk-lcd-dim); }
+#golf .gp.gp-skinned .gp-big, #golf .gp.gp-skinned .gp-name, #golf .gp.gp-skinned .gp-pts, #golf .gp.gp-skinned .gp-aimval b { text-shadow: none; }
+#golf .gp.gp-skinned .gp-big, #golf .gp.gp-skinned .gp-goal, #golf .gp.gp-skinned .gp-board .r .gn { color: var(--sk-lcd-gold); }
+#golf .gp.gp-skinned .gp-small, #golf .gp.gp-skinned .gp-last, #golf .gp.gp-skinned .gp-ready { color: var(--sk-lcd-soft); }
+#golf .gp.gp-skinned .gp-last b { color: var(--sk-lcd-ink); }
+#golf .gp.gp-skinned .gp-next { background: var(--sk-lcd-good); color: var(--sk-lcd); }
+#golf .gp.gp-skinned .gp-pts, #golf .gp.gp-skinned .gp-board .r.me { color: var(--sk-lcd-good); }
+#golf .gp.gp-skinned .gp-pts.zero, #golf .gp.gp-skinned .gp-note { color: var(--sk-lcd-bad); }
+#golf .gp.gp-skinned .gp-ready.on { color: var(--sk-lcd); background: var(--sk-lcd-gold); box-shadow: none; }
+#golf .gp.gp-skinned .gp-board .r .nm { text-shadow: none; }
+@keyframes gp-skflash { 50% { filter: brightness(1.25); } }
+/* the DOM buttons as the pad's raised pixel buttons (one art pixel = --u), palette per role */
+#golf .gp.gp-skinned .gp-btn { --pb: var(--sk-x-base); --pm: var(--sk-x-mid); --pl: var(--sk-x-lt); --pd: var(--sk-x-dk); color: var(--sk-x-txt);
+  display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 14px; background: var(--pb);
+  box-shadow: inset var(--u) var(--u) 0 0 var(--pl), inset calc(var(--u) * -1) calc(var(--u) * -2) 0 0 var(--pd),
+    0 calc(var(--u) * -1) 0 0 var(--sk-ink), 0 var(--u) 0 0 var(--sk-ink), calc(var(--u) * -1) 0 0 0 var(--sk-ink), var(--u) 0 0 0 var(--sk-ink),
+    0 calc(var(--u) * 3) 0 0 #00000088; transition: none; }
+#golf .gp.gp-skinned .gp-btn:active, #golf .gp.gp-skinned .gp-btn.down { transform: translateY(calc(var(--u) * 2)); background: var(--pm);
+  box-shadow: inset var(--u) var(--u) 0 0 var(--pd), 0 calc(var(--u) * -1) 0 0 var(--sk-ink), 0 var(--u) 0 0 var(--sk-ink),
+    calc(var(--u) * -1) 0 0 0 var(--sk-ink), var(--u) 0 0 0 var(--sk-ink), 0 var(--u) 0 0 #00000088; }
+#golf .gp.gp-skinned .gp-here { --pb: var(--sk-a-base); --pm: var(--sk-a-mid); --pl: var(--sk-a-lt); --pd: var(--sk-a-dk); color: var(--sk-a-txt); animation: gp-skflash 1s steps(2, end) infinite; }
+#golf .gp.gp-skinned .gp-enable { --pb: var(--sk-b-base); --pm: var(--sk-b-mid); --pl: var(--sk-b-lt); --pd: var(--sk-b-dk); color: var(--sk-b-txt); }
+#golf .gp.gp-skinned .gp-pass { --pb: var(--sk-c-base); --pm: var(--sk-c-mid); --pl: var(--sk-c-lt); --pd: var(--sk-c-dk); color: var(--sk-c-txt); }
+#golf .gp.gp-skinned .gp-btn[hidden] { display: none; }
+#golf .gp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (orientation: landscape) and (max-height: 520px) {
+  #golf .gp.gp-skinned { gap: 4px; padding: var(--u) calc(var(--u) * 2); }
+  #golf .gp.gp-skinned .gp-s { gap: 6px; }
+  #golf .gp.gp-skinned .gp-btn { min-height: 44px; padding: 6px 12px; }
+  #golf .gp.gp-skinned .gp-board { gap: 3px; }
+  #golf .gp.gp-skinned .gp-board .r .nm { font-size: 14px; }
+}
 @media (orientation: landscape) and (max-height: 520px) {
   #golf .gp { gap: 6px; }
   #golf .gp-aim { display: none; }
@@ -224,6 +265,136 @@ const CSS = `
   #golf .gp-big { font-size: clamp(16px, 3.6vw, 24px); }
 }
 `;
+
+// ── SKINS: the player's pixel gamepad (FoxBox couch-games dev/party/pad-skin.js, Lakota Nov 1) ───────────────────
+// pad.js's sibling ../pad-skin.js has the five pads; CLASSIC (or no pad-skin.js, e.g. this repo's own dev page) = no skin
+// at all: the screens above exactly as before. With a pad, the aim screen is drawn as the pad (HUD strip, an LCD with the
+// wind / goal / aim, the cross pad = the aim arrows, a BIRD'S EYE toggle, a big SWING button: portrait "golf" and
+// sideways "golfside"); the other screens (whose turn, the address pose, the result, the standings) keep their DOM,
+// laid into the pad's LCD screen (st.rect "screen") and coloured from the style. Every touch runs the same functions
+// as the DOM buttons (aimStart / aimStop / doSwing / doEye / doHere).
+let skinLoad = null;
+function loadSkin() {
+  if (!skinLoad) {
+    let url = "";
+    try { url = new URL("../pad-skin.js", import.meta.url).href; } catch {}
+    skinLoad = (url ? import(url) : Promise.reject(new Error("no url")))
+      .then((m) => (m && typeof m.createPadSkin === "function" && typeof m.registerLayout === "function" && m.PX ? (registerGolfLayouts(m), m) : null))
+      .catch(() => null);
+  }
+  return skinLoad;
+}
+const rotCW = (rows) => [...rows[0]].map((_, i) => rows.map((r) => r[i] || ".").reverse().join(""));
+/** the 8-way wind arrow as rows (0 deg = up the phone, like windArrow) */
+function windRows(dir) {
+  const k = ((Math.round((((dir % 360) + 360) % 360) / 45) % 8) + 8) % 8;
+  let rows = k % 2 ? MAPS.windD : MAPS.wind;
+  for (let t = 0; t < Math.floor(k / 2); t++) rows = rotCW(rows);
+  return rows;
+}
+/** Where things go (grid px). Shared by the layouts and the page (the text screens' LCD). */
+function golfGeom(F, side) {
+  const { W, H, bot } = F;
+  if (!side) {
+    const cl = 8, cw = W - 16, top = 20, avail = bot - 2 - top;
+    const lcdH = 26, crossH = 58, pillH = 11, fixed = lcdH + crossH + pillH;
+    const d = Math.max(40, Math.min(64, cw - 6, avail - fixed - 12));
+    const g = Math.max(3, Math.min(12, Math.floor((avail - fixed - d) / 3)));
+    const lcd = { x: cl, y: top, w: cw, h: lcdH };
+    const ccy = lcd.y + lcdH + g + 29;
+    const pill = { cx: Math.round(W / 2), y: ccy + 29 + g, w: Math.min(cw, 66) };
+    return {
+      hud: { x: 5, y: 2, w: W - 10, h: 12 }, panel: { x: 5, y: 16, w: W - 10, h: H - 20 }, lcd, lines: 3,
+      cross: { cx: Math.round(W / 2), cy: ccy }, pill, swing: { x: Math.round(W / 2 - d / 2), y: pill.y + pillH + g, d },
+      scr: { x: cl - 1, y: top, w: cw + 2, h: bot - 2 - top },
+    };
+  }
+  const L = F.L, R = F.R, cy = Math.round((16 + bot) / 2);
+  const d = Math.max(44, Math.min(60, bot - 22, Math.round((R - L) * 0.3)));
+  const sx = R - d - 2, ccx = L + 31, mx0 = ccx + 34, mw = sx - 6 - mx0, y0 = Math.max(17, cy - 25);
+  return {
+    hud: { x: L, y: 2, w: R - L, h: 12 }, lcd: { x: mx0, y: y0, w: mw, h: 33 }, lines: 4,
+    cross: { cx: ccx, cy }, pill: { cx: Math.round(mx0 + mw / 2), y: y0 + 39, w: mw }, swing: { x: sx, y: Math.round(cy - d / 2), d },
+    scr: { x: L, y: 18, w: R - L, h: bot - 1 - 18 },
+  };
+}
+let golfLayoutsDone = false;
+let skinLcdNow = null; // what the pad's aim LCD shows now (QA: window.__golfPad.skinLcd)
+function registerGolfLayouts(M) {
+  if (golfLayoutsDone) return;
+  golfLayoutsDone = true;
+  const X = M.PX;
+  const { P, R, each, fill, rrect, grow, all, text, textW, fitText, FB, FS, button, cross, plate, raised, key, bbR } = X;
+  const hexOk = (c) => (/^#[0-9a-f]{6}$/i.test(String(c || "")) ? c : null);
+  const fitFirst = (list, w) => { for (const s of list) if (s && textW(X.pixelText ? X.pixelText(s) : s, FS) <= w) return s; return fitText(list[list.length - 1] || "", w); };
+  function hud(S, r, D, side) {
+    const m = rrect(r.x, r.y, r.w, r.h, 3);
+    fill(grow(m), all(), S.ink); fill(m, all(), S.hud.bg);
+    each(m, all(), (x, y) => { if (!m(x, y - 1)) P(x, y, S.ink); });
+    R(r.x + 4, r.y + 4, 3, 3, hexOk(D.color) || S.led);
+    let right = r.x + r.w - 4;
+    if (side && D.score) right -= text(D.score, right, r.y + 3, FS, S.hud.gold, { align: "r" }) + 6;
+    text(fitText(D.title || "TEE TIME", right - r.x - 10), r.x + 10, r.y + 3, FS, S.hud.ink, { align: "l" });
+  }
+  /** rows: [{ l, r, lc, rc, icon }] on an LCD plate */
+  function lcd(S, r, rows) {
+    plate(S, r.x, r.y, r.w, r.h);
+    const y0 = r.y + Math.round((r.h - rows.length * 7 + 2) / 2);
+    rows.forEach((row, i) => {
+      const y = y0 + i * 7;
+      let x = r.x + 3, right = r.x + r.w - 3;
+      if (row.r) right -= text(fitText(row.r, r.w - 6), right, y, FS, row.rc || S.hud.gold, { align: "r" }) + 4;
+      if (row.icon) { row.icon.forEach((ln, j) => [...ln].forEach((ch, k) => { if (ch === "W") P(x + k, y - 1 + j, row.ic || S.hud.ink); })); x += row.icon[0].length + 2; }
+      if (row.l) text(fitText(row.l, right - x), x, y, FS, row.lc || S.hud.ink, { align: "l" });
+    });
+  }
+  function toggle(st, S, name, cx, y, w, label, on) {
+    const pr = st.isDown(name), sunk = pr || on, x = Math.round(cx - w / 2), h = 11, bb = bbR(x, y, w, h);
+    const pal = on ? S.b : S.x, m = rrect(x, y, w, h, 4);
+    raised(m, bb, S, pal, sunk);
+    const off = sunk ? 1 : 0, tw = textW(label, FS), led = w - tw >= 12;
+    const tx = Math.round(cx - tw / 2 + (led ? 3 : 0));
+    if (led) R(tx - 6, y + 4 + off, 3, 3, on ? S.led : S.x.dk);
+    text(label, tx, y + 3 + off, FS, on ? pal.txt : S.x.arrow, { align: "l" });
+    st.region({ n: name, t: "r", x: x - 3, y: y - 4, w: w + 6, h: h + 8 });
+  }
+  function draw(st, S, F, side) {
+    const D = st.data, g = golfGeom(F, side);
+    if (!side && X.tallBody) X.tallBody(S, F, { panel: g.panel });
+    hud(S, g.hud, D, side);
+    if (D.screen !== "aim") {
+      plate(S, g.scr.x, g.scr.y, g.scr.w, g.scr.h);
+      st.rect?.("screen", { x: g.scr.x + 1, y: g.scr.y + 2, w: g.scr.w - 2, h: g.scr.h - 3 });
+      return;
+    }
+    // the info LCD (or the COME BACK countdown's I'M HERE! key over it)
+    if (D.here) {
+      const r = g.lcd, pal = D.flash ? S.a : S.c, o = key(st, S, "here", r.x, r.y, r.w, r.h - 2, pal);
+      const big = textW("I'M HERE!", FB) <= r.w - 8;
+      text("I'M HERE!", r.x + r.w / 2, r.y + Math.round((r.h - 2) / 2) - (big ? 7 : 5) + o, big ? FB : FS, pal.txt);
+      text(D.here, r.x + r.w / 2, r.y + Math.round((r.h - 2) / 2) + 2 + o, FS, pal.txt);
+    } else {
+      const w = g.lcd.w - 6, wind = { icon: windRows(D.windDir || 0), l: `${D.windMph ?? 0} MPH` };
+      const ga = fitFirst(D.goalA || [], w), gb = fitFirst(D.goalB || [], side ? w : w - 32);
+      const rows = side
+        ? [wind, { l: ga }, { l: gb, lc: S.hud.ink }, { l: `AIM ${D.aim || "0"}`, lc: S.hud.gold }]
+        : [{ ...wind, r: `AIM ${D.aim || "0"}` }, { l: ga }, { l: gb, r: D.score || "", rc: S.hud.ink }];
+      lcd(S, g.lcd, rows);
+      skinLcdNow = { goal: [ga, gb].filter(Boolean).join(" "), aim: D.aim || "0", wind: `${D.windMph ?? 0} MPH` };
+    }
+    // the cross = the aim arrows (an arm at its limit shows no arrow)
+    const { cx, cy } = g.cross;
+    cross(st, S, cx, cy, 46, 16, S.x, ["l", "r"]);
+    const tri = (tx, dir, c) => { for (let i = 0; i < 5; i++) for (let j = -i; j <= i - 1; j++) P(tx + dir * i, cy + j, c); };
+    if (D.lmin) tri(cx - 18 - 1, 1, st.isDown("l") ? S.x.mid : S.x.base);
+    if (D.rmax) tri(cx + 18, -1, st.isDown("r") ? S.x.mid : S.x.base);
+    toggle(st, S, "eye", g.pill.cx, g.pill.y, g.pill.w, D.eye ? "BIRD'S EYE ON" : "BIRD'S EYE", !!D.eye);
+    const sw = g.swing;
+    button(st, S, "swing", sw.x, sw.y, sw.d, S.a, "SWING", FB, { hit: 4 });
+  }
+  M.registerLayout("golf", (st, S, F) => draw(st, S, F, false), { brand: false });
+  M.registerLayout("golfside", (st, S, F) => draw(st, S, F, true), { brand: false });
+}
 
 export function createGolfPad(root, { send, me }) {
   if (!document.getElementById("golf-pad-css")) {
@@ -315,6 +486,8 @@ export function createGolfPad(root, { send, me }) {
   let armSentAt = 0; // when SWING last sent {type:"arm"}
   let hereSentAt = 0, comeBackKey = ""; // I'M HERE! tapped; the COME BACK countdown we last buzzed for
   const ARM_RESEND_MS = 1500;
+  // SKINS (the pixel pad): pad-skin.js once loaded, the pad, its layer + host, the style shown ("" = none)
+  let skinMod = null, skin = null, skinLayer = null, skinHost = null, skinStyle = "", skinProbe = null, skinFlash = 0;
 
   // ── sound: a whoosh for the swing, a tick when READY, a chime when it's your turn (phone only) ──
   let ac = null;
@@ -560,15 +733,17 @@ export function createGolfPad(root, { send, me }) {
 
   // ── buttons ──
   let eyeOn = false, eyeSentAt = 0; // BIRD'S EYE: what we asked for (the TV's view echoes it back as view.birdseye)
-  el.eye.addEventListener("click", () => {
+  // (named, so the pixel pad's buttons run exactly these: SKINS below)
+  function doEye() {
     if (screen !== "aim" || !view?.isYourTurn) return;
     eyeOn = !(performance.now() - eyeSentAt < 1500 ? eyeOn : !!view.birdseye);
     eyeSentAt = performance.now();
     send({ type: "birdseye", on: eyeOn });
     buzz(15);
     render();
-  });
-  el.swing.addEventListener("click", () => {
+  }
+  el.eye.addEventListener("click", doEye);
+  function doSwing() {
     if (screen !== "aim" || !view?.isYourTurn) return;
     aimStop();
     audio();
@@ -576,9 +751,10 @@ export function createGolfPad(root, { send, me }) {
     swung = false;
     armSentAt = performance.now();
     send({ type: "arm" });
-    motionOn();
+    motionOn(); // (inside the tap: iOS only asks for motion access from a user gesture)
     render();
-  });
+  }
+  el.swing.addEventListener("click", doSwing);
   el.back.addEventListener("click", () => {
     if (!armed) return;
     armed = false;
@@ -598,13 +774,14 @@ export function createGolfPad(root, { send, me }) {
     permission = needsPermission ? "unknown" : "granted";
     motionOn();
   });
-  el.here.addEventListener("click", () => {
+  function doHere() {
     if (!view?.isYourTurn || !view.comeBack) return;
     send({ type: "here" }); // any message from the golfer up ends an idle COME BACK countdown
     hereSentAt = performance.now();
     buzz(30);
     render();
-  });
+  }
+  el.here.addEventListener("click", doHere);
   // the page hidden (phone locked / another app) or back: the TV shows COME BACK instead of skipping at once
   document.addEventListener("visibilitychange", () => {
     if (shown) send({ type: "hidden", on: !!document.hidden });
@@ -672,6 +849,10 @@ export function createGolfPad(root, { send, me }) {
   }
 
   function render() {
+    renderDom();
+    syncSkin(); // SKINS
+  }
+  function renderDom() {
     const next = screenNow();
     if (next !== screen) {
       if (screen === "aim" && aimDir) aimStop();
@@ -761,6 +942,135 @@ export function createGolfPad(root, { send, me }) {
     }
   }
 
+  // ── SKINS: the pixel pad over this screen (see loadSkin above; nothing here runs on CLASSIC) ──
+  function skinWanted() {
+    return !!(shown && skinMod && skinMod.skinId() !== "classic");
+  }
+  function safeTop() {
+    const t = globalThis.FOXBOX_SAFE_TEST; // QA: a phone's insets (headless browsers report none)
+    if (t && typeof t === "object") return +t.t || 0;
+    if (!skinProbe) {
+      skinProbe = document.createElement("div");
+      skinProbe.style.cssText = "position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px)";
+      document.body.append(skinProbe);
+    }
+    return parseFloat(getComputedStyle(skinProbe).paddingTop) || 0;
+  }
+  const myColor = () => getComputedStyle(document.documentElement).getPropertyValue("--c").trim();
+  function skinData() {
+    const v = view, g = (v && v.game) || {}, s = el.gp.dataset.screen;
+    const d = { screen: screen === "aim" && s === "aim" ? "aim" : "text", color: myColor(), title: "TEE TIME", score: "" };
+    if (!v || !status || status.state === "countdown") return d;
+    d.title = `${(g.index ?? 0) + 1}/${g.count || 3} ${String(g.name || "").replace(/ THE /g, " ")}`;
+    d.score = v.you ? `${v.you.total} ${ordinal(v.you.rank).toUpperCase()}` : "";
+    if (d.screen !== "aim") return d;
+    const tg = v.aim?.target, pin = v.aim?.pin, hint = String(g.hint || "");
+    d.windDir = v.wind?.dir || 0;
+    d.windMph = Math.round(v.wind?.mph || 0);
+    d.goalA = tg ? [`TARGET ${tg.yards} YD`, `TGT ${tg.yards} YD`, `${tg.yards} YD`] : pin ? [`PIN ${pin.yards} YD`, `${pin.yards} YD`] : [hint, hint.split(" ")[0]];
+    d.goalB = tg ? [`${tg.pts} PTS`] : pin ? [hint, hint.split(" ")[0]] : [""];
+    d.aim = el.aimDeg.textContent || "0";
+    d.lmin = el.left.disabled;
+    d.rmax = el.right.disabled;
+    d.eye = el.eye.dataset.on === "1";
+    d.here = !el.here.hidden ? `COME BACK ${v.comeBack?.left ?? ""}`.trim() : "";
+    d.flash = d.here ? Math.floor(performance.now() / 500) % 2 : 0;
+    return d;
+  }
+  function skinInput(ev) {
+    if (ev.type !== "press") return;
+    const n = ev.name;
+    if (n === "l" || n === "r") { // the cross = the aim arrows: press = 1 degree, hold = sweep
+      const dir = n === "l" ? -1 : 1;
+      if (ev.down) { if (!(dir < 0 ? el.left.disabled : el.right.disabled)) aimStart(dir, null); }
+      else if (aimDir === dir) aimStop();
+      return;
+    }
+    if (ev.down) { audio(); buzz(12); return; }
+    // the rest act on release, like a click (iOS shows its motion prompt only from a tap's end)
+    if (n === "swing") doSwing();
+    else if (n === "eye") doEye();
+    else if (n === "here") doHere();
+  }
+  /** the DOM text screens sit in the pad's LCD (CSS px from the pad, which sits at the top of skinHost) */
+  function placeScreen(rects) {
+    const r = rects && rects.screen;
+    if (!r || !skinHost) return;
+    const hb = skinHost.getBoundingClientRect();
+    const st = el.gp.style;
+    st.setProperty("--gp-sx", `${hb.left + r.x}px`);
+    st.setProperty("--gp-sy", `${hb.top + r.y}px`);
+    st.setProperty("--gp-sw", `${r.w}px`);
+    st.setProperty("--gp-sh", `${r.h}px`);
+    el.gp.classList.add("gp-placed");
+  }
+  /** a DOM button's label in the pad's bitmap font (the text stays, hidden, for screen readers and tests) */
+  function pixelButton(btn, on) {
+    const lab0 = btn.querySelector(".fbx-plabel"), sr = btn.querySelector(".gp-sr");
+    const txt = lab0 && sr ? sr.textContent : btn.textContent; // render() may have set plain text since
+    if (!on) {
+      if (lab0) btn.textContent = txt;
+      delete btn.dataset.plk;
+      return;
+    }
+    const k = `${skinStyle}|${txt}|${btn.clientWidth}`;
+    if (lab0 && btn.dataset.plk === k) return;
+    const maxW = Math.max(40, btn.clientWidth - 16), u = skinMod.artPx(), color = getComputedStyle(btn).color;
+    let lab = null;
+    for (const [font, px] of [["big", u], ["big", u * 0.75], ["small", u], ["big", u / 2], ["small", u * 0.75]]) {
+      lab = skinMod.pixelLabel(txt, { font, px, color });
+      if (lab && parseFloat(lab.style.width) <= maxW) break;
+    }
+    btn.dataset.plk = k;
+    btn.innerHTML = `<span class="gp-sr">${esc(txt)}</span>`;
+    if (lab) btn.append(lab);
+  }
+  function syncSkin() {
+    if (!skinWanted()) {
+      if (skin) { skin.release(); skin.destroy(); skin = null; }
+      if (skinLayer) { skinLayer.remove(); skinLayer = skinHost = null; }
+      if (skinStyle) {
+        skinStyle = "";
+        root.classList.remove("gp-skin-on");
+        el.gp.classList.remove("gp-skinned", "gp-placed");
+        for (const b of root.querySelectorAll(".gp-btn")) pixelButton(b, false);
+        clearInterval(skinFlash);
+        skinFlash = 0;
+      }
+      return;
+    }
+    const style = skinMod.skinId(), side = innerWidth > innerHeight;
+    if (!skinLayer) {
+      skinLayer = document.createElement("div");
+      skinLayer.className = "gp-skin";
+      skinLayer.innerHTML = `<div class="gp-skin-host" data-test="golf-skin"></div>`;
+      skinHost = skinLayer.firstChild;
+      root.prepend(skinLayer);
+    }
+    skinLayer.style.setProperty("--gp-safe-t", `${safeTop()}px`);
+    if (style !== skinStyle) {
+      skinStyle = style;
+      skinMod.applySkinVars?.(root, style);
+      root.style.setProperty("--u", `${skinMod.artPx ? skinMod.artPx() : 4}px`);
+      root.classList.add("gp-skin-on");
+      el.gp.classList.add("gp-skinned");
+    }
+    if (!skin) skin = skinMod.createPadSkin(skinHost, { style, game: side ? "golfside" : "golf", vibrate: false, onInput: skinInput, onRects: placeScreen });
+    skin.setStyle(style);
+    skin.setGame(side ? "golfside" : "golf");
+    const d = skinData();
+    skin.set(d);
+    if (d.here && !skinFlash) skinFlash = setInterval(() => { if (skin) skin.set({ flash: Math.floor(performance.now() / 500) % 2 }); }, 250);
+    else if (!d.here && skinFlash) { clearInterval(skinFlash); skinFlash = 0; }
+    if (screen !== "aim" && skinMod.pixelLabel) for (const b of el.gp.querySelectorAll(".gp-btn:not([hidden])")) if (b.offsetParent || b.getClientRects().length) pixelButton(b, true);
+  }
+  loadSkin().then((m) => {
+    skinMod = m;
+    if (m) syncSkin();
+  });
+  window.addEventListener("foxbox:pad-skin", () => { if (skin) skin.release(); syncSkin(); });
+  window.addEventListener("resize", () => { if (skinLayer) syncSkin(); });
+
   // read-only test hook (CONTRACT.md)
   window.__golfPad = {
     get screen() { return screen; },
@@ -774,6 +1084,8 @@ export function createGolfPad(root, { send, me }) {
     get swings() { return swings; },
     get view() { return view && JSON.parse(JSON.stringify(view)); },
     get birdseye() { return !!view?.birdseye; },
+    get skin() { return skin; }, // SKINS: the pixel pad (null on CLASSIC): regions, grid, style
+    get skinLcd() { return skin ? skinLcdNow && { ...skinLcdNow } : null; }, // SKINS: the aim LCD's lines (goal, aim, wind)
     get setup() { return setupInfo ? { picker: setupInfo.picker, map: setupInfo.lobby?.golf?.map ?? null } : null; },
   };
 
@@ -820,10 +1132,14 @@ export function createGolfPad(root, { send, me }) {
         armed = false;
       }
       if (shown) render();
-      else screen = "off";
+      else {
+        screen = "off";
+        syncSkin(); // SKINS: the pad goes with the round
+      }
     },
     release() {
       aimStop();
+      if (skin) skin.release(); // SKINS
     },
     /** golf's setup screen (pad.js): null = hidden, else { el, lobby, picker } */
     setup(info) {

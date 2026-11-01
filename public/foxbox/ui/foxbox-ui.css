@@ -214,3 +214,9 @@ html[data-foxbox-web="pad"] #name-go { background: var(--fbx-entry-accent); colo
 html[data-foxbox-tv] .fbx-tv2-chip { font-size: 1.05rem; line-height: 1.6; max-width: 38rem; padding: 0.95rem 1.2rem; }
 html[data-foxbox-tv] .fbx-tv2-chip [data-test="tv2-invite"] { display: block; margin: 0.2rem 0 0.15rem; font-size: 1.75em; letter-spacing: 0.08em; }
 html[data-foxbox-tv] .fbx-tv2-chip .fbx-tv2-dim { font-size: 0.9rem; }
+
+/* SKINS: the CONTROLLER choice on the name step (pad-skin.js builds it; here it sits in the card) */
+.fbx-skin-slot:empty { display: none; }
+.fbx-skin-slot { padding: 12px 10px 4px; border: 1px solid #ffffff22; border-radius: 18px; background: #0b0c1e; color: var(--ink, #fff9f1); }
+.fbx-skin-slot .fbx-skinpick-arrow { background: #262a52; box-shadow: 0 3px 0 #04050e; }
+html[data-foxbox-web="pad"] #name-skin { background: #15182b; box-shadow: none; border: 2px solid #ffffff30; }

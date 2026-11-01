@@ -136,6 +136,7 @@ function controllerShowing() {
   const pad = document.getElementById("pad-screen");
   if (!pad || !pad.classList.contains("show")) return false;
   if (document.body.classList.contains("fbx2-lobby-on")) return false; // the lobby layer covers it
+  if (pad.classList.contains("skin-on")) return false; // SKINS: the player's pixel pad is the look (no rolled background under it)
   return true;
 }
 

@@ -8,6 +8,7 @@
  *
  * The toolbar (FoxBox pixel arcade: FoxBox Pixel labels, square cream frame, navy fill, hard shadow, pixel icons):
  *   YOUR NAME + pencil   tap to rename (pad.js's name step)
+ *   PAD                  the player's gamepad look (pad-skin.js): pad.js's name step, opened at its CONTROLLER choice
  *   CHARACTER            kept hidden (Lakota): Sky's own setup asks for the character when Sky is picked
  *   USE CURSOR           the phone as a Wii-style pointer for its TV's lobby (pointer-pad.js: a full-screen tap pad over
  *                        this layer, RECENTER, SPEED; the TV draws the cursor: pointer-tv.js). Phones with a motion API
@@ -33,6 +34,7 @@ const ICONS = {
   close: ["#.....#", ".#...#.", "..#.#..", "...#...", "..#.#..", ".#...#.", "#.....#"],
   cursor: ["#......", "##.....", "###....", "####...", "#####..", "######.", "###....", "#.##..."],
   target: ["...#...", ".#####.", ".#...#.", "##.#.##", ".#...#.", ".#####.", "...#..."],
+  pad: [".########.", "##.####.##", "#...##.#.#", "##.####.##", "###....###", ".##....##."],
 };
 function icon(name, px = 2) {
   const rows = ICONS[name], w = rows[0].length, h = rows.length;
@@ -77,6 +79,7 @@ function injectCss() {
   .fbx2-padbar > [data-test="lobby-edit-name"] { margin-right: 0; }
   .fbx2-padbar > [data-test="lobby-party"] { order: 1; }
   .fbx2-padbar > [data-test="lobby-character"] { order: 2; }
+  .fbx2-padbar > [data-test="lobby-pad"] { order: 0; }
   .fbx2-tb { padding: 0 7px; gap: 5px; font-size: 8px; }
 }
 /* an older lobby2 bundle without the toolbar slot: the top right of the layer */
@@ -121,7 +124,7 @@ function injectCss() {
   document.head.append(css);
 }
 
-export async function initLobby2Pad({ url, myId, editName, changeCharacter, lobby }) {
+export async function initLobby2Pad({ url, myId, editName, editPad, changeCharacter, lobby }) {
   // FOXBOX_LOBBY2 is relative to the PAGE (pad/index.html), not to this module's folder
   const mod = await import(new URL(url, location.href).href);
   const mountLobby = mod.mountLobby || (globalThis.FoxboxLobby2 && globalThis.FoxboxLobby2.mountLobby);
@@ -165,6 +168,8 @@ export async function initLobby2Pad({ url, myId, editName, changeCharacter, lobb
   const nameBtn = mk("lobby-edit-name", `<span class="fbx2-tb-name">Name</span>${icon("pencil")}`, () => editName());
   nameBtn.setAttribute("aria-label", "Change your name");
   const nameLabel = nameBtn.querySelector(".fbx2-tb-name");
+  // SKINS: change the gamepad (the name step's CONTROLLER choice, without the keyboard)
+  if (editPad) mk("lobby-pad", `${icon("pad")}<span>Pad</span>`, () => editPad()).setAttribute("aria-label", "Change your controller");
   // USE CURSOR: the chip shows once pointer-pad.js is loaded and this phone can do it (a click: iPhone asks for motion)
   let ptr = null;
   const cursorBtn = mk("lobby-cursor", `${icon("cursor")}<span>Use cursor</span>`, () => ptr && ptr.toggle());

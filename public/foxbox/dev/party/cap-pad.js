@@ -293,37 +293,44 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
       try {
         btn.setPointerCapture(ev.pointerId);
       } catch {}
-      btn.classList.add("down");
-      const now = performance.now();
-      const loaded = now - lastFire >= RELOAD_MS;
-      if (loaded) {
-        lastFire = now;
-        btn.classList.remove("shot");
-        void btn.offsetWidth;
-        btn.classList.add("shot");
-        if (navigator.vibrate) {
-          try {
-            navigator.vibrate(45);
-          } catch {}
-        }
-      } else {
-        btn.classList.remove("nope");
-        void btn.offsetWidth;
-        btn.classList.add("nope");
-      }
-      b = 1;
-      send(loaded);
+      fireDown();
     });
     const end = (ev) => {
       if (ev.pointerId !== ptr) return;
       ptr = null;
-      btn.classList.remove("down");
-      b = 0;
-      send();
+      fireUp();
     };
     btn.addEventListener("pointerup", end);
     btn.addEventListener("pointercancel", end);
     btn.addEventListener("lostpointercapture", end);
+  }
+  function fireDown() {
+    const btn = el.fire;
+    btn.classList.add("down");
+    const now = performance.now();
+    const loaded = now - lastFire >= RELOAD_MS;
+    if (loaded) {
+      lastFire = now;
+      btn.classList.remove("shot");
+      void btn.offsetWidth;
+      btn.classList.add("shot");
+      if (navigator.vibrate) {
+        try {
+          navigator.vibrate(45);
+        } catch {}
+      }
+    } else {
+      btn.classList.remove("nope");
+      void btn.offsetWidth;
+      btn.classList.add("nope");
+    }
+    b = 1;
+    send(loaded);
+  }
+  function fireUp() {
+    el.fire.classList.remove("down");
+    b = 0;
+    send();
   }
 
   // the reload ring: 0 → 1 over RELOAD_MS after a shot
@@ -424,6 +431,10 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
       render();
     },
     release,
+    // SKINS: the pixel pad drives the same aim / FIRE as the DOM stick and button, and draws the tilt + reload
+    aim(vx, vy) { const m = Math.hypot(vx, vy); setAim(m < AIM_DEAD ? 0 : vx, m < AIM_DEAD ? 0 : vy); },
+    fire(down) { if (down) fireDown(); else fireUp(); },
+    info() { return { s, reload: Math.min(1, (performance.now() - lastFire) / RELOAD_MS), motion: gotMotion }; },
     setRole(text) {
       el.role.textContent = text;
     },

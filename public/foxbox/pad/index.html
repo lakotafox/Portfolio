@@ -101,6 +101,23 @@
         -webkit-user-select: text;
         user-select: text;
       }
+      /* SKINS: the CONTROLLER choice under the name: a panel in the name screen's own blue, pixel type */
+      #name-skin {
+        padding: 10px 10px 4px;
+        border-radius: 18px;
+        background: #0e3a86;
+        color: #fff;
+        box-shadow: inset 0 -4px 0 #0a2a63;
+      }
+      @media (orientation: landscape) and (max-height: 520px) {
+        #name-screen { gap: 8px; justify-content: center; }
+        #name-screen h1 { font-size: 30px; }
+        #name-screen p { font-size: 17px; }
+        #name-form { display: grid; width: min(720px, 100%); grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-rows: auto 1fr; gap: 10px 16px; align-items: start; }
+        #name-form #name-input { grid-column: 1; grid-row: 1; font-size: 24px; padding: 10px; }
+        #name-form #name-go { grid-column: 1; grid-row: 2; align-self: start; font-size: 26px; padding: 12px; }
+        #name-form #name-skin { grid-column: 2; grid-row: 1 / 3; }
+      }
       #name-go {
         font-size: 30px;
         padding: 16px;
@@ -1176,6 +1193,19 @@
       }
 
       /* ── Controller ───────────────────────────────────────────────────── */
+      /* SKINS: the player's pixel gamepad covers the controller (pad-skin.js draws it full bleed and keeps clear of the
+         notch / home bar itself); everything else on the screen steps aside, except Snowball's round cue */
+      #pad-screen.skin-on { background: #000; }
+      #pad-screen.skin-on > :not(.pad-skin):not(#round-cue) { visibility: hidden !important; }
+      /* Row: the CAPTAIN's boat view sits in the pad's window (pad-skin.js "frame" → --skin-w*); the TRAINING prompts stay up */
+      #pad-screen.skin-frame :is(#controls, #row) { position: static !important; }
+      /* (#controls is a flex item: with controller-look's z-index it's a stacking context of its own — lift it over the pad) */
+      #pad-screen.skin-frame #controls { z-index: 2 !important; }
+      #pad-screen.skin-frame #row-motion {
+        visibility: visible; position: absolute !important; z-index: 2; margin: 0; flex: none;
+        left: var(--skin-wx); top: var(--skin-wy); width: var(--skin-ww); height: var(--skin-wh); border-radius: 0; border: 0; box-shadow: none;
+      }
+      #pad-screen.skin-on #rtp { visibility: visible; z-index: 5; }
       #pad-screen {
         flex-direction: column;
         gap: 10px;
@@ -2327,6 +2357,7 @@
       <p>What's your name?</p>
       <form id="name-form" autocomplete="off">
         <input id="name-input" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="go" placeholder="Your name" />
+        <div id="name-skin" data-test="name-skin"></div><!-- SKINS: the CONTROLLER choice (pad-skin.js mountSkinPicker) -->
         <button id="name-go" type="submit">Let's play!</button>
       </form>
     </section>

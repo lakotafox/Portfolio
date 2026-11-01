@@ -46,6 +46,7 @@ import { createLandscape, createTurnHint, turnedDelta } from "./landscape.js";
 import { crownedPuff, cryingPuff, sprite } from "./pixel-art.js";
 import { createPhoneSounds } from "./phone-sounds.js";
 import { createRowTrainPad, S as ROW_TRAIN } from "./row-train-pad.js"; // ROWTRAIN: Row Row Rumble's TRAINING overlay
+import { createPadSkin, skinId, setSkinId, mountSkinPicker } from "./pad-skin.js"; // SKINS: the player's pixel gamepad (CLASSIC = none)
 
 const phoneSounds = createPhoneSounds({
   onReady: (audioReady) => queueMicrotask(() => sendRaw({ t: "state", drawing: drawOpen, audioReady: audioReady === true })),
@@ -929,6 +930,9 @@ $("rdy-change").addEventListener("click", () => {
   showPicker();
 });
 
+// SKINS: the CONTROLLER choice sits under the name (the player's pad is part of their profile; saved with the name)
+const skinPicker = mountSkinPicker($("name-skin"), { value: skinId(), name: me.name });
+$("name-input").addEventListener("input", () => skinPicker.setName($("name-input").value));
 $("name-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const name = $("name-input").value.replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, 12);
@@ -938,6 +942,7 @@ $("name-form").addEventListener("submit", (e) => {
   }
   me.name = name;
   saveMe();
+  setSkinId(skinPicker.value); // SKINS: part of the profile, saved with the name
   $("name-input").blur();
   $("me-name").textContent = me.name;
   // Straight to "You're in!": the character (Sky Scramble only) is set up from there.
@@ -951,12 +956,17 @@ $("change-char").addEventListener("click", () => showPicker());
 $("switch-game").addEventListener("click", () => sendRaw({ t: "pick" }));
 // the host's phone only (the TV says which: lobby state hostId): BOTS FILL / OFF for every game
 $("bots-host").addEventListener("click", () => window.foxboxLobby.bots());
-$("edit-name").addEventListener("click", () => {
+function openNameScreen({ pad = false } = {}) {
   release();
   $("name-input").value = me.name;
+  skinPicker.set(skinId()); // SKINS: the pad saved now (a cancelled change doesn't stick)
+  skinPicker.setName(me.name);
   showScreen("name-screen");
-  setTimeout(() => $("name-input").focus(), 50);
-});
+  requestAnimationFrame(() => skinPicker.refresh());
+  if (pad) setTimeout(() => $("name-skin").scrollIntoView({ block: "center" }), 50); // the PAD chip: no keyboard
+  else setTimeout(() => $("name-input").focus(), 50);
+}
+$("edit-name").addEventListener("click", () => openNameScreen());
 $("me-chip").addEventListener("click", () => $("edit-name").click()); // the lobby card's name: tap to change it
 
 // ── Connection ──────────────────────────────────────────────────────────────────
@@ -1102,7 +1112,7 @@ function onMessage(msg) {
       if (kartGameMsg(msg)) break; // KART: the kart module's (FOX KART is the hub's game)
       if (mode.id === "row" && msg.m && msg.m.type === "rowTrain") { rowTrain.onMessage(msg.m); renderStatus(); break; } // ROWTRAIN: the controls check
       if (mode.id === "row" && msg.m && msg.m.type === "rowBoat") { row.boatState(msg.m); break; } // ROWBOAT: reloading / stunned on the paddler's boat art
-      if (mode.id === "snowball" && msg.m && msg.m.type === "round") { roundCue(msg.m); break; } // SNOWBALL: best of three
+      if (mode.id === "snowball" && msg.m && msg.m.type === "round") { skinRound = Number(msg.m.round) || 0; roundCue(msg.m); syncSkin(); break; } // SNOWBALL: best of three
       if (msg.m && typeof msg.m === "object") {
         if (golfPad) golfPad.onMessage(msg.m);
         else {
@@ -1696,7 +1706,7 @@ function syncExtras() {
   const skyPad = sky && connected && curScreen === "pad-screen" && SKY_PAD_STATES.includes(st);
   // TEE TIME is left alone: it has its own portrait + sideways layouts (golf-pad.js) and is swung like a club,
   // and turned with CSS a portrait phone would use the portrait layout in a sideways box (SWING cut off)
-  if (typeof land !== "undefined") land.set((playing && web && mode.id !== "golf" && mode.id !== "knight" && mode.id !== "kart" && mode.id !== "whosfox") || skyPad); // on with the next release · KNIGHT: the knight pad turns itself · KART: so does the kart pad · WHOSFOX: portrait
+  if (typeof land !== "undefined") land.set((playing && web && mode.id !== "golf" && mode.id !== "knight" && mode.id !== "kart" && mode.id !== "whosfox") || skyPad || skinWanted()); // on with the next release · KNIGHT: the knight pad turns itself · KART: so does the kart pad · WHOSFOX: portrait
   if (skyLand) {
     for (const [id, l] of Object.entries(skyLand)) l.set(sky && curScreen === id);
     const skyScreen = sky && (curScreen in skyLand || skyPad);
@@ -1709,6 +1719,7 @@ function syncExtras() {
     if (!turned && skyTurnShown) { turnHint.hide(); skyTurnShown = false; } // only the one Sky showed (NONAME's setup shows it too)
     if (!skyScreen) turnSeen = false;
   }
+  syncSkin(); // SKINS
   if (lobby2Pad) {
     try {
       lobby2Pad.sync({ screen: curScreen, state: st, connected, gameId: mode.id, seats: !!mode.seats, role: role || null, lobby: lobbyState });
@@ -1859,6 +1870,92 @@ bonk.addEventListener("pointerup", bonkEnd);
 bonk.addEventListener("pointercancel", bonkEnd);
 bonk.addEventListener("lostpointercapture", bonkEnd);
 
+// ── SKINS: the player's pixel gamepad (pad-skin.js) ──────────────────────────────────────────────────────────────
+// Sky Scramble (slider + BONK) and Snowball Sumo (stick + SHOVE) wear the pad the player picked next to their name, from
+// the countdown through the round (and while out / waiting for the next one). It covers #pad-screen, so Sky's old
+// "GO GO GO! / Sky Scramble" panel is gone; its touches drive the same setXY / setB as #steer and #bonk. CLASSIC (or
+// anything else on screen: the lobby, the results, Row, the module games) = no skin, the controller exactly as before.
+var padSkin = null; // var: syncExtras may run before this line during start-up
+var SKIN_GAMES = { sky: "sky", snowball: "snow" }; // var: hoisted for syncExtras during start-up
+var SKIN_STATES = ["countdown", "playing", "out", "waiting"];
+var skinPoll = 0; // the first mate's tilt + reload, copied to the pad 20× a second
+/** The pad layout for what's on screen now, or null: Sky / Snowball, and Row's CAPTAIN (the boat view, framed) and FIRST MATE. */
+function skinGame() {
+  if (!SKIN_GAMES) return null;
+  if (mode.id === "row") return role === "paddle" ? "frame" : role === "captain" ? "mate" : null;
+  return SKIN_GAMES[mode.id] || null;
+}
+function skinWanted() {
+  if (!SKIN_GAMES) return false;
+  const st = lastStatus && lastStatus.state;
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  const states = mode.id === "row" ? ["countdown", "playing"] : SKIN_STATES;
+  return skinId() !== "classic" && connected && curScreen === "pad-screen" && !!skinGame() && states.includes(st);
+}
+function skinLabel(st) {
+  if (st === "countdown") return "GET READY!";
+  if (st === "out") return "OUT! NEXT ROUND SOON";
+  if (st === "waiting") return "NEXT ROUND SOON";
+  if (mode.id === "row") return role === "paddle" ? "SWING TO PADDLE" : "TILT";
+  return mode.stick === "xy" ? "" : "SLIDE TO STEER";
+}
+function syncSkin() {
+  const want = skinWanted();
+  const screen = $("pad-screen");
+  if (!want) {
+    if (padSkin) {
+      padSkin.release();
+      padSkin.destroy();
+      padSkin = null;
+      clearInterval(skinPoll);
+      skinPoll = 0;
+      screen.classList.remove("skin-on", "skin-frame", "skin-mate");
+    }
+    return;
+  }
+  const game = skinGame(), style = skinId();
+  if (!padSkin) {
+    padSkin = createPadSkin(screen, {
+      style, game, vibrate: false, // setB / cap-pad buzz themselves
+      onInput(ev) {
+        const g = padSkin ? padSkin.game : game;
+        if (g === "mate") {
+          if (ev.type === "move") cap.aim(ev.x, ev.y);
+          else if (ev.name === "fire") cap.fire(ev.down);
+          return;
+        }
+        if (g === "frame") return; // the paddler paddles with the phone itself
+        if (ev.type === "move") setXY(ev.x, mode.stick === "xy" ? ev.y : 0);
+        else if (ev.type === "press" && ev.name === "a") setB(ev.down ? 1 : 0);
+      },
+      // Row's CAPTAIN: the boat panel (#row-motion) goes into the pad's window
+      onRects(r) {
+        const w = r.window;
+        for (const [k, v] of Object.entries({ x: w?.x, y: w?.y, w: w?.w, h: w?.h })) screen.style.setProperty(`--skin-w${k}`, w ? v + "px" : "");
+      },
+    });
+    screen.classList.add("skin-on");
+  }
+  if (padSkin.game !== game) padSkin.release();
+  padSkin.setStyle(style);
+  padSkin.setGame(game);
+  screen.classList.toggle("skin-frame", game === "frame");
+  screen.classList.toggle("skin-mate", game === "mate");
+  if (game === "mate" && !skinPoll) {
+    skinPoll = setInterval(() => {
+      if (!padSkin) return;
+      const i = cap.info();
+      padSkin.set({ tilt: Math.round(i.s * 20) / 20, reload: Math.round(i.reload * 16) / 16 });
+    }, 50);
+  } else if (game !== "mate" && skinPoll) { clearInterval(skinPoll); skinPoll = 0; }
+  const st = lastStatus.state;
+  const seatColor = mode.id === "row" && mySeat()?.color?.base;
+  padSkin.set({ name: me.name, color: seatColor || myColor(), button: mode.button, label: skinLabel(st), dim: st === "out" || st === "waiting", round: game === "snow" ? skinRound : 0, won: skinRound, train: mode.id === "row" && rowTrain.visible() });
+}
+var skinRound = 0; // Snowball's round (its {type:"round"} cue)
+Object.defineProperty(window, "__padSkinQA", { get: () => padSkin, configurable: true }); // QA: the live pad (regions, grid, style)
+window.addEventListener("foxbox:pad-skin", () => { if (padSkin) padSkin.release(); syncSkin(); if (typeof land !== "undefined") syncExtras(); });
+
 // Setup is tied to the host epoch and exact seat. Permission/practice is local;
 // only a host acknowledgment marks the player ready.
 function syncRowSetup() {
@@ -1937,6 +2034,7 @@ function release() {
     setX(0);
     setB(0);
   }
+  if (padSkin) padSkin.release(); // SKINS: the pixel pad's held slider / stick / button
   if (golfPad) golfPad.release(); // TEE TIME: let go of a held aim arrow
   if (knightPad) knightPad.release(); // KNIGHT: let go of every held button
   if (kartPad) kartPad.release(); // KART: let go of GAS / ITEM
@@ -1994,6 +2092,7 @@ if (globalThis.FOXBOX_LOBBY2) {
         url: globalThis.FOXBOX_LOBBY2,
         myId: () => me.id,
         editName: () => $("edit-name").click(),
+        editPad: () => openNameScreen({ pad: true }), // SKINS: the PAD chip
         changeCharacter: () => showPicker(),
         lobby: window.foxboxLobby,
       }),
@@ -2020,6 +2119,7 @@ if (me.name) {
   connect();
 } else {
   showScreen("name-screen");
+  requestAnimationFrame(() => skinPicker.refresh()); // SKINS
 }
 renderStatus();
 // Show the remembered pick's thumbnail; forget it if that drawing was removed.
