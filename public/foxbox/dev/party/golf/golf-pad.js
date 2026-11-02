@@ -25,6 +25,11 @@
  *      great / huge); the TV adds the heavy RNG. The phone plays its own whoosh (never the TV).
  * Everyone else's phone shows whose turn it is, "you're next", the last shot and the standings.
  *
+ * Upright only (Lakota, Nov 1: you hold the phone like a club to swing, so there's no sideways layout). A phone held
+ * sideways on the aim screen sees TURN YOUR PHONE UPRIGHT instead of the aim controls (screen "upright"). That is
+ * decided by the screen, not the orientation alone: once SWING is tapped (armed: the address pose, the swing) the
+ * phone turns every which way and the overlay never comes back until the turn is over or BACK TO AIM.
+ *
  * Test hook: window.__golfPad (read-only), DOM data-test ids: see CONTRACT.md "Test hooks".
  */
 
@@ -54,6 +59,12 @@ const ordinal = (n) => {
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 };
 const TIER_NAME = { weak: "SOFT", good: "GOOD", great: "GREAT", huge: "HUGE" };
+/** A phone held sideways (the same test as the CSS below; a desktop window or a tablet is never "sideways"). */
+const SIDEWAYS_MQ = "(orientation: landscape) and (max-height: 520px)";
+const sideways = () => {
+  try { if (window.matchMedia) return window.matchMedia(SIDEWAYS_MQ).matches; } catch {}
+  return innerWidth > innerHeight && innerHeight <= 520;
+};
 
 // ── Pixel sprites (inline SVG from character maps, like pixel-art.js) ────────────────
 const INK = "#0a1428";
@@ -75,6 +86,11 @@ const MAPS = {
   wind: ["...OO...", "..OWWO..", ".OWWWWO.", "OWWWWWWO", "OOOWWOOO", "..OWWO..", "..OWWO..", "..OOOO.."], // points up (0 deg)
   windD: ["..OOOOOO", "..OWWWWO", "...OWWWO", "..OWWWWO", ".OWWWOWO", "OWWWO.OO", "OWWO....", ".OO....."], // points up-right (45 deg)
   flag: ["OOOOO.", "ORRRRO", "ORRRRRO", "ORRRRO", "OO.OO.", "OO....", "OO....", "OO...."],
+  // TURN YOUR PHONE UPRIGHT: a phone with a cross (shown turned sideways) and one with a tick (upright)
+  phoneNo: [".OOOOOOO.", "OKKKKKKKO", "OKKOOOKKO", "OKKKKKKKO", "OKCCCCCKO", "OKWCCCWKO", "OKCWCWCKO", "OKCCWCCKO", "OKCWCWCKO",
+    "OKWCCCWKO", "OKCCCCCKO", "OKCCCCCKO", "OKKKKKKKO", "OKKKKKKKO", ".OOOOOOO."],
+  phoneOk: [".OOOOOOO.", "OKKKKKKKO", "OKKOOOKKO", "OKKKKKKKO", "OKCCCCCKO", "OKCCCCCKO", "OKCCCCWKO", "OKCCCWWKO", "OKWCWWCKO",
+    "OKWWWCCKO", "OKCWCCCKO", "OKCCCCCKO", "OKKKKKKKO", "OKKKKKKKO", ".OOOOOOO."],
 };
 const BASE = { O: INK, E: INK, S: "#f2c79b", P: "#e8e8f0", W: "#ffffff", K: "#26304a", G: "#35d07f", R: "#ff5a3c", Y: "#ffd23f" };
 function mix(hex, amt) {
@@ -126,7 +142,7 @@ const CSS = `
 #golf .gp-s::after { margin-bottom: auto; }
 #golf .gp[data-screen="wait"] .gp-wait, #golf .gp[data-screen="intro"] .gp-intro, #golf .gp[data-screen="aim"] .gp-aim,
 #golf .gp[data-screen="armed"] .gp-armed, #golf .gp[data-screen="flight"] .gp-flight, #golf .gp[data-screen="result"] .gp-result,
-#golf .gp[data-screen="standings"] .gp-standings, #golf .gp[data-screen="done"] .gp-standings { display: flex; }
+#golf .gp[data-screen="standings"] .gp-standings, #golf .gp[data-screen="done"] .gp-standings, #golf .gp[data-screen="upright"] .gp-upright { display: flex; }
 #golf .gp-big { font-size: clamp(18px, 6.2vw, 28px); line-height: 1.35; color: #ffd23f; text-shadow: 3px 3px 0 #0a1428; }
 #golf .gp-mid { font-size: clamp(11px, 3.6vw, 15px); line-height: 1.6; }
 #golf .gp-small { font-size: 9px; line-height: 1.7; color: #c9d2e6; }
@@ -174,6 +190,16 @@ const CSS = `
 #golf .gp-eye { display: flex; width: 100%; margin: 0 0 14px; align-items: center; justify-content: center; gap: 10px; font-size: 11px; padding: 12px 10px; --gp-bg: #c9d2e6; }
 #golf .gp-eye .gp-px { width: 33px; height: auto; }
 #golf .gp-eye.on { --gp-bg: #ffd23f; }
+/* TURN YOUR PHONE UPRIGHT (the aim screen on a sideways phone; never while addressing or swinging) */
+#golf .gp-up-pic { display: flex; align-items: center; justify-content: center; gap: 14px; }
+#golf .gp-up-from { display: grid; place-items: center; width: 75px; height: 75px; transform: rotate(90deg); opacity: 0.6; }
+#golf .gp-up-to { display: grid; place-items: center; animation: gp-up-hop 0.9s steps(1, end) infinite; }
+#golf .gp-up-ar { width: 20px; height: auto; animation: gp-up-nudge 0.9s steps(1, end) infinite; }
+#golf .gp-up-big { font-size: clamp(16px, 5.2vw, 26px); }
+#golf .gp-up-tip { font-size: 16px; line-height: 1.35; color: #c9d2e6; }
+@keyframes gp-up-hop { 50% { transform: translateY(-4px); } }
+@keyframes gp-up-nudge { 50% { transform: translateX(4px); } }
+@media (prefers-reduced-motion: reduce) { #golf .gp-up-to, #golf .gp-up-ar { animation: none; } }
 /* golf setup (before START): the picker chooses the map; everyone sees the choice (pad.js gives us #golf-setup) */
 #golf-setup { margin: 4px 0; padding: 10px; background: #0a1428e6; color: #fff; font-family: "FoxBox Pixel", ui-monospace, monospace;
   box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428, inset 0 0 0 3px #ffffff2e; }
@@ -218,7 +244,7 @@ const CSS = `
 #golf .gp.gp-skinned .gp-frame { background: transparent; margin: 2px; box-shadow: inset 0 0 0 2px var(--sk-lcd-dim); }
 #golf .gp.gp-skinned .gp-big, #golf .gp.gp-skinned .gp-name, #golf .gp.gp-skinned .gp-pts, #golf .gp.gp-skinned .gp-aimval b { text-shadow: none; }
 #golf .gp.gp-skinned .gp-big, #golf .gp.gp-skinned .gp-goal, #golf .gp.gp-skinned .gp-board .r .gn { color: var(--sk-lcd-gold); }
-#golf .gp.gp-skinned .gp-small, #golf .gp.gp-skinned .gp-last, #golf .gp.gp-skinned .gp-ready { color: var(--sk-lcd-soft); }
+#golf .gp.gp-skinned .gp-small, #golf .gp.gp-skinned .gp-last, #golf .gp.gp-skinned .gp-ready, #golf .gp.gp-skinned .gp-up-tip { color: var(--sk-lcd-soft); }
 #golf .gp.gp-skinned .gp-last b { color: var(--sk-lcd-ink); }
 #golf .gp.gp-skinned .gp-next { background: var(--sk-lcd-good); color: var(--sk-lcd); }
 #golf .gp.gp-skinned .gp-pts, #golf .gp.gp-skinned .gp-board .r.me { color: var(--sk-lcd-good); }
@@ -248,16 +274,14 @@ const CSS = `
   #golf .gp.gp-skinned .gp-board .r .nm { font-size: 14px; }
 }
 @media (orientation: landscape) and (max-height: 520px) {
+  /* sideways: no aim controls (the aim screen is TURN YOUR PHONE UPRIGHT); the address screen still fits, since the
+     club grip turns the phone every which way */
   #golf .gp { gap: 6px; }
-  #golf .gp-aim { display: none; }
-  #golf .gp[data-screen="aim"] .gp-aim { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto minmax(0, 1fr); gap: 10px 18px; }
-  #golf .gp-aim::before, #golf .gp-aim::after { display: none; }
-  #golf .gp-aim .gp-info { grid-column: 1 / 3; }
-  #golf .gp-aim .gp-row { align-self: stretch; align-items: stretch; }
-  #golf .gp-aim .gp-aimval { justify-content: center; }
-  #golf .gp-aim .gp-swingbox { display: flex; flex-direction: column; gap: 8px; justify-content: center; min-height: 0; }
-  #golf .gp-arrow { min-height: 0; }
-  #golf .gp-swing { min-height: 0; flex: 1; max-height: 200px; }
+  #golf .gp-upright { gap: 8px; }
+  #golf .gp-up-pic .gp-up-phone { width: auto; height: 90px; }
+  #golf .gp-up-from { width: 90px; height: 90px; }
+  #golf .gp-up-ar { width: auto; height: 32px; }
+  #golf .gp-up-tip { font-size: 14px; }
   #golf .gp[data-screen="armed"] .gp-armed { flex-direction: row; flex-wrap: wrap; align-content: center; }
   #golf .gp-armed .gp-pose-pic { flex: 0 0 auto; }
   #golf .gp-armed .gp-arm-text { flex: 1 1 50%; display: flex; flex-direction: column; gap: 8px; }
@@ -269,9 +293,9 @@ const CSS = `
 // ── SKINS: the player's pixel gamepad (FoxBox couch-games dev/party/pad-skin.js, Lakota Nov 1) ───────────────────
 // pad.js's sibling ../pad-skin.js has the five pads; CLASSIC (or no pad-skin.js, e.g. this repo's own dev page) = no skin
 // at all: the screens above exactly as before. With a pad, the aim screen is drawn as the pad (HUD strip, an LCD with the
-// wind / goal / aim, the cross pad = the aim arrows, a BIRD'S EYE toggle, a big SWING button: portrait "golf" and
-// sideways "golfside"); the other screens (whose turn, the address pose, the result, the standings) keep their DOM,
-// laid into the pad's LCD screen (st.rect "screen") and coloured from the style. Every touch runs the same functions
+// wind / goal / aim, the cross pad = the aim arrows, a BIRD'S EYE toggle, a big SWING button: layout "golf", upright
+// only); the other screens (whose turn, the address pose, TURN YOUR PHONE UPRIGHT, the result, the standings) keep their
+// DOM, laid into the pad's LCD screen (st.rect "screen", a wide one on a sideways phone) and coloured from the style. Every touch runs the same functions
 // as the DOM buttons (aimStart / aimStop / doSwing / doEye / doHere).
 let skinLoad = null;
 function loadSkin() {
@@ -292,7 +316,7 @@ function windRows(dir) {
   for (let t = 0; t < Math.floor(k / 2); t++) rows = rotCW(rows);
   return rows;
 }
-/** Where things go (grid px). Shared by the layouts and the page (the text screens' LCD). */
+/** Where things go (grid px). side = a sideways phone's text screens (it never gets the aim controls). */
 function golfGeom(F, side) {
   const { W, H, bot } = F;
   if (!side) {
@@ -309,14 +333,8 @@ function golfGeom(F, side) {
       scr: { x: cl - 1, y: top, w: cw + 2, h: bot - 2 - top },
     };
   }
-  const L = F.L, R = F.R, cy = Math.round((16 + bot) / 2);
-  const d = Math.max(44, Math.min(60, bot - 22, Math.round((R - L) * 0.3)));
-  const sx = R - d - 2, ccx = L + 31, mx0 = ccx + 34, mw = sx - 6 - mx0, y0 = Math.max(17, cy - 25);
-  return {
-    hud: { x: L, y: 2, w: R - L, h: 12 }, lcd: { x: mx0, y: y0, w: mw, h: 33 }, lines: 4,
-    cross: { cx: ccx, cy }, pill: { cx: Math.round(mx0 + mw / 2), y: y0 + 39, w: mw }, swing: { x: sx, y: Math.round(cy - d / 2), d },
-    scr: { x: L, y: 18, w: R - L, h: bot - 1 - 18 },
-  };
+  const L = F.L, R = F.R; // inside the notch
+  return { hud: { x: L, y: 2, w: R - L, h: 12 }, scr: { x: L, y: 18, w: R - L, h: bot - 1 - 18 } };
 }
 let golfLayoutsDone = false;
 let skinLcdNow = null; // what the pad's aim LCD shows now (QA: window.__golfPad.skinLcd)
@@ -358,8 +376,9 @@ function registerGolfLayouts(M) {
     text(label, tx, y + 3 + off, FS, on ? pal.txt : S.x.arrow, { align: "l" });
     st.region({ n: name, t: "r", x: x - 3, y: y - 4, w: w + 6, h: h + 8 });
   }
-  function draw(st, S, F, side) {
-    const D = st.data, g = golfGeom(F, side);
+  function draw(st, S, F) {
+    // the aim controls are upright only; a sideways phone's screens (TURN YOUR PHONE UPRIGHT, the address pose...) are text
+    const D = st.data, side = D.screen !== "aim" && F.W > F.H, g = golfGeom(F, side);
     if (!side && X.tallBody) X.tallBody(S, F, { panel: g.panel });
     hud(S, g.hud, D, side);
     if (D.screen !== "aim") {
@@ -375,10 +394,8 @@ function registerGolfLayouts(M) {
       text(D.here, r.x + r.w / 2, r.y + Math.round((r.h - 2) / 2) + 2 + o, FS, pal.txt);
     } else {
       const w = g.lcd.w - 6, wind = { icon: windRows(D.windDir || 0), l: `${D.windMph ?? 0} MPH` };
-      const ga = fitFirst(D.goalA || [], w), gb = fitFirst(D.goalB || [], side ? w : w - 32);
-      const rows = side
-        ? [wind, { l: ga }, { l: gb, lc: S.hud.ink }, { l: `AIM ${D.aim || "0"}`, lc: S.hud.gold }]
-        : [{ ...wind, r: `AIM ${D.aim || "0"}` }, { l: ga }, { l: gb, r: D.score || "", rc: S.hud.ink }];
+      const ga = fitFirst(D.goalA || [], w), gb = fitFirst(D.goalB || [], w - 32);
+      const rows = [{ ...wind, r: `AIM ${D.aim || "0"}` }, { l: ga }, { l: gb, r: D.score || "", rc: S.hud.ink }];
       lcd(S, g.lcd, rows);
       skinLcdNow = { goal: [ga, gb].filter(Boolean).join(" "), aim: D.aim || "0", wind: `${D.windMph ?? 0} MPH` };
     }
@@ -392,8 +409,7 @@ function registerGolfLayouts(M) {
     const sw = g.swing;
     button(st, S, "swing", sw.x, sw.y, sw.d, S.a, "SWING", FB, { hit: 4 });
   }
-  M.registerLayout("golf", (st, S, F) => draw(st, S, F, false), { brand: false });
-  M.registerLayout("golfside", (st, S, F) => draw(st, S, F, true), { brand: false });
+  M.registerLayout("golf", draw, { brand: false });
 }
 
 export function createGolfPad(root, { send, me }) {
@@ -436,6 +452,15 @@ export function createGolfPad(root, { send, me }) {
         <button type="button" class="gp-btn gp-swing" data-test="golf-swing" data-native>SWING</button>
         <div class="gp-small gp-aim-tip">Aim on the TV, then tap SWING</div>
       </div>
+    </section>
+    <section class="gp-s gp-upright" data-test="golf-upright" role="status">
+      <div class="gp-up-pic" aria-hidden="true">
+        <span class="gp-up-from">${sprite("phoneNo", 5, "#ff5a3c", "gp-up-phone")}</span>
+        ${sprite("arrowR", 4, "#fff", "gp-up-ar")}
+        <span class="gp-up-to">${sprite("phoneOk", 5, "#35d07f", "gp-up-phone")}</span>
+      </div>
+      <div class="gp-big gp-up-big">TURN YOUR PHONE UPRIGHT</div>
+      <div class="gp-soft gp-up-tip">Hold it tall, like a golf club. Your aim and SWING are waiting.</div>
     </section>
     <section class="gp-s gp-armed">
       <div class="gp-pose-pic" data-test="golf-pose-pic"></div>
@@ -832,7 +857,12 @@ export function createGolfPad(root, { send, me }) {
     render();
   }
 
+  /** The aim screen on a sideways phone is TURN YOUR PHONE UPRIGHT (only "aim": never armed / flight, see the top). */
   function screenNow() {
+    const s = screenOf();
+    return s === "aim" && sideways() ? "upright" : s;
+  }
+  function screenOf() {
     if (!shown) return "off";
     const v = view;
     if (!v || !status || status.state === "countdown") return "wait";
@@ -875,7 +905,7 @@ export function createGolfPad(root, { send, me }) {
     }
     const g = v.game || {};
     // COME BACK (the TV's countdown) for the golfer up: a big I'M HERE! button (hidden a moment after a tap)
-    const cbMe = !!(v.isYourTurn && v.comeBack && (screen === "aim" || screen === "armed") && performance.now() - hereSentAt > 1200);
+    const cbMe = !!(v.isYourTurn && v.comeBack && (screen === "aim" || screen === "armed" || screen === "upright") && performance.now() - hereSentAt > 1200);
     el.here.hidden = !cbMe;
     if (cbMe) set(el.here, `I'M HERE! (${v.comeBack.left})`);
     set(el.game, `${(g.index ?? 0) + 1}/${g.count || 3} ${g.name || ""}`);
@@ -1039,7 +1069,7 @@ export function createGolfPad(root, { send, me }) {
       }
       return;
     }
-    const style = skinMod.skinId(), side = innerWidth > innerHeight;
+    const style = skinMod.skinId();
     if (!skinLayer) {
       skinLayer = document.createElement("div");
       skinLayer.className = "gp-skin";
@@ -1055,9 +1085,8 @@ export function createGolfPad(root, { send, me }) {
       root.classList.add("gp-skin-on");
       el.gp.classList.add("gp-skinned");
     }
-    if (!skin) skin = skinMod.createPadSkin(skinHost, { style, game: side ? "golfside" : "golf", vibrate: false, onInput: skinInput, onRects: placeScreen });
+    if (!skin) skin = skinMod.createPadSkin(skinHost, { style, game: "golf", vibrate: false, onInput: skinInput, onRects: placeScreen });
     skin.setStyle(style);
-    skin.setGame(side ? "golfside" : "golf");
     const d = skinData();
     skin.set(d);
     if (d.here && !skinFlash) skinFlash = setInterval(() => { if (skin) skin.set({ flash: Math.floor(performance.now() / 500) % 2 }); }, 250);
@@ -1069,7 +1098,10 @@ export function createGolfPad(root, { send, me }) {
     if (m) syncSkin();
   });
   window.addEventListener("foxbox:pad-skin", () => { if (skin) skin.release(); syncSkin(); });
-  window.addEventListener("resize", () => { if (skinLayer) syncSkin(); });
+  // the phone turned: aim <-> TURN YOUR PHONE UPRIGHT (render() also re-lays the pixel pad)
+  const onTurn = () => { if (shown) render(); else if (skinLayer) syncSkin(); };
+  window.addEventListener("resize", onTurn);
+  try { window.matchMedia?.(SIDEWAYS_MQ).addEventListener?.("change", onTurn); } catch {}
 
   // read-only test hook (CONTRACT.md)
   window.__golfPad = {
