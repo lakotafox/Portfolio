@@ -12,10 +12,10 @@
  * On the aim screen the golfer up has a BIRD'S EYE button: {type:"birdseye", on} toggles the TV's overhead view
  * (the swing always cuts back behind the golfer). Both go through the {t:"game"} path, so the web build works too.
  *
- * No shot clock. The page tells the TV when it is hidden (locked / another app): {type:"hidden", on} (and hello
- * carries `hidden`), so the TV shows COME BACK, <NAME>! with a 30 s countdown instead of skipping at once. When the
- * TV's countdown runs because the golfer up hasn't touched the phone for a minute (view.comeBack.why "idle"), the
- * phone buzzes and shows a big I'M HERE! button ({type:"here"}); any aim / SWING tap counts too.
+ * The turn clock (Lakota, Nov 7): 90 s per turn on the TV, then the turn is skipped; no banner, no idle logic. In the
+ * last 30 s the golfer up gets a tiny matching timer (view.timer {left, total}): "0:25" in the header (classic) or
+ * the pad LCD (skins). The page still tells the TV when it is hidden (locked / another app): {type:"hidden", on}
+ * (and hello carries `hidden`), as info only.
  *
  * The turn, Lakota's design:
  *   1. AIM: the gyro is OFF; the arrow buttons turn the aim line on the TV (tap = 1 degree, hold = sweep).
@@ -39,9 +39,9 @@
  * message sent while the link is dying is gone. The TV's views come every second, and the phone mends what got lost
  * from them: SWING again (arm), READY again, and the SWING ITSELF again (the phone sat on NICE SWING! while the TV
  * waited in "armed" and then skipped the golfer AWAY). Each resend is idempotent on the TV (it only acts in the right
- * phase, for the golfer up). The same for "I'm back" (Lakota, Nov 7: Don's turn went straight to COME BACK): a phone
+ * phase, for the golfer up). The same for "I'm back" (Lakota, Nov 7: Don's turn opened as if he were away): a phone
  * unlocked while its link was down lost its {type:"hidden", on:false}, so the TV still had it as hidden (away). When a
- * view says the TV has this page as hidden (view.you.hidden, or my turn's comeBack.why "away" on an older TV) while it
+ * view says the TV has this page as hidden (view.you.hidden) while it
  * is showing, the phone says {type:"hidden", on:false} again (at most once a second, so within ~1 s of the next view).
  *
  * Test hook: window.__golfPad (read-only), DOM data-test ids: see CONTRACT.md "Test hooks".
@@ -156,6 +156,9 @@ const CSS = `
   inset 0 0 0 3px var(--gp-edge, #ffffff2e); margin: 4px; padding: 10px 12px; }
 #golf .gp-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 10px; line-height: 1.4; color: #ffd23f; }
 #golf .gp-head .gp-score { color: #fff; white-space: nowrap; }
+#golf .gp-head .gp-timer { color: #cfe3ff; white-space: nowrap; opacity: 0.9; }
+#golf .gp-head .gp-timer.low { color: #ff9a7a; }
+#golf .gp-head .gp-timer[hidden] { display: none; }
 #golf .gp-s { display: none; flex: 1; min-height: 0; flex-direction: column; gap: 12px; align-items: stretch; justify-content: flex-start; text-align: center; }
 /* centred when it fits, top-aligned when it doesn't (auto margins on two spacers) */
 #golf .gp-s::before, #golf .gp-s::after { content: ""; flex: none; }
@@ -184,9 +187,6 @@ const CSS = `
 #golf .gp-info .gp-aim-goal { text-align: center; }
 #golf .gp-wind { display: flex; align-items: center; gap: 8px; }
 #golf .gp-wind-ar { display: inline-block; }
-#golf .gp-here { width: calc(100% - 8px); margin: 0 4px; padding: 14px 10px; font-size: clamp(16px, 5.4vw, 24px); line-height: 1.4; --gp-bg: #ffd23f;
-  animation: gp-flash 0.6s steps(2, end) infinite; }
-#golf .gp-here[hidden] { display: none; }
 #golf .gp-goal { font-size: 11px; line-height: 1.6; color: #ffd23f; }
 #golf .gp-pose-pic { display: flex; justify-content: center; }
 #golf .gp-pose-pic .gp-px { width: min(30vw, 128px); height: auto; }
@@ -282,7 +282,6 @@ const CSS = `
 #golf .gp.gp-skinned .gp-btn:active, #golf .gp.gp-skinned .gp-btn.down { transform: translateY(calc(var(--u) * 2)); background: var(--pm);
   box-shadow: inset var(--u) var(--u) 0 0 var(--pd), 0 calc(var(--u) * -1) 0 0 var(--sk-ink), 0 var(--u) 0 0 var(--sk-ink),
     calc(var(--u) * -1) 0 0 0 var(--sk-ink), var(--u) 0 0 0 var(--sk-ink), 0 var(--u) 0 0 #00000088; }
-#golf .gp.gp-skinned .gp-here { --pb: var(--sk-a-base); --pm: var(--sk-a-mid); --pl: var(--sk-a-lt); --pd: var(--sk-a-dk); color: var(--sk-a-txt); animation: gp-skflash 1s steps(2, end) infinite; }
 #golf .gp.gp-skinned .gp-enable { --pb: var(--sk-b-base); --pm: var(--sk-b-mid); --pl: var(--sk-b-lt); --pd: var(--sk-b-dk); color: var(--sk-b-txt); }
 #golf .gp.gp-skinned .gp-pass { --pb: var(--sk-c-base); --pm: var(--sk-c-mid); --pl: var(--sk-c-lt); --pd: var(--sk-c-dk); color: var(--sk-c-txt); }
 #golf .gp.gp-skinned .gp-btn[hidden] { display: none; }
@@ -317,7 +316,7 @@ const CSS = `
 // wind / goal / aim, the cross pad = the aim arrows, a BIRD'S EYE toggle, a big SWING button: layout "golf", upright
 // only); the other screens (whose turn, the address pose, TURN YOUR PHONE UPRIGHT, the result, the standings) keep their
 // DOM, laid into the pad's LCD screen (st.rect "screen", a wide one on a sideways phone) and coloured from the style. Every touch runs the same functions
-// as the DOM buttons (aimStart / aimStop / doSwing / doEye / doHere).
+// as the DOM buttons (aimStart / aimStop / doSwing / doEye).
 let skinLoad = null;
 function loadSkin() {
   if (!skinLoad) {
@@ -407,19 +406,13 @@ function registerGolfLayouts(M) {
       st.rect?.("screen", { x: g.scr.x + 1, y: g.scr.y + 2, w: g.scr.w - 2, h: g.scr.h - 3 });
       return;
     }
-    // the info LCD (or the COME BACK countdown's I'M HERE! key over it)
-    if (D.here) {
-      const r = g.lcd, pal = D.flash ? S.a : S.c, o = key(st, S, "here", r.x, r.y, r.w, r.h - 2, pal);
-      const big = textW("I'M HERE!", FB) <= r.w - 8;
-      text("I'M HERE!", r.x + r.w / 2, r.y + Math.round((r.h - 2) / 2) - (big ? 7 : 5) + o, big ? FB : FS, pal.txt);
-      text(D.here, r.x + r.w / 2, r.y + Math.round((r.h - 2) / 2) + 2 + o, FS, pal.txt);
-    } else {
-      const w = g.lcd.w - 6, wind = { icon: windRows(D.windDir || 0), l: `${D.windMph ?? 0} MPH` };
-      const ga = fitFirst(D.goalA || [], w), gb = fitFirst(D.goalB || [], w - 32);
-      const rows = [{ ...wind, r: `AIM ${D.aim || "0"}` }, { l: ga }, { l: gb, r: D.score || "", rc: S.hud.ink }];
-      lcd(S, g.lcd, rows);
-      skinLcdNow = { goal: [ga, gb].filter(Boolean).join(" "), aim: D.aim || "0", wind: `${D.windMph ?? 0} MPH` };
-    }
+    // the info LCD
+    const w = g.lcd.w - 6, wind = { icon: windRows(D.windDir || 0), l: `${D.windMph ?? 0} MPH` };
+    const ga = fitFirst(D.goalA || [], D.timer ? w - 30 : w), gb = fitFirst(D.goalB || [], w - 32);
+    // the turn clock's last 30 s sits small at the right of the goal row (the golfer up only)
+    const rows = [{ ...wind, r: `AIM ${D.aim || "0"}` }, { l: ga, r: D.timer || "" }, { l: gb, r: D.score || "", rc: S.hud.ink }];
+    lcd(S, g.lcd, rows);
+    skinLcdNow = { goal: [ga, gb].filter(Boolean).join(" "), aim: D.aim || "0", wind: `${D.windMph ?? 0} MPH`, timer: D.timer || "" };
     // the cross = the aim arrows (an arm at its limit shows no arrow)
     const { cx, cy } = g.cross;
     cross(st, S, cx, cy, 46, 16, S.x, ["l", "r"]);
@@ -442,8 +435,7 @@ export function createGolfPad(root, { send, me }) {
   }
   root.innerHTML = `
   <div class="gp" data-test="golf-screen" data-screen="wait">
-    <div class="gp-head gp-frame"><span class="gp-game">TEE TIME</span><span class="gp-score" data-test="golf-score"></span></div>
-    <button type="button" class="gp-btn gp-here" data-test="golf-here" data-native hidden>I'M HERE!</button>
+    <div class="gp-head gp-frame"><span class="gp-game">TEE TIME</span><span class="gp-timer" data-test="golf-timer" hidden></span><span class="gp-score" data-test="golf-score"></span></div>
     <section class="gp-s gp-wait">
       <div class="gp-turnpic"></div>
       <div class="gp-name gp-turnname" data-test="golf-turn"></div>
@@ -514,10 +506,10 @@ export function createGolfPad(root, { send, me }) {
   </div>`;
   const $ = (sel) => root.querySelector(sel);
   const el = {
-    gp: $(".gp"), game: $(".gp-game"), score: $(".gp-score"),
+    gp: $(".gp"), game: $(".gp-game"), score: $(".gp-score"), timer: $(".gp-timer"),
     turnpic: $(".gp-turnpic"), turnname: $(".gp-turnname"), turnsub: $(".gp-turnsub"), next: $(".gp-next"), last: $(".gp-last"),
     introNo: $(".gp-intro-no"), introName: $(".gp-intro-name"), introSub: $(".gp-intro-sub"), introHint: $(".gp-intro-hint"), introFirst: $(".gp-intro-first"),
-    wind: $(".gp-wind"), goal: $(".gp-aim-goal"), here: $(".gp-here"), aimDeg: $(".gp-aim-deg"), left: $('[data-test="golf-left"]'), right: $('[data-test="golf-right"]'),
+    wind: $(".gp-wind"), goal: $(".gp-aim-goal"), aimDeg: $(".gp-aim-deg"), left: $('[data-test="golf-left"]'), right: $('[data-test="golf-right"]'),
     swing: $(".gp-swing"), eye: $(".gp-eye"), eyeTxt: $(".gp-eye-txt"), posePic: $(".gp-pose-pic"), ready: $(".gp-ready"), note: $(".gp-note"), enable: $(".gp-enable"), pass: $(".gp-pass"), back: $(".gp-back"),
     flightTier: $(".gp-flight-tier"), resWho: $(".gp-res-who"), resLabel: $(".gp-res-label"), resDetail: $(".gp-res-detail"), resPts: $(".gp-res-pts"),
     resSec: $(".gp-result"), stTitle: $(".gp-st-title"), board: $(".gp-board"), stMe: $(".gp-st-me"),
@@ -530,7 +522,6 @@ export function createGolfPad(root, { send, me }) {
   let turnKey = ""; // roundId:gameIndex:turnIndex of my current turn
   let lastSwing = null, swings = 0;
   let armSentAt = 0; // when SWING last sent {type:"arm"}
-  let hereSentAt = 0, comeBackKey = ""; // I'M HERE! tapped; the COME BACK countdown we last buzzed for
   const ARM_RESEND_MS = 1500;
   // bad Wi-Fi: the swing / READY sent again when the TV's views show it never arrived (see the top)
   let swingMsg = null, swingSentAt = 0, readySentAt = 0, backSentAt = 0;
@@ -580,7 +571,7 @@ export function createGolfPad(root, { send, me }) {
     if (want) Object.assign(root.style, { position: "fixed", left: "50%", top: "50%", width: `${innerHeight}px`, height: `${innerWidth}px`, transform: `translate(-50%, -50%) rotate(${want}deg)`, zIndex: "3" });
   }
   // SKINS (the pixel pad): pad-skin.js once loaded, the pad, its layer + host, the style shown ("" = none)
-  let skinMod = null, skin = null, skinLayer = null, skinHost = null, skinStyle = "", skinProbe = null, skinFlash = 0;
+  let skinMod = null, skin = null, skinLayer = null, skinHost = null, skinStyle = "", skinProbe = null;
 
   // ── sound: a whoosh for the swing, a tick when READY, a chime when it's your turn (phone only) ──
   let ac = null;
@@ -870,15 +861,7 @@ export function createGolfPad(root, { send, me }) {
     permission = needsPermission ? "unknown" : "granted";
     motionOn();
   });
-  function doHere() {
-    if (!view?.isYourTurn || !view.comeBack) return;
-    send({ type: "here" }); // any message from the golfer up ends an idle COME BACK countdown
-    hereSentAt = performance.now();
-    buzz(30);
-    render();
-  }
-  el.here.addEventListener("click", doHere);
-  // the page hidden (phone locked / another app) or back: the TV shows COME BACK instead of skipping at once
+  // the page hidden (phone locked / another app) or back: info for the TV (it waits either way)
   document.addEventListener("visibilitychange", () => {
     if (shown) send({ type: "hidden", on: !!document.hidden });
   });
@@ -905,18 +888,10 @@ export function createGolfPad(root, { send, me }) {
       buzz(80);
     }
     if (!key) turnKey = "";
-    // the TV's COME BACK countdown for me while I'm here but idle: buzz + chime once, the I'M HERE! button shows
-    const cb = v.isYourTurn && v.comeBack ? `${key}:${v.comeBack.why}` : "";
-    if (cb && cb !== comeBackKey && v.comeBack.why === "idle") {
-      tone(988, 0.12, { gain: 0.06 });
-      tone(988, 0.12, { gain: 0.06, delay: 0.2 });
-      buzz([120, 80, 120]);
-    }
-    comeBackKey = cb;
     view = v;
     // the TV has this page as hidden (away) but it is showing: the "I'm back" got lost (unlocked while the link was
     // down). Say it again; idempotent on the TV, and any connected phone that talks is not away.
-    const tvAway = v.you?.hidden === true || !!(v.isYourTurn && v.comeBack && v.comeBack.why === "away");
+    const tvAway = v.you?.hidden === true;
     if (tvAway && shown && !document.hidden && performance.now() - backSentAt > BACK_RESEND_MS) {
       backSentAt = performance.now();
       send({ type: "hidden", on: false });
@@ -984,28 +959,29 @@ export function createGolfPad(root, { send, me }) {
     if (!v || !status || status.state === "countdown") {
       set(el.game, "TEE TIME");
       set(el.score, "");
+      el.timer.hidden = true;
       html(el.turnpic, sprite("golfer", 5, getComputedStyle(document.documentElement).getPropertyValue("--c").trim() || "#35d07f"));
       set(el.turnname, "GET READY!");
       set(el.turnsub, "LOOK AT THE TV");
       el.next.hidden = true;
       el.last.hidden = true;
-      el.here.hidden = true;
       return;
     }
     const g = v.game || {};
-    // COME BACK (the TV's countdown) for the golfer up: a big I'M HERE! button (hidden a moment after a tap)
-    const cbMe = !!(v.isYourTurn && v.comeBack && (screen === "aim" || screen === "armed" || screen === "upright") && performance.now() - hereSentAt > 1200);
-    el.here.hidden = !cbMe;
-    if (cbMe) set(el.here, `I'M HERE! (${v.comeBack.left})`);
     set(el.game, `${(g.index ?? 0) + 1}/${g.count || 3} ${g.name || ""}`);
     set(el.score, v.you ? `${v.you.total} PTS ${ordinal(v.you.rank).toUpperCase()}` : "");
+    // the turn clock's last 30 s, small, for the golfer up only
+    const tmr = myTimer(v);
+    el.timer.hidden = !tmr;
+    set(el.timer, tmr || "");
+    el.timer.classList.toggle("low", !!tmr && (v.timer.left | 0) <= 5);
 
     if (screen === "wait") {
       const t = v.turn;
       html(el.turnpic, t ? sprite("golfer", 5, t.color) : "");
       set(el.turnname, t ? `${t.name} IS UP` : "WATCH THE TV");
       el.turnname.style.color = t?.color || "#fff";
-      set(el.turnsub, !t ? "" : v.comeBack ? `COME BACK! ${v.comeBack.left}` : v.phase === "armed" ? (v.ready ? "READY TO SWING..." : "GETTING READY...") : v.phase === "flight" ? "THERE IT GOES!" : "AIMING...");
+      set(el.turnsub, !t ? "" : v.phase === "armed" ? (v.ready ? "READY TO SWING..." : "GETTING READY...") : v.phase === "flight" ? "THERE IT GOES!" : "AIMING...");
       el.next.hidden = !v.youreNext;
       const last = v.last;
       el.last.hidden = !last;
@@ -1076,6 +1052,11 @@ export function createGolfPad(root, { send, me }) {
     return parseFloat(getComputedStyle(skinProbe).paddingTop) || 0;
   }
   const myColor = () => getComputedStyle(document.documentElement).getPropertyValue("--c").trim();
+  /** "0:25" while the TV's turn clock shows (last 30 s) and it's my turn, else "" */
+  function myTimer(v) {
+    if (!v || !v.isYourTurn || !v.timer || !["aim", "armed"].includes(v.phase)) return "";
+    return `0:${String(Math.max(0, v.timer.left | 0)).padStart(2, "0")}`;
+  }
   function skinData() {
     const v = view, g = (v && v.game) || {}, s = el.gp.dataset.screen;
     const d = { screen: screen === "aim" && s === "aim" ? "aim" : "text", color: myColor(), title: "TEE TIME", score: "" };
@@ -1089,11 +1070,10 @@ export function createGolfPad(root, { send, me }) {
     d.goalA = tg ? [`TARGET ${tg.yards} YD`, `TGT ${tg.yards} YD`, `${tg.yards} YD`] : pin ? [`PIN ${pin.yards} YD`, `${pin.yards} YD`] : [hint, hint.split(" ")[0]];
     d.goalB = tg ? [`${tg.pts} PTS`] : pin ? [hint, hint.split(" ")[0]] : [""];
     d.aim = el.aimDeg.textContent || "0";
+    d.timer = myTimer(v);
     d.lmin = el.left.disabled;
     d.rmax = el.right.disabled;
     d.eye = el.eye.dataset.on === "1";
-    d.here = !el.here.hidden ? `COME BACK ${v.comeBack?.left ?? ""}`.trim() : "";
-    d.flash = d.here ? Math.floor(performance.now() / 500) % 2 : 0;
     return d;
   }
   function skinInput(ev) {
@@ -1109,7 +1089,6 @@ export function createGolfPad(root, { send, me }) {
     // the rest act on release, like a click (iOS shows its motion prompt only from a tap's end)
     if (n === "swing") doSwing();
     else if (n === "eye") doEye();
-    else if (n === "here") doHere();
   }
   /** the DOM text screens sit in the pad's LCD (CSS px from the pad, which sits at the top of skinHost) */
   function placeScreen(rects) {
@@ -1153,8 +1132,6 @@ export function createGolfPad(root, { send, me }) {
         root.classList.remove("gp-skin-on");
         el.gp.classList.remove("gp-skinned", "gp-placed");
         for (const b of root.querySelectorAll(".gp-btn")) pixelButton(b, false);
-        clearInterval(skinFlash);
-        skinFlash = 0;
       }
       return;
     }
@@ -1178,8 +1155,6 @@ export function createGolfPad(root, { send, me }) {
     skin.setStyle(style);
     const d = skinData();
     skin.set(d);
-    if (d.here && !skinFlash) skinFlash = setInterval(() => { if (skin) skin.set({ flash: Math.floor(performance.now() / 500) % 2 }); }, 250);
-    else if (!d.here && skinFlash) { clearInterval(skinFlash); skinFlash = 0; }
     if (screen !== "aim" && skinMod.pixelLabel) for (const b of el.gp.querySelectorAll(".gp-btn:not([hidden])")) if (b.offsetParent || b.getClientRects().length) pixelButton(b, true);
   }
   loadSkin().then((m) => {
