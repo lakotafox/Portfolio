@@ -39,7 +39,10 @@
  * message sent while the link is dying is gone. The TV's views come every second, and the phone mends what got lost
  * from them: SWING again (arm), READY again, and the SWING ITSELF again (the phone sat on NICE SWING! while the TV
  * waited in "armed" and then skipped the golfer AWAY). Each resend is idempotent on the TV (it only acts in the right
- * phase, for the golfer up).
+ * phase, for the golfer up). The same for "I'm back" (Lakota, Nov 7: Don's turn went straight to COME BACK): a phone
+ * unlocked while its link was down lost its {type:"hidden", on:false}, so the TV still had it as hidden (away). When a
+ * view says the TV has this page as hidden (view.you.hidden, or my turn's comeBack.why "away" on an older TV) while it
+ * is showing, the phone says {type:"hidden", on:false} again (at most once a second, so within ~1 s of the next view).
  *
  * Test hook: window.__golfPad (read-only), DOM data-test ids: see CONTRACT.md "Test hooks".
  */
@@ -530,7 +533,8 @@ export function createGolfPad(root, { send, me }) {
   let hereSentAt = 0, comeBackKey = ""; // I'M HERE! tapped; the COME BACK countdown we last buzzed for
   const ARM_RESEND_MS = 1500;
   // bad Wi-Fi: the swing / READY sent again when the TV's views show it never arrived (see the top)
-  let swingMsg = null, swingSentAt = 0, readySentAt = 0;
+  let swingMsg = null, swingSentAt = 0, readySentAt = 0, backSentAt = 0;
+  const BACK_RESEND_MS = 900; // "I'm back" again at most this often (the TV's views come once a second)
   const SWING_RESEND_MS = 2000; // > a slow link's round trip + the TV's 1 s view beat (a view from before the swing landed)
   const READY_RESEND_MS = 1500;
 
@@ -910,6 +914,13 @@ export function createGolfPad(root, { send, me }) {
     }
     comeBackKey = cb;
     view = v;
+    // the TV has this page as hidden (away) but it is showing: the "I'm back" got lost (unlocked while the link was
+    // down). Say it again; idempotent on the TV, and any connected phone that talks is not away.
+    const tvAway = v.you?.hidden === true || !!(v.isYourTurn && v.comeBack && v.comeBack.why === "away");
+    if (tvAway && shown && !document.hidden && performance.now() - backSentAt > BACK_RESEND_MS) {
+      backSentAt = performance.now();
+      send({ type: "hidden", on: false });
+    }
     // the TV moved on (shot taken, time up, turn over): follow it
     if (!v.isYourTurn || !["aim", "armed"].includes(v.phase)) {
       if (armed || listening) motionOff();
