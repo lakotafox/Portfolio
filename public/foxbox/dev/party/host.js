@@ -135,7 +135,10 @@ const GAMES = [
     tagline: "Tilt to steer · grab FOX BOXES · first across the line!",
     minPlayers: 1, maxPlayers: 8, controls: "Tilt to steer · GAS · ITEM (phone sideways)",
     racers: ["fox", "puff", "cat", "frog", "knight", "penguin", "bunny", "raccoon"], // the art's ids (CONTRACT "Art APIs"); default = by slot, like game.js
-    tracks: [{ id: "rampart", name: "RAMPART RUN", laps: 3, open: true }],
+    // PHONEPICK (Lakota: "we need a track picking step, just have postcards greyed out, coming soon"): the soon cards are
+    // locked (open: false: kartTrackOk refuses them), greyed on the TV pick row and the phones; no real names or art
+    tracks: [{ id: "rampart", name: "RAMPART RUN", laps: 3, open: true },
+      { id: "soon-1", name: "???", open: false, soon: true }, { id: "soon-2", name: "???", open: false, soon: true }, { id: "soon-3", name: "???", open: false, soon: true }],
     // ONE countdown (the game runs its own grid swoop + start lights): intro "own" = no shell countdown at all (no
     // 3-2-1, no phone cues, no GO! card): play() starts unpaused and the start lights are the countdown
     intro: "own",
@@ -1316,10 +1319,55 @@ function allKartReady() {
   const { readyCount, totalCount } = kartReadiness();
   return totalCount > 0 && readyCount === totalCount;
 }
-/** Everyone connected is ready (and nobody not-ready dropped a moment ago): the countdown. */
+/** Everyone connected is ready (and nobody not-ready dropped a moment ago): PHONEPICK the track pick step, then the
+ * round. Someone not ready any more (a new player joined) while the step is up: back to the READY check. */
 function maybeStartKart() {
   const dropWait = [...roster.values()].some((p) => !p.connected && Date.now() - p.goneAt < KART_DROP_WAIT_MS && !kartIsReady(p));
-  if (phase === "lobby" && allKartReady() && !dropWait) startCountdown(null, "ready");
+  const pk = lob.kart && lob.kart.pick;
+  if (phase !== "lobby" || !allKartReady() || dropWait) {
+    if (pk && !pk.picked && phase === "lobby" && !allKartReady()) { lob.kart.pick = null; saveLobby(); broadcastLobby(); renderLobby(); }
+    return;
+  }
+  if (!pk) return beginKartTrackPick();
+  if (pk.picked && !kartStampTimer) return startCountdown(null, "ready"); // (picked, then the TV reloaded: go on)
+  // (the step is up: it waits for the picker's PICK — no timer, Lakota — or the TV's Enter)
+}
+// ── PHONEPICK: the track pick step (after everyone is READY, before the round) ──
+// The TV shows the track postcards in a row (#kart-pick, the game's own postcard: game.trackPostcard; the COMING SOON
+// ones greyed); the track picker's phone flips through them (◀ ▶: {type:"fkbrowse", i}, the soon cards too) and picks
+// an open one ({type:"fkgo", id}: kartTrackOk guards it). Every other phone shows the same card + "<NAME> PICKS". PICK
+// stamps PICKED! on the TV card, then the round starts (the game's intro card follows as before). No timer: it waits
+// for the picker; the picker's phone gone = the host's phone picks; nobody = the TV's Enter starts the round as before.
+// lob.kart.pick = { i (the card shown), picked (null | track id), at } (the lobby state's kart.pick, + trackPicker).
+const KART_STAMP_MS = 1500; // PICKED! lands on the TV card, then the round starts
+let kartStampTimer = null;
+/** The track picker: the game picker while their phone is here, else the host's phone. */
+function kartTrackPicker() {
+  const p = lob.pickerId && roster.get(lob.pickerId);
+  if (p && p.connected) return lob.pickerId;
+  return hostPhoneId() || lob.pickerId || null;
+}
+function beginKartTrackPick() {
+  const i = Math.max(0, KART.tracks.findIndex((t) => t.id === kartTrack().id));
+  lob.kart.pick = { i, picked: null, at: Date.now() };
+  saveLobby();
+  broadcastLobby();
+  renderLobby();
+}
+/** The picker's PICK (an open track): PICKED! on the TV card, then the round. */
+function kartTrackGo(id) {
+  const pk = lob.kart && lob.kart.pick;
+  if (!pk || pk.picked || !kartTrackOk(id)) return;
+  lob.kart.track = id;
+  pk.i = Math.max(0, KART.tracks.findIndex((t) => t.id === id));
+  pk.picked = id;
+  pk.stampAt = Date.now();
+  const setup = lob.kart.id;
+  clearTimeout(kartStampTimer);
+  kartStampTimer = setTimeout(() => {
+    kartStampTimer = null;
+    if (phase === "lobby" && lob.kart && lob.kart.id === setup && lob.kart.pick && lob.kart.pick.picked) startCountdown(null, "ready");
+  }, KART_STAMP_MS);
 }
 /** Someone new joined during the everyone's-ready countdown: back to the setup for them. */
 function cancelKartCountdown() {
@@ -1378,8 +1426,17 @@ function kartDressBots(players) {
     pl.kart = { racer: racers.get(pl.playerId - 1) };
   }
 }
-/** startRound(): the game's options get the track. */
-const kartOptions = () => (GAME.id === "kart" ? { track: kartTrack().id } : {});
+/** startRound(): the game's options get the track; PHONEPICK: + the host's playerId (only the host skips the game's
+ * track tour; the game: no hostPid = anyone may) and the track picker's. */
+function kartOptions(r) {
+  if (GAME.id !== "kart") return {};
+  const o = { track: kartTrack().id };
+  const pidOf = (id) => { if (!id || !r || !r.humanIdByPid) return null; for (const [pid, hid] of r.humanIdByPid) if (hid === id) return pid; return null; };
+  const host = pidOf(hostPhoneId()), picker = pidOf(lob.kart && lob.kart.pick && lob.kart.pick.picked ? kartTrackPicker() : null);
+  if (host != null) o.hostPid = host;
+  if (picker != null) o.pickerPid = picker;
+  return o;
+}
 /** The lobby state's `kart` during the setup. picks = this setup's real picks only (a phone with none shows its racer
  * picker); racerOf = the racer every roster player would drive right now (their pick, else last race's, else by slot). */
 function kartLobby() {
@@ -1388,9 +1445,12 @@ function kartLobby() {
   for (const p of roster.values()) racerOf[p.id] = kartPickOf(p);
   const plan = kartRoundPlan(), slots = plan.slots, botRacers = plan.racers;
   const tr = kartTrack();
+  const pk = lob.kart.pick;
   return {
     id: lob.kart.id, track: tr.id, trackName: tr.name, laps: tr.laps || 3, tracks: KART.tracks, racers: KART.racers,
     picks, racerOf, bots: slots.length, botRacers: slots.map((s) => botRacers.get(s)), ...kartReadiness(),
+    // PHONEPICK: the track pick step (null = not up) and who picks (the phones show the same postcards: their own files)
+    pick: pk ? { i: pk.i, picked: pk.picked || null } : null, trackPicker: kartTrackPicker(),
   };
 }
 /** pickGame(): a fresh setup when FOX KART is picked (unless it already is the pick); none for other games. */
@@ -1401,7 +1461,7 @@ function kartOnPick(g) {
 /** {t:"game", m} from a phone: the setup's own messages. Returns true when it was one of them. */
 function onKartMsg(msg) {
   const m = msg.m;
-  if (!m || typeof m !== "object" || !["fkpick", "fktrack", "fkother"].includes(m.type)) return false;
+  if (!m || typeof m !== "object" || !["fkpick", "fktrack", "fkother", "fkbrowse", "fkgo"].includes(m.type)) return false;
   const p = roster.get(msg.id);
   if (!p || !p.connected) return true;
   if (!kartSetupActive()) return sendStatus(p), true; // not in the setup: just tell the phone where things are
@@ -1410,6 +1470,16 @@ function onKartMsg(msg) {
     const racer = kartRacer(m.racer) || kartPickOf(p);
     lob.kart.picks[p.id] = { racer, ready: m.ready === true, ...kartLookOf(m) }; // (GARAGE: + body / paint)
     if (kartRacer(m.racer)) lob.kartLast = { ...(lob.kartLast && typeof lob.kartLast === "object" ? lob.kartLast : {}), [p.id]: racer };
+  } else if (m.type === "fkbrowse" || m.type === "fkgo") {
+    // PHONEPICK: the track pick step, the track picker's phone only
+    const pk = lob.kart.pick;
+    if (!pk || pk.picked || p.id !== kartTrackPicker()) return true;
+    if (m.type === "fkbrowse") {
+      const i = Math.round(Number(m.i));
+      if (!Number.isFinite(i) || i < 0 || i >= KART.tracks.length) return true;
+      pk.i = i;
+      if (KART.tracks[i].open) lob.kart.track = KART.tracks[i].id; // (a COMING SOON card is only looked at)
+    } else kartTrackGo(m.id);
   } else if (!mayPick(p.id)) return true; // the track and PICK ANOTHER GAME are the game picker's
   else if (m.type === "fktrack") {
     if (!kartTrackOk(m.id)) return true; // COMING SOON
@@ -2161,6 +2231,7 @@ function kartWarn(key, e) {
 }
 const kartRacerName = (id) => ((kartArt && Array.isArray(kartArt.RACERS) && kartArt.RACERS.find((q) => q && q.id === id)) || {}).name || String(id || "").toUpperCase();
 function renderKartSetup(force = false) {
+  renderKartPick(); // PHONEPICK: the track pick row (over the lobby while the step is up)
   const box = $("kart-setup");
   if (!box) return;
   const layer = document.getElementById("fbx2-tv");
@@ -2180,7 +2251,7 @@ function renderKartSetup(force = false) {
   const picker = roster.get(lob.pickerId);
   const { readyCount, totalCount } = kartReadiness();
   const list = [...roster.values()].sort((a, b) => (b.connected - a.connected) || a.slot - b.slot);
-  const others = KART.tracks.filter((t) => t !== tr).map((t) => `<span class="fk-other${t.open ? "" : " soon"}" data-track="${esc(t.id)}">${esc(t.name)}${t.open ? "" : "<b>COMING SOON</b>"}</span>`).join("");
+  const others = KART.tracks.filter((t) => t !== tr && !t.soon).map((t) => `<span class="fk-other${t.open ? "" : " soon"}" data-track="${esc(t.id)}">${esc(t.name)}${t.open ? "" : "<b>COMING SOON</b>"}</span>`).join("");
   const rows = list.map((p) => {
     const st = kartState(p), racer = kartPickOf(p), c = colorSet(p.slot).base;
     return `<li class="${st}" style="--kc:${esc(c)}" data-player="${esc(p.id)}" data-setup="${st}" data-racer="${esc(racer)}" data-color="${esc(c)}">`
@@ -2221,6 +2292,73 @@ function renderKartSetup(force = false) {
     box.style.width = `${Math.round(Math.max(r.width, Math.min(360, room)))}px`;
     box.style.maxHeight = `${Math.max(160, Math.round(innerHeight - r.bottom - 40))}px`;
   }
+}
+// PHONEPICK: the TV's track pick row (#kart-pick, over the lobby while lob.kart.pick is up): the game's postcards
+// (game.trackPostcard: the intro card's look; COMING SOON greyed) on the intro's wooden table, the card the picker is on
+// big in the middle of the row (the others half size, easing between), PICKED! stamped on it at PICK. 960 × 540 art
+// pixels, shown at the screen's size (pixelated). Drawn every frame while it's up (the stamp + the flip ease).
+const KP_W = 960, KP_H = 540;
+let kartPickRaf = 0, kartPickSizes = null;
+function renderKartPick() {
+  const on = kartSetupActive() && phase === "lobby" && !!(lob.kart && lob.kart.pick);
+  let box = document.getElementById("kart-pick");
+  if (!on) {
+    if (box && !box.hidden) box.hidden = true;
+    if (kartPickRaf) { cancelAnimationFrame(kartPickRaf); kartPickRaf = 0; }
+    kartPickSizes = null;
+    return;
+  }
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "kart-pick";
+    box.dataset.test = "kart-pick";
+    box.style.cssText = "position:fixed;inset:0;z-index:90;background:#6b4429;display:flex;align-items:center;justify-content:center";
+    const cv = document.createElement("canvas");
+    cv.width = KP_W; cv.height = KP_H;
+    cv.style.cssText = "width:100vw;height:100vh;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges";
+    box.append(cv);
+    document.body.append(box);
+  }
+  box.hidden = false;
+  if (!kartPickRaf) kartPickRaf = requestAnimationFrame(drawKartPick);
+}
+function drawKartPick() {
+  kartPickRaf = 0;
+  const box = document.getElementById("kart-pick"), pk = lob.kart && lob.kart.pick;
+  if (!box || box.hidden || !pk || !(kartSetupActive() && phase === "lobby")) return renderKartPick();
+  const cv = box.querySelector("canvas"), g = cv.getContext("2d"), now = Date.now();
+  g.imageSmoothingEnabled = false;
+  // the intro's wooden table
+  g.fillStyle = "#6b4429"; g.fillRect(0, 0, KP_W, KP_H);
+  for (let y = 0; y < KP_H; y += 18) { g.fillStyle = "#4f301c"; g.fillRect(0, y, KP_W, 1); g.fillStyle = "#7a4f31"; for (let x = (y * 7) % 60; x < KP_W; x += 90) g.fillRect(x, y + 6, 22, 1); }
+  // the heading
+  const who = roster.get(kartTrackPicker()), name = String((who && who.name) || "THE PICKER").toUpperCase();
+  const tr = KART.tracks[pk.i] || kartTrack();
+  const txt = (s, x, y, px, col) => { g.font = `${px}px "FoxBox Pixel", "Press Start 2P", monospace`; g.textAlign = "center"; g.textBaseline = "top"; g.fillStyle = "#0a1428"; g.fillText(s, x + 3, y + 3); g.fillStyle = col; g.fillText(s, x, y); };
+  txt(pk.picked ? `${String(tr.name).toUpperCase()}!` : "PICK A TRACK", KP_W / 2, 40, 32, "#ffd23f");
+  txt(pk.picked ? `${name} PICKED IT` : `${name} PICKS ON THEIR PHONE`, KP_W / 2, 88, 16, "#fff9f1");
+  // the row: the shown card at 1x, the others at half size (eased)
+  const N = KART.tracks.length;
+  if (!kartPickSizes || kartPickSizes.length !== N) kartPickSizes = KART.tracks.map((_, i) => (i === pk.i ? 1 : 0.5));
+  for (let i = 0; i < N; i++) kartPickSizes[i] += ((i === pk.i ? 1 : 0.5) - kartPickSizes[i]) * 0.22;
+  const CW = 316, CH = 203, GAP = 22;
+  const total = kartPickSizes.reduce((a, k) => a + CW * k, 0) + GAP * (N - 1);
+  let x = Math.round((KP_W - total) / 2);
+  const cy = 318, stamped = pk.picked && pk.stampAt ? Math.min(1, (now - pk.stampAt) / 350) : 0;
+  KART.tracks.forEach((t, i) => {
+    const k = kartPickSizes[i], w = Math.round(CW * k), h = Math.round(CH * k), y = Math.round(cy - h / 2), sel = i === pk.i;
+    let card = null;
+    try { card = game && typeof game.trackPostcard === "function" ? game.trackPostcard(t.open ? t.id : null, { soon: !t.open, seed: i, stamped: sel ? 1 - (1 - stamped) ** 3 : 0 }) : null; } catch (e) { kartWarn("trackPostcard threw", e); }
+    if (sel) { g.fillStyle = "#0a1428"; g.fillRect(x - 9, y - 9, w + 18, h + 18); g.fillStyle = "#ffd23f"; g.fillRect(x - 7, y - 7, w + 14, h + 14); g.fillStyle = "#6b4429"; g.fillRect(x - 3, y - 3, w + 6, h + 6); } // (a gold frame round the card + its shadow)
+    if (card) { g.imageSmoothingEnabled = k < 0.999; g.drawImage(card, x, y, w, h); g.imageSmoothingEnabled = false; }
+    else { // (an older game module: a plain card)
+      g.fillStyle = t.open ? "#f4ecd8" : "#c9c6bf"; g.fillRect(x, y, w - 4, h - 5);
+      g.font = `${Math.max(8, Math.round(16 * k))}px "FoxBox Pixel", monospace`; g.textAlign = "center"; g.fillStyle = "#14101f";
+      g.fillText(t.open ? String(t.name) : "COMING SOON", x + w / 2, y + h / 2);
+    }
+    x += w + GAP;
+  });
+  kartPickRaf = requestAnimationFrame(drawKartPick);
 }
 /** The track card: the game's mini-map (game.trackImage(id), a canvas) on grass, else a little pixel circuit. */
 function drawKartTrack(box) {
@@ -2770,7 +2908,7 @@ function startRound() {
     seed: r.seed,
     // FoxBox party extension: the game's setup choices (TEE TIME: the map the picker chose; every game: the
     // BOTS setting — Row Row Rumble leaves boats with nobody aboard out when it's "off")
-    options: { bots: botsOn() ? "fill" : "off", ...(GAME.id === "golf" && lob.golf ? { map: lob.golf.map } : {}), ...knightOptions(), ...kartOptions(), ...(r.training ? { training: true } : {}) }, // KNIGHT: + the picker's level · KART: + the track · ROW: + training
+    options: { bots: botsOn() ? "fill" : "off", ...(GAME.id === "golf" && lob.golf ? { map: lob.golf.map } : {}), ...knightOptions(), ...kartOptions(r), ...(r.training ? { training: true } : {}) }, // KNIGHT: + the picker's level · KART: + the track · ROW: + training
     players,
     gameProperties,
     hud: {
