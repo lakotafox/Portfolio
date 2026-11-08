@@ -29,6 +29,17 @@
  * sideways on the aim screen sees TURN YOUR PHONE UPRIGHT instead of the aim controls (screen "upright"). That is
  * decided by the screen, not the orientation alone: once SWING is tapped (armed: the address pose, the swing) the
  * phone turns every which way and the overlay never comes back until the turn is over or BACK TO AIM.
+ * Sideways = GRAVITY across the phone's short edge (devicemotion), never the window's shape (Lakota, Nov 7: TURN YOUR
+ * PHONE UPRIGHT on an upright phone). A window can stay landscape on an upright phone (iOS keeps the last rotation while
+ * the phone lies flat or after the swing's tumble; Android can keep a page's landscape lock), and iOS gives no readings
+ * before motion access: no fresh readings = upright. A landscape window on the aim screen gets the upright aim layout
+ * turned with CSS to face a phone held upright (#golf.gp-turned), so the aim controls are never blocked by a guess.
+ *
+ * Bad Wi-Fi (Lakota, Nov 7: the TV waited for a golfer who was on their phone): pad.js's send is fire-and-forget, so a
+ * message sent while the link is dying is gone. The TV's views come every second, and the phone mends what got lost
+ * from them: SWING again (arm), READY again, and the SWING ITSELF again (the phone sat on NICE SWING! while the TV
+ * waited in "armed" and then skipped the golfer AWAY). Each resend is idempotent on the TV (it only acts in the right
+ * phase, for the golfer up).
  *
  * Test hook: window.__golfPad (read-only), DOM data-test ids: see CONTRACT.md "Test hooks".
  */
@@ -59,11 +70,18 @@ const ordinal = (n) => {
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 };
 const TIER_NAME = { weak: "SOFT", good: "GOOD", great: "GREAT", huge: "HUGE" };
-/** A phone held sideways (the same test as the CSS below; a desktop window or a tablet is never "sideways"). */
+/** A phone-sized landscape WINDOW (the same test as the CSS below; a desktop window or a tablet never is). Not the
+ *  way the phone is held: that is gravity's (heldSideways in createGolfPad). */
 const SIDEWAYS_MQ = "(orientation: landscape) and (max-height: 520px)";
-const sideways = () => {
+const landWindow = () => {
   try { if (window.matchMedia) return window.matchMedia(SIDEWAYS_MQ).matches; } catch {}
   return innerWidth > innerHeight && innerHeight <= 520;
+};
+/** The window's rotation from the phone's natural (portrait) way up, degrees (90 / 270 when landscape). */
+const screenAngle = () => {
+  const o = globalThis.screen && globalThis.screen.orientation;
+  if (o && typeof o.angle === "number") return ((o.angle % 360) + 360) % 360;
+  return typeof window.orientation === "number" ? ((window.orientation % 360) + 360) % 360 : 0;
 };
 
 // ── Pixel sprites (inline SVG from character maps, like pixel-art.js) ────────────────
@@ -511,6 +529,52 @@ export function createGolfPad(root, { send, me }) {
   let armSentAt = 0; // when SWING last sent {type:"arm"}
   let hereSentAt = 0, comeBackKey = ""; // I'M HERE! tapped; the COME BACK countdown we last buzzed for
   const ARM_RESEND_MS = 1500;
+  // bad Wi-Fi: the swing / READY sent again when the TV's views show it never arrived (see the top)
+  let swingMsg = null, swingSentAt = 0, readySentAt = 0;
+  const SWING_RESEND_MS = 2000; // > a slow link's round trip + the TV's 1 s view beat (a view from before the swing landed)
+  const READY_RESEND_MS = 1500;
+
+  // ── which way the phone is held: gravity (see the top). Signs don't matter (iOS reports them the other way round). ──
+  const TILT_ON = 6.5, TILT_OFF = 4.5; // m/s2 of gravity across the short edge: sideways from ~42 deg, back under ~27 deg
+  const TILT_HOLD_MS = 350; // a change must hold this long (the swing's tumble never shows the overlay: aim only anyway)
+  const TILT_FRESH_MS = 1500; // older readings = no readings = upright
+  const tilt = { side: false, cand: null, since: 0, at: 0, n: 0, listening: false };
+  function onTilt(e) {
+    const g = e.accelerationIncludingGravity;
+    if (!g || !fin(g.x) || !fin(g.y)) return;
+    const ax = Math.abs(g.x), ay = Math.abs(g.y), now = performance.now();
+    const was = heldSideways();
+    tilt.at = now;
+    tilt.n++;
+    const side = tilt.side ? ax > TILT_OFF && ax > ay : ax > TILT_ON && ax > ay * 1.5;
+    if (side === tilt.side) tilt.cand = null;
+    else if (tilt.cand !== side) { tilt.cand = side; tilt.since = now; }
+    else if (now - tilt.since >= TILT_HOLD_MS) { tilt.side = side; tilt.cand = null; }
+    if (heldSideways() !== was && shown) render();
+  }
+  function tiltListen(on) {
+    if (on === tilt.listening) return;
+    tilt.listening = on;
+    if (on) window.addEventListener("devicemotion", onTilt);
+    else {
+      window.removeEventListener("devicemotion", onTilt);
+      tilt.side = false;
+      tilt.cand = null;
+    }
+  }
+  const heldSideways = () => tilt.side && performance.now() - tilt.at < TILT_FRESH_MS;
+
+  // ── a landscape window on the aim screen: the upright aim layout, turned to face a phone held upright ──
+  let turnDeg = 0;
+  function applyTurn() {
+    const want = shown && screen === "aim" && landWindow() ? (screenAngle() === 270 ? 90 : 270) : 0;
+    if (want !== turnDeg) {
+      turnDeg = want;
+      root.classList.toggle("gp-turned", !!want);
+      if (!want) for (const k of ["position", "left", "top", "width", "height", "transform", "zIndex"]) root.style[k] = "";
+    }
+    if (want) Object.assign(root.style, { position: "fixed", left: "50%", top: "50%", width: `${innerHeight}px`, height: `${innerWidth}px`, transform: `translate(-50%, -50%) rotate(${want}deg)`, zIndex: "3" });
+  }
   // SKINS (the pixel pad): pad-skin.js once loaded, the pad, its layer + host, the style shown ("" = none)
   let skinMod = null, skin = null, skinLayer = null, skinHost = null, skinStyle = "", skinProbe = null, skinFlash = 0;
 
@@ -731,6 +795,7 @@ export function createGolfPad(root, { send, me }) {
     ready = on;
     stillSince = 0;
     poseOffSince = 0;
+    readySentAt = performance.now();
     send({ type: "ready", ready: on });
     if (on) {
       tone(1320, 0.07, { gain: 0.06 });
@@ -749,7 +814,9 @@ export function createGolfPad(root, { send, me }) {
     lastSwing = { peakDps: Math.round(s.peak), strength: Math.round(strength * 100) / 100, tier, wrist: Math.round(wrist * 100) / 100, lin: Math.round(s.lin), at: Date.now() };
     swings++;
     swung = true;
-    send({ type: "swing", strength: lastSwing.strength, tier, wrist: lastSwing.wrist, peakDps: lastSwing.peakDps });
+    swingMsg = { key: turnKey, m: { type: "swing", strength: lastSwing.strength, tier, wrist: lastSwing.wrist, peakDps: lastSwing.peakDps } };
+    swingSentAt = performance.now();
+    send(swingMsg.m);
     whoosh(strength);
     buzz(60);
     motionOff();
@@ -853,6 +920,16 @@ export function createGolfPad(root, { send, me }) {
       // right after BACK + a quick SWING is just late news, not a reason to drop the re-arm.)
       armSentAt = performance.now();
       send({ type: "arm" });
+    } else if (swung && swingMsg && swingMsg.key === key && performance.now() - swingSentAt > SWING_RESEND_MS) {
+      // my swing went out but the TV is still waiting for it (aim / armed, my turn): it got lost on the way (bad Wi-Fi,
+      // a link that died as it went). Send it again, after an arm if the TV isn't armed: the TV takes a swing only
+      // while armed, and once it has the shot it is in flight, so a late duplicate does nothing.
+      swingSentAt = performance.now();
+      if (v.phase === "aim") send({ type: "arm" });
+      send(swingMsg.m);
+    } else if (v.phase === "armed" && armed && !swung && v.ready !== ready && performance.now() - readySentAt > READY_RESEND_MS) {
+      readySentAt = performance.now(); // READY (or not) got lost: the TV's PHONE FACE DOWN... / READY... SWING! follows the phone
+      send({ type: "ready", ready });
     }
     render();
   }
@@ -860,7 +937,7 @@ export function createGolfPad(root, { send, me }) {
   /** The aim screen on a sideways phone is TURN YOUR PHONE UPRIGHT (only "aim": never armed / flight, see the top). */
   function screenNow() {
     const s = screenOf();
-    return s === "aim" && sideways() ? "upright" : s;
+    return s === "aim" && heldSideways() ? "upright" : s;
   }
   function screenOf() {
     if (!shown) return "off";
@@ -888,6 +965,7 @@ export function createGolfPad(root, { send, me }) {
       if (screen === "aim" && aimDir) aimStop();
       screen = next;
     }
+    applyTurn();
     el.gp.dataset.screen = screen === "off" ? "wait" : screen;
     const v = view;
     const set = (node, txt) => { if (node.textContent !== txt) node.textContent = txt; };
@@ -1108,6 +1186,7 @@ export function createGolfPad(root, { send, me }) {
     get screen() { return screen; },
     get phase() { return view?.phase || null; },
     get isYourTurn() { return !!view?.isYourTurn; },
+    get held() { return { sideways: heldSideways(), readings: tilt.n, fresh: performance.now() - tilt.at < TILT_FRESH_MS, landWindow: landWindow(), turned: turnDeg }; },
     get motion() { return motion; },
     get armed() { return armed; },
     get ready() { return ready; },
@@ -1158,6 +1237,7 @@ export function createGolfPad(root, { send, me }) {
       const was = shown;
       shown = !!on;
       if (shown && !was) send({ type: "hello", hidden: !!document.hidden }); // the game answers with this phone's view at once
+      tiltListen(shown); // which way the phone is held (Android: at once; iOS: once SWING got motion access)
       if (!shown && was) {
         aimStop();
         motionOff();
@@ -1166,6 +1246,7 @@ export function createGolfPad(root, { send, me }) {
       if (shown) render();
       else {
         screen = "off";
+        applyTurn();
         syncSkin(); // SKINS: the pad goes with the round
       }
     },
