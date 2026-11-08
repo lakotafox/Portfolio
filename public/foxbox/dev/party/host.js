@@ -1264,7 +1264,7 @@ function knightBackToSetup(afterRound) {
 // picker (8 critters, the kart in the player's slot colour), then READY (that tap also asks iPhone motion permission);
 // the game picker also gets PICK ANOTHER GAME. lob.kart = { id, track, picks: { [clientId]: { racer, ready } }, bots },
 // saved with the lobby (a TV reload keeps it); bots = this setup's racer order for the bots (re-rolled per setup).
-// Phone → TV ({t:"game", m}): {type:"fkpick", setupId, racer, ready} on every change · the picker only: {type:"fktrack",
+// Phone → TV ({t:"game", m}): {type:"fkpick", setupId, racer, ready, body?, paint?} on every change · the picker only: {type:"fktrack",
 // id} (an open track) and {type:"fkother"} (PICK ANOTHER GAME: back to the game cards). The countdown starts once every
 // connected player is ready (a not-ready player who just dropped gets KART_DROP_WAIT_MS); Enter on the TV starts at once
 // (no pick = the racer by slot). After the results: the FoxBox lobby (Lakota's choice for NONAME); each phone's last
@@ -1273,6 +1273,10 @@ function knightBackToSetup(afterRound) {
 const KART = GAMES.find((g) => g.id === "kart");
 const KART_DROP_WAIT_MS = 4000;
 const kartRacer = (v) => (typeof v === "string" && KART.racers.includes(v) ? v : null);
+// GARAGE (fox-kart's kart picker): a phone's kart body + paint ride its fkpick ({ body, paint }: plain ids, looks only;
+// the game checks them against its own lists, unknown = today's kart). Kept per pick, handed on in pl.kart.
+const kartLookId = (v) => (typeof v === "string" && /^[a-z][a-z0-9-]{0,15}$/.test(v) ? v : null);
+const kartLookOf = (pk) => { const o = {}; if (pk && kartLookId(pk.body)) o.body = pk.body; if (pk && kartLookId(pk.paint)) o.paint = pk.paint; return o; };
 const kartTrackOk = (id) => KART.tracks.some((t) => t.id === id && t.open);
 const kartTrack = () => KART.tracks.find((t) => t.id === (lob.kart && lob.kart.track)) || KART.tracks.find((t) => t.open) || KART.tracks[0];
 function kartSetupActive() {
@@ -1290,7 +1294,7 @@ function kartShuffled() {
 /** A fresh setup; `keep` = the last one: its picks kept (nobody ready), the same track. The bots' racer order re-rolled. */
 function newKartSetup(keep) {
   const picks = {};
-  if (keep && keep.picks && typeof keep.picks === "object") for (const [id, pk] of Object.entries(keep.picks)) if (roster.has(id) && pk && kartRacer(pk.racer)) picks[id] = { racer: pk.racer, ready: false };
+  if (keep && keep.picks && typeof keep.picks === "object") for (const [id, pk] of Object.entries(keep.picks)) if (roster.has(id) && pk && kartRacer(pk.racer)) picks[id] = { racer: pk.racer, ready: false, ...kartLookOf(pk) }; // (GARAGE: + body / paint)
   const track = keep && kartTrackOk(keep.track) ? keep.track : (KART.tracks.find((t) => t.open) || KART.tracks[0]).id;
   lob.kart = { id: newRowSetupId(), track, picks, bots: kartShuffled() };
 }
@@ -1380,7 +1384,7 @@ const kartOptions = () => (GAME.id === "kart" ? { track: kartTrack().id } : {});
  * picker); racerOf = the racer every roster player would drive right now (their pick, else last race's, else by slot). */
 function kartLobby() {
   const picks = {}, racerOf = {};
-  for (const [id, pk] of Object.entries(lob.kart.picks)) if (roster.has(id) && pk && kartRacer(pk.racer)) picks[id] = { racer: pk.racer, ready: !!pk.ready };
+  for (const [id, pk] of Object.entries(lob.kart.picks)) if (roster.has(id) && pk && kartRacer(pk.racer)) picks[id] = { racer: pk.racer, ready: !!pk.ready, ...kartLookOf(pk) }; // (GARAGE: + body / paint)
   for (const p of roster.values()) racerOf[p.id] = kartPickOf(p);
   const plan = kartRoundPlan(), slots = plan.slots, botRacers = plan.racers;
   const tr = kartTrack();
@@ -1404,7 +1408,7 @@ function onKartMsg(msg) {
   if (m.type === "fkpick") {
     if (m.setupId !== lob.kart.id) return sendStatus(p), toPad(p.id, { t: "lobby", s: lobbyState() }), true; // an old setup's
     const racer = kartRacer(m.racer) || kartPickOf(p);
-    lob.kart.picks[p.id] = { racer, ready: m.ready === true };
+    lob.kart.picks[p.id] = { racer, ready: m.ready === true, ...kartLookOf(m) }; // (GARAGE: + body / paint)
     if (kartRacer(m.racer)) lob.kartLast = { ...(lob.kartLast && typeof lob.kartLast === "object" ? lob.kartLast : {}), [p.id]: racer };
   } else if (!mayPick(p.id)) return true; // the track and PICK ANOTHER GAME are the game picker's
   else if (m.type === "fktrack") {
@@ -2706,7 +2710,7 @@ function startRound() {
     if (GAME.id === "knight") pl.knight = knightPickOf(p); // KNIGHT: the knight + sword this player picked (party extra)
     const item = skyStartItem(p);
     if (item) pl.startItem = item; // Sky: the doodle vote's winner starts flying their free item (party extra)
-    if (GAME.id === "kart") pl.kart = { racer: kartPickOf(p) }; // KART: the racer this player picked (party extra)
+    if (GAME.id === "kart") pl.kart = { racer: kartPickOf(p), ...kartLookOf(lob.kart && lob.kart.picks[p.id]) }; // KART: the racer (+ GARAGE: kart body + paint) this player picked (party extra)
     players.push(pl);
     nameById.set(p.slot + 1, p.name);
     humanIdByPid.set(p.slot + 1, p.id);
