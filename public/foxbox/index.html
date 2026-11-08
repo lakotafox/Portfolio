@@ -1149,6 +1149,11 @@
         font-size: 1.6rem;
         line-height: 1.15;
       }
+      /* TENNIS (FOX TENNIS): the game draws its own scoreboard (top left) and the tournament bracket full screen, so the
+         shell's player stack would sit over both: off for tennis (the results screen still lists everyone) */
+      #hud[data-game="tennis"] #scoreboard {
+        display: none;
+      }
       #screen-points {
         position: absolute;
         inset: 0;

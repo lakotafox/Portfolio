@@ -179,6 +179,34 @@ const GAMES = [
     },
   },
   // ── end WHOSFOX ──
+  // ── TENNIS (FOX TENNIS, working name) ──
+  {
+    // FOX TENNIS (fox-tennis repo): couch tennis, the phone swung like a racket (players run on their own, you only swing).
+    // 1 player: singles vs a CPU · 2: singles · 3-4: doubles 2v2 (a CPU fills) · 5-8: a knockout tournament of singles,
+    // the bracket on the TV between matches. The phone UI is its own module (dev/party/tennis/tennis-pad.js + swing.js, see
+    // pad.js): PLAY (iOS motion permission) -> hold still -> READY, then swings with their moment on the TV's clock (ping /
+    // pong). Everything rides {t:"game", m} (fox-tennis CONTRACT.md). intro "own": the game's own intro waits for every
+    // phone's READY (a shell READY… over a paused game would hold its pings back: fromPhone only runs while "playing").
+    // botFillTo 4: BOTS FILL makes 1-3 people a doubles match (bots fill to 4), never a bot tournament; 5+ people play
+    // the tournament with byes, no bots.
+    id: "tennis", name: "FOX TENNIS", gameId: "foxtennis", button: "START", stick: "tennis",
+    module: "../../games/tennis/gc.game.js", props: "../../games/tennis/gc.properties.json",
+    tagline: "Swing your phone like a racket!",
+    minPlayers: 1, maxPlayers: 8, botFillTo: 4, controls: "Swing your phone like a racket: forehand or backhand",
+    intro: "own",
+    card: {
+      chip: "Swing",
+      motion: true,
+      rules: [
+        "Hold your phone like a racket and swing when the ball comes",
+        "Forehand or backhand: your player runs to the ball on their own",
+        "Swing early to go cross-court, late to go down the line",
+        "2 players: singles · 3-4: doubles · 5-8: a tournament",
+      ],
+      win: "Win the match (a tournament: win the final)",
+    },
+  },
+  // ── end TENNIS ──
 ];
 const GAME_KEY = "foxbox-game";
 const GAME = (() => {
@@ -214,7 +242,7 @@ function loadBotsMode() {
 }
 const botsOn = () => botsMode === "fill" && GAME.bots !== false;
 /** Players a round gets: everyone here, plus (FILL) bots up to the game's maxPlayers. */
-const roundTarget = (humanCount) => (botsOn() ? Math.max(humanCount, Math.min(MAX_PLAYERS, GAME.maxPlayers || MAX_PLAYERS)) : humanCount);
+const roundTarget = (humanCount) => (botsOn() ? Math.max(humanCount, Math.min(MAX_PLAYERS, GAME.botFillTo || GAME.maxPlayers || MAX_PLAYERS)) : humanCount); // TENNIS: botFillTo (bots fill to this many, not maxPlayers)
 const AUTO_START_MS = 20_000;
 const AUTO_START = false; // lobby v2: the game picker starts the round (no timers)
 const DRAW_HOLD_MS = 60_000; // auto-start waits at most this much longer while someone is drawing

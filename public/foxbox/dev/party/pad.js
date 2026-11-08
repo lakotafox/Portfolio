@@ -1108,6 +1108,7 @@ function onMessage(msg) {
       break;
     case "game": // FoxBox party extension: the running game's message for this phone (TEE TIME)
       if (foxGameMsg(msg)) break; // WHOSFOX: the WHO'S THE FOX? module's
+      if (tennisGameMsg(msg)) break; // TENNIS: the FOX TENNIS module's
       if (knightGameMsg(msg)) break; // KNIGHT: the knight module's (Knight Platformer is the hub's game)
       if (kartGameMsg(msg)) break; // KART: the kart module's (FOX KART is the hub's game)
       if (mode.id === "row" && msg.m && msg.m.type === "rowTrain") { rowTrain.onMessage(msg.m); renderStatus(); break; } // ROWTRAIN: the controls check
@@ -1355,6 +1356,45 @@ function syncFox() {
   if (on) $("bonk-wrap").hidden = cover;
 }
 // ── end WHOSFOX ──
+// ── TENNIS (FOX TENNIS) ──
+// The game's phone module (dev/party/tennis/tennis-pad.js + swing.js, synced from the fox-tennis repo's phone/), loaded the
+// first time tennis is the hub's game. Like TEE TIME's: it owns #tennis (inside #controls, portrait) during the round, and
+// talks to the TV with {t:"game", m} both ways (fox-tennis CONTRACT.md); the lobby keeps the plain START, results stay pad.js's.
+var tennisPad = null; // var: onMessage / renderStatus may run before this line during start-up
+var tennisLoad = null;
+var tennisInbox = [];
+function tennisGameMsg(msg) {
+  if (mode.id !== "tennis" || !msg.m || typeof msg.m !== "object") return false;
+  if (tennisPad) tennisPad.onMessage(msg.m);
+  else {
+    tennisInbox.push(msg.m);
+    if (tennisInbox.length > 16) tennisInbox.shift();
+  }
+  return true;
+}
+function syncTennis() {
+  const tennis = mode.id === "tennis";
+  if (tennis && !tennisLoad) {
+    tennisLoad = import("./tennis/tennis-pad.js")
+      .then((m) => {
+        tennisPad = m.createTennisPad($("tennis"), {
+          send: (m2) => sendRaw({ t: "game", m: m2 }),
+          me: () => ({ id: me.id, name: me.name }),
+        });
+        for (const msg of tennisInbox.splice(0)) tennisPad.onMessage(msg);
+        renderStatus();
+      })
+      .catch((e) => console.warn("[foxbox] tennis controller didn't load", e));
+  }
+  const st = lastStatus && lastStatus.state;
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  const on = tennis && connected && curScreen === "pad-screen" && (st === "countdown" || st === "playing");
+  $("pad-screen").classList.toggle("tennis", on);
+  $("tennis").hidden = !on;
+  if (tennis) $("bonk-wrap").hidden = on;
+  if (tennisPad) tennisPad.show(on, lastStatus);
+}
+// ── end TENNIS ──
 
 // ── Lobby v2 ────────────────────────────────────────────────────────────────────
 // The TV sends {t:"lobby", s} with everyone's roles; a phone UI (lobby2) talks back through
@@ -1446,7 +1486,7 @@ function applyMode(g) {
   mode = { ...mode, ...g, seats: !!g.seats };
   $("bonk").textContent = mode.button;
   const rowing = mode.stick === "motion";
-  steer.hidden = rowing || mode.id === "golf"; // TEE TIME: START in the lobby, its own module in play (syncGolf)
+  steer.hidden = rowing || mode.id === "golf" || mode.id === "tennis"; // TEE TIME: START in the lobby, its own module in play (syncGolf) · TENNIS: the same (syncTennis)
   $("bonk-wrap").hidden = rowing;
   steer.classList.toggle("xy", mode.stick === "xy");
   $("steer-label").textContent = mode.stick === "xy" ? "drag to roll" : "slide to steer";
@@ -1682,6 +1722,7 @@ function renderStatus() {
   syncKnight(); // KNIGHT
   syncKart(); // KART
   syncFox(); // WHOSFOX
+  syncTennis(); // TENNIS
   syncExtras();
 }
 
@@ -1706,7 +1747,7 @@ function syncExtras() {
   const skyPad = sky && connected && curScreen === "pad-screen" && SKY_PAD_STATES.includes(st);
   // TEE TIME is left alone: it has its own portrait + sideways layouts (golf-pad.js) and is swung like a club,
   // and turned with CSS a portrait phone would use the portrait layout in a sideways box (SWING cut off)
-  if (typeof land !== "undefined") land.set((playing && web && mode.id !== "golf" && mode.id !== "knight" && mode.id !== "kart" && mode.id !== "whosfox") || skyPad || skinWanted()); // on with the next release · KNIGHT: the knight pad turns itself · KART: so does the kart pad · WHOSFOX: portrait
+  if (typeof land !== "undefined") land.set((playing && web && mode.id !== "golf" && mode.id !== "knight" && mode.id !== "kart" && mode.id !== "whosfox" && mode.id !== "tennis") || skyPad || skinWanted()); // on with the next release · KNIGHT: the knight pad turns itself · KART: so does the kart pad · WHOSFOX: portrait · TENNIS: portrait (swung upright)
   if (skyLand) {
     for (const [id, l] of Object.entries(skyLand)) l.set(sky && curScreen === id);
     const skyScreen = sky && (curScreen in skyLand || skyPad);
@@ -2038,6 +2079,7 @@ function release() {
   if (golfPad) golfPad.release(); // TEE TIME: let go of a held aim arrow
   if (knightPad) knightPad.release(); // KNIGHT: let go of every held button
   if (kartPad) kartPad.release(); // KART: let go of GAS / ITEM
+  if (tennisPad) tennisPad.release(); // TENNIS
 }
 window.addEventListener("blur", release);
 
@@ -2047,7 +2089,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   padScreen.addEventListener(
     type,
     (e) => {
-      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button, #kart [data-native]")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones; KART: the kart pad's)
+      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button, #kart [data-native], #tennis [data-native]")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones; KART: the kart pad's; TENNIS: the tennis pad's)
       if (padScreen.classList.contains("row-setup") && !e.target.closest("#cap-aim, #cap-fire")) return; // Row setup scrolls
       e.preventDefault();
     },
