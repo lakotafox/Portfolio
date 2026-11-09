@@ -47,5 +47,10 @@
 /foxbox-beta/* /foxbox/:splat 302!
 /foxbox-beta   /foxbox/       302!
 
+# --- FOX TV: served from the Mac (~/Projects/channel-tv, basePath /foxtv)
+# over Tailscale Funnel. Down whenever that machine is asleep/offline. ---
+/foxtv    https://macbook-air.tail0f1ab2.ts.net/foxtv         200!
+/foxtv/*  https://macbook-air.tail0f1ab2.ts.net/foxtv/:splat  200!
+
 # --- portfolio SPA catch-all (must stay last) ---
 /* /index.html 200
