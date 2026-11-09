@@ -1,0 +1,151 @@
+{
+  "title": "Sticker Stack \u2014 paper foley",
+  "durationMs": 6200,
+  "license": "CC0-1.0",
+  "sourceAuthor": "Luckius",
+  "sourceTitle": "Various Paper Sound Effects",
+  "sourcePage": "https://opengameart.org/content/various-paper-sound-effects",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "editing": "Original-speed excerpts, rumble/high-frequency filtering, short click-free fades, constant master gain and gentle stereo placement. No synthesized tones, music, loops or reverb.",
+  "recordings": [
+    {
+      "file": "Paper Sound - 1.wav",
+      "sha256": "d04ac578637259182dc4c9e03664217d9c80c0da90d5784563dbe43bd6a264cc"
+    },
+    {
+      "file": "Paper Sound - 2.wav",
+      "sha256": "7b670c269c463c308c8808a7d3bad5116fbd7a55c7e26d0b9064627f4c576b03"
+    },
+    {
+      "file": "Paper Sound - 3.wav",
+      "sha256": "31c6a512b42ac3420b701ea7b4b4644f0f901794f944584d9e99372df6958623"
+    },
+    {
+      "file": "Paper Sound - 4.wav",
+      "sha256": "6736e9e27f1cf4799bc3dc04b0584ce3581fee6441b13cc6f6bc085d438bfc10"
+    }
+  ],
+  "cues": [
+    {
+      "startMs": 180,
+      "durationMs": 430,
+      "action": "lavender sheet slides in"
+    },
+    {
+      "startMs": 640,
+      "durationMs": 130,
+      "action": "lavender paper contact"
+    },
+    {
+      "startMs": 720,
+      "durationMs": 420,
+      "action": "coral sheet slides in"
+    },
+    {
+      "startMs": 1180,
+      "durationMs": 140,
+      "action": "coral paper contact"
+    },
+    {
+      "startMs": 1140,
+      "durationMs": 410,
+      "action": "cream card slides up"
+    },
+    {
+      "startMs": 1590,
+      "durationMs": 130,
+      "action": "cream card contact"
+    },
+    {
+      "startMs": 1530,
+      "durationMs": 460,
+      "action": "fox head sticker curls into place"
+    },
+    {
+      "startMs": 1990,
+      "durationMs": 110,
+      "action": "fox head pressed flat"
+    },
+    {
+      "startMs": 1920,
+      "durationMs": 500,
+      "action": "curled tail sticker rolls down"
+    },
+    {
+      "startMs": 2420,
+      "durationMs": 110,
+      "action": "tail pressed flat"
+    },
+    {
+      "startMs": 2350,
+      "durationMs": 350,
+      "action": "F sticker peels down"
+    },
+    {
+      "startMs": 2700,
+      "durationMs": 95,
+      "action": "F pressed flat"
+    },
+    {
+      "startMs": 2650,
+      "durationMs": 320,
+      "action": "O sticker peels down"
+    },
+    {
+      "startMs": 2970,
+      "durationMs": 95,
+      "action": "O pressed flat"
+    },
+    {
+      "startMs": 2920,
+      "durationMs": 320,
+      "action": "X sticker peels down"
+    },
+    {
+      "startMs": 3240,
+      "durationMs": 95,
+      "action": "X pressed flat"
+    },
+    {
+      "startMs": 3190,
+      "durationMs": 320,
+      "action": "T sticker peels down"
+    },
+    {
+      "startMs": 3510,
+      "durationMs": 95,
+      "action": "T pressed flat"
+    },
+    {
+      "startMs": 3460,
+      "durationMs": 330,
+      "action": "V sticker peels down"
+    },
+    {
+      "startMs": 3790,
+      "durationMs": 110,
+      "action": "V pressed flat"
+    },
+    {
+      "startMs": 4100,
+      "durationMs": 130,
+      "action": "star sticker pressed"
+    },
+    {
+      "startMs": 4300,
+      "durationMs": 130,
+      "action": "dot sticker pressed"
+    },
+    {
+      "startMs": 5350,
+      "durationMs": 790,
+      "action": "paper stack scoots off the table"
+    },
+    {
+      "startMs": 5790,
+      "durationMs": 240,
+      "action": "last paper edge brushes past"
+    }
+  ],
+  "masterPeakDbfs": -4.15
+}

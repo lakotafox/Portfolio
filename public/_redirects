@@ -48,9 +48,12 @@
 /foxbox-beta   /foxbox/       302!
 
 # --- FOX TV: served from the Mac (~/Projects/channel-tv, basePath /foxtv)
-# over Tailscale Funnel. Down whenever that machine is asleep/offline. ---
+# over Tailscale Funnel. Down whenever that machine is asleep/offline.
+# Static files copied into public/foxtv/ (channel-tv's
+# scripts/publish-netlify-static.sh) are served here first: the splat rule
+# is deliberately NOT forced, so only pages/API/big media hit the Mac. ---
 /foxtv    https://macbook-air.tail0f1ab2.ts.net/foxtv         200!
-/foxtv/*  https://macbook-air.tail0f1ab2.ts.net/foxtv/:splat  200!
+/foxtv/*  https://macbook-air.tail0f1ab2.ts.net/foxtv/:splat  200
 
 # --- portfolio SPA catch-all (must stay last) ---
 /* /index.html 200

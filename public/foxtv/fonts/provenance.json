@@ -1,0 +1,15 @@
+{
+  "family": "Roboto Condensed",
+  "style": "normal",
+  "weightRange": "400 700",
+  "subset": "latin",
+  "filename": "roboto-condensed-latin.woff2",
+  "sourceCss": "https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400..700&display=swap",
+  "sourceFont": "https://fonts.gstatic.com/s/robotocondensed/v31/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7DQk6YvM.woff2",
+  "sourceLicense": "https://github.com/google/fonts/blob/main/ofl/robotocondensed/OFL.txt",
+  "license": "SIL Open Font License 1.1",
+  "licenseFile": "OFL.txt",
+  "bytes": 46080,
+  "sha256": "718ced55c5d8e207d6d14b1765fe6cf5886882834f45cc0ad23283cd210f9a96",
+  "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+}
