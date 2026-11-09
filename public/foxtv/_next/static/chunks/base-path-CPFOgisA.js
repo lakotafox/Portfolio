@@ -1,0 +1,1 @@
+var e=`/foxtv`;function t(t){return!t||!t.startsWith(`/`)||t.startsWith(`//`)||t===`/foxtv`||t.startsWith(`/foxtv/`)||t.startsWith(`/foxtv?`)?t:`${e}${t}`}function n(e){return e===`/foxtv`?`/`:e.startsWith(`/foxtv/`)?e.slice(6):e}export{t as n,n as t};
