@@ -23,7 +23,18 @@
  *      address pose: hold the phone face down / pointing at the floor like a club. Held still = READY.
  *   3. The swing: the first big rotation spike after READY. Its peak picks a power tier (weak / good /
  *      great / huge); the TV adds the heavy RNG. The phone plays its own whoosh (never the TV).
- * Everyone else's phone shows whose turn it is, "you're next", the last shot and the standings.
+ * Everyone else's phone shows who is up and their step (AIM / READY / SWING), the shot to beat in this mini-game
+ * (view.best, nothing before anyone has scored), the scores, and "you're next" with the wind. No small golfer figure.
+ *
+ * The intro cards (Lakota, Nov 9): when golf is picked in the lobby every golfer's phone opens on three cards laid in
+ * the pad's LCD: MAKE ROOM, HOLD ON TIGHT, HOW TO SWING (OK, OK, GOT IT; nothing moves on by itself). The TV says who
+ * still has to see them (view.cards) and waits for that golfer meanwhile, 45 s at most: its camera stays up high
+ * before their turn (only for a phone that said it is showing the cards: {type:"cards", on:true}), or it holds their
+ * turn clock (view.hold). GOT IT sends {type:"cards"}. The hub drops phone messages during its READY... countdown, so
+ * the phone says both again from the views (at most once a second) until the TV's view agrees (view.cardsSeen /
+ * view.cards). Screen "cards": nothing else on the pad can be pressed.
+ * The pictures (the cards, the swing screen) are the "LCD SIGNS" sign people: cream, plain circle hands, the phone
+ * always gold; drawn as vectors and snapped to clean art pixels (PICS below).
  *
  * Upright only (Lakota, Nov 1: you hold the phone like a club to swing, so there's no sideways layout). A phone held
  * sideways on the aim screen sees TURN YOUR PHONE UPRIGHT instead of the aim controls (screen "upright"). That is
@@ -44,7 +55,7 @@
  * view says the TV has this page as hidden (view.you.hidden) while it
  * is showing, the phone says {type:"hidden", on:false} again (at most once a second, so within ~1 s of the next view).
  *
- * Test hook: window.__golfPad (read-only), DOM data-test ids: see CONTRACT.md "Test hooks".
+ * Test hook: window.__golfPad (read-only, plus setClock for stepped capture), DOM data-test ids: see CONTRACT.md "Test hooks".
  */
 
 // ── Swing detector tuning (CONTRACT.md "Swing detector") ─────────────────────────────
@@ -90,17 +101,6 @@ const screenAngle = () => {
 // ── Pixel sprites (inline SVG from character maps, like pixel-art.js) ────────────────
 const INK = "#0a1428";
 const MAPS = {
-  golfer: [
-    "....OOOO....", "...OCCCCO...", "..OCCCCCCO..", ".OOOOOOOOOO.", "...OSSSSO...", "...OSESEO...", "...OSSSSO...",
-    "..OCCCCCCO..", ".OCCCCCCCCO.", ".OSCCCCCCSO.", "..O.PPPP.O..", "...OPPPPO...", "...OPP.PO...", "...OPP.PO...", "..OOO..OOO..",
-  ],
-  // the address pose: both hands round the phone, pointing at the ball like a club
-  address: [
-    ".....OOOO..........", "....OCCCCO.........", "....OCCCCCOO.......", "....OSSSSO.........", "....OSSSEO.........",
-    ".....OSSO..........", "....OCCCCO.........", "...OCCCCCCOO.......", "...OCCCCCOSSO......", "...OCCCCO..OSSO....",
-    "....OCCO....OSSO...", "....OPPO.....OKKO..", "...OPPPPO....OKKO..", "...OPPOPPO...OKKO..", "...OPO.OPO...OKKO..",
-    "..OPPO.OPPO..OOOO..", "..OOOO.OOOO........", "............OWWO...", "............OWWO...", ".............OO....",
-  ],
   arrowL: ["...OO", "..OWO", ".OWWO", "OWWWO", ".OWWO", "..OWO", "...OO"],
   eye: ["...OOOOO...", ".OOWWWWWOO.", "OWWWOOOWWWO", "OWWOCCCOWWO", "OWWWOOOWWWO", ".OOWWWWWOO.", "...OOOOO..."],
   arrowR: ["OO...", "OWO..", "OWWO.", "OWWWO", "OWWO.", "OWO..", "OO..."],
@@ -146,6 +146,348 @@ function windArrow(dir, scale = 3) {
   return `<span class="gp-wind-ar" style="transform:rotate(${turn}deg)">${sprite(diag ? "windD" : "wind", scale, "#fff")}</span>`;
 }
 
+// ── The pictures: "LCD SIGNS" (Lakota's pick, Nov 9) ─────────────────────────────────────────────────────────────
+// Cream sign people with plain circle hands on the dark LCD; the phone is always gold. No hand close-ups: everything
+// is taught with the whole figure. Drawn with ordinary canvas calls in ART-PIXEL units: makePic supersamples 4x and
+// gives every art pixel the colour most of its samples snapped to, so there are no blended edge colours and nothing
+// shimmers into a third colour when shapes overlap. Lines thinner than 2 art px can vanish: keep them 2+ and on whole
+// pixels. Every scene is { W, H, loop (ms), draw(ctx, t, extra) }; draw is a pure function of t = ms into the loop, so
+// a capture script can step the clock (window.__golfPad.setClock).
+// Swing angle theta (radians): 0 = arms straight down, + = toward the viewer's right, - = left (front view).
+const PICS = (() => {
+  const rgb = (hex) => [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+  function makePic(W, H, colours, SS = 4) {
+    const hi = document.createElement("canvas");
+    hi.width = W * SS; hi.height = H * SS;
+    const hctx = hi.getContext("2d", { willReadFrequently: true });
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    canvas.className = "pc-cv";
+    const octx = canvas.getContext("2d");
+    const pal = [...new Set(colours.map((c) => c.toLowerCase()))].map(rgb);
+    const packed = pal.map(([r, g, b]) => ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0);
+    const cache = new Map();
+    const near = (r, g, b) => {
+      const k = (r << 16) | (g << 8) | b;
+      let v = cache.get(k);
+      if (v === undefined) {
+        let bd = Infinity;
+        for (let i = 0; i < pal.length; i++) {
+          const p = pal[i], d = (p[0] - r) ** 2 + (p[1] - g) ** 2 + (p[2] - b) ** 2;
+          if (d < bd) { bd = d; v = i; }
+        }
+        cache.set(k, v);
+      }
+      return v;
+    };
+    const votes = new Uint16Array(pal.length + 1);
+    function render(fn) {
+      hctx.setTransform(1, 0, 0, 1, 0, 0);
+      hctx.clearRect(0, 0, hi.width, hi.height);
+      hctx.setTransform(SS, 0, 0, SS, 0, 0);
+      hctx.save(); fn(hctx); hctx.restore();
+      const src = hctx.getImageData(0, 0, hi.width, hi.height).data;
+      const img = octx.createImageData(W, H), dst = new Uint32Array(img.data.buffer), HW = W * SS;
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        votes.fill(0);
+        for (let sy = 0; sy < SS; sy++) {
+          let i = ((y * SS + sy) * HW + x * SS) * 4;
+          for (let sx = 0; sx < SS; sx++, i += 4) votes[src[i + 3] < 128 ? 0 : 1 + near(src[i], src[i + 1], src[i + 2])]++;
+        }
+        let bi = 0, bv = votes[0];
+        for (let k = 1; k < votes.length; k++) if (votes[k] > bv) { bv = votes[k]; bi = k; }
+        dst[y * W + x] = bi ? packed[bi - 1] : 0;
+      }
+      octx.putImageData(img, 0, 0);
+    }
+    return { canvas, render, W, H };
+  }
+  /** The small shape kit. Outlines sit OUTSIDE the shape (stroke first, fill on top), sw = their width in art px. */
+  function kit(c) {
+    const path = (pts, close) => { c.beginPath(); pts.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y))); if (close) c.closePath(); };
+    const fs = (fill, stroke, sw = 2) => {
+      if (stroke) { c.lineJoin = "round"; c.lineWidth = sw * 2; c.strokeStyle = stroke; c.stroke(); }
+      if (fill) { c.fillStyle = fill; c.fill(); }
+    };
+    const k = {
+      line(pts, w, col) { c.lineCap = "round"; c.lineJoin = "round"; c.lineWidth = w; c.strokeStyle = col; path(pts); c.stroke(); },
+      oline(pts, w, col, oc, ow = 2) { k.line(pts, w + ow * 2, oc); k.line(pts, w, col); },
+      circ(x, y, r, fill, stroke, sw) { c.beginPath(); c.arc(x, y, r, 0, 7); fs(fill, stroke, sw); },
+      rr(x, y, w, h, r, fill, stroke, sw) { c.beginPath(); c.roundRect(x, y, w, h, r); fs(fill, stroke, sw); },
+      poly(pts, fill, stroke, sw) { path(pts, true); fs(fill, stroke, sw); },
+      arc(cx, cy, r, a0, a1, w, col, dash) {
+        c.beginPath(); c.arc(cx, cy, r, a0, a1);
+        c.lineCap = "butt"; c.lineWidth = w; c.strokeStyle = col; c.setLineDash(dash || []); c.stroke(); c.setLineDash([]);
+      },
+    };
+    return k;
+  }
+  const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+  const ease = (x) => { x = clamp01(x); return x * x * (3 - 2 * x); };
+  /** 0 before a, 1 after b, eased in between */
+  const seg = (t, a, b) => ease((t - a) / (b - a));
+  const rad = (d) => (d * Math.PI) / 180;
+
+  const A = { bg: "#101125", ink: "#fff9f1", gold: "#ffd23f", teal: "#2ed3c6", red: "#ff5a3c", dim: "#2c2f55", soft: "#b7b3b4" };
+  /** The phone's back, centred on (x, y), len long, wid wide. ang 0 = upright (top end up), PI = top end down. The
+   *  camera island marks the TOP end. */
+  function phone(c, x, y, len, wid, ang) {
+    const K = kit(c), r = Math.min(4, wid * 0.22);
+    c.save(); c.translate(x, y); c.rotate(ang);
+    K.rr(-wid / 2, -len / 2, wid, len, r, A.gold, A.bg, 1.5);
+    const cs = Math.max(3, wid * 0.42), m = wid * 0.12;
+    K.rr(-wid / 2 + m, -len / 2 + m, cs, cs, cs * 0.3, A.bg);
+    if (cs >= 6) K.circ(-wid / 2 + m + cs / 2, -len / 2 + m + cs / 2, cs * 0.24, A.ink);
+    c.restore();
+  }
+  /** The sign person. o.theta = swing angle holding the phone (null/undefined = arms at the sides), o.lean = lean
+   *  about the feet (radians, + = to the right).
+   *  CIRCLE HANDS: every arm ends in a plain filled circle in the body's cream, a bit wider than the arm; no fingers,
+   *  no outline. Holding the phone = the two circles sit on the gold phone, one above the other.
+   *  For the gag pictures: o.empty = the same arms with no phone in them, o.oops = both hands on the head,
+   *  o.hop = art px off the floor. */
+  function person(c, cx, footY, h, o = {}) {
+    const K = kit(c), col = A.ink, bg = A.bg;
+    c.save(); c.translate(cx, footY - (o.hop || 0)); if (o.lean) c.rotate(o.lean);
+    const r = h * 0.115, shY = -h * 0.7, hipY = -h * 0.4, lw = h * 0.095, aw = h * 0.075, hr = h * 0.056;
+    K.line([[-h * 0.05, hipY], [-h * 0.13, -lw / 2]], lw, col);
+    K.line([[h * 0.05, hipY], [h * 0.13, -lw / 2]], lw, col);
+    K.line([[0, shY + h * 0.07], [0, hipY]], h * 0.24, col);
+    if (o.oops) {
+      for (const m of [-1, 1]) K.oline([[m * h * 0.14, shY + h * 0.05], [m * h * 0.3, shY - h * 0.05], [m * (r + hr * 0.4), -h + r * 0.8]], aw, col, bg, 1.5);
+    } else if (o.theta == null) {
+      for (const m of [-1, 1]) {
+        const hx = m * h * 0.21, hy = hipY + h * 0.02;
+        K.oline([[m * h * 0.15, shY + h * 0.05], [hx, hy]], aw, col, bg, 1.5);
+        K.circ(hx, hy, hr, col);
+      }
+    } else {
+      const th = o.theta, dx = Math.sin(th), dy = Math.cos(th), cy = -0.64 * h, L = h * 0.36, pl = h * 0.34, pw = h * 0.14;
+      const at = (d) => [dx * d, cy + dy * d], h1 = at(L), h2 = at(L + hr * 2.2), pc = at(L - hr * 1.1 + pl / 2);
+      K.oline([[-h * 0.14, shY + h * 0.05], h1], aw, col, bg, 1.5);
+      K.oline([[h * 0.14, shY + h * 0.05], h2], aw, col, bg, 1.5);
+      if (!o.empty) phone(c, pc[0], pc[1], pl, pw, Math.PI - th); // top end away from the hands = face down at the bottom of the swing
+      K.circ(h1[0], h1[1], hr, col);
+      K.circ(h2[0], h2[1], hr, col);
+    }
+    K.circ(0, -h + r, r, col, bg, 1.5);
+    if (o.oops) for (const m of [-1, 1]) K.circ(m * (r + hr * 0.4), -h + r * 0.8, hr, col, bg, 1.5);
+    c.restore();
+  }
+  function lamp(c, x, footY, h) {
+    const K = kit(c), top = footY - h;
+    K.line([[x - 6, footY - 1], [x + 6, footY - 1]], 3, A.ink);
+    K.line([[x, footY - 1], [x, top + 14]], 2.5, A.ink);
+    K.poly([[x - 5, top], [x + 5, top], [x + 9, top + 15], [x - 9, top + 15]], A.ink);
+  }
+  function tick(c, x, y, s = 5) { kit(c).line([[x - s, y], [x - s * 0.3, y + s * 0.7], [x + s, y - s * 0.8]], 3, A.teal); }
+  function warn(c, x, y) {
+    const K = kit(c);
+    K.line([[x, y - 7], [x, y]], 3.5, A.red);
+    K.circ(x, y + 5.5, 2, A.red);
+  }
+  const W = 152, H = 110;
+  const floor = (c, floorY) => kit(c).line([[4, floorY + 2], [W - 4, floorY + 2]], 2, A.dim);
+  /** The whole golfer, front view: the same big figure on every teaching picture (no hand close-ups, no arrows, no
+   *  trails). thD = swing angle in degrees, o.x = where they stand, o.ready = the small READY! with its tick. */
+  function golfer(c, thD, o = {}) {
+    const fy = 102, x = o.x == null ? 76 : o.x, h = 76;
+    person(c, x, fy, h, { theta: rad(thD), lean: rad(thD) * 0.05 });
+    if (o.ready) {
+      c.font = '8px "FoxBox Pixel"'; c.textBaseline = "top"; c.textAlign = "center";
+      c.fillStyle = A.gold; c.fillText("READY!", x - 6, 5);
+      tick(c, x + 6 + c.measureText("READY!").width / 2, 9, 4);
+      c.textAlign = "left";
+    }
+  }
+  /** one calm golf swing in degrees: still until t0, back (750 ms), through (450 ms), hold the finish, come back (800 ms) */
+  function swingDeg(t, t0, hold) {
+    const a = t0 + 750, b = a + 450, d = b + hold;
+    return t < t0 ? 0 : t < a ? -112 * ease((t - t0) / 750) : t < b ? -112 + 230 * ease((t - a) / 450) : t < d ? 118 : 118 * (1 - ease((t - d) / 800));
+  }
+  /** 3 HOW TO SWING: just the golfer doing it. Phone face down in both hands in front -> hold still (READY!) -> swing
+   *  back and through -> back to the start. */
+  const howto = { W, H, loop: 4200, draw(c, t) { floor(c, 102); golfer(c, swingDeg(t, 1500, 500), { ready: t >= 900 && t < 3200 }); } };
+  /** the swing screen, after tapping SWING: the golfer stands over the phone, face down in both hands, almost still */
+  const swing = { W, H, loop: 3000, draw(c, t) { floor(c, 102); golfer(c, 3 * Math.sin((t / 3000) * 2 * Math.PI)); } };
+  /** READY! SWING!: the same golfer, set, with READY!. Still. */
+  const ready = { W, H, loop: 3000, still: true, draw(c) { floor(c, 102); golfer(c, 0, { ready: true }); } };
+  // ── THE GAG (Lakota, Nov 9: "make it funny they break the lamp and throw the phone into the tv") ──
+  // One room, drawn once: a lit lamp at the left (inside the backswing), the golfer, a TV on the wall at the right. The
+  // backswing takes the lamp's shade off (CRASH!); on the way through the phone leaves the hands and sticks in the TV
+  // (CRACK!). Two pictures are cut from it (Lakota picked B, Nov 9): lampGag = the lamp (card 1), tvGag = the phone
+  // into the TV (card 2, the lamp already broken). Same size as every other card picture (152 x 110), same seven colours.
+  const GX = 66, GH = 70, FY = 100, LX = 20, LH = 64, FLY_MS = 200, GRAV = 0.00045; // (art px, ms, px/ms2)
+  const TVB = { x: 110, y: 26, w: 38, h: 26, ix: 11, iy: 17 }; // the TV; (ix, iy) = where the phone goes in, from its corner
+  const LATE = 1900; // ms after a hit: the last thing gives up (the bulb drops off, the TV sags)
+  /** a comic-book bang: red spikes, gold middle */
+  function burst(c, x, y, r, rot = 0) {
+    const K = kit(c), n = 9;
+    const star = (R, col) => { const pts = []; for (let i = 0; i < n * 2; i++) { const a = rot + (i * Math.PI) / n, q = i % 2 ? R * 0.45 : R; pts.push([x + Math.cos(a) * q, y + Math.sin(a) * q]); } K.poly(pts, col); };
+    star(r, A.red); star(r * 0.52, A.gold);
+  }
+  function word(c, s, x, y, col) {
+    c.font = '8px "FoxBox Pixel"'; c.textBaseline = "top"; c.textAlign = "center";
+    c.fillStyle = col; c.fillText(s, x, y); c.textAlign = "left";
+  }
+  /** the picture jumps for a moment at each hit */
+  function shake(c, t, hits) {
+    for (const t0 of hits) {
+      const d = t - t0;
+      if (t0 != null && d >= 0 && d < 240) { const i = (d / 40) | 0; c.translate([2, -2, 1, -1, 1, 0][i], [-1, 1, -1, 1, 0, 0][i]); }
+    }
+  }
+  // the shade's pieces: [where on the shade (dx, dy), speed (vx, vy), spin, size]
+  const SHARDS = [[-6, 4, -0.018, -0.1, 0.012, 6], [5, 2, 0.016, -0.13, -0.015, 5], [-2, 9, -0.008, -0.06, 0.02, 4], [3, 10, 0.028, -0.085, -0.01, 6], [0, 5, 0.006, -0.15, 0.017, 5]];
+  /** The lamp. d = ms since the phone hit it (< 0 = whole and lit). The shade bursts into pieces that fall to the
+   *  floor and stay there, the pole wobbles, the bare bulb flickers and goes out, and a good while later drops off. */
+  function gagLamp(c, x, fy, h, d, late = LATE) {
+    const K = kit(c), top = fy - h;
+    if (d < 0) {
+      K.circ(x, top + 15, 3.2, A.gold);
+      lamp(c, x, fy, h);
+      return;
+    }
+    const wob = 0.3 * Math.exp(-d / 450) * Math.sin(d / 70), dl = d - late;
+    K.line([[x - 6, fy - 1], [x + 6, fy - 1]], 3, A.ink);
+    c.save(); c.translate(x, fy - 1); c.rotate(wob);
+    K.line([[0, 0], [0, -(h - 15)]], 2.5, A.ink);
+    if (dl < 0) K.circ(0, -(h - 13), 3.2, d < 700 && ((d / 70) | 0) % 2 === 0 ? A.gold : A.soft);
+    c.restore();
+    if (dl >= 0) { // the bulb lets go
+      const y0 = top + 12, fall = Math.sqrt((2 * (fy - 3 - y0)) / GRAV), u = Math.min(1, dl / fall);
+      K.circ(x + 7 * u, u < 1 ? y0 + 0.5 * GRAV * dl * dl : fy - 3, 3.2, A.soft);
+    }
+    for (const [dx, dy, vx, vy, spin, sz] of SHARDS) {
+      const y0 = top + dy, land = (-vy + Math.sqrt(vy * vy + 2 * GRAV * (fy - 2 - y0))) / GRAV, q = Math.min(d, land);
+      const px = x + dx + vx * q, py = d < land ? y0 + vy * q + 0.5 * GRAV * q * q : fy - 2;
+      c.save(); c.translate(px, py); c.rotate(d < land ? spin * q : 0);
+      K.poly([[-sz / 2, 1.5], [sz / 2, 1.5], [sz * 0.1, -sz * 0.55]], A.ink);
+      c.restore();
+    }
+  }
+  const CRACKS = [[[11, 17], [15, 13], [14, 9], [19, 3]], [[11, 17], [18, 16], [22, 19], [28, 15], [35, 17]], [[11, 17], [8, 12], [3, 10]], [[11, 17], [14, 21], [13, 23]]];
+  const CRACK_LATE = [[14, 9], [22, 8], [27, 11], [35, 7]];
+  /** The TV on the wall, showing golf. d = ms since the phone went in (< 0 = fine). The screen flickers and dies
+   *  cracked, the phone stays stuck in it, the set swings and hangs crooked, and a good while later sags further. */
+  function gagTv(c, d, late = LATE) {
+    const K = kit(c), { x, y, w, h, ix, iy } = TVB;
+    const hung = d < 0 ? 0 : 0.13 * (1 - Math.exp(-d / 160)) + 0.07 * Math.exp(-d / 380) * Math.sin(d / 55)
+      + (d > late ? 0.2 * (1 - Math.exp(-(d - late) / 90)) + 0.06 * Math.exp(-(d - late) / 300) * Math.sin((d - late) / 50) : 0);
+    c.save(); c.translate(x + w - 3, y + 2); c.rotate(-hung); c.translate(-(w - 3), -2); // it hangs from its top right corner
+    K.rr(0, 0, w, h, 2, A.ink);
+    const live = d < 0 || (d < 360 && ((d / 60) | 0) % 2 === 1);
+    K.rr(3, 3, w - 6, h - 6, 1, live ? A.dim : A.bg);
+    if (live) {
+      c.fillStyle = A.teal; c.fillRect(3, h - 8, w - 6, 5);
+      K.line([[25, 8], [25, h - 6]], 2, A.ink);
+      K.poly([[26, 7], [32, 10], [26, 13]], A.red);
+      K.circ(11, h - 8, 1.7, A.gold);
+    }
+    if (d >= 0) {
+      c.save(); c.beginPath(); c.rect(3, 3, w - 6, h - 6); c.clip();
+      for (const pts of CRACKS) K.line(pts, 2, A.ink);
+      if (d > late) K.line(CRACK_LATE, 2, A.ink);
+      c.restore();
+      phone(c, ix - 0.7 * 9, iy + 0.7 * 9, GH * 0.34, GH * 0.14, STUCK); // stuck in the screen, top end in
+    }
+    c.restore();
+  }
+  const STUCK = Math.PI / 4; // the phone's angle in the TV: flying up and to the right
+  /** the thrown phone on its way from the hands to the TV (u 0..1), spinning */
+  function flyingPhone(c, thRel, u) {
+    const R = GH * 0.4684, x0 = GX + Math.sin(thRel) * R, y0 = FY - 0.64 * GH + Math.cos(thRel) * R;
+    const x1 = TVB.x + TVB.ix - 0.7 * 9, y1 = TVB.y + TVB.iy + 0.7 * 9, a0 = Math.PI - thRel, a1 = STUCK + 4 * Math.PI;
+    phone(c, x0 + (x1 - x0) * u, y0 + (y1 - y0) * u - 5 * Math.sin(Math.PI * u), GH * 0.34, GH * 0.14, a0 + (a1 - a0) * u);
+  }
+  /** The room at time t. o.lamp = ms the lamp is hit (null = it is already broken), o.fly = ms the phone leaves the
+   *  hands (null = it never does), o.tvLate = ms after the TV is hit that it sags, o.g = the golfer then:
+   *  { th (deg), lean, hop, oops, bang }. */
+  function gagRoom(c, t, o) {
+    const tv = o.fly == null ? null : o.fly + FLY_MS, dLamp = o.lamp == null ? 1e6 : t - o.lamp, dTv = tv == null ? -1 : t - tv;
+    const g = o.g, flown = o.fly != null && t >= o.fly, th = rad(g.th);
+    c.save();
+    shake(c, t, [o.lamp, tv]);
+    floor(c, FY);
+    gagLamp(c, LX, FY, LH, dLamp);
+    gagTv(c, dTv, o.tvLate);
+    person(c, GX, FY, GH, { theta: th, lean: g.lean || 0, hop: g.hop || 0, empty: flown, oops: g.oops });
+    if (flown && dTv < 0) flyingPhone(c, rad(45), (t - o.fly) / FLY_MS);
+    if (g.bang) warn(c, GX + Math.sin(g.lean || 0) * GH, FY - GH * Math.cos(g.lean || 0) - 12 - (g.hop || 0));
+    if (dLamp >= 0 && dLamp < 200) burst(c, LX + 3, FY - LH + 8, 9 + dLamp / 40, dLamp / 300);
+    if (dTv >= 0 && dTv < 200) burst(c, TVB.x + TVB.ix, TVB.y + TVB.iy, 9 + dTv / 40, dTv / 300);
+    if (dLamp >= 0 && dLamp < 650) word(c, "CRASH!", 34, 12 - Math.min(6, dLamp / 40), A.red);
+    if (dTv >= 0 && dTv < 650) word(c, "CRACK!", 112, 12 - Math.min(6, dTv / 40), A.red);
+    c.restore();
+  }
+  const hopAt = (t, t0, px = 3, ms = 170) => (t >= t0 && t < t0 + ms ? px * Math.sin((Math.PI * (t - t0)) / ms) : 0);
+  /** one full swing that starts at tb: back (650 ms), through (450 ms), hold the finish until td, arms down by td + 450 */
+  const fullSwing = (t, tb, td) => (t < tb ? 0 : t < tb + 650 ? -112 * ease((t - tb) / 650) : t < tb + 1100 ? -112 + 230 * ease((t - tb - 650) / 450)
+    : t < td ? 118 : 118 * (1 - ease((t - td) / 450)));
+  /** 1 MAKE ROOM, THE LAMP: the backswing takes the lamp out; the golfer freezes at the top, slowly brings
+   *  the phone down, looks; then the bulb drops off. The TV is fine (for now). */
+  const lampGag = {
+    W, H, loop: 4800,
+    draw(c, t) {
+      const tb = 600, hit = tb + 560, drop = hit + LATE + 440;
+      const th = t < tb ? 0 : t < tb + 650 ? -112 * ease((t - tb) / 650) : t < 2200 ? -112 : -112 * (1 - ease((t - 2200) / 700));
+      gagRoom(c, t, { lamp: hit, fly: null, g: {
+        th, bang: (t >= hit + 150 && t < 2900) || (t >= drop && t < drop + 700), hop: hopAt(t, hit + 40, 4) + hopAt(t, drop, 3),
+        lean: -0.13 * seg(t, 2900, 3200),
+      } });
+    },
+  };
+  /** 2 HOLD ON TIGHT, THE TV: the lamp is already in pieces; the swing lets the phone go and it sticks in the
+   *  TV; a stare at the empty hands, hands on the head, the TV sags. */
+  const tvGag = {
+    W, H, loop: 5200,
+    draw(c, t) {
+      const tb = 500, fly = tb + 931, tvLate = 2400, sag = fly + FLY_MS + tvLate;
+      gagRoom(c, t, { lamp: null, fly, tvLate, g: {
+        th: fullSwing(t, tb, 2250), bang: t >= 2750 && t < 3200, oops: t >= 3200, hop: hopAt(t, 3200) + hopAt(t, sag + 60, 2),
+        lean: 0.12 * seg(t, 3450, 3700),
+      } });
+    },
+  };
+  /** the drive to beat on a range strip: tee at the left, a mark every 50 yards, a flag in the leader's colour.
+   *  (0 to 300 yd; a drive past 275 gets a 350 yd strip, so the flag never runs off the picture) */
+  const bar = {
+    W: 140, H: 24, loop: 1000, still: true,
+    draw(c, t, o = {}) {
+      const K = kit(c), x0 = 8, x1 = 132, y = 17, yds = Math.max(0, o.yards || 0), max = yds > 275 ? 350 : 300;
+      const X = (yd) => Math.round(x0 + ((x1 - x0) * Math.min(yd, max)) / max);
+      K.line([[x0, y], [x1, y]], 2, A.soft);
+      for (let yd = 0; yd <= max; yd += 50) K.line([[X(yd), y], [X(yd), y + 4]], 2, A.soft);
+      const fx = X(yds);
+      K.line([[fx, y - 1], [fx, 3]], 2, A.ink);
+      K.poly([[fx + 1, 2], [fx + 12, 6], [fx + 1, 10]], o.color || A.gold);
+      K.circ(x0, y - 4, 2.6, A.ink);
+    },
+  };
+  return { makePic, SCENES: { lampGag, tvGag, howto, swing, ready, bar }, PAL: Object.values(A) };
+})();
+/** The three intro cards (the words are Lakota's approved ones; "the TV" on card 1 is a thing to mind, not a place to look). */
+const CARDS = [
+  { pic: "lampGag", title: "MAKE ROOM", say: ["Nobody beside or behind you.", "Mind the lamp and the TV."], go: "OK" },
+  { pic: "tvGag", title: "HOLD ON TIGHT", say: ["Both hands on your phone.", "Don't let go when you swing."], go: "OK" },
+  { pic: "howto", title: "HOW TO SWING", say: ["Phone face down. Two hands.", "Hold still, then swing."], go: "GOT IT" },
+];
+const CARD_TAP_MS = 400; // a tap this soon after a card came up belongs to the card before (a double tap never skips one unseen)
+const CARDS_RESEND_MS = 1000; // GOT IT again at most this often while the TV's views still ask for the cards
+/** The wind as a small pixel arrow in the text colour, 8 ways: 0 deg = blowing straight down the range (up on the phone). */
+const windSvg = (dir) => `<svg width="18" height="18" viewBox="0 0 9 9" shape-rendering="crispEdges" style="transform:rotate(${Math.round((((dir % 360) + 360) % 360) / 45) * 45}deg)" aria-hidden="true"><path fill="currentColor" d="M4 0h1v1h1v1h1v1h-2v6h-1v-6h-2v-1h1v-1h1z"/></svg>`;
+/** The shot to beat in this mini-game as the waiting screens word it (view.best, null = nothing to show yet).
+ *  Never "TO BEAT 40 PTS / KAI", which reads as Kai's total: the label says it is one shot, per mini-game. */
+function bestWords(v) {
+  const b = v && v.best, id = v && v.game && v.game.id;
+  if (!b) return null;
+  const by = { name: b.name, color: b.color };
+  if (id === "drive") return { ...by, label: "LONGEST SO FAR", short: "LONGEST", num: String(b.yards), unit: "YD", yards: b.yards };
+  if (id === "pin") return b.hio ? { ...by, label: "CLOSEST SO FAR", short: "CLOSEST", num: "HOLE", unit: "IN ONE", wide: "IN THE HOLE" }
+    : { ...by, label: "CLOSEST SO FAR", short: "CLOSEST", num: (+b.yards).toFixed(1), unit: "YD" };
+  return { ...by, label: "BEST SHOT SO FAR", short: "BEST SHOT", num: String(b.points), unit: "PTS" };
+}
+
 // ── Styles (house pixel look: FoxBox Pixel caps, FoxBox Soft names, stepped 4px frames, hard shadows) ──
 const CSS = `
 #pad-screen.golf #controls { flex: 1 1 auto !important; height: auto !important; }
@@ -166,11 +508,11 @@ const CSS = `
 #golf .gp-s::after { margin-bottom: auto; }
 #golf .gp[data-screen="wait"] .gp-wait, #golf .gp[data-screen="intro"] .gp-intro, #golf .gp[data-screen="aim"] .gp-aim,
 #golf .gp[data-screen="armed"] .gp-armed, #golf .gp[data-screen="flight"] .gp-flight, #golf .gp[data-screen="result"] .gp-result,
-#golf .gp[data-screen="standings"] .gp-standings, #golf .gp[data-screen="done"] .gp-standings, #golf .gp[data-screen="upright"] .gp-upright { display: flex; }
+#golf .gp[data-screen="standings"] .gp-standings, #golf .gp[data-screen="done"] .gp-standings, #golf .gp[data-screen="upright"] .gp-upright,
+#golf .gp[data-screen="cards"] .gp-cards { display: flex; }
 #golf .gp-big { font-size: clamp(18px, 6.2vw, 28px); line-height: 1.35; color: #ffd23f; text-shadow: 3px 3px 0 #0a1428; }
 #golf .gp-mid { font-size: clamp(11px, 3.6vw, 15px); line-height: 1.6; }
 #golf .gp-small { font-size: 9px; line-height: 1.7; color: #c9d2e6; }
-#golf .gp-turnsub:empty { display: none; } /* an empty line still costs one gap: hidden, the rest stays centred */
 #golf .gp-soft { font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif; font-weight: 700; }
 #golf .gp-name { font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif; font-weight: 700; font-size: clamp(22px, 7vw, 32px); line-height: 1.1; text-shadow: 3px 3px 0 #0a1428; }
 #golf .gp-row { display: flex; align-items: center; justify-content: center; gap: 14px; }
@@ -189,8 +531,6 @@ const CSS = `
 #golf .gp-wind { display: flex; align-items: center; gap: 8px; }
 #golf .gp-wind-ar { display: inline-block; }
 #golf .gp-goal { font-size: 11px; line-height: 1.6; color: #ffd23f; }
-#golf .gp-pose-pic { display: flex; justify-content: center; }
-#golf .gp-pose-pic .gp-px { width: min(30vw, 128px); height: auto; }
 #golf .gp-ready { font-size: clamp(16px, 5.5vw, 24px); line-height: 1.4; padding: 14px 10px; color: #c9d2e6; }
 #golf .gp-ready.on { color: #0a1428; background: #ffd23f; }
 #golf .gp-note { font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif; font-weight: 700; font-size: 16px; line-height: 1.35; color: #ffb4a6; }
@@ -201,11 +541,7 @@ const CSS = `
 #golf .gp-board .r.me { color: #35d07f; }
 #golf .gp-board .r .nm { font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif; font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #golf .gp-board .r .gn { color: #ffd23f; font-size: 9px; margin-left: 6px; }
-#golf .gp-turnpic { display: flex; justify-content: center; }
-#golf .gp-turnpic .gp-px { width: 72px; height: auto; }
 #golf .gp-next { color: #0a1428; background: #35d07f; padding: 10px; font-size: 12px; line-height: 1.5; align-self: center; }
-#golf .gp-last { font-size: 10px; line-height: 1.7; color: #c9d2e6; }
-#golf .gp-last b { color: #fff; font-weight: 400; }
 #golf .gp-pts { font-size: clamp(22px, 7.5vw, 34px); color: #35d07f; text-shadow: 3px 3px 0 #0a1428; }
 #golf .gp-pts.zero { color: #ff5a3c; }
 #golf .gp-result.perfect .gp-big { animation: gp-flash 0.5s steps(2, end) infinite; }
@@ -266,8 +602,7 @@ const CSS = `
 #golf .gp.gp-skinned .gp-frame { background: transparent; margin: 2px; box-shadow: inset 0 0 0 2px var(--sk-lcd-dim); }
 #golf .gp.gp-skinned .gp-big, #golf .gp.gp-skinned .gp-name, #golf .gp.gp-skinned .gp-pts, #golf .gp.gp-skinned .gp-aimval b { text-shadow: none; }
 #golf .gp.gp-skinned .gp-big, #golf .gp.gp-skinned .gp-goal, #golf .gp.gp-skinned .gp-board .r .gn { color: var(--sk-lcd-gold); }
-#golf .gp.gp-skinned .gp-small, #golf .gp.gp-skinned .gp-last, #golf .gp.gp-skinned .gp-ready, #golf .gp.gp-skinned .gp-up-tip { color: var(--sk-lcd-soft); }
-#golf .gp.gp-skinned .gp-last b { color: var(--sk-lcd-ink); }
+#golf .gp.gp-skinned .gp-small, #golf .gp.gp-skinned .gp-ready, #golf .gp.gp-skinned .gp-up-tip { color: var(--sk-lcd-soft); }
 #golf .gp.gp-skinned .gp-next { background: var(--sk-lcd-good); color: var(--sk-lcd); }
 #golf .gp.gp-skinned .gp-pts, #golf .gp.gp-skinned .gp-board .r.me { color: var(--sk-lcd-good); }
 #golf .gp.gp-skinned .gp-pts.zero, #golf .gp.gp-skinned .gp-note { color: var(--sk-lcd-bad); }
@@ -306,8 +641,77 @@ const CSS = `
   #golf .gp[data-screen="armed"] .gp-armed { flex-direction: row; flex-wrap: wrap; align-content: center; }
   #golf .gp-armed .gp-pose-pic { flex: 0 0 auto; }
   #golf .gp-armed .gp-arm-text { flex: 1 1 50%; display: flex; flex-direction: column; gap: 8px; }
-  #golf .gp-pose-pic .gp-px { width: min(18vw, 110px); }
   #golf .gp-big { font-size: clamp(16px, 3.6vw, 24px); }
+}
+/* THE INTRO CARDS and the waiting / swing screens ("LCD SIGNS", Lakota Nov 9): the sections with .pc, laid in the pad's
+   LCD like every other text screen. The --sk-* colours come from the pixel pad; the fallbacks are the CLASSIC pad's. */
+#golf .gp > .gp-s.pc { gap: 12px; }
+#golf .pc .pc-pic { display: flex; justify-content: center; flex: none; }
+#golf .pc .pc-pic[hidden] { display: none; }
+#golf .pc .pc-cv { display: block; image-rendering: pixelated; }
+#golf .pc .pc-title { font-size: clamp(17px, 5.6vw, 23px); line-height: 1.3; }
+#golf .pc .gp-next.pc-head { font-size: clamp(17px, 5.6vw, 23px); line-height: 1.3; padding: 10px 12px; } /* "YOU'RE NEXT" is the headline */
+#golf .pc .pc-say { font-size: 19px; line-height: 1.3; }
+#golf .pc .pc-kick { letter-spacing: 0.04em; }
+#golf .pc .pc-go { align-self: stretch; min-height: 58px; margin: 4px 8px 14px; font-size: 18px; --gp-bg: #ffd23f; }
+#golf .gp.gp-skinned .pc .pc-go { --pb: var(--sk-a-base); --pm: var(--sk-a-mid); --pl: var(--sk-a-lt); --pd: var(--sk-a-dk); color: var(--sk-a-txt, #101125); }
+#golf .pc .gp-arm-text { display: flex; flex-direction: column; gap: 12px; }
+#golf .pc .gp-back { margin-bottom: 14px; }
+#golf .pc .pc-up { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+#golf .pc .pc-up > i { width: 22px; height: 22px; background: var(--pc); box-shadow: 0 0 0 3px var(--sk-lcd-ink, #fff); }
+#golf .pc .pc-up .gp-name { font-size: clamp(30px, 10vw, 40px); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#golf .pc .pc-up small { flex-basis: 100%; font-size: 9px; line-height: 1.6; }
+#golf .pc .pc-track { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0 2px; }
+#golf .pc .pc-track span { font-size: 10px; line-height: 1; padding: 10px 0; color: var(--sk-lcd-soft, #c9d2e6); box-shadow: inset 0 0 0 2px var(--sk-lcd-dim, #ffffff2e); }
+#golf .pc .pc-track span.done { color: var(--sk-lcd-ink, #fff); box-shadow: inset 0 0 0 2px var(--sk-lcd-ink, #fff); }
+#golf .pc .pc-track span.on { color: #101125; background: var(--sk-lcd-gold, #ffd23f); box-shadow: none; }
+#golf .pc .pc-status { display: flex; align-items: center; justify-content: center; gap: 8px; }
+#golf .pc .pc-status > i, #golf .pc .pc-who > i { display: inline-block; width: 12px; height: 12px; background: var(--pc); box-shadow: 0 0 0 2px var(--sk-lcd-ink, #fff); margin-right: 8px; }
+#golf .pc .pc-num { font-size: clamp(24px, 8vw, 32px); line-height: 1.3; color: var(--sk-lcd-gold, #ffd23f); }
+#golf .pc .pc-num.sm { font-size: clamp(15px, 5vw, 20px); line-height: 1.6; }
+#golf .pc .pc-who { font-size: 20px; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#golf .pc .pc-beat { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+#golf .pc .pc-two { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+#golf .pc .pc-two.one { grid-template-columns: 1fr; }
+#golf .pc .pc-two .gp-frame { display: flex; flex-direction: column; gap: 5px; align-items: center; padding: 10px 4px; min-width: 0; }
+#golf .pc .pc-wind { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 10px; line-height: 1.5; flex-wrap: wrap; }
+#golf .pc .pc-wind svg { display: block; }
+#golf .pc .gp-board { font-size: 11px; gap: 7px; padding: 0 6px; }
+#golf .pc .gp-board .r { grid-template-columns: 46px minmax(0, 1fr) auto; }
+#golf .pc .gp-board .r .nm { font-size: 19px; }
+#golf .pc .gp-board .r .nm i { display: inline-block; width: 10px; height: 10px; background: var(--pc); margin-right: 8px; }
+#golf .pc .gp-board .more { font-size: 9px; line-height: 1.6; text-align: center; color: var(--sk-lcd-soft, #c9d2e6); }
+/* a short phone (375 x 667): tighter */
+@media (max-height: 700px) {
+  #golf .gp > .gp-s.pc { gap: 8px; }
+  #golf .pc .pc-say { font-size: 17px; }
+  #golf .pc .pc-go { min-height: 48px; margin-bottom: 12px; }
+  #golf .pc .gp-arm-text { gap: 8px; }
+  #golf .pc .gp-board { gap: 3px; }
+  #golf .pc .pc-up .gp-name { font-size: 30px; }
+}
+/* a sideways window: the picture beside the words (cards, like the swing screen), the waiting screens in two columns */
+@media (orientation: landscape) and (max-height: 520px) {
+  #golf .gp > .gp-s.pc { gap: 6px; }
+  #golf .gp[data-screen="cards"] .gp-cards, #golf .gp[data-screen="wait"] .gp-wait { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; row-gap: 6px; align-content: center; align-items: center; }
+  #golf .gp-cards::before, #golf .gp-cards::after, #golf .gp-wait::before, #golf .gp-wait::after { display: none; }
+  #golf .gp-cards .pc-pic { grid-column: 1; grid-row: 1 / span 4; }
+  #golf .gp-cards > :not(.pc-pic) { grid-column: 2; }
+  #golf .gp[data-screen="wait"] .gp-wait { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  #golf .gp-wait > * { grid-column: 1; }
+  #golf .gp-wait > .pc-beat, #golf .gp-wait > .gp-board, #golf .gp-wait > .pc-two, #golf .gp-wait > .pc-wind { grid-column: 2; }
+  #golf .gp-wait > .pc-beat, #golf .gp-wait > .pc-two { grid-row: 1 / span 2; }
+  #golf .gp-wait > .gp-board, #golf .gp-wait > .pc-wind { grid-row: 3 / span 2; }
+  #golf .pc .pc-say { font-size: 15px; }
+  #golf .pc .pc-go { min-height: 44px; margin: 2px 8px 8px; }
+  #golf .pc .gp-arm-text { gap: 6px; }
+  #golf .pc .gp-back { margin-bottom: 8px; }
+  #golf .pc .gp-board { gap: 2px; }
+  #golf .pc .gp-board .r .nm { font-size: 15px; }
+  #golf .pc .pc-up .gp-name { font-size: 26px; }
+  #golf .pc .pc-num { font-size: 22px; }
+  #golf .pc .pc-who { font-size: 16px; }
+  #golf .pc .pc-two .gp-frame { padding: 6px 4px; gap: 2px; }
 }
 `;
 
@@ -437,13 +841,14 @@ export function createGolfPad(root, { send, me }) {
   root.innerHTML = `
   <div class="gp" data-test="golf-screen" data-screen="wait">
     <div class="gp-head gp-frame"><span class="gp-game">TEE TIME</span><span class="gp-timer" data-test="golf-timer" hidden></span><span class="gp-score" data-test="golf-score"></span></div>
-    <section class="gp-s gp-wait">
-      <div class="gp-turnpic"></div>
-      <div class="gp-name gp-turnname" data-test="golf-turn"></div>
-      <div class="gp-mid gp-turnsub"></div>
-      <div class="gp-next" hidden>YOU'RE NEXT!</div>
-      <div class="gp-last gp-frame" data-test="golf-last" hidden></div>
+    <section class="gp-s gp-cards pc" data-test="golf-cards">
+      <div class="gp-small pc-kick"></div>
+      <div class="gp-big pc-title"></div>
+      <div class="pc-pic" data-pic="lampGag"></div>
+      <div class="gp-soft pc-say"></div>
+      <button type="button" class="gp-btn pc-go" data-test="golf-card-ok" data-native>OK</button>
     </section>
+    <section class="gp-s gp-wait pc" data-test="golf-wait"></section>
     <section class="gp-s gp-intro">
       <div class="gp-small gp-intro-no"></div>
       <div class="gp-big gp-intro-name"></div>
@@ -476,11 +881,11 @@ export function createGolfPad(root, { send, me }) {
       <div class="gp-big gp-up-big">TURN YOUR PHONE UPRIGHT</div>
       <div class="gp-soft gp-up-tip">Hold it tall, like a golf club. Your aim and SWING are waiting.</div>
     </section>
-    <section class="gp-s gp-armed">
-      <div class="gp-pose-pic" data-test="golf-pose-pic"></div>
+    <section class="gp-s gp-armed pc">
+      <div class="pc-pic gp-pose-pic" data-test="golf-pose-pic" data-pic="swing"></div>
       <div class="gp-arm-text">
-        <div class="gp-mid">TURN YOUR PHONE FACE DOWN</div>
-        <div class="gp-soft" style="font-size:17px;line-height:1.35">Both hands, like a golf club. Hold still, then swing!</div>
+        <div class="gp-mid gp-arm-head">TURN YOUR PHONE FACE DOWN</div>
+        <div class="gp-soft pc-say gp-arm-say">Both hands, like a golf club.<br>Hold still, then swing!</div>
         <div class="gp-ready gp-frame" data-test="golf-pose">WAITING FOR MOTION...</div>
         <div class="gp-note"></div>
         <button type="button" class="gp-btn gp-link gp-enable" data-test="golf-enable" data-native hidden>TRY MOTION AGAIN</button>
@@ -507,7 +912,8 @@ export function createGolfPad(root, { send, me }) {
   const $ = (sel) => root.querySelector(sel);
   const el = {
     gp: $(".gp"), game: $(".gp-game"), score: $(".gp-score"), timer: $(".gp-timer"),
-    turnpic: $(".gp-turnpic"), turnname: $(".gp-turnname"), turnsub: $(".gp-turnsub"), next: $(".gp-next"), last: $(".gp-last"),
+    cards: $(".gp-cards"), cardKick: $(".gp-cards .pc-kick"), cardTitle: $(".gp-cards .pc-title"), cardPic: $(".gp-cards .pc-pic"), cardSay: $(".gp-cards .pc-say"), cardGo: $(".gp-cards .pc-go"),
+    wait: $(".gp-wait"), armHead: $(".gp-arm-head"), armSay: $(".gp-arm-say"),
     introNo: $(".gp-intro-no"), introName: $(".gp-intro-name"), introSub: $(".gp-intro-sub"), introHint: $(".gp-intro-hint"), introFirst: $(".gp-intro-first"),
     wind: $(".gp-wind"), goal: $(".gp-aim-goal"), aimDeg: $(".gp-aim-deg"), left: $('[data-test="golf-left"]'), right: $('[data-test="golf-right"]'),
     swing: $(".gp-swing"), eye: $(".gp-eye"), eyeTxt: $(".gp-eye-txt"), posePic: $(".gp-pose-pic"), ready: $(".gp-ready"), note: $(".gp-note"), enable: $(".gp-enable"), pass: $(".gp-pass"), back: $(".gp-back"),
@@ -528,6 +934,13 @@ export function createGolfPad(root, { send, me }) {
   const BACK_RESEND_MS = 900; // "I'm back" again at most this often (the TV's views come once a second)
   const SWING_RESEND_MS = 2000; // > a slow link's round trip + the TV's 1 s view beat (a view from before the swing landed)
   const READY_RESEND_MS = 1500;
+  // the intro cards: which card, GOT IT tapped (this round), when the card came up, when {type:"cards"} last went out;
+  // staleRound = the round whose views were on this phone when the pad was last put away (never shown during a countdown)
+  let cardIdx = 0, cardsDone = false, cardAt = 0, cardsSentAt = 0, cardsOnAt = 0, staleRound = null;
+  const cardsUp = () => !!(view && view.cards && !cardsDone && view.phase !== "done" && !(status && status.state === "countdown" && view.roundId === staleRound));
+  // the pictures: box -> { key, scene, pic, extra }; the clock they are drawn at (ms; picClock = a test's stepped clock)
+  const pics = new Map();
+  let picT0 = performance.now(), picClock = null, picRaf = 0, picDrawn = 0;
 
   // ── which way the phone is held: gravity (see the top). Signs don't matter (iOS reports them the other way round). ──
   const TILT_ON = 6.5, TILT_OFF = 4.5; // m/s2 of gravity across the short edge: sideways from ~42 deg, back under ~27 deg
@@ -830,6 +1243,19 @@ export function createGolfPad(root, { send, me }) {
     render();
   }
   el.eye.addEventListener("click", doEye);
+  el.cardGo.addEventListener("click", () => {
+    const now = performance.now();
+    if (screen !== "cards" || now - cardAt < CARD_TAP_MS) return;
+    buzz(12);
+    cardAt = picT0 = now;
+    if (cardIdx < CARDS.length - 1) cardIdx++;
+    else {
+      cardsDone = true;
+      cardsSentAt = now;
+      send({ type: "cards" });
+    }
+    render();
+  });
   function doSwing() {
     if (screen !== "aim" || !view?.isYourTurn) return;
     aimStop();
@@ -876,6 +1302,8 @@ export function createGolfPad(root, { send, me }) {
       roundId = v.roundId;
       armed = swung = false;
       motionOff();
+      cardIdx = 0; // a new round: the cards (if the TV asks for them) start over
+      cardsDone = false;
     }
     const key = myTurnKey(v);
     if (key && key !== turnKey) {
@@ -895,6 +1323,18 @@ export function createGolfPad(root, { send, me }) {
     if (tvAway && shown && !document.hidden && performance.now() - backSentAt > BACK_RESEND_MS) {
       backSentAt = performance.now();
       send({ type: "hidden", on: false });
+    }
+    // GOT IT never arrived (the hub drops phone messages during its READY... countdown; bad Wi-Fi): say it again.
+    // Idempotent on the TV; it answers with a view that no longer asks for the cards.
+    if (v.cards && cardsDone && performance.now() - cardsSentAt > CARDS_RESEND_MS) {
+      cardsSentAt = performance.now();
+      send({ type: "cards" });
+    }
+    // The cards are on this screen: tell the TV (its camera only waits up high for a phone that said so; a TV without
+    // view.cardsSeen is not asked). Said again the same way until the view agrees.
+    if (v.cardsSeen === false && shown && cardsUp() && performance.now() - cardsOnAt > CARDS_RESEND_MS) {
+      cardsOnAt = performance.now();
+      send({ type: "cards", on: true });
     }
     // the TV moved on (shot taken, time up, turn over): follow it
     if (!v.isYourTurn || !["aim", "armed"].includes(v.phase)) {
@@ -928,6 +1368,7 @@ export function createGolfPad(root, { send, me }) {
   function screenOf() {
     if (!shown) return "off";
     const v = view;
+    if (cardsUp()) return "cards"; // before anything else (the countdown too): nothing else is on the pad meanwhile
     if (!v || !status || status.state === "countdown") return "wait";
     switch (v.phase) {
       case "intro": return "intro";
@@ -949,6 +1390,8 @@ export function createGolfPad(root, { send, me }) {
     const next = screenNow();
     if (next !== screen) {
       if (screen === "aim" && aimDir) aimStop();
+      if (next === "cards" || next === "armed") picT0 = performance.now(); // the picture starts its loop with the screen
+      if (next === "cards") cardAt = picT0;
       screen = next;
     }
     applyTurn();
@@ -956,37 +1399,38 @@ export function createGolfPad(root, { send, me }) {
     const v = view;
     const set = (node, txt) => { if (node.textContent !== txt) node.textContent = txt; };
     const html = (node, h) => { if (node.dataset.h !== h) { node.innerHTML = h; node.dataset.h = h; } };
-    if (!v || !status || status.state === "countdown") {
+    const pre = !v || !status || status.state === "countdown";
+    const g = (v && v.game) || {};
+    if (pre) {
       set(el.game, "TEE TIME");
       set(el.score, "");
       el.timer.hidden = true;
-      html(el.turnpic, sprite("golfer", 5, getComputedStyle(document.documentElement).getPropertyValue("--c").trim() || "#35d07f"));
-      set(el.turnname, "GET READY!");
-      set(el.turnsub, ""); // (no "LOOK AT THE TV": Lakota, Nov 9; the empty line is hidden so the rest stays centred)
-      el.next.hidden = true;
-      el.last.hidden = true;
-      return;
+    } else {
+      set(el.game, `${(g.index ?? 0) + 1}/${g.count || 3} ${g.name || ""}`);
+      set(el.score, v.you ? `${v.you.total} PTS ${ordinal(v.you.rank).toUpperCase()}` : "");
+      // the turn clock's last 30 s, small, for the golfer up only
+      const tmr = myTimer(v);
+      el.timer.hidden = !tmr;
+      set(el.timer, tmr || "");
+      el.timer.classList.toggle("low", !!tmr && (v.timer.left | 0) <= 5);
     }
-    const g = v.game || {};
-    set(el.game, `${(g.index ?? 0) + 1}/${g.count || 3} ${g.name || ""}`);
-    set(el.score, v.you ? `${v.you.total} PTS ${ordinal(v.you.rank).toUpperCase()}` : "");
-    // the turn clock's last 30 s, small, for the golfer up only
-    const tmr = myTimer(v);
-    el.timer.hidden = !tmr;
-    set(el.timer, tmr || "");
-    el.timer.classList.toggle("low", !!tmr && (v.timer.left | 0) <= 5);
 
-    if (screen === "wait") {
-      const t = v.turn;
-      html(el.turnpic, t ? sprite("golfer", 5, t.color) : "");
-      set(el.turnname, t ? `${t.name} IS UP` : "GET READY!");
-      el.turnname.style.color = t?.color || "#fff";
-      set(el.turnsub, !t ? "" : v.phase === "armed" ? (v.ready ? "READY TO SWING..." : "GETTING READY...") : v.phase === "flight" ? "THERE IT GOES!" : "AIMING...");
-      el.next.hidden = !v.youreNext;
-      const last = v.last;
-      el.last.hidden = !last;
-      if (last) html(el.last, `<b class="gp-soft" style="font-size:15px">${esc(last.name)}</b> ${esc(last.label)} · +${last.points}`);
-    } else if (screen === "intro") {
+    if (screen === "cards") {
+      const cd = CARDS[cardIdx];
+      el.cards.dataset.card = String(cardIdx + 1);
+      set(el.cardKick, `BEFORE YOU SWING  ${cardIdx + 1}/${CARDS.length}`);
+      set(el.cardTitle, cd.title);
+      if (el.cardPic.dataset.pic !== cd.pic) el.cardPic.dataset.pic = cd.pic;
+      html(el.cardSay, `${esc(cd.say[0])}<br>${esc(cd.say[1])}`);
+      if (el.cardGo.dataset.label !== cd.go) { el.cardGo.textContent = cd.go; el.cardGo.dataset.label = cd.go; } // (the pixel pad re-letters it: syncSkin)
+    } else if (pre) {
+      html(el.wait, ""); // the hub's countdown: nothing to say yet, so nothing is shown (no filler line)
+    } else if (screen === "wait") {
+      html(el.wait, waitHtml(v));
+    } else {
+      html(el.wait, ""); // not showing: no stale score rows left in the page under another screen
+    }
+    if (screen === "intro") {
       set(el.introNo, `CHALLENGE ${(g.index ?? 0) + 1} OF ${g.count || 3}${g.map?.name ? ` · ${g.map.name}` : ""}`);
       set(el.introName, g.name || "");
       set(el.introSub, g.sub || "");
@@ -1006,7 +1450,6 @@ export function createGolfPad(root, { send, me }) {
       el.eye.dataset.on = on ? "1" : "0";
       set(el.eyeTxt, on ? "BIRD'S EYE: ON" : "BIRD'S EYE");
     } else if (screen === "armed") {
-      html(el.posePic, sprite("address", 6, getComputedStyle(document.documentElement).getPropertyValue("--c").trim() || "#35d07f"));
       el.ready.classList.toggle("on", ready);
       el.ready.dataset.ready = ready ? "1" : "0";
       set(el.ready, ready ? "READY! SWING!" : motion === "asking" ? "TAP ALLOW..." : motion === "on" ? (gotData ? "FACE DOWN + HOLD STILL" : "WAITING FOR MOTION...") : "MOTION IS OFF");
@@ -1016,6 +1459,13 @@ export function createGolfPad(root, { send, me }) {
         : motion === "nodata" ? "No motion readings. Check Settings > Safari > Motion & Orientation Access, then try again."
         : "";
       set(el.note, note);
+      // the picture and the words follow READY (the phone is face down then: its sound / buzz and the TV carry it);
+      // with a motion problem the picture makes way for the note and its buttons
+      const pic = ready ? "ready" : "swing";
+      if (el.posePic.dataset.pic !== pic) el.posePic.dataset.pic = pic;
+      el.posePic.hidden = !!note;
+      set(el.armHead, ready ? "NOW SWING!" : "TURN YOUR PHONE FACE DOWN");
+      html(el.armSay, ready ? "Swing it like a golf club.<br>Hold on tight!" : "Both hands, like a golf club.<br>Hold still, then swing!");
       el.enable.hidden = !(motion === "denied" || motion === "nodata");
       el.pass.hidden = !["denied", "nodata", "unavailable", "insecure"].includes(motion);
     } else if (screen === "flight") {
@@ -1035,7 +1485,87 @@ export function createGolfPad(root, { send, me }) {
       html(el.board, rows);
       set(el.stMe, v.you ? `YOU: ${ordinal(v.you.rank).toUpperCase()} · ${v.you.total} PTS` : "");
     }
+    syncPics();
   }
+
+  // ── the waiting screens: who is up and their step, the shot to beat, the scores; "you're next" with the wind ──
+  const chip = (c) => `<i style="--pc:${esc(c)}"></i>`;
+  const ORD = (n) => ordinal(n).toUpperCase();
+  const BOARD_ROWS = 4; // what fits under the shot to beat on a short phone: the top rows, and always your own
+  function waitHtml(v) {
+    const up = v.turn, g = v.game || {};
+    if (!up) return ""; // no turn yet: nothing useful to show, so nothing (no filler line)
+    // (hold: the TV is waiting for the golfer up to finish the intro cards; no step is lit yet)
+    const word = v.hold ? "MAKING ROOM..." : v.phase === "armed" ? (v.ready ? "READY TO SWING..." : "LINING UP...") : v.phase === "flight" ? "THERE IT GOES!" : "AIMING...";
+    const stage = v.hold ? -1 : v.phase === "aim" ? 0 : v.phase === "armed" && !v.ready ? 1 : 2;
+    const b = bestWords(v), meId = v.you && v.you.playerId;
+    const sr = `<span class="gp-sr" data-test="golf-turn">${esc(up.name)} IS UP</span>`;
+    if (v.youreNext) {
+      const best = b ? `<div class="gp-frame" data-test="golf-best" data-best="${esc(`${b.num} ${b.unit}`)}" data-by="${esc(b.name)}"><div class="gp-small">${b.short}</div><div class="pc-num">${esc(b.num)}</div><div class="gp-small">${b.unit}</div><div class="gp-soft pc-who">${chip(b.color)}${esc(b.name)}</div></div>` : "";
+      const mine = v.you ? `<div class="gp-frame" data-test="golf-mine"><div class="gp-small">YOUR TOTAL</div><div class="pc-num">${v.you.total}</div><div class="gp-small">PTS</div><div class="gp-soft pc-who">${ORD(v.you.rank)} PLACE</div></div>` : "";
+      return `<div class="gp-next pc-head" data-test="golf-next">YOU'RE NEXT</div>
+        <div class="gp-small pc-status">${chip(up.color)}${esc(up.name)} IS UP: ${word}</div>${sr}
+        ${best || mine ? `<div class="pc-two${best && mine ? "" : " one"}">${best}${mine}</div>` : ""}
+        <div class="gp-frame pc-wind">${windSvg(v.wind?.dir || 0)}<span>WIND ${Math.round(v.wind?.mph || 0)} MPH</span><span class="gp-goal">${esc(g.hint || "")}</span></div>
+        <div class="gp-soft pc-say">Stand up and make room.</div>`;
+    }
+    const col = /^#[0-9a-f]{6}$/i.test(b?.color || "") ? b.color : "";
+    const best = b ? `<div class="gp-frame pc-beat" data-test="golf-best" data-best="${esc(b.wide || `${b.num} ${b.unit}`)}" data-by="${esc(b.name)}"><div class="gp-small">${b.label}</div><div class="pc-num${b.wide ? " sm" : ""}">${esc(b.wide || `${b.num} ${b.unit}`)}</div>${
+      b.yards != null ? `<div class="pc-pic" data-pic="bar" data-yards="${+b.yards || 0}" data-color="${col}"></div>` : ""}<div class="gp-soft pc-who">${chip(b.color)}${esc(b.name)}</div></div>` : "";
+    // the scores: the top rows; with more golfers than fit, the last row is always your own
+    const all = v.scores || [], mineAt = all.findIndex((x) => x.playerId === meId);
+    let rows = all;
+    if (all.length > BOARD_ROWS) rows = mineAt >= BOARD_ROWS ? [...all.slice(0, BOARD_ROWS - 1), all[mineAt]] : all.slice(0, BOARD_ROWS);
+    const board = rows.map((x) => `<div class="r${x.playerId === meId ? " me" : ""}"><span>${ORD(x.rank)}</span><span class="nm">${chip(x.color)}${esc(x.name)}${x.playerId === meId ? " (YOU)" : ""}</span><span>${x.total} PTS</span></div>`).join("");
+    return `<div class="pc-up" style="--pc:${esc(up.color)}"><small class="gp-small">GOLFER ${(up.index | 0) + 1} OF ${up.count || all.length || 1}</small><i></i><span class="gp-name">${esc(up.name)}</span><span class="gp-mid">IS UP</span></div>${sr}
+      <div class="pc-track" data-test="golf-track" data-stage="${stage}">${["AIM", "READY", "SWING"].map((w, i) => `<span class="${i < stage ? "done" : i === stage ? "on" : ""}">${w}</span>`).join("")}</div>
+      <div class="gp-small pc-status" data-test="golf-status">${word}</div>
+      ${best}
+      <div class="gp-board" data-test="golf-board">${board}${all.length > rows.length ? `<div class="more">${all.length} GOLFERS</div>` : ""}</div>`;
+  }
+
+  // ── the pictures: one small canvas per [data-pic] box, redrawn ~30 times a second while a moving one shows ──
+  const picScale = () => { // CSS px per art pixel: whole device pixels, smaller on a short or sideways screen
+    const dpr = window.devicePixelRatio || 1, land = landWindow();
+    return Math.max(land ? 1 : 2, Math.floor((land ? 1 : innerHeight >= 780 ? 2 : 1.5) * dpr)) / dpr;
+  };
+  const picTime = () => (picClock != null ? picClock : performance.now() - picT0);
+  const picMoving = () => shown && (screen === "cards" || (screen === "armed" && !ready));
+  function drawPic(e, t) {
+    const L = e.scene.loop;
+    try { e.pic.render((c) => e.scene.draw(c, ((t % L) + L) % L, e.extra || undefined)); } catch {}
+  }
+  function drawPics(all) {
+    const t = picTime();
+    for (const [box, e] of pics) if (all || (!e.scene.still && box.getClientRects().length)) drawPic(e, t);
+  }
+  function syncPics() {
+    const k = picScale();
+    for (const box of [...pics.keys()]) if (!box.isConnected) pics.delete(box);
+    for (const box of el.gp.querySelectorAll("[data-pic]")) {
+      const name = box.dataset.pic, scene = PICS.SCENES[name];
+      if (!scene) continue;
+      const key = `${name}|${k}|${box.dataset.yards || ""}|${box.dataset.color || ""}`;
+      let e = pics.get(box);
+      if (e && e.key === key) continue;
+      const extra = name === "bar" ? { yards: +box.dataset.yards || 0, color: box.dataset.color || "" } : null;
+      const pic = PICS.makePic(scene.W, scene.H, [...PICS.PAL, ...(extra && extra.color ? [extra.color] : [])]);
+      pic.canvas.style.width = `${scene.W * k}px`;
+      pic.canvas.style.height = `${scene.H * k}px`;
+      box.replaceChildren(pic.canvas);
+      e = { key, scene, pic, extra, k };
+      pics.set(box, e);
+      drawPic(e, picTime());
+    }
+    if (picMoving() && !picRaf) picRaf = requestAnimationFrame(picFrame);
+  }
+  function picFrame(ts) {
+    picRaf = 0;
+    if (!picMoving()) return;
+    if (picClock == null && ts - picDrawn >= 30) { picDrawn = ts; drawPics(false); }
+    picRaf = requestAnimationFrame(picFrame);
+  }
+  try { document.fonts?.load?.('8px "FoxBox Pixel"').then(() => drawPics(true)).catch(() => {}); } catch {} // (READY! in the pictures)
 
   // ── SKINS: the pixel pad over this screen (see loadSkin above; nothing here runs on CLASSIC) ──
   function skinWanted() {
@@ -1184,6 +1714,14 @@ export function createGolfPad(root, { send, me }) {
     get skin() { return skin; }, // SKINS: the pixel pad (null on CLASSIC): regions, grid, style
     get skinLcd() { return skin ? skinLcdNow && { ...skinLcdNow } : null; }, // SKINS: the aim LCD's lines (goal, aim, wind)
     get setup() { return setupInfo ? { picker: setupInfo.picker, map: setupInfo.lobby?.golf?.map ?? null } : null; },
+    get cards() { return { on: screen === "cards", index: cardIdx, done: cardsDone, tv: !!view?.cards }; }, // the intro cards
+    get pics() { return [...pics].filter(([box]) => box.getClientRects().length).map(([box, e]) => ({ name: box.dataset.pic, loop: e.scene.still ? 0 : e.scene.loop, k: e.k })); },
+    /** stepped capture: draw the pictures at ms into their loop and stop their own clock; null = run again */
+    setClock(ms) {
+      picClock = ms == null ? null : +ms || 0;
+      if (picClock == null) picT0 = performance.now();
+      drawPics(true);
+    },
   };
 
   // ── golf setup: the map choice (Lakota: "let whoever is picking the game pick the map") ──
@@ -1228,6 +1766,7 @@ export function createGolfPad(root, { send, me }) {
         aimStop();
         motionOff();
         armed = false;
+        staleRound = roundId; // (the next countdown must not put this round's leftover view on the pad: cardsUp)
       }
       if (shown) render();
       else {
