@@ -170,6 +170,7 @@ const CSS = `
 #golf .gp-big { font-size: clamp(18px, 6.2vw, 28px); line-height: 1.35; color: #ffd23f; text-shadow: 3px 3px 0 #0a1428; }
 #golf .gp-mid { font-size: clamp(11px, 3.6vw, 15px); line-height: 1.6; }
 #golf .gp-small { font-size: 9px; line-height: 1.7; color: #c9d2e6; }
+#golf .gp-turnsub:empty { display: none; } /* an empty line still costs one gap: hidden, the rest stays centred */
 #golf .gp-soft { font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif; font-weight: 700; }
 #golf .gp-name { font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif; font-weight: 700; font-size: clamp(22px, 7vw, 32px); line-height: 1.1; text-shadow: 3px 3px 0 #0a1428; }
 #golf .gp-row { display: flex; align-items: center; justify-content: center; gap: 14px; }
@@ -490,7 +491,6 @@ export function createGolfPad(root, { send, me }) {
     <section class="gp-s gp-flight">
       <div class="gp-big">NICE SWING!</div>
       <div class="gp-mid gp-flight-tier"></div>
-      <div class="gp-small">WATCH THE TV</div>
     </section>
     <section class="gp-s gp-result">
       <div class="gp-mid gp-res-who"></div>
@@ -962,7 +962,7 @@ export function createGolfPad(root, { send, me }) {
       el.timer.hidden = true;
       html(el.turnpic, sprite("golfer", 5, getComputedStyle(document.documentElement).getPropertyValue("--c").trim() || "#35d07f"));
       set(el.turnname, "GET READY!");
-      set(el.turnsub, "LOOK AT THE TV");
+      set(el.turnsub, ""); // (no "LOOK AT THE TV": Lakota, Nov 9; the empty line is hidden so the rest stays centred)
       el.next.hidden = true;
       el.last.hidden = true;
       return;
@@ -979,7 +979,7 @@ export function createGolfPad(root, { send, me }) {
     if (screen === "wait") {
       const t = v.turn;
       html(el.turnpic, t ? sprite("golfer", 5, t.color) : "");
-      set(el.turnname, t ? `${t.name} IS UP` : "WATCH THE TV");
+      set(el.turnname, t ? `${t.name} IS UP` : "GET READY!");
       el.turnname.style.color = t?.color || "#fff";
       set(el.turnsub, !t ? "" : v.phase === "armed" ? (v.ready ? "READY TO SWING..." : "GETTING READY...") : v.phase === "flight" ? "THERE IT GOES!" : "AIMING...");
       el.next.hidden = !v.youreNext;

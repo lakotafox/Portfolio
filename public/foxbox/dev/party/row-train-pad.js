@@ -39,10 +39,10 @@ export const S = {
   },
   waiting: (n) => `WAITING FOR ${n}`,
   auto: { away: "PASSED: PHONE AWAY", idle: "PASSED: NO MOVES SEEN", time: "PASSED: TIME UP", skip: "SKIPPED ON THE TV" },
-  done: { big: "ALL SET!", sub: "WATCH THE TV", line: "Watch the TV 👀" },
+  done: { big: "ALL SET!", sub: "", line: "" }, // (no "WATCH THE TV": Lakota, Nov 9)
 };
 
-const DONE_MS = 1800; // "ALL SET! WATCH THE TV" stays this long after phase "done"
+const DONE_MS = 1800; // "ALL SET!" stays this long after phase "done"
 const STALE_MS = 5000; // the game repeats its message every 2 s: nothing for this long = no training any more
 const PHASES = ["paddle", "steer", "fire", "done"];
 const SEATS = ["paddle", "captain"];

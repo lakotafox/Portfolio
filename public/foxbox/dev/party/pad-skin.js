@@ -965,9 +965,11 @@ registerLayout("frame", (st, S, F) => {
   st.rect("window", win);
 });
 /** The FIRST MATE: tilt steers (the gauge shows it), the left thumb aims (stick "aim"), the right fires ("fire", with the
- *  reload bar). data: { name, color, tilt (−1..1), reload (0..1, 1 = loaded), label, train (TRAINING prompts up: no gauge) } */
+ *  reload bar). data: { name, color, tilt (−1..1), reload (0..1, 1 = loaded), label, train (TRAINING prompts up: no gauge),
+ *  turn (the phone is upright: the TURN YOUR PHONE SIDEWAYS card instead of the controls), turnF (the card's frame, 0 / 1) } */
 registerLayout("mate", (st, S, F) => {
   const D = st.data;
+  if (D.turn) return void mateTurnCard(st, S, F);
   badge(st, S, F);
   const mid = (16 + F.bot) / 2;
   const d = Math.max(46, Math.min(54, F.bot - 30));
@@ -988,6 +990,61 @@ registerLayout("mate", (st, S, F) => {
   plate(S, bx0 - 1, by0 - 1, bw + 2, 6);
   for (let i = 0; i < n; i++) { const cw = Math.floor((bw - (n - 1)) / n), cx0 = bx0 + i * (cw + 1); R(cx0, by0 + 1, cw, 2, i < Math.round(k * n) ? (loaded ? S.c.base : S.c.dk) : S.hud.dim); }
 });
+/** Lines of str no wider than maxW in font f (o: text()'s bold / scale): the fewest lines, then the most even ones. */
+function wrapText(str, maxW, f, o = {}) {
+  const words = pixelText(str).split(" ").filter(Boolean), n = words.length;
+  let best = [words.join(" ")], bestScore = Infinity;
+  for (let mask = 0; mask < 1 << Math.max(0, n - 1); mask++) {
+    const lines = [words[0] || ""];
+    for (let i = 1; i < n; i++) { if ((mask >> (i - 1)) & 1) lines.push(words[i]); else lines[lines.length - 1] += " " + words[i]; }
+    const ws = lines.map((ln) => textW(ln, f, o)), widest = Math.max(...ws);
+    const score = Math.max(0, widest - maxW) * 1e6 + lines.length * 1e3 + widest - Math.min(...ws);
+    if (score < bestScore) { bestScore = score; best = lines; }
+  }
+  return best;
+}
+/** The FIRST MATE with the phone upright: the stick and FIRE can't sit side by side in a tall pad, so there are NO controls
+ *  (no touch regions: every touch is dead) — just TURN YOUR PHONE SIDEWAYS on the pad's own LCD, with a phone that turns
+ *  (an upright phone → a sideways one; data.turnF = 1 lights the upright one for the two-frame blink). */
+function mateTurnCard(st, S, F) {
+  if (H > W) tallBody(S, F, { panel: { x: 5, y: 16, w: W - 10, h: F.bot - 17 } });
+  badge(st, S, F);
+  const hud = S.hud, cx = Math.round((F.L + F.R) / 2), top = 17, room = F.bot - 2 - top;
+  const pw = Math.min(F.R - F.L - 4, 124), px0 = Math.round(cx - pw / 2), iw = pw - 8;
+  const big = wrapText("TURN YOUR PHONE SIDEWAYS", iw, FB, { bold: true });
+  const small = [...wrapText("TILT TO STEER", iw, FS), ...wrapText("THUMBS TO AIM & FIRE", iw, FS)];
+  const bigH = big.length * 10 - 3, smallH = small.length * 7 - 2;
+  const ph = Math.max(14, Math.min(30, room - (bigH + smallH + 9 + 8 + 18))), pwid = Math.round(ph * 0.56); // the upright phone
+  const plH = Math.min(room, ph + 9 + bigH + 8 + smallH + 18), py0 = Math.round(top + (room - plH) / 2);
+  plate(S, px0, py0, pw, plH);
+  // the icon: upright phone → sideways phone (the lit one has the bright bezel + the gold screen)
+  const phone = (x, y, w, h, on) => {
+    const m = rrect(x, y, w, h, 3), bb = bbR(x, y, w, h, 1), tall = h > w;
+    fill(m, bb, on ? hud.ink : hud.dim);
+    const [sx, sy, sw, sh] = tall ? [x + 2, y + 3, w - 4, h - 8] : [x + 3, y + 2, w - 8, h - 4];
+    R(sx, sy, sw, sh, on && hud.ink !== hud.gold ? hud.gold : hud.bg);
+    if (on && hud.ink === hud.gold) R(sx + 1, sy + 1, sw - 2, sh - 2, hud.gold); // one-colour LCDs (BRICK): a dark line keeps the screen apart from the bezel
+    if (tall) R(x + (w >> 1) - 1, y + h - 4, 2, 2, hud.bg); else R(x + w - 4, y + (h >> 1) - 1, 2, 2, hud.bg);
+  };
+  const up = st.data.turnF === 1, iy = py0 + 9, ix = Math.round(cx - (pwid + 5 + 9 + 5 + ph) / 2), ay = iy + (ph >> 1);
+  phone(ix, iy, pwid, ph, up);
+  R(ix + pwid + 5, ay - 1, 6, 2, hud.ink);
+  for (let i = 0; i < 4; i++) R(ix + pwid + 5 + 5 + i, ay - 4 + i, 1, 8 - 2 * i, hud.ink);
+  phone(ix + pwid + 19, iy + ((ph - pwid) >> 1), ph, pwid, !up);
+  let y = iy + ph + 9;
+  // the fonts' bold is a double strike, which fills a W in: the headline draws its own 7-wide W (one pixel wider than the rest)
+  const headline = (ln, y) => {
+    let x = Math.round(cx - (textW(ln, FB, { bold: true }) + (ln.split("W").length - 1)) / 2);
+    for (const ch of ln) {
+      if (ch === "W") { [99, 99, 99, 107, 127, 119, 99].forEach((row, r) => { for (let k = 0; k < 7; k++) if ((row >> (6 - k)) & 1) P(x + k, y + r, hud.gold); }); x++; }
+      else text(ch, x, y, FB, hud.gold, { bold: true, align: "l" });
+      x += 7;
+    }
+  };
+  big.forEach((ln, i) => headline(ln, y + i * 10));
+  y += bigH + 8;
+  small.forEach((ln, i) => text(ln, cx, y + i * 7, FS, hud.ink));
+}
 
 // ── helper GW: TEE TIME + WHO'S THE FOX? (portrait bodies + DOM theming) ──────────────────────────────────────────
 // Both games have DOM screens (text, media, motion prompts) that can't all be canvas, so besides their canvas layouts

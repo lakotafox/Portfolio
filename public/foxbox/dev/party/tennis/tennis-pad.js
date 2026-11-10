@@ -22,10 +22,6 @@ const SWING_HARD = 0.72; // power above this = a big hit (src/config.js POWER.ha
 // ── pixel sprites (inline SVG from character maps, like golf-pad.js) ──
 const INK = "#0a1428";
 const MAPS = {
-  player: [ // front view, racket up on the right (C = your slot colour)
-    "....OOOOOO......", "...OHHHHHHO.OOO.", "...OCCCCCCOOFFFO", "...OSOSSOSOOFGFO", "...OSSSSSSOOFGFO", "....OOSSOO.OFFO.",
-    "...OCCCCCCO..OO.", "..OCCCCCCCCOOO..", "..OSCCCCCCSSO...", "..OSOWWWWO.O....", "...OOWWWWOO.....", "....OSSOSSO.....", "....OSO.OSO.....", "...OWWO.OWWO....", "...OOOO.OOOO....",
-  ],
   grip: [ // a hand round a phone held upright, like a racket handle
     "....OOOOO....", "...OKKKKKO...", "...OKBBBKO...", "...OKBBBKO...", "...OKBBBKO...", "...OKBBBKO...", "..OOKBBBKOO..", ".OSSKKKKKSSO.",
     ".OSSSSSSSSSO.", "OSSOSSSSSSSO.", "OSSOSSSSSSO..", ".OSSSSSSSSO..", "..OSSSSSSO...", "...OCCCCO....", "...OCCCCO....", "...OOOOOO....",
@@ -85,6 +81,7 @@ const CSS = `
 #tennis .tp[data-screen="point"] .tp-point, #tennis .tp[data-screen="bracket"] .tp-bracket, #tennis .tp[data-screen="done"] .tp-bracket { display: flex; }
 #tennis .tp-big { font-size: clamp(20px, 7vw, 32px); line-height: 1.3; color: #ffd23f; text-shadow: 3px 3px 0 #0a1428; }
 #tennis .tp-mid { font-size: clamp(11px, 3.6vw, 15px); line-height: 1.6; }
+#tennis .tp-wait-sub:empty { display: none; } /* an empty line still costs one gap: hidden, the title stays centred */
 #tennis .tp-small { font-size: 9px; line-height: 1.7; color: #c9d2e6; }
 #tennis .tp-soft { font-family: "FoxBox Soft", ui-rounded, system-ui, sans-serif; font-weight: 700; font-size: 17px; line-height: 1.35; }
 #tennis .tp-pic { display: flex; justify-content: center; }
@@ -141,9 +138,8 @@ export function createTennisPad(root, { send, me }) {
     <div class="tp-head tp-frame"><span class="tp-label">FOX TENNIS</span><span class="tp-you"></span></div>
     <div class="tp-score tp-frame" data-test="tennis-score" hidden></div>
     <section class="tp-s tp-wait">
-      <div class="tp-pic tp-wait-pic"></div>
       <div class="tp-big tp-wait-title">GET READY!</div>
-      <div class="tp-mid tp-wait-sub">LOOK AT THE TV</div>
+      <div class="tp-mid tp-wait-sub"></div>
     </section>
     <section class="tp-s tp-ready">
       <div class="tp-pic tp-ready-pic"></div>
@@ -156,7 +152,6 @@ export function createTennisPad(root, { send, me }) {
       <button type="button" class="tp-btn tp-link tp-tapmode" data-test="tennis-tapmode" data-native hidden>USE TAP TO SWING</button>
     </section>
     <section class="tp-s tp-play">
-      <div class="tp-pic tp-play-pic"></div>
       <div class="tp-cue tp-frame" data-test="tennis-cue">GET READY</div>
       <div class="tp-mid tp-play-sub"></div>
       <button type="button" class="tp-btn tp-tap" data-test="tennis-tap" hidden>SWING!</button>
@@ -176,9 +171,9 @@ export function createTennisPad(root, { send, me }) {
   const $ = (s) => root.querySelector(s);
   const el = {
     tp: $(".tp"), label: $(".tp-label"), you: $(".tp-you"), score: $(".tp-score"),
-    waitPic: $(".tp-wait-pic"), waitTitle: $(".tp-wait-title"), waitSub: $(".tp-wait-sub"),
+    waitTitle: $(".tp-wait-title"), waitSub: $(".tp-wait-sub"),
     readyPic: $(".tp-ready-pic"), play: $(".tp-play-btn"), state: $(".tp-state"), note: $(".tp-note"), tapmode: $(".tp-tapmode"), hands: [...root.querySelectorAll("[data-hand]")],
-    playPic: $(".tp-play-pic"), cue: $(".tp-cue"), playSub: $(".tp-play-sub"), tap: $(".tp-tap"),
+    cue: $(".tp-cue"), playSub: $(".tp-play-sub"), tap: $(".tp-tap"),
     fx: $(".tp-fx"), meter: $(".tp-fx .meter"), word: $(".tp-fx .word"),
     ptWho: $(".tp-pt-who"), ptTitle: $(".tp-pt-title"), ptCall: $(".tp-pt-call"), brTitle: $(".tp-br-title"), br: $(".tp-br"), brMe: $(".tp-br-me"),
   };
@@ -380,9 +375,8 @@ export function createTennisPad(root, { send, me }) {
       html(el.score, m.teams.map((t, i) => `<i class="${m.server.side === i ? "sv" : ""}"></i><span class="nm" style="color:${esc(readable(t.players[0].color))}">${esc(t.name)}</span><span class="gm">${m.games[i]}</span><span class="pt">${esc(pt(i))}</span>`).join(""));
     }
     if (screen === "wait") {
-      html(el.waitPic, sprite("player", 6, myColor));
-      if (!v || !status || status.state === "countdown") { set(el.waitTitle, "GET READY!"); set(el.waitSub, "LOOK AT THE TV"); }
-      else { set(el.waitTitle, v.you?.playing ? "GET READY!" : "WATCHING"); set(el.waitSub, m ? `${m.teams[0].name} VS ${m.teams[1].name}` : "LOOK AT THE TV"); }
+      if (!v || !status || status.state === "countdown") { set(el.waitTitle, "GET READY!"); set(el.waitSub, ""); } // (no "LOOK AT THE TV": Lakota, Nov 9)
+      else { set(el.waitTitle, v.you?.playing ? "GET READY!" : "WATCHING"); set(el.waitSub, m ? `${m.teams[0].name} VS ${m.teams[1].name}` : ""); }
     } else if (screen === "ready") {
       html(el.readyPic, sprite("grip", 7, myColor));
       const on = motion === "on" && gotData;
@@ -396,7 +390,6 @@ export function createTennisPad(root, { send, me }) {
         : motion === "unavailable" ? "No motion sensor here: play with taps!" : motion === "nodata" ? "No motion readings (Settings > Safari > Motion & Orientation Access)." : "");
       el.tapmode.hidden = !["denied", "insecure", "unavailable", "nodata"].includes(motion);
     } else if (screen === "play") {
-      html(el.playPic, sprite("player", 5, myColor));
       let cue = "GET READY", cls = "", sub = "";
       if (v.yourServe) { cue = "YOUR SERVE: SWING!"; cls = "serve"; sub = v.match.serveN === 2 ? "SECOND SERVE" : "SWING WHEN THE BALL IS UP"; }
       else if (v.yourBall && v.smash) { cue = "▲ SMASH IT! ▲"; cls = "smash"; sub = "HIGH BALL: SWING HARD"; }

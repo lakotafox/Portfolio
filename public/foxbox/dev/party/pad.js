@@ -1643,7 +1643,7 @@ function renderStatus() {
       }
       case "countdown":
         b = "Get ready!";
-        s = "Look at the TV 👀";
+        s = mode.id === "row" || mode.id === "golf" || mode.id === "tennis" ? "" : "Look at the TV 👀"; // (those phones don't send eyes to the TV: Lakota, Nov 9)
         break;
       case "playing":
         if (mode.id === "row" && rowTrain.visible()) { // ROWTRAIN: the controls check before the race (then ALL SET!)
@@ -1919,7 +1919,9 @@ bonk.addEventListener("lostpointercapture", bonkEnd);
 var padSkin = null; // var: syncExtras may run before this line during start-up
 var SKIN_GAMES = { sky: "sky", snowball: "snow" }; // var: hoisted for syncExtras during start-up
 var SKIN_STATES = ["countdown", "playing", "out", "waiting"];
-var skinPoll = 0; // the first mate's tilt + reload, copied to the pad 20× a second
+var skinPoll = 0; // the first mate's tilt + reload (+ "the phone is upright": the turn card), copied to the pad 20× a second
+var skinTurn = false;
+var skinCalm = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : { matches: false }; // no blinking icon
 /** The pad layout for what's on screen now, or null: Sky / Snowball, and Row's CAPTAIN (the boat view, framed) and FIRST MATE. */
 function skinGame() {
   if (!SKIN_GAMES) return null;
@@ -1986,12 +1988,15 @@ function syncSkin() {
     skinPoll = setInterval(() => {
       if (!padSkin) return;
       const i = cap.info();
-      padSkin.set({ tilt: Math.round(i.s * 20) / 20, reload: Math.round(i.reload * 16) / 16 });
+      // held upright: the pad shows TURN YOUR PHONE SIDEWAYS instead of the stick + FIRE (cap-pad.js decides, by gravity)
+      if (i.turn && !skinTurn) padSkin.release();
+      skinTurn = !!i.turn;
+      padSkin.set({ tilt: Math.round(i.s * 20) / 20, reload: Math.round(i.reload * 16) / 16, turn: !!i.turn, turnF: i.turn && !skinCalm.matches ? Math.floor(Date.now() / 700) % 2 : 0 });
     }, 50);
   } else if (game !== "mate" && skinPoll) { clearInterval(skinPoll); skinPoll = 0; }
   const st = lastStatus.state;
   const seatColor = mode.id === "row" && mySeat()?.color?.base;
-  padSkin.set({ name: me.name, color: seatColor || myColor(), button: mode.button, label: skinLabel(st), dim: st === "out" || st === "waiting", round: game === "snow" ? skinRound : 0, won: skinRound, train: mode.id === "row" && rowTrain.visible() });
+  padSkin.set({ name: me.name, color: seatColor || myColor(), button: mode.button, label: skinLabel(st), dim: st === "out" || st === "waiting", round: game === "snow" ? skinRound : 0, won: skinRound, train: mode.id === "row" && rowTrain.visible(), turn: game === "mate" && !!cap.info().turn });
 }
 var skinRound = 0; // Snowball's round (its {type:"round"} cue)
 Object.defineProperty(window, "__padSkinQA", { get: () => padSkin, configurable: true }); // QA: the live pad (regions, grid, style)

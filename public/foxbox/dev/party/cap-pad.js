@@ -11,7 +11,11 @@
  *   - LEFT thumb: aim stick (2D, up = -1).
  *   - RIGHT thumb: FIRE, with a reload ring (RELOAD_MS, a phone-side estimate of the game's reload).
  * Motion is required; setup offers a tilt test and host-confirmed Ready before the race.
- * In portrait it asks to turn the phone sideways.
+ * Upright (judged by gravity like the steering; by the window's shape only before any motion reading) during
+ * training, the countdown and the race, the controls are BLOCKED: a TURN YOUR PHONE SIDEWAYS card takes their place
+ * (#cap-turn here for CLASSIC; the pixel pads draw their own from info().turn) and the aim stick + FIRE are dead.
+ * The moment the phone is sideways the controller is back, no tap needed. Setup (motion permission, Ready) stays
+ * reachable upright, and the results screen is never blocked.
  *
  *   createCapPad(el, { onInput({x, y, s, b}) }) -> { show(on), release(), setRole(text) }
  */
@@ -20,6 +24,7 @@ const RELOAD_MS = 4000;
 const FULL_TILT = Math.sin((22 * Math.PI) / 180); // gravity share at full lock
 const DEAD = Math.sin((5 * Math.PI) / 180);
 const HOLD_SWITCH_MS = 800; // gravity must clearly point the other way this long to change sides
+const TURN_SWITCH_MS = 250; // …but from the TURN YOUR PHONE SIDEWAYS card to sideways: right away (nothing to flip there)
 const AIM_DEAD = 0.12;
 const AIM_FULL = 0.7; // fraction of the stick radius for full aim
 
@@ -54,8 +59,11 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
   let holdAngle = null;
   let flipSince = 0;
   let rotDeg = 0; // CSS rotation applied to the controller (clockwise), so it matches the hold
+  let blocked = false; // held upright outside setup: the TURN YOUR PHONE SIDEWAYS card is up, aim + FIRE are dead
   const padScreen = el.root.closest("#pad-screen") || document.getElementById("pad-screen");
   injectCss();
+  const turnCard = el.root.querySelector("#cap-turn");
+  if (turnCard) turnCard.innerHTML = TURN_CARD_HTML;
   const tip = document.createElement("div");
   tip.className = "cap-tip";
   tip.textContent = "Tip: turn on Rotation Lock (Control Center) for the steadiest controls";
@@ -82,7 +90,7 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
     const clear = h === 90 || h === 270 ? Math.abs(ux) > 7 : Math.abs(uy) > 7;
     if (!clear) { flipSince = 0; return; }
     if (!flipSince) flipSince = now;
-    else if (now - flipSince > HOLD_SWITCH_MS) {
+    else if (now - flipSince > (blocked && (h === 90 || h === 270) ? TURN_SWITCH_MS : HOLD_SWITCH_MS)) {
       holdAngle = h;
       flipSince = 0;
       layout();
@@ -92,11 +100,12 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
 
   // turn the whole controller screen so "up" is the physical up, whatever the window is doing
   function layout() {
-    if (!shown) return clearRot();
+    if (!shown) { setBlocked(false); return clearRot(); }
     const want = holdAngle == null ? screenAngle() : holdAngle === 180 ? 0 : holdAngle;
     rotDeg = (((want - screenAngle()) % 360) + 360) % 360;
     const portraitHold = holdAngle === 0 || holdAngle === 180 || (holdAngle == null && window.innerHeight > window.innerWidth);
     el.root.classList.toggle("portrait", portraitHold);
+    setBlocked(portraitHold && !preparing() && state() !== "results"); // (the results screen has no controls to block)
     if (!padScreen) return;
     if (!rotDeg) return clearRot();
     const side = rotDeg === 90 || rotDeg === 270;
@@ -107,6 +116,20 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
       position: "fixed", left: "50%", top: "50%", right: "auto", bottom: "auto",
       width: w + "px", height: h + "px", transform: `translate(-50%, -50%) rotate(${rotDeg}deg)`,
     });
+  }
+  // upright outside setup = the card instead of the controls: let go of the stick + FIRE and keep them dead meanwhile
+  function setBlocked(on) {
+    if (on === blocked) return;
+    blocked = on;
+    if (padScreen) padScreen.classList.toggle("cap-upright", on);
+    if (on && (x || y || b)) {
+      x = y = b = 0;
+      send();
+    }
+    el.fire.classList.remove("down");
+    el.aim.classList.remove("active");
+    el.aimKnob.style.transform = "";
+    el.aimArrow.style.opacity = "0";
   }
   function clearRot() {
     rotDeg = 0;
@@ -269,6 +292,7 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
     pad.addEventListener("lostpointercapture", end);
   }
   function setAim(vx, vy) {
+    if (blocked) vx = vy = 0; // the turn card is up: no aiming
     vx = q(vx);
     vy = q(vy);
     const r = el.aim.getBoundingClientRect();
@@ -305,6 +329,7 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
     btn.addEventListener("lostpointercapture", end);
   }
   function fireDown() {
+    if (blocked) return; // the turn card is up: no shots
     const btn = el.fire;
     btn.classList.add("down");
     const now = performance.now();
@@ -401,6 +426,7 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
       } else {
         release();
         clearTimeout(fallbackTimer);
+        setBlocked(false);
         clearRot();
         holdAngle = null;
         try {
@@ -434,15 +460,21 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
     // SKINS: the pixel pad drives the same aim / FIRE as the DOM stick and button, and draws the tilt + reload
     aim(vx, vy) { const m = Math.hypot(vx, vy); setAim(m < AIM_DEAD ? 0 : vx, m < AIM_DEAD ? 0 : vy); },
     fire(down) { if (down) fireDown(); else fireUp(); },
-    info() { return { s, reload: Math.min(1, (performance.now() - lastFire) / RELOAD_MS), motion: gotMotion }; },
+    info() { return { s, reload: Math.min(1, (performance.now() - lastFire) / RELOAD_MS), motion: gotMotion, turn: blocked }; },
     setRole(text) {
       el.role.textContent = text;
     },
   };
 }
 
+// CLASSIC's TURN YOUR PHONE SIDEWAYS card (#cap-turn): a phone that turns, the line, what sideways gives you
+const TURN_CARD_HTML =
+  '<div class="cap-turn-ico" aria-hidden="true"><i></i></div>' +
+  '<div class="cap-turn-big">TURN YOUR PHONE SIDEWAYS</div>' +
+  '<small>tilt to steer<br>thumbs to aim &amp; fire</small>';
+
 // The landscape-only captain layout from pad.html, also applied while the controller is turned
-// with CSS inside a portrait window (iPhone, or Rotation Lock on), plus the iPhone tip line.
+// with CSS inside a portrait window (iPhone, or Rotation Lock on), plus the iPhone tip line and the turn card.
 function injectCss() {
   if (document.getElementById("cap-rot-css")) return;
   const st = document.createElement("style");
@@ -456,6 +488,21 @@ function injectCss() {
   #pad-screen.cap-rot.captain #me-ball { width: 30px; height: 30px; }
   #pad-screen.cap-rot.captain #me-name { font-size: 20px; }
   #cap .cap-tip { font-size: 12px; line-height: 1.3; opacity: 0.7; text-align: center; max-width: 22em; }
-  #cap .cap-tip[hidden] { display: none; }`;
+  #cap .cap-tip[hidden] { display: none; }
+  /* upright during training / countdown / race (.cap-upright): the card is the whole controller — nothing under it
+     shows through or takes a touch, the TRAINING prompts and the status card step aside */
+  #pad-screen.cap-upright.captain #status { display: none; }
+  #pad-screen.cap-upright #rtp { visibility: hidden !important; }
+  #pad-screen.cap-upright #cap-top, #pad-screen.cap-upright #cap-main { visibility: hidden; pointer-events: none; }
+  #pad-screen.cap-upright #cap-turn { position: fixed; z-index: 4; inset: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+  #cap #cap-turn { flex-direction: column; gap: 18px; background: #0b1020; font-size: 30px; font-weight: 900; line-height: 1.15; letter-spacing: 0.02em; padding: 20px; touch-action: none; }
+  #cap #cap-turn .cap-turn-big { max-width: 9em; color: #ffd23f; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.45); }
+  #cap #cap-turn small { font-size: 16px; font-weight: 700; line-height: 1.3; opacity: 0.85; max-width: 16em; }
+  #cap .cap-turn-ico { width: 132px; height: 132px; display: flex; align-items: center; justify-content: center; }
+  #cap .cap-turn-ico i { position: relative; display: block; width: 62px; height: 112px; border-radius: 12px; border: 5px solid #f4f7ff; background: #1d2740; box-sizing: border-box; animation: cap-turn-phone 2.4s ease-in-out infinite; }
+  #cap .cap-turn-ico i::before { content: ""; position: absolute; inset: 6px 4px 14px; border-radius: 4px; background: #ffd23f; }
+  #cap .cap-turn-ico i::after { content: ""; position: absolute; left: 50%; bottom: 3px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: #f4f7ff; }
+  @keyframes cap-turn-phone { 0%, 25% { transform: rotate(0deg); } 55%, 90% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
+  @media (prefers-reduced-motion: reduce) { #cap .cap-turn-ico i { animation: none; transform: rotate(-90deg); } }`;
   document.head.append(st);
 }
