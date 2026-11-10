@@ -14,11 +14,15 @@
  * Upright (judged by gravity like the steering; by the window's shape only before any motion reading) during
  * training, the countdown and the race, the controls are BLOCKED: a TURN YOUR PHONE SIDEWAYS card takes their place
  * (#cap-turn here for CLASSIC; the pixel pads draw their own from info().turn) and the aim stick + FIRE are dead.
+ * The card's picture is a phone turning from upright to sideways: pad-skin.js's TURN_ART, one spec for CLASSIC and the
+ * pixel pads, and the same picture as FOX KART's turn card.
  * The moment the phone is sideways the controller is back, no tap needed. Setup (motion permission, Ready) stays
  * reachable upright, and the results screen is never blocked.
  *
  *   createCapPad(el, { onInput({x, y, s, b}) }) -> { show(on), release(), setRole(text) }
  */
+
+import { TURN_ART } from "./pad-skin.js"; // the turn card's picture: one spec for CLASSIC (here) and the pixel pads
 
 const RELOAD_MS = 4000;
 const FULL_TILT = Math.sin((22 * Math.PI) / 180); // gravity share at full lock
@@ -467,9 +471,26 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
   };
 }
 
-// CLASSIC's TURN YOUR PHONE SIDEWAYS card (#cap-turn): a phone that turns, the line, what sideways gives you
+// CLASSIC's TURN YOUR PHONE SIDEWAYS card (#cap-turn): the picture, the line, what sideways gives you.
+// The picture is TURN_ART (pad-skin.js) at TA.cell CSS px per cell: behind (svg) a dashed outline of the phone standing
+// upright, where it started, and a chunky arrow sweeping over the top; in front (i) the phone, which fades in upright,
+// waits a beat, turns a quarter turn about its bottom-right corner, rests sideways, then starts over. Sideways is the
+// pose it spends its time in, and the pose it holds with reduced motion.
+const TA = TURN_ART, TC = TA.cell, TB = TA.body, TF = TA.fine;
+const TURN_ARROW = TA.arrow.map(([y, a, b]) => `M${a * TC} ${y * TC}h${(b - a + 1) * TC}v${TC}H${a * TC}z`).join("");
+const TURN_PIC =
+  `<svg viewBox="0 0 ${TA.w * TC} ${TA.h * TC}" shape-rendering="crispEdges">` +
+  `<rect x="${(TB.x + 0.5) * TC}" y="${(TB.y + 0.5) * TC}" width="${(TB.w - 1) * TC}" height="${(TB.h - 1) * TC}" fill="${TA.gold}" fill-opacity="${TA.ghost.fill}" stroke="${TA.gold}" stroke-opacity="${TA.ghost.line}" stroke-width="${TC}" stroke-dasharray="${TA.ghost.on * TC} ${TA.ghost.off * TC}"/>` +
+  `<rect x="${TB.x * TC + (TB.w * TC - TF.dot.w) / 2}" y="${(TB.y + TB.h) * TC - TF.dot.b - TF.dot.h}" width="${TF.dot.w}" height="${TF.dot.h}" fill="${TA.gold}" fill-opacity="${TA.ghost.line}"/>` +
+  `<path transform="translate(${TF.shadow} ${TF.shadow})" fill="${TA.dark}" d="${TURN_ARROW}"/><path fill="${TA.gold}" d="${TURN_ARROW}"/></svg><i></i>`;
+const turnPct = (ms) => +((ms / TA.loopMs) * 100).toFixed(2) + "%";
+const TURN_KEYS =
+  `0% { transform: rotate(0deg); opacity: 0; } ${turnPct(TA.inMs)} { transform: rotate(0deg); opacity: 1; } ` +
+  `${turnPct(TA.turnAt)} { transform: rotate(0deg); opacity: 1; animation-timing-function: cubic-bezier(${TA.ease.join(", ")}); } ` +
+  `${turnPct(TA.turnAt + TA.turnMs)} { transform: rotate(${TA.deg}deg); opacity: 1; } ${turnPct(TA.loopMs - TA.outMs)} { transform: rotate(${TA.deg}deg); opacity: 1; } ` +
+  `100% { transform: rotate(${TA.deg}deg); opacity: 0; }`;
 const TURN_CARD_HTML =
-  '<div class="cap-turn-ico" aria-hidden="true"><i></i></div>' +
+  `<div class="cap-turn-ico" aria-hidden="true">${TURN_PIC}</div>` +
   '<div class="cap-turn-big">TURN YOUR PHONE SIDEWAYS</div>' +
   '<small>tilt to steer<br>thumbs to aim &amp; fire</small>';
 
@@ -498,11 +519,12 @@ function injectCss() {
   #cap #cap-turn { flex-direction: column; gap: 18px; background: #0b1020; font-size: 30px; font-weight: 900; line-height: 1.15; letter-spacing: 0.02em; padding: 20px; touch-action: none; }
   #cap #cap-turn .cap-turn-big { max-width: 9em; color: #ffd23f; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.45); }
   #cap #cap-turn small { font-size: 16px; font-weight: 700; line-height: 1.3; opacity: 0.85; max-width: 16em; }
-  #cap .cap-turn-ico { width: 132px; height: 132px; display: flex; align-items: center; justify-content: center; }
-  #cap .cap-turn-ico i { position: relative; display: block; width: 62px; height: 112px; border-radius: 12px; border: 5px solid #f4f7ff; background: #1d2740; box-sizing: border-box; animation: cap-turn-phone 2.4s ease-in-out infinite; }
-  #cap .cap-turn-ico i::before { content: ""; position: absolute; inset: 6px 4px 14px; border-radius: 4px; background: #ffd23f; }
-  #cap .cap-turn-ico i::after { content: ""; position: absolute; left: 50%; bottom: 3px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: #f4f7ff; }
-  @keyframes cap-turn-phone { 0%, 25% { transform: rotate(0deg); } 55%, 90% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
-  @media (prefers-reduced-motion: reduce) { #cap .cap-turn-ico i { animation: none; transform: rotate(-90deg); } }`;
+  #cap .cap-turn-ico { position: relative; flex: none; width: ${TA.w * TC}px; height: ${TA.h * TC}px; }
+  #cap .cap-turn-ico svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
+  #cap .cap-turn-ico i { position: absolute; left: ${TB.x * TC}px; top: ${TB.y * TC}px; width: ${TB.w * TC}px; height: ${TB.h * TC}px; background: linear-gradient(${TA.dark}, ${TA.dark}) ${TA.slit.x * TC}px ${TA.slit.y * TC}px / ${TA.slit.w * TC}px ${TA.slit.h * TC}px no-repeat, ${TA.gold}; box-shadow: 0 0 0 ${TA.edge * TC}px ${TA.dark}; transform-origin: 100% 100%; animation: cap-turn-phone ${TA.loopMs}ms linear infinite; }
+  #cap .cap-turn-ico i::before { content: ""; position: absolute; left: ${TF.screen.l}px; right: ${TF.screen.r}px; top: ${TF.screen.t}px; bottom: ${TF.screen.b}px; background: var(--c, #3d8bfd); box-shadow: 0 0 0 ${TF.screen.ring}px ${TA.dark}, inset ${TF.screen.shine}px ${TF.screen.shine}px 0 rgba(255, 255, 255, 0.3); }
+  #cap .cap-turn-ico i::after { content: ""; position: absolute; left: 50%; bottom: ${TF.dot.b}px; width: ${TF.dot.w}px; height: ${TF.dot.h}px; margin-left: ${-TF.dot.w / 2}px; background: ${TA.dark}; }
+  @keyframes cap-turn-phone { ${TURN_KEYS} }
+  @media (prefers-reduced-motion: reduce) { #cap .cap-turn-ico i { animation: none; transform: rotate(${TA.deg}deg); } }`;
   document.head.append(st);
 }

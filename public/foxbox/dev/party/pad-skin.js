@@ -565,7 +565,9 @@ export function createPadSkin(host, opts = {}) {
     val: (n) => vals.get(n) || { x: 0, y: 0 },
     region: (r) => regions.push(r),
     rect: (n, r) => { rects[n] = r; }, // a named area for the page (e.g. Row's boat window): opts.onRects gets it in CSS px
+    frame: (ms = 0) => { again = again === null ? ms : Math.min(again, ms); }, // a layout that moves on its own (the TURN card's phone): draw me again in ms (0 = next frame)
   };
+  let again = null, wake = 0;
   let rects = {}, rectsSent = "";
 
   let G = null; // { W, H, k, dpr, rot, F, img, buf, bg, bgKey }
@@ -634,8 +636,14 @@ export function createPadSkin(host, opts = {}) {
     BUF = G.buf;
     regions = [];
     rects = {};
+    again = null;
     try { LAYOUTS[game](st, S, G.F); } catch (e) { console.warn("[pad-skin] layout", e); }
     ctx.putImageData(G.img, 0, 0);
+    clearTimeout(wake);
+    if (again !== null) { // (a hidden page: no need to keep up, just look again now and then)
+      if (document.hidden) again = Math.max(again, 500);
+      if (again <= 0) redraw(); else wake = setTimeout(redraw, again);
+    }
     if (opts.onRects) {
       const sc = G.k / G.dpr, css = {};
       for (const [n, r] of Object.entries(rects)) css[n] = { x: r.x * sc, y: r.y * sc, w: r.w * sc, h: r.h * sc };
@@ -748,7 +756,7 @@ export function createPadSkin(host, opts = {}) {
     el: cv,
     lastDrawMs: 0,
     get regions() { return regions.slice(); },
-    get debug() { return { down: [...touchDown.entries()], held: [...held], raf, dirty, dead }; },
+    get debug() { return { down: [...touchDown.entries()], held: [...held], raf, dirty, dead, turnT0: st.turnT0 ?? null }; },
     get grid() { return G ? { W: G.W, H: G.H, k: G.k, dpr: G.dpr, rot: G.rot, F: G.F, safe: G.safe } : null; },
     get style() { return styleId; },
     get game() { return game; },
@@ -782,6 +790,7 @@ export function createPadSkin(host, opts = {}) {
       dead = true;
       cancelAnimationFrame(raf);
       clearTimeout(tmo);
+      clearTimeout(wake);
       ro?.disconnect();
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onResize);
@@ -966,10 +975,12 @@ registerLayout("frame", (st, S, F) => {
 });
 /** The FIRST MATE: tilt steers (the gauge shows it), the left thumb aims (stick "aim"), the right fires ("fire", with the
  *  reload bar). data: { name, color, tilt (−1..1), reload (0..1, 1 = loaded), label, train (TRAINING prompts up: no gauge),
- *  turn (the phone is upright: the TURN YOUR PHONE SIDEWAYS card instead of the controls), turnF (the card's frame, 0 / 1) } */
+ *  turn (the phone is upright: the TURN YOUR PHONE SIDEWAYS card instead of the controls; its picture runs on its own
+ *  clock, the old turnF frame is not read any more) } */
 registerLayout("mate", (st, S, F) => {
   const D = st.data;
   if (D.turn) return void mateTurnCard(st, S, F);
+  st.turnT0 = null; // (the card's picture starts from the top the next time it comes up)
   badge(st, S, F);
   const mid = (16 + F.bot) / 2;
   const d = Math.max(46, Math.min(54, F.bot - 30));
@@ -1003,35 +1014,139 @@ function wrapText(str, maxW, f, o = {}) {
   }
   return best;
 }
+// ── the TURN YOUR PHONE SIDEWAYS picture (ROW's first mate, phone upright) ───────────────────────────────────
+/**
+ * ONE spec for both drawings of the picture: mateTurnCard() below (the five pixel pads) and CLASSIC's card in
+ * cap-pad.js. It is the same picture as FOX KART's turn card (kart-pad.js, .fk-ph), so the two games read as one
+ * family: a dashed outline of the phone standing upright (where it started), a chunky arrow sweeping over the top to
+ * where it ends up, and the phone itself, which fades in upright, waits a beat, turns a quarter turn clockwise about
+ * its bottom-right corner, rests sideways (the pose it spends its time in, and the one it holds with reduced motion),
+ * then starts over.
+ * Sizes are in CELLS: one art pixel on a pixel pad, `cell` CSS px on CLASSIC. Change a value here and both follow.
+ */
+export const TURN_ART = {
+  // the loop (ms): fade in → upright beat → the turn → rest sideways → fade out
+  loopMs: 2800, inMs: 140, turnAt: 504, turnMs: 602, outMs: 98,
+  ease: [0.45, 0, 0.2, 1], // the turn's cubic-bezier
+  deg: 90, // clockwise: the phone ends up lying to the right of where it stood
+  // the picture
+  cell: 4, // CLASSIC: CSS px per cell
+  w: 49, h: 33, // the picture's box (the turning phone's top corner swings up to 4 cells above it)
+  body: { x: 1, y: 2, w: 17, h: 30 }, // the phone, upright; it turns about its bottom-right corner
+  edge: 1, // the dark line round the phone
+  slit: { x: 6, y: 1, w: 5, h: 1 }, // the speaker (inside the body)
+  screen: { x: 2, y: 3, w: 13, h: 22 }, // pixel pads: the screen (inside the body), a 1-cell dark frame round it
+  dot: { x: 7, y: 27, w: 3, h: 2 }, // pixel pads: the home dot (inside the body)
+  fine: { screen: { l: 6, t: 12, r: 6, b: 20, ring: 2, shine: 4 }, dot: { w: 8, h: 8, b: 6 }, shadow: 3 }, // CLASSIC, in CSS px: the same parts where FOX KART draws finer than a cell
+  ghost: { on: 3, off: 2, line: 0.45, fill: 0.05 }, // the dashed outline: dash + gap (cells), how much gold is in the line / the fill
+  arrow: [[1, 23, 26], [2, 20, 28], [3, 20, 30], [4, 27, 31], [5, 29, 32], [6, 31, 33], [7, 32, 33], [8, 32, 34], [9, 33, 34], [10, 33, 34], [11, 30, 37], [12, 31, 36], [13, 32, 35], [14, 33, 34]], // rows of cells: [y, first x, last x]
+  gold: "#ffd23f", dark: "#0a1428", // CLASSIC's colours (a pixel pad uses its own LCD's gold; the screen is the player's colour on both)
+};
+const CALM = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : { matches: false };
+const turnEase = (x) => { // TURN_ART.ease at x (0..1)
+  const [x1, y1, x2, y2] = TURN_ART.ease, f = (t, a, b) => 3 * (1 - t) * (1 - t) * t * a + 3 * (1 - t) * t * t * b + t * t * t;
+  let lo = 0, hi = 1;
+  for (let i = 0; i < 22; i++) { const m = (lo + hi) / 2; if (f(m, x1, x2) < x) lo = m; else hi = m; }
+  return f((lo + hi) / 2, y1, y2);
+};
+/** The phone's pose ms into the card: { deg (0 = upright … TURN_ART.deg = sideways), a (opacity), wait (ms until it next moves) }. */
+export function turnPose(ms) {
+  const A = TURN_ART, t = ((ms % A.loopMs) + A.loopMs) % A.loopMs, end = A.turnAt + A.turnMs, out = A.loopMs - A.outMs;
+  if (t < A.inMs) return { deg: 0, a: t / A.inMs, wait: 0 };
+  if (t < A.turnAt) return { deg: 0, a: 1, wait: A.turnAt - t };
+  if (t < end) return { deg: A.deg * turnEase((t - A.turnAt) / A.turnMs), a: 1, wait: 0 };
+  if (t < out) return { deg: A.deg, a: 1, wait: out - t };
+  return { deg: A.deg, a: (A.loopMs - t) / A.outMs, wait: 0 };
+}
+/** The phone as pixels (upright, edge included), in a pad's colours. */
+const turnSprites = new Map();
+function turnSprite(gold, dark, screen, shine) {
+  const key = [gold, dark, screen, shine].join(), hit = turnSprites.get(key);
+  if (hit) return hit;
+  const A = TURN_ART, e = A.edge, w = A.body.w + 2 * e, h = A.body.h + 2 * e, px = new Uint32Array(w * h).fill(col(dark));
+  const box = (r, c, g = 0) => { for (let y = r.y - g; y < r.y + r.h + g; y++) for (let x = r.x - g; x < r.x + r.w + g; x++) px[(y + e) * w + x + e] = col(c); };
+  box({ x: 0, y: 0, w: A.body.w, h: A.body.h }, gold);
+  box(A.slit, dark);
+  box(A.screen, dark, 1);
+  box(A.screen, screen);
+  box({ ...A.screen, h: 1 }, shine); box({ ...A.screen, w: 1 }, shine); // the light catches its top + left edge
+  box(A.dot, dark);
+  const spr = { w, h, px };
+  if (turnSprites.size > 24) turnSprites.clear();
+  turnSprites.set(key, spr);
+  return spr;
+}
+/** The whole picture, its box's top-left at (x0, y0): the outline, the arrow, then the phone at pose p. c: the pad's LCD colours. */
+function turnPicture(x0, y0, p, c) {
+  const A = TURN_ART, B = A.body, g = A.ghost;
+  // where it started: a dashed outline (dashes run clockwise from the top-left corner), a hint of a fill, the home dot
+  const line = mixHex(c.bg, c.gold, g.line);
+  R(x0 + B.x + 1, y0 + B.y + 1, B.w - 2, B.h - 2, mixHex(c.bg, c.gold, g.fill));
+  const ring = [];
+  for (let i = 0; i < B.w - 1; i++) ring.push([i, 0]);
+  for (let i = 0; i < B.h - 1; i++) ring.push([B.w - 1, i]);
+  for (let i = B.w - 1; i > 0; i--) ring.push([i, B.h - 1]);
+  for (let i = B.h - 1; i > 0; i--) ring.push([0, i]);
+  ring.forEach(([x, y], n) => { if (n % (g.on + g.off) < g.on) P(x0 + B.x + x, y0 + B.y + y, line); });
+  R(x0 + B.x + A.dot.x, y0 + B.y + A.dot.y - 1, A.dot.w, A.dot.h, line); // (a row up: clear of the dashed line)
+  // the arrow, over a dark drop shadow
+  for (const [y, xa, xb] of A.arrow) R(x0 + xa + 1, y0 + y + 1, xb - xa + 1, 1, c.dark);
+  for (const [y, xa, xb] of A.arrow) R(x0 + xa, y0 + y, xb - xa + 1, 1, c.gold);
+  // the phone, turned p.deg clockwise about its bottom-right corner: every pixel looks up the cell of the upright
+  // phone it came from (nearest neighbour, so upright and sideways are pixel-exact)
+  const spr = turnSprite(c.gold, c.dark, c.screen, c.shine), pvx = B.x + B.w, pvy = B.y + B.h;
+  const rad = (p.deg * Math.PI) / 180, cs = p.deg === 90 ? 0 : Math.cos(rad), sn = p.deg === 90 ? 1 : Math.sin(rad);
+  const a = Math.max(0, Math.min(1, p.a));
+  if (a <= 0) return;
+  for (let y = -5; y <= A.h; y++) for (let x = -1; x <= A.w; x++) {
+    const dx = x + 0.5 - pvx, dy = y + 0.5 - pvy;
+    const sx = Math.floor(dx * cs + dy * sn + B.w + A.edge), sy = Math.floor(dy * cs - dx * sn + B.h + A.edge);
+    if (sx < 0 || sy < 0 || sx >= spr.w || sy >= spr.h) continue;
+    const gx = x0 + x, gy = y0 + y;
+    if (gx < 0 || gy < 0 || gx >= W || gy >= H) continue;
+    const v = spr.px[sy * spr.w + sx], i = gy * W + gx;
+    if (a >= 1) { BUF[i] = v; continue; }
+    const u = BUF[i], ch = (s) => Math.round(((u >>> s) & 255) + (((v >>> s) & 255) - ((u >>> s) & 255)) * a) << s; // (the fade in / out)
+    BUF[i] = ((255 << 24) | ch(16) | ch(8) | ch(0)) >>> 0;
+  }
+}
 /** The FIRST MATE with the phone upright: the stick and FIRE can't sit side by side in a tall pad, so there are NO controls
- *  (no touch regions: every touch is dead) — just TURN YOUR PHONE SIDEWAYS on the pad's own LCD, with a phone that turns
- *  (an upright phone → a sideways one; data.turnF = 1 lights the upright one for the two-frame blink). */
+ *  (no touch regions: every touch is dead) — just TURN YOUR PHONE SIDEWAYS on the pad's own LCD, under a phone that turns
+ *  from upright to sideways (TURN_ART above; it runs on its own clock from the moment the card comes up). */
 function mateTurnCard(st, S, F) {
   if (H > W) tallBody(S, F, { panel: { x: 5, y: 16, w: W - 10, h: F.bot - 17 } });
   badge(st, S, F);
-  const hud = S.hud, cx = Math.round((F.L + F.R) / 2), top = 17, room = F.bot - 2 - top;
-  const pw = Math.min(F.R - F.L - 4, 124), px0 = Math.round(cx - pw / 2), iw = pw - 8;
-  const big = wrapText("TURN YOUR PHONE SIDEWAYS", iw, FB, { bold: true });
-  const small = [...wrapText("TILT TO STEER", iw, FS), ...wrapText("THUMBS TO AIM & FIRE", iw, FS)];
-  const bigH = big.length * 10 - 3, smallH = small.length * 7 - 2;
-  const ph = Math.max(14, Math.min(30, room - (bigH + smallH + 9 + 8 + 18))), pwid = Math.round(ph * 0.56); // the upright phone
-  const plH = Math.min(room, ph + 9 + bigH + 8 + smallH + 18), py0 = Math.round(top + (room - plH) / 2);
-  plate(S, px0, py0, pw, plH);
-  // the icon: upright phone → sideways phone (the lit one has the bright bezel + the gold screen)
-  const phone = (x, y, w, h, on) => {
-    const m = rrect(x, y, w, h, 3), bb = bbR(x, y, w, h, 1), tall = h > w;
-    fill(m, bb, on ? hud.ink : hud.dim);
-    const [sx, sy, sw, sh] = tall ? [x + 2, y + 3, w - 4, h - 8] : [x + 3, y + 2, w - 8, h - 4];
-    R(sx, sy, sw, sh, on && hud.ink !== hud.gold ? hud.gold : hud.bg);
-    if (on && hud.ink === hud.gold) R(sx + 1, sy + 1, sw - 2, sh - 2, hud.gold); // one-colour LCDs (BRICK): a dark line keeps the screen apart from the bezel
-    if (tall) R(x + (w >> 1) - 1, y + h - 4, 2, 2, hud.bg); else R(x + w - 4, y + (h >> 1) - 1, 2, 2, hud.bg);
+  const A = TURN_ART, hud = S.hud, top = 17, room = F.bot - 2 - top;
+  const words = (iw) => {
+    const big = wrapText("TURN YOUR PHONE SIDEWAYS", iw, FB, { bold: true });
+    const small = [...wrapText("TILT TO STEER", iw, FS), ...wrapText("THUMBS TO AIM & FIRE", iw, FS)];
+    return { big, small, bigH: big.length * 10 - 3, smallH: small.length * 7 - 2 };
   };
-  const up = st.data.turnF === 1, iy = py0 + 9, ix = Math.round(cx - (pwid + 5 + 9 + 5 + ph) / 2), ay = iy + (ph >> 1);
-  phone(ix, iy, pwid, ph, up);
-  R(ix + pwid + 5, ay - 1, 6, 2, hud.ink);
-  for (let i = 0; i < 4; i++) R(ix + pwid + 5 + 5 + i, ay - 4 + i, 1, 8 - 2 * i, hud.ink);
-  phone(ix + pwid + 19, iy + ((ph - pwid) >> 1), ph, pwid, !up);
-  let y = iy + ph + 9;
+  let cx = Math.round((F.L + F.R) / 2), pw = Math.min(F.R - F.L - 4, 124), px0 = Math.round(cx - pw / 2);
+  let T = words(pw - 8), ix, iy, y, g2 = 6;
+  const stack = A.h + T.bigH + T.smallH;
+  if (room >= stack + 19) { // the picture over the words (the pad is tall whenever the phone is upright)
+    const [pt, g1, gap, pb] = room >= stack + 35 ? [9, 9, 8, 9] : [6, 5, 4, 4];
+    g2 = gap;
+    const plH = stack + pt + g1 + g2 + pb, py0 = Math.round(top + (room - plH) / 2);
+    plate(S, px0, py0, pw, plH);
+    ix = Math.round(cx - A.w / 2); iy = py0 + pt; y = iy + A.h + g1;
+  } else { // no room to stack (a wide, short pad): the picture beside the words
+    pw = Math.min(F.R - F.L - 4, 190); px0 = Math.round((F.L + F.R) / 2 - pw / 2);
+    T = words(pw - A.w - 24);
+    const inner = Math.max(A.h + 4, T.bigH + 6 + T.smallH), plH = Math.min(room, inner + 10), py0 = Math.round(top + (room - plH) / 2);
+    plate(S, px0, py0, pw, plH);
+    ix = px0 + 8; iy = py0 + Math.round((plH - A.h) / 2) + 2;
+    cx = Math.round(px0 + 8 + A.w + (pw - A.w - 16) / 2); y = py0 + Math.round((plH - (T.bigH + 6 + T.smallH)) / 2);
+  }
+  // the picture, in this pad's LCD colours; the phone's screen is the player's colour (a one-colour LCD dims its own)
+  const one = hud.ink === hud.gold, mine = one ? mixHex(hud.bg, hud.gold, 0.5) : hex2(st.data.color || hud.ink);
+  const colours = { bg: hud.bg, gold: hud.gold, dark: mixHex(hud.bg, "#000000", 0.4), screen: mine, shine: one ? hud.gold : mixHex(mine, "#ffffff", 0.3) };
+  const now = performance.now();
+  if (typeof st.turnT0 !== "number") st.turnT0 = now; // the card just came up: the loop starts from the top
+  const pose = CALM.matches ? { deg: A.deg, a: 1, wait: -1 } : turnPose(now - st.turnT0); // reduced motion: resting sideways, nothing moves
+  turnPicture(ix, iy, pose, colours);
+  if (pose.wait >= 0) st.frame(pose.wait);
   // the fonts' bold is a double strike, which fills a W in: the headline draws its own 7-wide W (one pixel wider than the rest)
   const headline = (ln, y) => {
     let x = Math.round(cx - (textW(ln, FB, { bold: true }) + (ln.split("W").length - 1)) / 2);
@@ -1041,9 +1156,9 @@ function mateTurnCard(st, S, F) {
       x += 7;
     }
   };
-  big.forEach((ln, i) => headline(ln, y + i * 10));
-  y += bigH + 8;
-  small.forEach((ln, i) => text(ln, cx, y + i * 7, FS, hud.ink));
+  T.big.forEach((ln, i) => headline(ln, y + i * 10));
+  y += T.bigH + g2;
+  T.small.forEach((ln, i) => text(ln, cx, y + i * 7, FS, hud.ink));
 }
 
 // ── helper GW: TEE TIME + WHO'S THE FOX? (portrait bodies + DOM theming) ──────────────────────────────────────────
