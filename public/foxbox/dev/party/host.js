@@ -1275,7 +1275,8 @@ function knightBackToSetup(afterRound) {
 // (no pick = the racer by slot). After the results: the FoxBox lobby (Lakota's choice for NONAME); each phone's last
 // racer is kept (lob.kartLast) and preselected the next time FOX KART is picked. A round / countdown called off (Esc)
 // goes back to the setup, picks kept, nobody ready.
-// TITLE: a setup begun from the lobby opens on the title screen (lob.kart.title; "TITLE" below); START, then all of the above.
+// TITLE: a setup begun from the lobby opens on the title screen (lob.kart.title; "TITLE" below): a 6.6 s fake load, then
+// PRESS START, then all of the above.
 const KART = GAMES.find((g) => g.id === "kart");
 const KART_DROP_WAIT_MS = 4000;
 const kartRacer = (v) => (typeof v === "string" && KART.racers.includes(v) ? v : null);
@@ -1304,7 +1305,9 @@ function newKartSetup(keep) {
   const track = keep && kartTrackOk(keep.track) ? keep.track : (KART.tracks.find((t) => t.open) || KART.tracks[0]).id;
   // TITLE: a setup that begins from the lobby opens on the title picture (kartTitleGo ends it); one that carries on from
   // a called-off round (keep) doesn't show it again
-  lob.kart = { id: newRowSetupId(), track, picks, bots: kartShuffled(), title: keep ? !!keep.title : true };
+  // (titleAt = when the title came up on this TV: set by renderKartTitle once the picture is on the screen; a fresh
+  // setup = a fresh title = the fake load again)
+  lob.kart = { id: newRowSetupId(), track, picks, bots: kartShuffled(), title: keep ? !!keep.title : true, titleAt: keep && keep.title && Number.isFinite(keep.titleAt) ? keep.titleAt : null, titleLook: kartTitleLookNew(keep) };
 }
 /** No pick yet: the racer this phone picked last time, else the one by slot (game.js does the same by slot). */
 const kartDefault = (p) => kartRacer(lob.kartLast && lob.kartLast[p.id]) || KART.racers[p.slot % KART.racers.length];
@@ -1339,13 +1342,45 @@ function maybeStartKart() {
   // (the step is up: it waits for the picker's PICK — no timer, Lakota — or the TV's Enter)
 }
 // ── TITLE: the title screen (the first step of a setup begun from the lobby) ──
-// lob.kart.title = true: the TV shows the title picture full screen (#kart-title: kart/title.png, 480 × 270 pixel art,
-// PRESS START — kart/title-start.png — blinking over it; nothing else moves) and so does every phone (its own copy of
-// the picture). ONE phone also gets a START button: the host's (hostPhoneId; no host phone here = the game picker's,
-// else the oldest phone connected), named in the lobby state's kart.titleHost; when it leaves, the next one gets it.
-// START ({type:"fkstart"} from that phone, or Enter / Space on the TV) clears the flag: the racer pick goes on exactly as
-// before. No timer. Saved with the lobby (a TV reload keeps the title up); the extra TVs get it in m:lobby's lob.
+// lob.kart.title = true: the TV shows the title screen full screen (#kart-title: a 480 × 270 canvas drawn by
+// kart/kart-title.js — fox-kart's phone/title-screen.js, the SAME drawing every phone has in kart-pad.js — from
+// kart/title.png) and so does every phone.
+// THE FAKE LOAD (Lakota, Nov 9: "dont let the start button appear for 6.6 seconds were going to do a fake laoding screen
+// vibes"): lob.kart.titleAt = this TV's clock when the picture went up. For KART_TITLE_LOAD_MS after it the screen
+// "loads" (lob.kart.titleLook: A a chunky bar · B the picture loads in · C a small spinner — see THE LOOK), NO start prompt is shown
+// anywhere and nothing starts the game: a START that comes early (a phone, Enter / Space) is dropped, not kept. Then
+// PRESS START (red letters, a slow pulse) on the TV and on ONE phone: the host's (hostPhoneId; no host phone here = the
+// game picker's, else the oldest phone connected), named in the lobby state's kart.titleHost — null during the load;
+// when that phone leaves, the next one gets it. The lobby state's kart.titleLoad = { ms, look, left } tells the phones
+// where the clock is (left = ms still to go when the state was made: a phone that joins or reloads late is right at
+// once; wait = the picture isn't up here yet). ONE clock: titleAt, read against Date.now() here and against the boss
+// clock on an extra TV (which gets titleAt in m:lobby's lob). Saved with the lobby: a TV reload carries on, it doesn't
+// load again. START ({type:"fkstart"} from that phone, or Enter / Space on the TV) clears the flag: the racer pick goes
+// on exactly as before. The title is silent.
+const KART_TITLE_LOAD_MS = 6600, KART_TITLE_LOOKS = ["A", "B", "C"], KART_TITLE_LOOK = "A";
+// (tests / the review clips: ?karttitle=B on the TV page forces the look)
+const KART_TITLE_ASK = (() => { try { const v = String(new URLSearchParams(location.search).get("karttitle") || "").toUpperCase(); return KART_TITLE_LOOKS.includes(v) ? v : null; } catch { return null; } })();
+// THE LOOK (Lakota, Nov 9: "Let's do all those loadings ... pick one random each time we play that game"): a fresh
+// title rolls one of the three, never the one the title before it had (lob.kartTitleLast, saved with the lobby). It is
+// rolled ONCE, here on the main TV, and lives in lob.kart.titleLook: the phones get it in kart.titleLoad.look, an extra
+// TV in m:lobby's lob, a TV reload finds it saved. A setup that carries on (keep) keeps its look.
+function kartTitleLookNew(keep) {
+  if (KART_TITLE_ASK) return KART_TITLE_ASK;
+  if (keep && KART_TITLE_LOOKS.includes(keep.titleLook)) return keep.titleLook;
+  const pool = KART_TITLE_LOOKS.filter((l) => l !== lob.kartTitleLast);
+  return (lob.kartTitleLast = pool[Math.floor(Math.random() * pool.length)] || KART_TITLE_LOOK);
+}
 const kartTitleUp = () => kartSetupActive() && !!lob.kart.title;
+const kartTitleArmed = () => kartTitleUp() && Number.isFinite(lob.kart.titleAt);
+const kartTitleLook = () => (lob.kart && KART_TITLE_LOOKS.includes(lob.kart.titleLook) ? lob.kart.titleLook : KART_TITLE_LOOK);
+/** ms since the title came up on the main TV (0 until it has), on the one clock every TV shares */
+function kartTitleT() {
+  if (!kartTitleArmed()) return 0;
+  const clock = globalThis.FOXBOX_CLOCK && typeof globalThis.FOXBOX_CLOCK.bossNow === "function" ? globalThis.FOXBOX_CLOCK : null;
+  return Math.max(0, (mirror && clock ? clock.bossNow() : Date.now()) - lob.kart.titleAt);
+}
+/** the fake load is over: PRESS START is up, START works */
+const kartTitleReady = () => kartTitleArmed() && kartTitleT() >= KART_TITLE_LOAD_MS;
 function kartTitleHost() {
   const h = hostPhoneId();
   if (h) return h;
@@ -1353,9 +1388,10 @@ function kartTitleHost() {
   const picker = here.find((p) => p.id === lob.pickerId);
   return (picker || here[0] || {}).id || null;
 }
-/** START: the title off, the racer pick on. */
-function kartTitleGo() {
+/** START: the title off, the racer pick on. Not during the fake load (force: the picture can't be shown / a test). */
+function kartTitleGo(force) {
   if (mirror || !kartTitleUp()) return false;
+  if (force !== true && !kartTitleReady()) return false; // too early: dropped (never queued for 6.6 s)
   lob.kart.title = false;
   saveLobby();
   broadcastLobby();
@@ -1363,13 +1399,27 @@ function kartTitleGo() {
   maybeStartKart();
   return true;
 }
+/** the main TV: the moment the load ends, the phones are told (kart.titleHost + titleLoad.left 0) — once per title */
+let kartTitleTO = 0, kartTitleSaid = "";
+function kartTitlePoll() {
+  if (mirror || !kartTitleArmed()) return;
+  if (kartTitleReady()) {
+    const k = `${lob.kart.id}:${lob.kart.titleAt}`;
+    if (kartTitleSaid !== k) { kartTitleSaid = k; publishLobby(); }
+    return;
+  }
+  if (!kartTitleTO) kartTitleTO = setTimeout(() => { kartTitleTO = 0; kartTitlePoll(); }, Math.max(15, KART_TITLE_LOAD_MS - kartTitleT() + 5));
+}
 // The TV's layer. Shown / hidden with style.display (never just `hidden`: the layer's own inline display would beat it —
-// the track pick row's bug of Nov 8); hidden again by startRound. The two PNGs are fetched + decoded BEFORE the picture
-// is put up (plain ink until then: never a half-drawn frame). The art is shown at a whole number of screen pixels per
-// art pixel when that fills ≥ 86 % of the fitted size (1080p = × 4, 4K = × 8), else fitted exactly; nearest-neighbour,
-// centred on the picture's own ink (#14101f). A picture that can't be loaded: the main TV skips the title.
+// the track pick row's bug of Nov 8); hidden again by startRound. The picture and the drawing module are fetched +
+// decoded BEFORE the title is put up (plain ink until then: never a half-drawn frame) and the 6.6 s only begin then.
+// The canvas is shown at a whole number of screen pixels per art pixel when that fills ≥ 86 % of the fitted size
+// (1080p = × 4, 4K = × 8), else fitted exactly; nearest-neighbour, centred on the picture's own ink (#14101f). Each
+// animation frame draws titleFrame(look, t, …): a pure function of lob.kart + the clock, so every TV draws the same.
+// A picture / module that can't be loaded: the main TV skips the title.
 const KT_W = 480, KT_H = 270, KT_INK = "#14101f";
-let kartTitleLoad = null, kartTitleImgs = null;
+let kartTitleLoad = null, kartTitleImgs = null, kartTitleKit = null, kartTitleRaf = 0, kartTitleKey = "";
+const kartTitleStill = (() => { try { return matchMedia("(prefers-reduced-motion: reduce)"); } catch { return null; } })();
 function kartTitlePreload() {
   if (kartTitleLoad) return kartTitleLoad;
   const one = (file) => new Promise((ok, no) => {
@@ -1378,12 +1428,17 @@ function kartTitlePreload() {
     im.onerror = () => no(new Error(`${file} not loaded`));
     im.src = new URL(`./kart/${file}`, import.meta.url).href;
   });
-  kartTitleLoad = Promise.all([one("title.png"), one("title-start.png")])
-    .then((a) => { kartTitleImgs = a; renderKartTitle(); })
+  kartTitleLoad = Promise.all([one("title.png"), import("./kart/kart-title.js")])
+    .then(([art, kit]) => {
+      if (!kit || typeof kit.titleFrame !== "function" || typeof kit.drawTitle !== "function") throw new Error("kart-title.js has no title drawing");
+      kartTitleKit = kit;
+      kartTitleImgs = art;
+      renderKartTitle();
+    })
     .catch((e) => {
       kartTitleImgs = false;
       kartWarn("title picture not loaded (no title screen)", e);
-      if (!kartTitleGo()) renderKartTitle();
+      if (!kartTitleGo(true)) renderKartTitle();
     });
   return kartTitleLoad;
 }
@@ -1393,12 +1448,32 @@ function kartTitleFit() {
   const k = whole >= 1 && whole / fit >= 0.86 ? whole : fit;
   return { w: (KT_W * k) / dpr, h: (KT_H * k) / dpr, k, whole: k === whole };
 }
+const kartTitleFrame = () => kartTitleKit.titleFrame({ look: kartTitleLook(), t: kartTitleT(), ms: KART_TITLE_LOAD_MS, start: kartTitleArmed(), still: !!(kartTitleStill && kartTitleStill.matches) });
+function kartTitlePaint() {
+  const box = document.getElementById("kart-title"), cv = box && box.querySelector("canvas.kt-art");
+  if (!cv || !kartTitleKit || !kartTitleImgs) return;
+  const f = kartTitleFrame();
+  if (f.key === kartTitleKey) return;
+  kartTitleKey = f.key;
+  try { kartTitleKit.drawTitle(cv.getContext("2d"), kartTitleImgs, f); } catch (e) { kartWarn("title drawing threw", e); }
+  box.dataset.phase = f.loading ? "load" : "ready"; // (QA: what is on the screen)
+  box.dataset.prompt = f.prompt ? "1" : "0";
+  box.dataset.look = f.look;
+}
+function kartTitleTick() {
+  kartTitleRaf = 0;
+  const box = document.getElementById("kart-title");
+  if (!box || box.style.display === "none") return;
+  kartTitlePoll();
+  kartTitlePaint();
+  kartTitleRaf = requestAnimationFrame(kartTitleTick);
+}
 function renderKartTitle() {
   const on = kartTitleUp() && phase === "lobby" && kartTitleImgs !== false;
   let box = document.getElementById("kart-title");
   if (!on) {
     if (box && box.style.display !== "none") { box.hidden = true; box.style.display = "none"; }
-    if (kartTitleImgs === false && !mirror && kartTitleUp()) setTimeout(kartTitleGo, 0); // (no picture: no title step)
+    if (kartTitleImgs === false && !mirror && kartTitleUp()) setTimeout(() => kartTitleGo(true), 0); // (no picture: no title step)
     return;
   }
   if (!kartTitleImgs) kartTitlePreload();
@@ -1409,9 +1484,7 @@ function renderKartTitle() {
     // z 98: over everything the lobby keeps on top (phone cursors + the party chip 95, the BOTS label 96): a clean picture
     box.style.cssText = `position:fixed;inset:0;z-index:98;background:${KT_INK};align-items:center;justify-content:center;overflow:hidden`;
     const st = document.createElement("style");
-    st.textContent = "@keyframes kart-title-blink{0%,49.99%{opacity:1}50%,100%{opacity:0}}"
-      + "#kart-title img{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}"
-      + "#kart-title .kt-start{animation:kart-title-blink 1s linear infinite}"; // PRESS START: on 0.5 s, off 0.5 s
+    st.textContent = "#kart-title canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}";
     const pic = document.createElement("div");
     pic.className = "kt-pic";
     pic.style.cssText = "position:relative;flex:none";
@@ -1421,11 +1494,11 @@ function renderKartTitle() {
   }
   const pic = box.querySelector(".kt-pic");
   if (kartTitleImgs && !pic.firstChild) {
-    const [art, start] = kartTitleImgs;
-    art.alt = start.alt = "";
-    art.className = "kt-art"; art.dataset.test = "kart-title-art";
-    start.className = "kt-start"; start.dataset.test = "kart-title-start";
-    pic.append(art, start);
+    const cv = document.createElement("canvas");
+    cv.width = KT_W; cv.height = KT_H;
+    cv.className = "kt-art"; cv.dataset.test = "kart-title-art";
+    pic.append(cv);
+    kartTitleKey = "";
   }
   const f = kartTitleFit();
   pic.style.width = `${f.w}px`;
@@ -1434,6 +1507,17 @@ function renderKartTitle() {
   box.dataset.ready = kartTitleImgs ? "1" : "0";
   box.hidden = false;
   box.style.display = "flex";
+  if (!kartTitleImgs) return;
+  // the picture is on the screen: the main TV starts the one clock (once per title; a reload finds it already set)
+  if (!mirror && !kartTitleArmed()) {
+    lob.kart.titleAt = Date.now();
+    if (KART_TITLE_ASK) lob.kart.titleLook = KART_TITLE_ASK;
+    saveLobby();
+    queueMicrotask(publishLobby);
+  }
+  kartTitlePoll();
+  kartTitlePaint();
+  if (!kartTitleRaf) kartTitleRaf = requestAnimationFrame(kartTitleTick);
 }
 // ── PHONEPICK: the track pick step (after everyone is READY, before the round) ──
 // The TV shows the track postcards in a row (#kart-pick, the game's own postcard: game.trackPostcard; the COMING SOON
@@ -1554,8 +1638,10 @@ function kartLobby() {
     picks, racerOf, bots: slots.length, botRacers: slots.map((s) => botRacers.get(s)), ...kartReadiness(),
     // PHONEPICK: the track pick step (null = not up) and who picks (the phones show the same postcards: their own files)
     pick: pk ? { i: pk.i, picked: pk.picked || null } : null, trackPicker: kartTrackPicker(),
-    // TITLE: the title screen is up (every phone shows the picture) + the one phone with START
-    title: !!lob.kart.title, titleHost: lob.kart.title ? kartTitleHost() : null,
+    // TITLE: the title screen is up (every phone draws it) + the one phone with PRESS START (nobody during the fake
+    // load) + where the load's clock is (left = ms to go as of this state; wait = the picture isn't up on the TV yet)
+    title: !!lob.kart.title, titleHost: lob.kart.title && kartTitleReady() ? kartTitleHost() : null,
+    ...(lob.kart.title ? { titleLoad: { ms: KART_TITLE_LOAD_MS, look: kartTitleLook(), left: kartTitleArmed() ? Math.max(0, Math.round(KART_TITLE_LOAD_MS - kartTitleT())) : KART_TITLE_LOAD_MS, ...(kartTitleArmed() ? {} : { wait: true }) } } : {}),
   };
 }
 /** pickGame(): a fresh setup when FOX KART is picked (unless it already is the pick); none for other games. */
@@ -1571,7 +1657,8 @@ function onKartMsg(msg) {
   if (!p || !p.connected) return true;
   if (!kartSetupActive()) return sendStatus(p), true; // not in the setup: just tell the phone where things are
   if (m.type === "fkstart") {
-    // TITLE: START, from the one phone that has the button (anyone else / no title up: told where things are)
+    // TITLE: START, from the one phone that has PRESS START (anyone else / no title up / still loading: told where
+    // things are; an early START is dropped by kartTitleGo, not kept)
     if (!kartTitleUp() || p.id !== kartTitleHost() || !kartTitleGo()) toPad(p.id, { t: "lobby", s: lobbyState() });
     return true;
   }
@@ -1671,6 +1758,7 @@ const lob = {
   knight: null, // KNIGHT: Knight Platformer's setup { id, level, picks } (see knightSetupActive)
   kart: null, // KART: FOX KART's setup { id, track, picks, bots } (see kartSetupActive)
   kartLast: {}, // KART: each phone's last racer (clientId → racer id), preselected the next time FOX KART is picked
+  kartTitleLast: null, // KART: the loading look ("A" | "B" | "C") the last title had: the next one rolls another
 };
 function saveLobby() {
   try {
@@ -3285,7 +3373,7 @@ window.addEventListener("keydown", (e) => {
     setBotsMode(botsMode === "fill" ? "off" : "fill"); // BOTS: FILL / OFF (the lobby toggle does the same)
   } else if ((e.key === "Enter" || e.code === "Space") && phase === "lobby") {
     e.preventDefault();
-    if (!kartTitleGo()) startCountdown(null); // TITLE: START on the title screen (then the racer pick as before)
+    if (!kartTitleGo()) startCountdown(null); // TITLE: START on the title screen (then the racer pick as before; during the fake load: nothing)
   } else if ((e.key === "Enter" || e.code === "Space") && phase === "playing" && round && !round.ended && round.training) {
     e.preventDefault(); // ROW TRAINING: the TV skips the controls check (everyone passes)
     if (typeof game.skipTraining === "function") try { game.skipTraining(); } catch (err) { console.warn("[party] skipTraining threw", err); }
@@ -3817,12 +3905,16 @@ window.__party = {
   get kart() {
     return lob.kart && { ...JSON.parse(JSON.stringify(lob.kart)), last: { ...(lob.kartLast || {}) } };
   },
-  /** TITLE: the title screen { up, host: the phone with START, loaded: the picture is in }; kartStart() = START. */
+  /** TITLE: the title screen { up, host: the phone that gets PRESS START, loaded: the picture is in, ready: the fake
+   *  load is over (PRESS START is up), left: ms of it to go, t: ms since the title came up, at: its clock, look, ms };
+   *  kartStart() = START as a player presses it (nothing during the load). */
   get kartTitle() {
-    return { up: kartTitleUp(), host: kartTitleUp() ? kartTitleHost() : null, loaded: !!kartTitleImgs };
+    const up = kartTitleUp();
+    return { up, host: up ? kartTitleHost() : null, loaded: !!kartTitleImgs, ready: kartTitleReady(), left: up ? (kartTitleArmed() ? Math.max(0, KART_TITLE_LOAD_MS - kartTitleT()) : KART_TITLE_LOAD_MS) : 0,
+      t: kartTitleT(), at: up && kartTitleArmed() ? lob.kart.titleAt : null, look: kartTitleLook(), ms: KART_TITLE_LOAD_MS };
   },
   kartStart: () => kartTitleGo(),
-  start: () => { kartTitleGo(); startCountdown(null); }, // (tests: past the title screen too)
+  start: () => { kartTitleGo(true); startCountdown(null); }, // (tests: past the title screen too, load or not)
   lobby: () => toLobby(),
   get lobbyState() {
     return lobbyState();
