@@ -764,7 +764,7 @@ const voteScreen = (() => {
     const foot = sv.step === "vote" ? `${myVote ? "VOTED! TAP ANOTHER TO CHANGE IT" : "TAP YOUR FAVOURITE · NOT YOUR OWN"} · ${sv.voted}/${sv.voters} VOTED`
       : sv.step === "tie" ? "A RANDOM ONE OF THE TIED WINS"
       : sv.step === "pick" ? (iWon ? "YOU START THE ROUND FLYING IT" : `${up(sv.winnerName)} IS PICKING A FREE ITEM TO START WITH...`)
-      : "GET READY!";
+      : ""; // (the title says who won and what they picked; a waiting phone gets no filler line: Lakota, Nov 9)
     if (el.foot.textContent !== foot) el.foot.textContent = foot;
   }
   el.gal.addEventListener("click", (e) => {
@@ -1575,6 +1575,14 @@ $("boats-head").addEventListener("click", () => {
   renderBoats();
 });
 
+/** How this game is played from this phone: the status card's line in the countdown and the round. */
+function controlsLine() {
+  return role === "captain"
+    ? "Tilt to steer · aim and FIRE at the other boats"
+    : mode.stick === "motion"
+    ? "Paddle! A steady beat is fastest"
+    : mode.stick === "xy" ? "Drag to roll · SHOVE to bump" : "Steer ◀ ▶ · BONK = dive on heads";
+}
 function renderStatus() {
   if (lastStatus && lastStatus.game) applyMode(lastStatus.game);
   applyRole();
@@ -1641,9 +1649,8 @@ function renderStatus() {
         if (ll) s += ` · ${ll}`;
         break;
       }
-      case "countdown":
-        b = "Get ready!";
-        s = mode.id === "row" || mode.id === "golf" || mode.id === "tennis" ? "" : "Look at the TV 👀"; // (those phones don't send eyes to the TV: Lakota, Nov 9)
+      case "countdown": // no headline (a waiting phone gets no filler, and is never sent to the TV: Lakota, Nov 9): how to play, as in the round
+        s = controlsLine();
         break;
       case "playing":
         if (mode.id === "row" && rowTrain.visible()) { // ROWTRAIN: the controls check before the race (then ALL SET!)
@@ -1652,11 +1659,7 @@ function renderStatus() {
           break;
         }
         b = "GO GO GO!";
-        s = role === "captain"
-          ? "Tilt to steer · aim and FIRE at the other boats"
-          : mode.stick === "motion"
-          ? "Paddle! A steady beat is fastest"
-          : mode.stick === "xy" ? "Drag to roll · SHOVE to bump" : "Steer ◀ ▶ · BONK = dive on heads";
+        s = controlsLine();
         break;
       case "out":
         b = "Oops, you're out!";
@@ -1680,6 +1683,7 @@ function renderStatus() {
     }
   }
   if (big.textContent !== b) big.textContent = b;
+  if (big.hidden !== !b) big.hidden = !b; // (no headline = no empty box in the row / column)
   if (small.textContent !== s) small.textContent = s;
   const rows = ws && ws.readyState === 1 && lastStatus?.state === "results" && Array.isArray(lastStatus.results) ? lastStatus.results : null;
   $("pad-screen").classList.toggle("results", !!rows);
@@ -1715,7 +1719,7 @@ function renderStatus() {
   }
   renderBack();
   // the captain's sideways screen hides #status: mirror it in the middle column
-  const capLine = b === "You're in!" ? s : s ? `${b} · ${s}` : b;
+  const capLine = b === "You're in!" || !b ? s : s ? `${b} · ${s}` : b;
   if ($("cap-status").textContent !== capLine) $("cap-status").textContent = capLine;
   $("cap-seat").hidden = !(mode.seats && lastStatus && lastStatus.state === "lobby");
   syncGolf();
@@ -1936,7 +1940,7 @@ function skinWanted() {
   return skinId() !== "classic" && connected && curScreen === "pad-screen" && !!skinGame() && states.includes(st);
 }
 function skinLabel(st) {
-  if (st === "countdown") return "GET READY!";
+  // (the countdown shows the round's own label; a waiting phone gets no filler line: Lakota, Nov 9)
   if (st === "out") return "OUT! NEXT ROUND SOON";
   if (st === "waiting") return "NEXT ROUND SOON";
   if (mode.id === "row") return role === "paddle" ? "SWING TO PADDLE" : "TILT";
