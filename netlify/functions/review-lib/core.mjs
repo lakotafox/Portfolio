@@ -127,7 +127,8 @@ export function makeHandler(store) {
     const old = await store.getJSON(`post/${id}`);
     const post = {
       id,
-      ts: old ? old.ts : Date.now(),
+      // A backdated ts lets old, still unanswered items sit below newer ones.
+      ts: old ? old.ts : Number(body.ts) > 0 ? Math.min(Number(body.ts), Date.now()) : Date.now(),
       project: str(body.project, 60) || "OTHER",
       session: str(body.session, 80),
       group: str(body.group, 80),
