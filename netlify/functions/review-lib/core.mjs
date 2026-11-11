@@ -236,6 +236,7 @@ export function makeHandler(store) {
     const parts = at < 0 ? [] : url.pathname.slice(at + 12).split("/").filter(Boolean);
     const route = parts[0] || "";
     const method = req.method;
+    let poster = false;
 
     try {
       if (route === "auth" && method === "POST") {
@@ -249,7 +250,7 @@ export function makeHandler(store) {
 
       const role = roleOf(tokenFrom(req));
       if (!role) return fail(401, "locked");
-      const poster = role === "post";
+      poster = role === "post";
 
       if (route === "feed" && method === "GET") return await feed(url);
       if (route === "media" && method === "GET" && parts.length === 2) return await getMedia(req, parts[1]);
@@ -268,7 +269,8 @@ export function makeHandler(store) {
       return fail(404, "no such route");
     } catch (e) {
       console.error("review-api", route, e);
-      return fail(500, "server error");
+      // The poster (the CLI) gets the reason, so a storage fault can be told from a bug.
+      return json({ error: "server error", ...(poster ? { detail: String(e?.message || e).slice(0, 300) } : {}) }, 500);
     }
   };
 }
