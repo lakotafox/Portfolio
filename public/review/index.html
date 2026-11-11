@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#000000">
+<title>Review</title>
+<style>
+:root{--bg:#000;--card:#000;--line:#262626;--text:#f5f5f5;--dim:#a8a8a8;--faint:#737373;--field:#121212;--like:#ff3040;--no:#ffb020;--blue:#0095f6;--good:#3ddc84}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+body{overflow-x:hidden}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:520px;margin:0 auto;min-height:100vh;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+@media (max-width:540px){.wrap{border:0}}
+header.top{position:sticky;top:0;z-index:20;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.bar{display:flex;align-items:center;gap:10px;padding:10px 16px}
+.logo{font-weight:800;font-size:22px;letter-spacing:-.5px;flex:1}
+.logo small{font-weight:500;font-size:12px;color:var(--faint);letter-spacing:0;margin-left:6px}
+.iconbtn{width:36px;height:36px;display:grid;place-items:center;border-radius:50%}
+.iconbtn:active{background:#1a1a1a}
+.iconbtn svg{width:22px;height:22px}
+.spin svg{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tabs{display:flex}
+.tab{flex:1;padding:10px 0 9px;text-align:center;font-weight:700;font-size:13px;letter-spacing:.4px;color:var(--faint);border-bottom:2px solid transparent}
+.tab.on{color:var(--text);border-bottom-color:var(--text)}
+.tab b{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:#262626;color:var(--text);font-size:12px;line-height:18px}
+.tab.on b.hot{background:var(--like)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;scrollbar-width:none;border-bottom:1px solid var(--line)}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:6px 14px;border-radius:999px;border:1px solid #363636;font-size:13px;font-weight:600;color:var(--dim);white-space:nowrap}
+.chip.on{background:var(--text);color:#000;border-color:var(--text)}
+.group{padding:18px 16px 8px;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--faint)}
+article.post{border-bottom:1px solid var(--line);padding-bottom:14px}
+.phead{display:flex;align-items:center;gap:10px;padding:12px 16px 10px}
+.ava{flex:0 0 34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;color:#000}
+.who{flex:1;min-width:0}
+.who .p{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who .s{font-size:12px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.media{position:relative;background:#0a0a0a}
+.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.track::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;position:relative;display:grid;place-items:center;overflow:hidden}
+.slide img,.slide video{width:100%;height:100%;object-fit:contain;display:block;background:#0a0a0a}
+.slide img.px{image-rendering:pixelated}
+.slide audio{width:calc(100% - 32px)}
+.slabel{position:absolute;left:10px;top:10px;max-width:calc(100% - 20px);padding:4px 10px;border-radius:999px;background:rgba(0,0,0,.72);font-size:12px;font-weight:700;pointer-events:none}
+.count{position:absolute;right:10px;top:10px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.72);font-size:12px;font-weight:600;pointer-events:none}
+.dots{display:flex;justify-content:center;gap:5px;padding-top:10px}
+.dots i{width:6px;height:6px;border-radius:50%;background:#4a4a4a}
+.dots i.on{background:var(--blue)}
+.acts{display:flex;align-items:center;gap:6px;padding:8px 10px 2px}
+.act{width:44px;height:44px;display:grid;place-items:center;border-radius:50%}
+.act svg{width:27px;height:27px;fill:none;stroke:var(--text);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round;transition:transform .15s}
+.act:active svg{transform:scale(.85)}
+.act.up.on svg{fill:var(--like);stroke:var(--like)}
+.act.down.on svg{fill:var(--no);stroke:var(--no)}
+.saved{margin-left:auto;padding-right:8px;font-size:12px;color:var(--faint)}
+.saved.ok{color:var(--good)}
+.saved.bad{color:var(--like);font-weight:700}
+.body{padding:2px 16px 0}
+.title{font-weight:700;font-size:16px}
+.cap{color:#dcdcdc;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:3px}
+.choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.choice{padding:9px 16px;border-radius:10px;border:1px solid #363636;font-weight:700;font-size:13px;letter-spacing:.3px}
+.choice.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.comments{margin-top:10px;display:grid;gap:6px}
+.cm{display:flex;gap:8px;align-items:flex-start;font-size:14px}
+.cm .t{flex:1;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.cm .t b{margin-right:6px}
+.cm.claude .t b{color:#c98bff}
+.cm .m{display:block;font-size:11px;color:var(--faint);margin-top:1px}
+.cm .x{flex:0 0 28px;height:24px;color:var(--faint);font-size:16px;line-height:1}
+.say{display:flex;gap:8px;align-items:flex-end;margin-top:10px}
+.say textarea{flex:1;min-width:0;resize:none;height:40px;max-height:160px;padding:9px 14px;border-radius:20px;border:1px solid #363636;background:var(--field);color:var(--text);font:inherit;font-size:16px;line-height:1.3;outline:none}
+.say textarea:focus{border-color:#555}
+.say textarea::placeholder{color:var(--faint)}
+.say button{height:40px;padding:0 6px;font-weight:700;color:var(--blue)}
+.say button:disabled{opacity:.35}
+.empty{padding:90px 30px;text-align:center;color:var(--dim)}
+.empty .big{font-size:44px;margin-bottom:10px}
+.empty b{display:block;color:var(--text);font-size:18px;margin-bottom:4px}
+.lock{padding:120px 30px;text-align:center;color:var(--dim)}
+.lock svg{width:54px;height:54px;stroke:var(--faint);fill:none;stroke-width:1.5;margin-bottom:14px}
+.lock b{display:block;color:var(--text);font-size:18px;margin-bottom:6px}
+.box{position:fixed;inset:0;z-index:50;background:#000;display:none;overflow:auto;-webkit-overflow-scrolling:touch}
+.box.on{display:block}
+.box img{display:block;min-width:100%;min-height:100vh;object-fit:contain;margin:auto}
+.box img.fit{width:100%;height:100vh}
+.box img.px{image-rendering:pixelated}
+.box .close{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;width:40px;height:40px;border-radius:50%;background:rgba(30,30,30,.85);font-size:20px}
+.box .hint{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:0;right:0;text-align:center;font-size:12px;color:var(--dim);pointer-events:none}
+.foot{padding:26px 16px calc(40px + env(safe-area-inset-bottom));text-align:center;font-size:12px;color:var(--faint)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="bar">
+      <div class="logo">Review<small id="sub"></small></div>
+      <button class="iconbtn" id="refresh" aria-label="Refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+      </button>
+    </div>
+    <div class="tabs" id="tabs" hidden>
+      <button class="tab on" data-tab="new">TO REVIEW<b id="nNew" class="hot">0</b></button>
+      <button class="tab" data-tab="done">REVIEWED<b id="nDone">0</b></button>
+    </div>
+  </header>
+  <div class="chips" id="chips" hidden></div>
+  <main id="feed"></main>
+  <div class="foot" id="foot"></div>
+</div>
+<div class="box" id="box"><img id="boxImg" alt=""><button class="close" id="boxClose" aria-label="Close">✕</button><div class="hint">tap the picture to switch between fit and full size</div></div>
+
+<script>
+(() => {
+  const API = "/review-api/";
+  const $ = (id) => document.getElementById(id);
+  const feedEl = $("feed");
+  const ls = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
+  };
+
+  // The secret link is /review/#k=<key>. Keep the key on this device and drop it from the address bar.
+  let key = ls.get("rk");
+  const fromHash = new URLSearchParams(location.hash.slice(1)).get("k");
+  if (fromHash) {
+    key = fromHash;
+    ls.set("rk", key);
+    history.replaceState(null, "", location.pathname);
+  }
+
+  let posts = [];
+  let tab = ls.get("review.tab") === "done" ? "done" : "new";
+  let project = ls.get("review.project") || "";
+  // Posts answered during this visit stay where they are until the next refresh or tab change.
+  const sticky = new Set();
+
+  function el(tag, attrs, ...kids) {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === "class") n.className = v;
+      else if (k === "text") n.textContent = v;
+      else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v === true ? "" : v);
+    }
+    for (const kid of kids.flat()) if (kid != null) n.append(kid);
+    return n;
+  }
+  const svg = (inner) => {
+    const t = document.createElement("template");
+    t.innerHTML = `<svg viewBox="0 0 24 24">${inner}</svg>`;
+    return t.content.firstChild;
+  };
+  const HEART = '<path d="M12 20.5s-7.5-4.6-9.3-9.4C1.5 7.7 3.6 4.5 6.9 4.5c2 0 3.7 1.1 5.1 3 1.4-1.9 3.1-3 5.1-3 3.3 0 5.4 3.2 4.2 6.6-1.8 4.8-9.3 9.4-9.3 9.4z"/>';
+  const THUMB = '<path d="M8 13.5V4.5h9.2c.9 0 1.7.6 1.9 1.5l1.3 5.2c.3 1.2-.6 2.3-1.9 2.3H14l.7 3.6c.3 1.4-.8 2.6-2.1 2.6-.5 0-.9-.3-1.1-.7z"/><path d="M8 4.5H4.5v9H8"/>';
+
+  async function call(path, opts = {}, retry = true) {
+    const res = await fetch(API + path, {
+      method: opts.body ? "POST" : "GET",
+      credentials: "same-origin",
+      headers: opts.body ? { "content-type": "application/json" } : undefined,
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+      cache: "no-store",
+    });
+    if (res.status === 401 && retry && key && path !== "auth") {
+      const ok = await call("auth", { body: { k: key } }, false).then(() => true, () => false);
+      if (ok) return call(path, opts, false);
+    }
+    if (!res.ok) throw Object.assign(new Error("request failed"), { status: res.status });
+    return res.json();
+  }
+
+  const answered = (p) => !!(p.react.vote || p.react.choice || p.react.comments.some((c) => c.by === "lakota"));
+  const hue = (s) => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+  function ago(ts) {
+    const s = Math.max(0, (Date.now() - ts) / 1000);
+    if (s < 90) return "now";
+    if (s < 3600) return Math.round(s / 60) + "m";
+    if (s < 86400) return Math.round(s / 3600) + "h";
+    if (s < 86400 * 14) return Math.round(s / 86400) + "d";
+    return new Date(ts).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  }
+
+  // One save at a time per post, so a quick like-then-comment never overwrites itself.
+  const queues = new Map();
+  function save(post, body, markEl) {
+    const prev = queues.get(post.id) || Promise.resolve();
+    const run = prev.then(async () => {
+      markEl.className = "saved";
+      markEl.textContent = "saving…";
+      try {
+        const out = await call("react", { body: { postId: post.id, ...body } });
+        post.react = out.react;
+        markEl.className = "saved ok";
+        markEl.textContent = "saved ✓";
+        return true;
+      } catch (e) {
+        markEl.className = "saved bad";
+        markEl.textContent = e.status === 401 ? "LOCKED — open your secret link" : "NOT SAVED — tap to retry";
+        markEl.onclick = () => { markEl.onclick = null; save(post, body, markEl).then(() => paint(post)); };
+        return false;
+      }
+    });
+    queues.set(post.id, run.catch(() => {}));
+    return run;
+  }
+
+  const painters = new Map();
+  const paint = (post) => painters.get(post.id)?.();
+
+  function mediaBlock(post) {
+    const list = post.media || [];
+    if (!list.length) return { node: null, slide: () => 0 };
+    // The frame takes the tallest item's shape, kept between wide (2:1) and tall (4:5).
+    let ratio = 0;
+    for (const m of list) ratio = Math.max(ratio, m.type === "audio" ? 0.3 : m.w && m.h ? m.h / m.w : 0.5625);
+    ratio = Math.min(1.25, Math.max(0.3, ratio));
+    let current = 0;
+    const track = el("div", { class: "track" });
+    const dots = list.length > 1 ? el("div", { class: "dots" }, list.map((_, i) => el("i", { class: i ? "" : "on" }))) : null;
+    const count = list.length > 1 ? el("div", { class: "count", text: `1/${list.length}` }) : null;
+    list.forEach((m) => {
+      const src = API + "media/" + m.id;
+      let node;
+      if (m.type === "video") {
+        node = el("video", { src, controls: true, muted: true, loop: true, playsinline: true, preload: "metadata" });
+        node.muted = true;
+        watchVideo(node);
+      } else if (m.type === "audio") {
+        node = el("audio", { src, controls: true, preload: "metadata" });
+      } else {
+        node = el("img", { src, alt: m.label || post.title, loading: "lazy", decoding: "async", class: post.pixel ? "px" : "",
+          onclick: () => openBox(src, post.pixel) });
+      }
+      track.append(el("div", { class: "slide", style: `aspect-ratio:1/${ratio}` }, node, m.label ? el("div", { class: "slabel", text: m.label }) : null));
+    });
+    track.addEventListener("scroll", () => {
+      const i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i === current) return;
+      current = i;
+      if (count) count.textContent = `${i + 1}/${list.length}`;
+      if (dots) [...dots.children].forEach((d, n) => d.classList.toggle("on", n === i));
+    }, { passive: true });
+    return { node: el("div", {}, el("div", { class: "media" }, track, count), dots), slide: () => current };
+  }
+
+  function postCard(post) {
+    const media = mediaBlock(post);
+    const mark = el("span", { class: "saved" });
+    const up = el("button", { class: "act up", "aria-label": "Like" }, svg(HEART));
+    const down = el("button", { class: "act down", "aria-label": "Dislike" }, svg(THUMB));
+    const choices = el("div", { class: "choices" });
+    const comments = el("div", { class: "comments" });
+    const box = el("textarea", { rows: "1", placeholder: "Add a comment…", "aria-label": "Comment" });
+    const send = el("button", { text: "Post", disabled: true });
+    const draftKey = "review.draft." + post.id;
+    box.value = ls.get(draftKey) || "";
+
+    const act = (body) => { sticky.add(post.id); save(post, body, mark).then(() => { paint(post); counts(); }); };
+
+    function repaint() {
+      up.classList.toggle("on", post.react.vote === "up");
+      down.classList.toggle("on", post.react.vote === "down");
+      choices.replaceChildren(...(post.choices || []).map((c) =>
+        el("button", { class: "choice" + (post.react.choice === c ? " on" : ""), text: c,
+          onclick: () => { post.react.choice = post.react.choice === c ? null : c; repaint(); act({ choice: post.react.choice }); } })));
+      choices.hidden = !(post.choices || []).length;
+      comments.replaceChildren(...post.react.comments.map((c) => {
+        const where = c.slide != null && (post.media || []).length > 1 ? ` · on ${c.slide + 1} of ${post.media.length}` : "";
+        return el("div", { class: "cm" + (c.by === "claude" ? " claude" : "") },
+          el("div", { class: "t" }, el("b", { text: c.by === "claude" ? "claude" : "you" }), c.text, el("span", { class: "m", text: ago(c.ts) + where })),
+          c.by === "lakota" ? el("button", { class: "x", "aria-label": "Delete comment", text: "×",
+            onclick: () => { if (confirm("Delete this comment?")) act({ deleteComment: c.id }); } }) : null);
+      }));
+      comments.hidden = !post.react.comments.length;
+    }
+    painters.set(post.id, repaint);
+
+    up.onclick = () => { post.react.vote = post.react.vote === "up" ? null : "up"; repaint(); act({ vote: post.react.vote }); };
+    down.onclick = () => { post.react.vote = post.react.vote === "down" ? null : "down"; repaint(); act({ vote: post.react.vote }); };
+
+    const grow = () => { box.style.height = "40px"; box.style.height = Math.min(160, box.scrollHeight + 2) + "px"; send.disabled = !box.value.trim(); };
+    // Reads and clears the box in one step, so Post followed by the box losing focus sends once.
+    function sendNow() {
+      const text = box.value.trim();
+      if (!text) return;
+      box.value = "";
+      ls.set(draftKey, null);
+      grow();
+      sticky.add(post.id);
+      save(post, { comment: { text, slide: media.slide() } }, mark).then((ok) => {
+        if (!ok && !box.value) { box.value = text; ls.set(draftKey, text); grow(); }
+        paint(post);
+        counts();
+      });
+    }
+    box.addEventListener("input", () => { ls.set(draftKey, box.value || null); grow(); });
+    box.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); sendNow(); } });
+    box.addEventListener("blur", sendNow);
+    send.onclick = sendNow;
+
+    const sub = [post.session, ago(post.ts)].filter(Boolean).join(" · ");
+    const card = el("article", { class: "post" },
+      el("div", { class: "phead" },
+        el("div", { class: "ava", style: `background:hsl(${hue(post.project)} 80% 62%)`, text: post.project.slice(0, 1).toUpperCase() }),
+        el("div", { class: "who" }, el("div", { class: "p", text: post.project }), el("div", { class: "s", text: sub }))),
+      media.node,
+      el("div", { class: "acts" }, up, down, mark),
+      el("div", { class: "body" },
+        post.title ? el("div", { class: "title", text: post.title }) : null,
+        post.caption ? el("div", { class: "cap", text: post.caption }) : null,
+        choices, comments,
+        el("div", { class: "say" }, box, send)));
+    repaint();
+    requestAnimationFrame(grow);
+    return card;
+  }
+
+  // Clips play muted while they are on screen and pause when they scroll away.
+  const io = "IntersectionObserver" in window ? new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      const v = e.target;
+      if (e.intersectionRatio >= 0.6) { if (v.paused && !v.dataset.held) v.play().catch(() => {}); }
+      else if (!v.paused) v.pause();
+    }
+  }, { threshold: [0, 0.6] }) : null;
+  function watchVideo(v) {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    io?.observe(v);
+  }
+
+  function openBox(src, pixel) {
+    const img = $("boxImg");
+    img.src = src;
+    img.className = "fit" + (pixel ? " px" : "");
+    $("box").classList.add("on");
+    document.body.style.overflow = "hidden";
+  }
+  function closeBox() { $("box").classList.remove("on"); document.body.style.overflow = ""; $("boxImg").removeAttribute("src"); }
+  $("boxClose").onclick = closeBox;
+  $("boxImg").onclick = () => $("boxImg").classList.toggle("fit");
+  addEventListener("keydown", (e) => { if (e.key === "Escape") closeBox(); });
+
+  const inTab = (p) => (tab === "new" ? !answered(p) || sticky.has(p.id) : answered(p) && !sticky.has(p.id));
+  function counts() {
+    const scope = posts.filter((p) => !project || p.project === project);
+    const left = scope.filter((p) => !answered(p)).length;
+    $("nNew").textContent = left;
+    $("nDone").textContent = scope.length - left;
+    $("sub").textContent = left ? `${left} waiting` : "";
+    document.title = left ? `(${left}) Review` : "Review";
+  }
+
+  function render() {
+    painters.clear();
+    io?.disconnect();
+    const projects = [...new Set(posts.map((p) => p.project))].sort();
+    if (project && !projects.includes(project)) project = "";
+    const chips = $("chips");
+    chips.hidden = projects.length < 2;
+    chips.replaceChildren(...[""].concat(projects).map((name) =>
+      el("button", { class: "chip" + (name === project ? " on" : ""), text: name || "All",
+        onclick: () => { project = name; ls.set("review.project", name || null); sticky.clear(); render(); } })));
+    document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t.dataset.tab === tab));
+    $("tabs").hidden = false;
+    counts();
+
+    const shown = posts.filter((p) => (!project || p.project === project) && inTab(p));
+    // Newest batch first; inside a batch, the order it was posted in.
+    const groups = new Map();
+    for (const p of shown) {
+      const k = p.project + "\u0000" + (p.group || p.id);
+      if (!groups.has(k)) groups.set(k, { name: p.group, project: p.project, last: 0, items: [] });
+      const g = groups.get(k);
+      g.items.push(p);
+      g.last = Math.max(g.last, p.ts);
+    }
+    const ordered = [...groups.values()].sort((a, b) => b.last - a.last);
+    const out = [];
+    for (const g of ordered) {
+      if (g.name) out.push(el("div", { class: "group", text: `${g.name} · ${g.items.length}` }));
+      for (const p of g.items) out.push(postCard(p));
+    }
+    if (!out.length) {
+      out.push(tab === "new"
+        ? el("div", { class: "empty" }, el("div", { class: "big", text: "✓" }), el("b", { text: "All caught up" }), "Nothing is waiting for you.")
+        : el("div", { class: "empty" }, el("b", { text: "Nothing here yet" }), "Things you like, dislike or comment on show up here."));
+    }
+    feedEl.replaceChildren(...out);
+    $("foot").textContent = posts.length ? "Likes, picks and comments save as you go." : "";
+  }
+
+  function locked() {
+    $("tabs").hidden = true;
+    $("chips").hidden = true;
+    feedEl.replaceChildren(el("div", { class: "lock" },
+      svg('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
+      el("b", { text: "Private" }), "Open this page from your secret link."));
+  }
+
+  let loading = false;
+  async function load(force) {
+    if (loading) return;
+    // Never redraw under someone who is typing.
+    if (!force && document.activeElement && document.activeElement.tagName === "TEXTAREA") return;
+    loading = true;
+    $("refresh").classList.add("spin");
+    try {
+      const data = await call("feed");
+      posts = data.posts;
+      sticky.clear();
+      render();
+    } catch (e) {
+      if (e.status === 401) locked();
+      else if (!posts.length) feedEl.replaceChildren(el("div", { class: "empty" }, el("b", { text: "Could not load" }), "Check the connection, then tap refresh."));
+    } finally {
+      loading = false;
+      $("refresh").classList.remove("spin");
+    }
+  }
+
+  document.querySelectorAll(".tab").forEach((t) => (t.onclick = () => {
+    tab = t.dataset.tab;
+    ls.set("review.tab", tab);
+    sticky.clear();
+    render();
+    scrollTo({ top: 0 });
+  }));
+  $("refresh").onclick = () => load(true);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) load(false); });
+  load(true);
+})();
+</script>
+</body>
+</html>
