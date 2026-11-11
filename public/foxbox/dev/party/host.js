@@ -1280,10 +1280,10 @@ function knightBackToSetup(afterRound) {
 const KART = GAMES.find((g) => g.id === "kart");
 const KART_DROP_WAIT_MS = 4000;
 const kartRacer = (v) => (typeof v === "string" && KART.racers.includes(v) ? v : null);
-// GARAGE (fox-kart's kart picker): a phone's kart body + paint ride its fkpick ({ body, paint }: plain ids, looks only;
-// the game checks them against its own lists, unknown = today's kart). Kept per pick, handed on in pl.kart.
+// GARAGE (fox-kart's kart picker): a phone's kart body + paint + wheels ride its fkpick ({ body, paint, wheels }: plain
+// ids, looks only; the game checks them against its own lists, unknown = today's kart). Kept per pick, handed on in pl.kart.
 const kartLookId = (v) => (typeof v === "string" && /^[a-z][a-z0-9-]{0,15}$/.test(v) ? v : null);
-const kartLookOf = (pk) => { const o = {}; if (pk && kartLookId(pk.body)) o.body = pk.body; if (pk && kartLookId(pk.paint)) o.paint = pk.paint; return o; };
+const kartLookOf = (pk) => { const o = {}; if (pk && kartLookId(pk.body)) o.body = pk.body; if (pk && kartLookId(pk.paint)) o.paint = pk.paint; if (pk && kartLookId(pk.wheels)) o.wheels = pk.wheels; return o; };
 const kartTrackOk = (id) => KART.tracks.some((t) => t.id === id && t.open);
 const kartTrack = () => KART.tracks.find((t) => t.id === (lob.kart && lob.kart.track)) || KART.tracks.find((t) => t.open) || KART.tracks[0];
 function kartSetupActive() {
@@ -1301,7 +1301,7 @@ function kartShuffled() {
 /** A fresh setup; `keep` = the last one: its picks kept (nobody ready), the same track. The bots' racer order re-rolled. */
 function newKartSetup(keep) {
   const picks = {};
-  if (keep && keep.picks && typeof keep.picks === "object") for (const [id, pk] of Object.entries(keep.picks)) if (roster.has(id) && pk && kartRacer(pk.racer)) picks[id] = { racer: pk.racer, ready: false, ...kartLookOf(pk) }; // (GARAGE: + body / paint)
+  if (keep && keep.picks && typeof keep.picks === "object") for (const [id, pk] of Object.entries(keep.picks)) if (roster.has(id) && pk && kartRacer(pk.racer)) picks[id] = { racer: pk.racer, ready: false, ...kartLookOf(pk), shown: !!pk.shown }; // (GARAGE: + body / paint / wheels; EMPTY PLATE: + shown — a kart locked in before is still on its plate, like the phone's screen)
   const track = keep && kartTrackOk(keep.track) ? keep.track : (KART.tracks.find((t) => t.open) || KART.tracks[0]).id;
   // TITLE: a setup that begins from the lobby opens on the title picture (kartTitleGo ends it); one that carries on from
   // a called-off round (keep) doesn't show it again
@@ -1475,8 +1475,48 @@ function kartTitleTick() {
   kartTitlePaint();
   kartTitleRaf = requestAnimationFrame(kartTitleTick);
 }
+// KART FULL SCREEN (Lakota, Nov 11: "auto full screen on fox kart title ... if it's not already full"). A browser only
+// lets a page go full screen from a click / key ON THAT PAGE (a phone's tap can't do it for the TV, and the page load
+// that brings FOX KART up drops both the old full screen and the old click). So, honestly: while the title is up and
+// this TV is not full screen, (a) if a click / key on this page is still fresh, go full screen right now; (b) else the
+// FIRST click or key on this page during the title does it (START from the TV's keyboard included). Nothing is shown,
+// nothing asks. Already full (the FoxBox TV app ?tv=1, a kiosk / F11 window, an earlier full screen): nothing to do.
+// Once per page load: someone who leaves full screen again (Esc) is not pulled back in.
+let kartFullArmed = false, kartFullDone = false;
+const kartFullIs = () => {
+  try {
+    if (document.fullscreenElement || document.documentElement.dataset.foxboxTv === "1") return true;
+    if (typeof matchMedia === "function" && matchMedia("(display-mode: fullscreen)").matches) return true;
+    return !!(window.screen && screen.width > 0 && innerWidth >= screen.width - 1 && innerHeight >= screen.height - 1);
+  } catch { return false; }
+};
+function kartFullGo() {
+  const de = document.documentElement;
+  if (kartFullDone || kartFullIs() || typeof de.requestFullscreen !== "function" || document.fullscreenEnabled === false) return;
+  kartFullDone = true;
+  de.dataset.kartFull = "asked";
+  try { Promise.resolve(de.requestFullscreen({ navigationUI: "hide" })).then(() => { de.dataset.kartFull = "on"; }, () => { de.dataset.kartFull = "refused"; }); } catch { de.dataset.kartFull = "refused"; }
+}
+function kartFullPress(e) {
+  if (e.type === "keydown" && (e.repeat || e.key === "Escape" || e.code === "KeyF" || e.metaKey || e.ctrlKey || e.altKey)) return; // (F = the web's own full screen key)
+  kartFullArm(false);
+  kartFullGo();
+}
+function kartFullArm(on) {
+  if (on === kartFullArmed) return;
+  kartFullArmed = on;
+  for (const ev of ["click", "keydown"]) window[on ? "addEventListener" : "removeEventListener"](ev, kartFullPress, true);
+  document.documentElement.dataset.kartFull = on ? "armed" : "off";
+}
+function kartFullSync(titleUp) {
+  if (!titleUp || kartFullDone || kartFullIs() || typeof document.documentElement.requestFullscreen !== "function") return kartFullArm(false);
+  if (kartFullArmed) return;
+  if (navigator.userActivation && navigator.userActivation.isActive) return kartFullGo();
+  kartFullArm(true);
+}
 function renderKartTitle() {
   const on = kartTitleUp() && phase === "lobby" && kartTitleImgs !== false;
+  kartFullSync(on);
   let box = document.getElementById("kart-title");
   if (!on) {
     if (box && box.style.display !== "none") { box.hidden = true; box.style.display = "none"; }
@@ -1725,7 +1765,7 @@ function kartOptions(r) {
  * picker); racerOf = the racer every roster player would drive right now (their pick, else last race's, else by slot). */
 function kartLobby() {
   const picks = {}, racerOf = {};
-  for (const [id, pk] of Object.entries(lob.kart.picks)) if (roster.has(id) && pk && kartRacer(pk.racer)) picks[id] = { racer: pk.racer, ready: !!pk.ready, ...kartLookOf(pk) }; // (GARAGE: + body / paint)
+  for (const [id, pk] of Object.entries(lob.kart.picks)) if (roster.has(id) && pk && kartRacer(pk.racer)) picks[id] = { racer: pk.racer, ready: !!pk.ready, ...kartLookOf(pk), shown: !!pk.shown }; // (GARAGE: + body / paint / wheels; EMPTY PLATE: + shown)
   for (const p of roster.values()) racerOf[p.id] = kartPickOf(p);
   const plan = kartRoundPlan(), slots = plan.slots, botRacers = plan.racers;
   const tr = kartTrack();
@@ -1762,7 +1802,11 @@ function onKartMsg(msg) {
   if (m.type === "fkpick") {
     if (m.setupId !== lob.kart.id) return sendStatus(p), toPad(p.id, { t: "lobby", s: lobbyState() }), true; // an old setup's
     const racer = kartRacer(m.racer) || kartPickOf(p);
-    lob.kart.picks[p.id] = { racer, ready: m.ready === true, ...kartLookOf(m) }; // (GARAGE: + body / paint)
+    // EMPTY PLATE: shown = this player's kart is on its plate in the garage (the phone says so from its first dial turn
+    // or LOCK IN; READY shows it too; once on, it stays for the setup). A phone page from before the flag: as before.
+    const was = lob.kart.picks[p.id];
+    const shown = !("shown" in m) || m.shown === true || m.ready === true || !!(was && was.shown);
+    lob.kart.picks[p.id] = { racer, ready: m.ready === true, ...kartLookOf(m), shown }; // (GARAGE: + body / paint / wheels)
     if (kartRacer(m.racer)) lob.kartLast = { ...(lob.kartLast && typeof lob.kartLast === "object" ? lob.kartLast : {}), [p.id]: racer };
   } else if (m.type === "fkbrowse" || m.type === "fkgo") {
     // PHONEPICK: the track pick step, the track picker's phone only
@@ -2528,6 +2572,7 @@ const kartRacerName = (id) => ((kartArt && Array.isArray(kartArt.RACERS) && kart
 function renderKartSetup(force = false) {
   renderKartTitle(); // TITLE: the title picture (over the lobby while it's up)
   renderKartPick(); // PHONEPICK: the track pick row (over the lobby while the step is up)
+  renderKartGarage(); // GARAGE: the big garage room (over the lobby while the phones pick)
   const box = $("kart-setup");
   if (!box) return;
   const layer = document.getElementById("fbx2-tv");
@@ -2588,6 +2633,88 @@ function renderKartSetup(force = false) {
     box.style.width = `${Math.round(Math.max(r.width, Math.min(360, room)))}px`;
     box.style.maxHeight = `${Math.max(160, Math.round(innerHeight - r.bottom - 40))}px`;
   }
+}
+// GARAGE: the ONE big garage (#kart-garage, over the lobby while the phones pick their racer / kart / READY): every
+// player's kart turning on its own plate in the looks their phone sends (fkpick), their name + a ready light under it —
+// the game's own drawer (kart-art.js createGarage = the game's render/garage.js), 480 × 270 art pixels at the screen's
+// size. Under the track pick row (z 90) and the title (z 98); the READY CHECK panel stays in the page underneath (the
+// tests read it). An older kart-art.js without the drawer: no layer — the lobby + the panel as before.
+// KART_GARAGE_JOIN: the join QR as a poster on the garage's wall, so a late friend can still join (8 players: none).
+const KART_GARAGE_JOIN = true;
+let kartGarageRaf = 0, kartGarage = null, kartGarageQrLast = null, kartGarageAt = 0, kartGarageBots = 0;
+function kartGarageQr() {
+  const cv = $("qr"), text = (cv && cv.dataset.text) || "";
+  if (!text || typeof qrcodegen === "undefined") return null;
+  if (!kartGarageQrLast || kartGarageQrLast.key !== text) {
+    kartGarageQrLast = { key: text, size: 0, bits: null };
+    try {
+      const qr = qrcodegen.QrCode.encodeText(text, qrcodegen.QrCode.Ecc.MEDIUM), n = qr.size, bits = new Uint8Array(n * n);
+      for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) bits[y * n + x] = qr.getModule(x, y) ? 1 : 0;
+      kartGarageQrLast = { key: text, size: n, bits };
+    } catch (e) { kartWarn("garage join poster", e); }
+  }
+  return kartGarageQrLast.size ? kartGarageQrLast : null;
+}
+// CLEAN GARAGE (Lakota, Nov 11): the lobby's BOTS label and the web's "Full screen" button (net-p2p.js) sat over the
+// garage picture: both are hidden while the garage (and the track pick that follows it) is up, and come back with the
+// lobby. Hidden only: the B key and the F key still work, and the garage's own board still says "+N BOTS".
+function kartCleanScreen(on) {
+  const de = document.documentElement;
+  if (on && !document.getElementById("kart-clean-style")) {
+    const st = document.createElement("style");
+    st.id = "kart-clean-style";
+    st.textContent = 'html.kart-garage-up #bots-toggle,html.kart-garage-up [data-test="fullscreen-button"]{display:none!important}';
+    document.head.append(st);
+  }
+  if (de.classList.contains("kart-garage-up") !== on) de.classList.toggle("kart-garage-up", on);
+}
+function renderKartGarage() {
+  const on = kartSetupActive() && phase === "lobby" && !lob.kart.title && !lob.kart.pick && !!kartArt && typeof kartArt.createGarage === "function" && roster.size > 0;
+  kartCleanScreen(on || (kartSetupActive() && phase === "lobby" && !lob.kart.title && !!lob.kart.pick));
+  let box = document.getElementById("kart-garage");
+  if (!on) {
+    if (box && (!box.hidden || box.style.display !== "none")) { box.hidden = true; box.style.display = "none"; }
+    if (kartGarageRaf) { cancelAnimationFrame(kartGarageRaf); kartGarageRaf = 0; }
+    return;
+  }
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "kart-garage";
+    box.dataset.test = "kart-garage";
+    box.style.cssText = "position:fixed;inset:0;z-index:89;background:#1b1830;align-items:center;justify-content:center";
+    const cv = document.createElement("canvas");
+    cv.width = 480; cv.height = 270;
+    cv.style.cssText = "width:100vw;height:100vh;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges";
+    box.append(cv);
+    document.body.append(box);
+  }
+  try { kartGarageBots = kartRoundPlan().slots.length; } catch { kartGarageBots = 0; }
+  box.hidden = false;
+  box.style.display = "flex";
+  if (!kartGarageRaf) kartGarageRaf = requestAnimationFrame(drawKartGarage);
+}
+function drawKartGarage(ts) {
+  kartGarageRaf = 0;
+  const box = document.getElementById("kart-garage");
+  if (!box || box.hidden || !(kartSetupActive() && phase === "lobby") || lob.kart.title || lob.kart.pick) return renderKartGarage();
+  kartGarageRaf = requestAnimationFrame(drawKartGarage);
+  if (ts - kartGarageAt < 30) return; // (about 30 pictures a second: plenty for a slow turn, half the work on a slow TV)
+  kartGarageAt = ts;
+  try {
+    if (!kartGarage) kartGarage = kartArt.createGarage({});
+    const list = [...roster.values()].sort((a, b) => a.slot - b.slot).slice(0, 8);
+    const { readyCount, totalCount } = kartReadiness();
+    const players = list.map((p) => ({ key: p.id, name: p.name, colorKey: COLOR_KEYS[p.slot % COLOR_KEYS.length], racer: kartPickOf(p), ...kartLookOf(lob.kart.picks[p.id]), state: kartState(p), empty: !(lob.kart.picks[p.id] && lob.kart.picks[p.id].shown) })); // (EMPTY PLATE: no kart until the phone turned a dial / locked in)
+    const room = kartGarage.room({
+      t: ts / 1000, players, art: kartArt, head: `READY ${readyCount}/${totalCount}`, go: totalCount > 0 && readyCount === totalCount,
+      sub: kartGarageBots ? `+${kartGarageBots} BOT${kartGarageBots > 1 ? "S" : ""}` : "", join: KART_GARAGE_JOIN && list.length < 8 ? kartGarageQr() : null,
+    });
+    box.firstChild.getContext("2d").drawImage(room, 0, 0);
+    const looks = players.map((p) => `${p.racer}/${p.body || ""}/${p.wheels || ""}/${p.paint || ""}/${p.state}`).join(",");
+    if (box.dataset.looks !== looks) box.dataset.looks = looks; // (the tests read what the room shows)
+    const plates = players.map((p) => (p.empty ? "empty" : "kart")).join(",");
+    if (box.dataset.plates !== plates) box.dataset.plates = plates;
+  } catch (e) { kartWarn("garage room", e); }
 }
 // PHONEPICK: the TV's track pick row (#kart-pick, over the lobby while lob.kart.pick is up): the game's postcards
 // (game.trackPostcard: the intro card's look; COMING SOON greyed) on the intro's wooden table, the card the picker is on
@@ -3148,7 +3275,7 @@ function startRound() {
     if (GAME.id === "knight") pl.knight = knightPickOf(p); // KNIGHT: the knight + sword this player picked (party extra)
     const item = skyStartItem(p);
     if (item) pl.startItem = item; // Sky: the doodle vote's winner starts flying their free item (party extra)
-    if (GAME.id === "kart") pl.kart = { racer: kartPickOf(p), ...kartLookOf(lob.kart && lob.kart.picks[p.id]) }; // KART: the racer (+ GARAGE: kart body + paint) this player picked (party extra)
+    if (GAME.id === "kart") pl.kart = { racer: kartPickOf(p), ...kartLookOf(lob.kart && lob.kart.picks[p.id]) }; // KART: the racer (+ GARAGE: kart body + paint + wheels) this player picked (party extra)
     players.push(pl);
     nameById.set(p.slot + 1, p.name);
     humanIdByPid.set(p.slot + 1, p.id);
@@ -3195,7 +3322,7 @@ function startRound() {
   r.intro = null;
   stats.rounds++;
   phase = r.hold ? "countdown" : "playing";
-  if (GAME.id === "kart") { renderKartPick(); renderKartTitle(); } // PHONEPICK / TITLE: the postcard row + the title picture off the screen now
+  if (GAME.id === "kart") { renderKartPick(); renderKartTitle(); renderKartGarage(); } // PHONEPICK / TITLE: the postcard row + the title picture off the screen now
   isPaused = false;
   clearInterval(countdownTimer);
   $("paused").classList.remove("show");
