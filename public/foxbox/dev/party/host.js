@@ -1275,8 +1275,8 @@ function knightBackToSetup(afterRound) {
 // (no pick = the racer by slot). After the results: the FoxBox lobby (Lakota's choice for NONAME); each phone's last
 // racer is kept (lob.kartLast) and preselected the next time FOX KART is picked. A round / countdown called off (Esc)
 // goes back to the setup, picks kept, nobody ready.
-// TITLE: a setup begun from the lobby opens on the title screen (lob.kart.title; "TITLE" below): a 6.6 s fake load, then
-// PRESS START, then all of the above.
+// TITLE: a setup begun from the lobby opens on the title screen (lob.kart.title; "TITLE" below): a 25 s fake load, then
+// PRESS START, then all of the above. KART THEME: the theme song plays from the title to the start lights (below).
 const KART = GAMES.find((g) => g.id === "kart");
 const KART_DROP_WAIT_MS = 4000;
 const kartRacer = (v) => (typeof v === "string" && KART.racers.includes(v) ? v : null);
@@ -1308,6 +1308,11 @@ function newKartSetup(keep) {
   // (titleAt = when the title came up on this TV: set by renderKartTitle once the picture is on the screen; a fresh
   // setup = a fresh title = the fake load again)
   lob.kart = { id: newRowSetupId(), track, picks, bots: kartShuffled(), title: keep ? !!keep.title : true, titleAt: keep && keep.title && Number.isFinite(keep.titleAt) ? keep.titleAt : null, titleLook: kartTitleLookNew(keep) };
+  // ── KART THEME ──: a setup that carries on while the song is still playing (a round called off in the tour) keeps the
+  // song where it is; a fresh one, or one whose song was faded out for the race, gets a new start (kartThemeSync)
+  lob.kart.themeAt = keep && Number.isFinite(keep.themeAt) && !keep.themeEnd ? keep.themeAt : null;
+  lob.kart.themeEnd = false;
+  // ── end KART THEME ──
 }
 /** No pick yet: the racer this phone picked last time, else the one by slot (game.js does the same by slot). */
 const kartDefault = (p) => kartRacer(lob.kartLast && lob.kartLast[p.id]) || KART.racers[p.slot % KART.racers.length];
@@ -1356,8 +1361,10 @@ function maybeStartKart() {
 // once; wait = the picture isn't up here yet). ONE clock: titleAt, read against Date.now() here and against the boss
 // clock on an extra TV (which gets titleAt in m:lobby's lob). Saved with the lobby: a TV reload carries on, it doesn't
 // load again. START ({type:"fkstart"} from that phone, or Enter / Space on the TV) clears the flag: the racer pick goes
-// on exactly as before. The title is silent.
-const KART_TITLE_LOAD_MS = 6600, KART_TITLE_LOOKS = ["A", "B", "C"], KART_TITLE_LOOK = "A";
+// on exactly as before. The title draws no sound of its own; the theme song plays over it ("KART THEME" below).
+// KART THEME (Lakota, Nov 10: "force the title screen loading to take minimum 25 seconds so the music plays longer"):
+// the load was 6600 ms, it is 25000 now. Nothing else of the title changed: the looks scale with the length.
+const KART_TITLE_LOAD_MS = 25000, KART_TITLE_LOOKS = ["A", "B", "C"], KART_TITLE_LOOK = "A";
 // (tests / the review clips: ?karttitle=B on the TV page forces the look)
 const KART_TITLE_ASK = (() => { try { const v = String(new URLSearchParams(location.search).get("karttitle") || "").toUpperCase(); return KART_TITLE_LOOKS.includes(v) ? v : null; } catch { return null; } })();
 // THE LOOK (Lakota, Nov 9: "Let's do all those loadings ... pick one random each time we play that game"): a fresh
@@ -1391,7 +1398,7 @@ function kartTitleHost() {
 /** START: the title off, the racer pick on. Not during the fake load (force: the picture can't be shown / a test). */
 function kartTitleGo(force) {
   if (mirror || !kartTitleUp()) return false;
-  if (force !== true && !kartTitleReady()) return false; // too early: dropped (never queued for 6.6 s)
+  if (force !== true && !kartTitleReady()) return false; // too early: dropped (never queued for the load's end)
   lob.kart.title = false;
   saveLobby();
   broadcastLobby();
@@ -1412,7 +1419,7 @@ function kartTitlePoll() {
 }
 // The TV's layer. Shown / hidden with style.display (never just `hidden`: the layer's own inline display would beat it —
 // the track pick row's bug of Nov 8); hidden again by startRound. The picture and the drawing module are fetched +
-// decoded BEFORE the title is put up (plain ink until then: never a half-drawn frame) and the 6.6 s only begin then.
+// decoded BEFORE the title is put up (plain ink until then: never a half-drawn frame) and the load's 25 s only begin then.
 // The canvas is shown at a whole number of screen pixels per art pixel when that fills ≥ 86 % of the fitted size
 // (1080p = × 4, 4K = × 8), else fitted exactly; nearest-neighbour, centred on the picture's own ink (#14101f). Each
 // animation frame draws titleFrame(look, t, …): a pure function of lob.kart + the clock, so every TV draws the same.
@@ -1511,6 +1518,8 @@ function renderKartTitle() {
   // the picture is on the screen: the main TV starts the one clock (once per title; a reload finds it already set)
   if (!mirror && !kartTitleArmed()) {
     lob.kart.titleAt = Date.now();
+    lob.kart.themeAt = lob.kart.titleAt + KART_THEME_LEAD_MS; lob.kart.themeEnd = false; // KART THEME: the song's first note, on the same clock
+    queueMicrotask(kartThemeSync); // KART THEME: start fetching the first piece now (not at the next 200 ms tick), so the lead is all there for it
     if (KART_TITLE_ASK) lob.kart.titleLook = KART_TITLE_ASK;
     saveLobby();
     queueMicrotask(publishLobby);
@@ -1519,6 +1528,94 @@ function renderKartTitle() {
   kartTitlePaint();
   if (!kartTitleRaf) kartTitleRaf = requestAnimationFrame(kartTitleTick);
 }
+// ── KART THEME: the theme song (Lakota, Nov 10: round 6's "1.5x" build goes live) ──
+// The shell owns the song; the game module knows nothing of it. kart/kart-theme.js (fox-kart's
+// src/audio/theme-player.js) plays kart/theme-*.mp3 on THIS TV page. TV only: no phone loads or plays any of it.
+// It starts with the title screen (its first note KART_THEME_LEAD_MS after the picture is up), plays on through the
+// racer pick, READY, the track pick and the game's track tour, and FADES out when the tour ends or is skipped (or
+// there is none): under the grid swoop and the first start light, done about 2 s before GO. Never a cut. Leaving the
+// kart setup (PICK ANOTHER GAME) fades it too.
+// ONE clock, like the title's: lob.kart.themeAt = the main TV's clock at the song's first note; lob.kart.themeEnd =
+// the song has been faded out for this setup. Both are saved with the lobby (a TV reload joins the song where it
+// would be; a reload mid-race does not bring it back) and reach an extra TV in m:lobby's lob: it plays the same song
+// at the same place off the boss clock and ends it by its own view of the tour. A round called off (Esc) before the
+// fade: the song carries on. After the fade: the setup's song starts again from the top.
+// SOUND BLOCKED (a TV browser that allows no sound until someone presses on that page; the lobby's "Click once on
+// this page to turn the sound on"): nothing waits for the song and nothing here can throw into the shell. The title,
+// its 25 s and everything after run exactly as without it, in silence; the first key / click on the TV page brings
+// the song in at the place it would be by then. The module or a piece that can't be loaded: no song (or that piece
+// silent); nothing else changes.
+const KART_THEME_LEAD_MS = 600; // ms from the title picture going up to the song's first note (the picture lands, then the bass)
+const KART_THEME_TITLE_VOL = 0.54; // the song's level while the title is up: 2 dB over KART_THEME_VOL (Lakota: "a bit louder than race music while the title is up")
+const KART_THEME_VOL = 0.43; // … and from the racer pick on: the game's race-music level (its MUSIC_VOL 0.32 × its TV bus 1.35)
+const KART_THEME_FADE_S = 2.5; // s: the fade-out when the tour ends / is skipped (GO is 1.5 s of grid swoop + 3 lights = 4.5 s after that)
+const KART_THEME_LEAVE_S = 1.2; // s: the fade-out when the kart setup is left
+const KART_THEME_NOFRAME_MS = 4000; // a round that has drawn no frame yet (an extra TV still getting it): the song holds on this long
+const KART_THEME_TICK_MS = 200; // how often the song is checked against the lobby / the round
+let kartThemeLoad = null, kartThemePlayer = null, kartThemeTimer = 0, kartThemeRoundAt = 0, kartThemeStale = null, kartThemeDone = null, kartThemeWas = "off";
+/** the clock themeAt is on: this TV's own on the main TV, the boss clock on an extra TV */
+const kartThemeNow = () => { const c = globalThis.FOXBOX_CLOCK; return mirror && c && typeof c.bossNow === "function" ? c.bossNow() : Date.now(); };
+const kartThemeFrame = () => { try { return (globalThis.__kart && globalThis.__kart.frame) || null; } catch { return null; } };
+/** the player module: fetched once, never waited for (a failure = no song) */
+function kartThemeKit() {
+  if (kartThemeLoad) return;
+  kartThemeLoad = import("./kart/kart-theme.js")
+    .then((kit) => {
+      kartThemePlayer = kit.createThemePlayer({ base: new URL("./kart/", import.meta.url).href, clock: kartThemeNow });
+      if (kartTitleUp() && !kartTitleArmed()) kartThemePlayer.prep(); // (the title is about to come up: the first two pieces fetched now)
+      kartThemeSync();
+    })
+    .catch((e) => kartWarn("theme song not loaded (no music)", e));
+}
+/** Every KART_THEME_TICK_MS on a FOX KART TV page: what should the song be doing right now? (lob.kart + the phase +
+ *  the game's frame, nothing else: the main TV and an extra TV come to the same answer.) */
+function kartThemeSync() {
+  if (GAME.id !== "kart") return;
+  try {
+    const k = lob.kart, inLobby = phase === "lobby" || phase === "boot";
+    // the main TV: a setup that is up without a song gets one (with a title: on the title's clock, set by
+    // renderKartTitle; without: from now — the title was skipped, or the song was faded out for a round called off)
+    if (!mirror && k && inLobby && kartSetupActive() && (!Number.isFinite(k.themeAt) || k.themeEnd) && (!k.title || kartTitleArmed())) {
+      k.themeAt = (k.title ? k.titleAt : Date.now()) + KART_THEME_LEAD_MS;
+      k.themeEnd = false;
+      saveLobby();
+      syncTvB();
+    }
+    const alive = !!k && Number.isFinite(k.themeAt) && !k.themeEnd && kartThemeDone !== k.themeAt;
+    let vol = 0, secs = KART_THEME_LEAVE_S, ended = false;
+    if (inLobby) {
+      kartThemeRoundAt = 0;
+      kartThemeStale = kartThemeFrame(); // (the last round's frame, if any: not this round's)
+      if (alive && lob.selectedGameId === "kart") vol = k.title ? KART_THEME_TITLE_VOL : KART_THEME_VOL;
+    } else if (phase === "countdown" || phase === "playing") {
+      if (!kartThemeRoundAt) kartThemeRoundAt = Date.now();
+      let f = kartThemeFrame();
+      if (f === kartThemeStale) f = null;
+      // the track tour is on (frame.intro = s into it): the song plays; the tour over / skipped / none: it fades
+      const tour = f ? f.phase === "grid" && f.intro != null : Date.now() - kartThemeRoundAt < KART_THEME_NOFRAME_MS;
+      if (alive && tour) vol = KART_THEME_VOL;
+      else if (alive) { ended = true; secs = KART_THEME_FADE_S; }
+    } else if (alive) ended = true; // (results)
+    if (vol > 0) {
+      kartThemeKit();
+      if (kartThemePlayer) kartThemePlayer.play(k.themeAt, vol);
+      kartThemeWas = "on";
+    } else {
+      if (kartThemePlayer) kartThemePlayer.fade(secs);
+      kartThemeWas = "off";
+    }
+    if (ended) {
+      kartThemeDone = k.themeAt;
+      if (!mirror) { k.themeEnd = true; saveLobby(); syncTvB(); }
+    }
+  } catch (e) { kartWarn("theme song check threw (the song is left as it is)", e); }
+}
+function kartThemeBoot() {
+  if (GAME.id !== "kart" || kartThemeTimer) return;
+  kartThemeKit();
+  kartThemeTimer = setInterval(kartThemeSync, KART_THEME_TICK_MS);
+}
+// ── end KART THEME ──
 // ── PHONEPICK: the track pick step (after everyone is READY, before the round) ──
 // The TV shows the track postcards in a row (#kart-pick, the game's own postcard: game.trackPostcard; the COMING SOON
 // ones greyed); the track picker's phone flips through them (◀ ▶: {type:"fkbrowse", i}, the soon cards too) and picks
@@ -3914,6 +4011,16 @@ window.__party = {
       t: kartTitleT(), at: up && kartTitleArmed() ? lob.kart.titleAt : null, look: kartTitleLook(), ms: KART_TITLE_LOAD_MS };
   },
   kartStart: () => kartTitleGo(),
+  /** KART THEME: the theme song on this TV { at: the song's first note (the shared clock), end: faded out for this
+   *  setup, loaded: the player module is in, want: "on" | "off", vols, player: the player's own info() — state
+   *  "off" | "wait" | "blocked" | "playing" | "fading", pos (s into the song), piece, gain, … } */
+  get kartTheme() {
+    const k = lob.kart;
+    let player = null;
+    try { player = kartThemePlayer ? kartThemePlayer.info() : null; } catch {}
+    return { at: k && Number.isFinite(k.themeAt) ? k.themeAt : null, end: !!(k && k.themeEnd), loaded: !!kartThemePlayer, want: kartThemeWas, now: kartThemeNow(),
+      leadMs: KART_THEME_LEAD_MS, vols: { title: KART_THEME_TITLE_VOL, setup: KART_THEME_VOL }, fadeS: KART_THEME_FADE_S, player };
+  },
   start: () => { kartTitleGo(true); startCountdown(null); }, // (tests: past the title screen too, load or not)
   lobby: () => toLobby(),
   get lobbyState() {
@@ -4001,6 +4108,7 @@ async function boot() {
     saveLobby();
   }
   if (GAME.id === "kart") kartTitlePreload(); // TITLE: the picture fetched + decoded before it's ever shown
+  kartThemeBoot(); // KART THEME: the song's player + its check (FOX KART pages only; never waited for)
   // ── end KART ──
   renderHub();
   if (!mirror) loadRoster();
