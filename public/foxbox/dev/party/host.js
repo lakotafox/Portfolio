@@ -210,6 +210,7 @@ const GAMES = [
     },
   },
   // ── end TENNIS ──
+  {"id":"bowling","name":"FOX BOWLING","gameId":"bowling","button":"START","stick":"bowling","controls":"Pick your ball · line up with the arrows · swing your phone to bowl · tilt to curve","tagline":"Swing your phone like a bowling ball!","minPlayers":1,"maxPlayers":8,"botFillTo":4,"intro":"own","card":{"chip":"Swing","motion":true,"rules":["Pick your ball on your phone: pattern and two colours","Take turns: line up with the arrows, tap BOWL, then swing your arm","Tilt your phone while the ball rolls to curve it","No motion on your phone? Flick up to bowl instead"],"win":"Most pins after 3 frames wins (real bowling scores)"},"module":"../../games/bowling/gc.game.js","props":"../../games/bowling/gc.properties.json"}, // foxbox.json "lobby" (site/build.mjs)
 ];
 const GAME_KEY = "foxbox-game";
 const GAME = (() => {
