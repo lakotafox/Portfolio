@@ -386,22 +386,31 @@ function colorSet(slot) {
 }
 const colorVars = (c) => `--c:${c.base};--l:${c.light};--d:${c.dark}`;
 
+// BOWLFIX (Nov 12): the web build keeps the roster per TV tab (sessionStorage = this room, like the room code), never
+// in localStorage. It was in localStorage, so every new party on the same TV browser brought back the LAST party's
+// phones (their ids are per phone tab) as "just dropped" players: START within 15 s of a TV page load (picking a game
+// reloads it) put them in the round as people with no phone (Lakota's "another me", whose turn nobody could bowl).
+// The LAN package (party server, ids per phone) keeps localStorage.
+const rosterStore = () => (isP2P ? sessionStorage : localStorage);
+if (isP2P) try { localStorage.removeItem(ROSTER_KEY); } catch {} // (an old party's roster left by older builds)
 function saveRoster() {
   try {
-    const list = [...roster.values()].map(({ id, slot, name, character, seat }) => ({ id, slot, name, character, seat }));
-    localStorage.setItem(ROSTER_KEY, JSON.stringify(list));
+    // goneAt: a phone that had already left keeps its own clock through a TV reload (it used to restart at the load)
+    const list = [...roster.values()].map(({ id, slot, name, character, seat, connected, goneAt }) => ({ id, slot, name, character, seat, goneAt: connected ? 0 : goneAt }));
+    rosterStore().setItem(ROSTER_KEY, JSON.stringify(list));
   } catch {}
 }
 function loadRoster() {
   try {
-    const list = JSON.parse(localStorage.getItem(ROSTER_KEY)) || [];
+    const list = JSON.parse(rosterStore().getItem(ROSTER_KEY)) || [];
     const now = Date.now();
     for (const p of list) {
       if (typeof p.id !== "string" || !(p.slot >= 0 && p.slot < MAX_PLAYERS)) continue;
       if ([...roster.values()].some((q) => q.slot === p.slot)) continue;
       const character = typeof p.character === "string" ? p.character : null;
       const seat = validSeat(p.seat) && ![...roster.values()].some((q) => sameSeat(q.seat, p.seat)) ? { boat: p.seat.boat, seat: p.seat.seat } : null;
-      roster.set(p.id, { id: p.id, slot: p.slot, name: p.name || `Player ${p.slot + 1}`, character, seat, connected: false, goneAt: now, x: 0, b: 0, lastB: 0, drawing: false });
+      const goneAt = Number.isFinite(p.goneAt) && p.goneAt > 0 && p.goneAt <= now ? p.goneAt : now;
+      roster.set(p.id, { id: p.id, slot: p.slot, name: p.name || `Player ${p.slot + 1}`, character, seat, connected: false, goneAt, x: 0, b: 0, lastB: 0, drawing: false });
     }
   } catch {}
 }
@@ -470,6 +479,7 @@ function onServer(msg) {
       break;
     }
     case "join":
+      if (Array.isArray(msg.was)) adoptSeat(msg.id, msg.was); // BOWLFIX: the same phone in a new tab: its own seat back
       onJoin(msg.id, msg.name, msg.character, msg.drawing, msg.audioReady, msg.house);
       break;
     case "screen": // an extra TV linked / left (web build + relay)
@@ -526,6 +536,34 @@ function onServer(msg) {
 }
 
 // ── Players joining / leaving ─────────────────────────────────────────────────
+// BOWLFIX (Nov 12): a phone back in a new tab (new player id, same browser: net-p2p.js lists its old ids as `was`)
+// takes over its old roster entry: the same slot, so in a round the same player (playerId) — its phone drives its own
+// bowler / golfer / kart, never a second copy of it. Only an entry whose phone is gone, only for an id the TV doesn't
+// know yet. Everything the lobby keeps by player id follows (join order, roles, points, a game setup's picks).
+function adoptSeat(id, was) {
+  if (typeof id !== "string" || !id || roster.has(id) || mirror) return false;
+  const old = was.map((w) => roster.get(w)).filter((q) => q && !q.connected)
+    .sort((a, b) => (inRound(b) ? 1 : 0) - (inRound(a) ? 1 : 0) || b.goneAt - a.goneAt)[0];
+  if (!old) return false;
+  const from = old.id;
+  roster.delete(from);
+  old.id = id;
+  roster.set(id, old);
+  const move = (obj) => { if (obj && typeof obj === "object" && from in obj) { if (!(id in obj)) obj[id] = obj[from]; delete obj[from]; } };
+  lob.order = lob.order.includes(id) ? lob.order.filter((x) => x !== from) : lob.order.map((x) => (x === from ? id : x));
+  move(lob.names); move(lob.points); move(lob.kartLast);
+  if (lob.pickerId === from) lob.pickerId = id;
+  if (lob.rollerId === from) lob.rollerId = id;
+  if (lob.sky) { move(lob.sky.picked); move(lob.sky.ready); }
+  if (lob.kart) move(lob.kart.picks);
+  if (lob.knight) move(lob.knight.picks);
+  if (round) for (const [pid, hid] of round.humanIdByPid) if (hid === from) round.humanIdByPid.set(pid, id);
+  console.log(`[foxbox] ${id.slice(0, 8)} is ${from.slice(0, 8)} back in a new tab: same seat`);
+  saveRoster();
+  saveLobby();
+  return true;
+}
+
 function onJoin(id, name, character, drawing, audioReady, house) {
   if (typeof id !== "string" || !id) return;
   let p = roster.get(id);
