@@ -189,6 +189,7 @@ const CSS = `
 .fbx-tv2-live.fbx-tv2-top { left: 50%; top: 0.8rem; transform: translateX(-50%); }
 .fbx-tv2-live.fbx-tv2-bottom { top: auto; bottom: 1.2rem; } /* KNIGHT: NONAME's HUD has the whole top band */
 body.golf-overhead .fbx-tv2-live.fbx-tv2-top { top: calc(8.4vh + 0.4rem); } /* golf's BIRD'S EYE label has the top middle (its screen view sets the class) */
+body.minigolf-course .fbx-tv2-live { left: 50%; top: 0.8rem; transform: translateX(-50%); } /* MINI GOLF: on the course its hole tag has the corner (its screen view sets the class) */
 .fbx-tv2-live::before { content: ""; display: inline-block; width: 0.7rem; height: 0.7rem; margin-right: 0.6rem; background: #ff5a3c; vertical-align: -0.05rem; }
 .fbx-tv2-card { left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 2.2rem 2.8rem; font-size: 1.5rem; line-height: 1.6; text-align: center; max-width: 70rem; pointer-events: auto; }
 .fbx-tv2-card small { display: block; margin-top: 1rem; font-size: 0.8rem; color: #c9c8df; }
