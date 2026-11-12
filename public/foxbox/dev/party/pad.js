@@ -1110,6 +1110,7 @@ function onMessage(msg) {
       if (foxGameMsg(msg)) break; // WHOSFOX: the WHO'S THE FOX? module's
       if (tennisGameMsg(msg)) break; // TENNIS: the FOX TENNIS module's
       if (bowlingGameMsg(msg)) break; // BOWLING: the FOX BOWLING module's
+      if (minigolfGameMsg(msg)) break; // MINIGOLF: the FOX MINI GOLF module's
       if (knightGameMsg(msg)) break; // KNIGHT: the knight module's (Knight Platformer is the hub's game)
       if (kartGameMsg(msg)) break; // KART: the kart module's (FOX KART is the hub's game)
       if (mode.id === "row" && msg.m && msg.m.type === "rowTrain") { rowTrain.onMessage(msg.m); renderStatus(); break; } // ROWTRAIN: the controls check
@@ -1396,6 +1397,45 @@ function syncTennis() {
   if (tennisPad) tennisPad.show(on, lastStatus);
 }
 // ── end TENNIS ──
+// ── MINIGOLF (FOX MINI GOLF) ──
+// The game's phone module (dev/party/minigolf/minigolf-pad.js, built from games/minigolf/phone/), loaded the first time
+// mini golf is the hub's game. Like FOX TENNIS's: it owns #minigolf during the round (its setup screens, then the putter)
+// and talks to the TV with {t:"game", m} both ways (games/minigolf/CONTRACT.md); the lobby keeps the plain START.
+var minigolfPad = null; // var: onMessage / renderStatus may run before this line during start-up
+var minigolfLoad = null;
+var minigolfInbox = [];
+function minigolfGameMsg(msg) {
+  if (mode.id !== "minigolf" || !msg.m || typeof msg.m !== "object") return false;
+  if (minigolfPad) minigolfPad.onMessage(msg.m);
+  else {
+    minigolfInbox.push(msg.m);
+    if (minigolfInbox.length > 16) minigolfInbox.shift();
+  }
+  return true;
+}
+function syncMinigolf() {
+  const golf = mode.id === "minigolf";
+  if (golf && !minigolfLoad) {
+    minigolfLoad = import("./minigolf/minigolf-pad.js")
+      .then((m) => {
+        minigolfPad = m.createMinigolfPad($("minigolf"), {
+          send: (m2) => sendRaw({ t: "game", m: m2 }),
+          me: () => ({ id: me.id, name: me.name }),
+        });
+        for (const msg of minigolfInbox.splice(0)) minigolfPad.onMessage(msg);
+        renderStatus();
+      })
+      .catch((e) => console.warn("[foxbox] mini golf controller didn't load", e));
+  }
+  const st = lastStatus && lastStatus.state;
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  const on = golf && connected && curScreen === "pad-screen" && (st === "countdown" || st === "playing");
+  $("pad-screen").classList.toggle("minigolf", on);
+  $("minigolf").hidden = !on;
+  if (golf) $("bonk-wrap").hidden = on;
+  if (minigolfPad) minigolfPad.show(on);
+}
+// ── end MINIGOLF ──
 
 // ── BOWLING (FOX BOWLING) ──
 // The game's phone module (dev/party/bowling/bowling-pad.js, built from games/bowling/phone/), loaded the first time bowling
@@ -1528,7 +1568,7 @@ function applyMode(g) {
   mode = { ...mode, ...g, seats: !!g.seats };
   $("bonk").textContent = mode.button;
   const rowing = mode.stick === "motion";
-  steer.hidden = rowing || mode.id === "golf" || mode.id === "tennis" || mode.id === "bowling"; // TEE TIME: START in the lobby, its own module in play (syncGolf) · TENNIS: the same (syncTennis)
+  steer.hidden = rowing || mode.id === "golf" || mode.id === "tennis" || mode.id === "bowling" || mode.id === "minigolf"; // TEE TIME: START in the lobby, its own module in play (syncGolf) · TENNIS: the same (syncTennis) · MINIGOLF: the same (syncMinigolf)
   $("bonk-wrap").hidden = rowing;
   steer.classList.toggle("xy", mode.stick === "xy");
   $("steer-label").textContent = mode.stick === "xy" ? "drag to roll" : "slide to steer";
@@ -1770,6 +1810,7 @@ function renderStatus() {
   syncFox(); // WHOSFOX
   syncTennis(); // TENNIS
   syncBowling(); // BOWLING
+  syncMinigolf(); // MINIGOLF
   syncExtras();
 }
 
@@ -1794,7 +1835,7 @@ function syncExtras() {
   const skyPad = sky && connected && curScreen === "pad-screen" && SKY_PAD_STATES.includes(st);
   // TEE TIME is left alone: it has its own portrait + sideways layouts (golf-pad.js) and is swung like a club,
   // and turned with CSS a portrait phone would use the portrait layout in a sideways box (SWING cut off)
-  if (typeof land !== "undefined") land.set((playing && web && mode.id !== "golf" && mode.id !== "knight" && mode.id !== "kart" && mode.id !== "whosfox" && mode.id !== "tennis" && mode.id !== "bowling") || skyPad || skinWanted()); // on with the next release · KNIGHT: the knight pad turns itself · KART: so does the kart pad · WHOSFOX: portrait · TENNIS: portrait (swung upright)
+  if (typeof land !== "undefined") land.set((playing && web && mode.id !== "golf" && mode.id !== "knight" && mode.id !== "kart" && mode.id !== "whosfox" && mode.id !== "tennis" && mode.id !== "bowling" && mode.id !== "minigolf") || skyPad || skinWanted()); // on with the next release · KNIGHT: the knight pad turns itself · KART: so does the kart pad · WHOSFOX: portrait · TENNIS: portrait (swung upright) · MINIGOLF: portrait (the putter)
   if (skyLand) {
     for (const [id, l] of Object.entries(skyLand)) l.set(sky && curScreen === id);
     const skyScreen = sky && (curScreen in skyLand || skyPad);
@@ -2132,6 +2173,7 @@ function release() {
   if (knightPad) knightPad.release(); // KNIGHT: let go of every held button
   if (kartPad) kartPad.release(); // KART: let go of GAS / ITEM
   if (tennisPad) tennisPad.release(); // TENNIS
+  if (minigolfPad) minigolfPad.release(); // MINIGOLF: let go of a held aim arrow
 }
 window.addEventListener("blur", release);
 
@@ -2141,7 +2183,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   padScreen.addEventListener(
     type,
     (e) => {
-      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button, #kart [data-native], #tennis [data-native], #bowling [data-native]")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones; KART: the kart pad's; TENNIS: the tennis pad's)
+      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button, #kart [data-native], #tennis [data-native], #bowling [data-native], #minigolf [data-native]")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones; KART: the kart pad's; TENNIS: the tennis pad's; MINIGOLF: the putter's)
       if (padScreen.classList.contains("row-setup") && !e.target.closest("#cap-aim, #cap-fire")) return; // Row setup scrolls
       e.preventDefault();
     },
