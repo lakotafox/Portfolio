@@ -2639,22 +2639,11 @@ function renderKartSetup(force = false) {
 // the game's own drawer (kart-art.js createGarage = the game's render/garage.js), 480 × 270 art pixels at the screen's
 // size. Under the track pick row (z 90) and the title (z 98); the READY CHECK panel stays in the page underneath (the
 // tests read it). An older kart-art.js without the drawer: no layer — the lobby + the panel as before.
-// KART_GARAGE_JOIN: the join QR as a poster on the garage's wall, so a late friend can still join (8 players: none).
-const KART_GARAGE_JOIN = true;
-let kartGarageRaf = 0, kartGarage = null, kartGarageQrLast = null, kartGarageAt = 0, kartGarageBots = 0;
-function kartGarageQr() {
-  const cv = $("qr"), text = (cv && cv.dataset.text) || "";
-  if (!text || typeof qrcodegen === "undefined") return null;
-  if (!kartGarageQrLast || kartGarageQrLast.key !== text) {
-    kartGarageQrLast = { key: text, size: 0, bits: null };
-    try {
-      const qr = qrcodegen.QrCode.encodeText(text, qrcodegen.QrCode.Ecc.MEDIUM), n = qr.size, bits = new Uint8Array(n * n);
-      for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) bits[y * n + x] = qr.getModule(x, y) ? 1 : 0;
-      kartGarageQrLast = { key: text, size: n, bits };
-    } catch (e) { kartWarn("garage join poster", e); }
-  }
-  return kartGarageQrLast.size ? kartGarageQrLast : null;
-}
+// NO JOIN POSTER (Lakota, Nov 11: "Ditch the qr in the garage"): round 3 hung the join QR on the wall right of the
+// door while fewer than 8 players were in. Nothing is passed as `join` any more, so the drawer always paints the wall
+// the way a full room already looked (the fox poster) — at every player count. Joining is unchanged: a friend joins
+// from the FoxBox lobby (its own join card + QR), which is where the QR belongs.
+let kartGarageRaf = 0, kartGarage = null, kartGarageAt = 0, kartGarageBots = 0;
 // CLEAN GARAGE (Lakota, Nov 11): the lobby's BOTS label and the web's "Full screen" button (net-p2p.js) sat over the
 // garage picture: both are hidden while the garage (and the track pick that follows it) is up, and come back with the
 // lobby. Hidden only: the B key and the F key still work, and the garage's own board still says "+N BOTS".
@@ -2707,7 +2696,7 @@ function drawKartGarage(ts) {
     const players = list.map((p) => ({ key: p.id, name: p.name, colorKey: COLOR_KEYS[p.slot % COLOR_KEYS.length], racer: kartPickOf(p), ...kartLookOf(lob.kart.picks[p.id]), state: kartState(p), empty: !(lob.kart.picks[p.id] && lob.kart.picks[p.id].shown) })); // (EMPTY PLATE: no kart until the phone turned a dial / locked in)
     const room = kartGarage.room({
       t: ts / 1000, players, art: kartArt, head: `READY ${readyCount}/${totalCount}`, go: totalCount > 0 && readyCount === totalCount,
-      sub: kartGarageBots ? `+${kartGarageBots} BOT${kartGarageBots > 1 ? "S" : ""}` : "", join: KART_GARAGE_JOIN && list.length < 8 ? kartGarageQr() : null,
+      sub: kartGarageBots ? `+${kartGarageBots} BOT${kartGarageBots > 1 ? "S" : ""}` : "", join: null, // (no join poster: see above)
     });
     box.firstChild.getContext("2d").drawImage(room, 0, 0);
     const looks = players.map((p) => `${p.racer}/${p.body || ""}/${p.wheels || ""}/${p.paint || ""}/${p.state}`).join(",");
