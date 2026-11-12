@@ -1,0 +1,1 @@
+import{n as e}from"./base-path-CPFOgisA.js";function t(t){return e(!t||t===`/favicon.svg`?`/branding/fox-tv.png`:t)}export{t};

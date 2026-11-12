@@ -1,0 +1,1 @@
+import{r as e}from"./framework-QQJNyU1r.js";import{n as t}from"./base-path-CPFOgisA.js";var n=e();function r({href:e=`/`}){return(0,n.jsx)(`a`,{className:`tv-brand`,href:t(e),"aria-label":`FOX TV home`,children:(0,n.jsx)(`img`,{className:`brand-logo`,src:t(`/branding/fox-tv.png`),alt:`FOX TV`,width:1313,height:1198,fetchPriority:`high`})})}export{r as t};
