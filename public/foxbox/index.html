@@ -819,8 +819,62 @@
       #bots-toggle[hidden] {
         display: none;
       }
-      #bots-toggle[data-mode="fill"] {
-        color: #ffd23f;
+      /* a switch (lobby-pad, Nov 12): BOTS [FILL | OFF], the one that's on lit up (FILL gold, OFF red), the B key after it */
+      #bots-toggle:not([hidden]) {
+        display: inline-flex;
+        align-items: center;
+        gap: 0;
+      }
+      #bots-toggle .bt-c {
+        font-size: 0;
+      }
+      #bots-toggle .bt-v,
+      #bots-toggle .bt-o::before {
+        display: inline-block;
+        padding: 0.3rem 0.5rem 0.25rem;
+      }
+      #bots-toggle .bt-v {
+        order: 2;
+        margin-left: 0.6rem;
+        box-shadow: 0 0 0 0.15rem #fff9f1;
+      }
+      #bots-toggle .bt-o {
+        order: 3;
+        box-shadow: 0 0 0 0.15rem #fff9f1;
+        background: #05060f;
+        color: #6c70a0;
+      }
+      #bots-toggle .bt-o::before {
+        content: attr(data-o);
+      }
+      #bots-toggle[data-mode="off"] .bt-o {
+        order: 1;
+        margin-left: 0.6rem;
+      }
+      #bots-toggle[data-mode="off"] .bt-v {
+        margin-left: 0;
+      }
+      #bots-toggle[data-mode="fill"] .bt-v {
+        background: #ffd23f;
+        color: #101125;
+      }
+      #bots-toggle[data-mode="off"] .bt-v {
+        order: 2;
+        background: #ff5a3c;
+        color: #fff9f1;
+      }
+      #bots-toggle::after {
+        content: "B";
+        order: 4;
+        margin-left: 0.7rem;
+        padding: 0.15rem 0.35rem 0.1rem;
+        border: 0.12rem solid #c9c8df;
+        border-bottom-width: 0.25rem;
+        color: #c9c8df;
+        font-size: 0.6rem;
+      }
+      #bots-toggle.bt-ro::after {
+        content: none;
       }
       #bots-toggle.bt-ro {
         cursor: default;

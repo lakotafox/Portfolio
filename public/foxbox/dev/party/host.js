@@ -134,7 +134,10 @@ const GAMES = [
     module: "../../games/kart/gc.game.js", props: "../../games/kart/gc.properties.json",
     tagline: "Tilt to steer · grab FOX BOXES · first across the line!",
     minPlayers: 1, maxPlayers: 8, controls: "Tilt to steer · GAS · ITEM (phone sideways)",
-    racers: ["fox", "puff", "cat", "frog", "knight", "penguin", "bunny", "raccoon"], // the art's ids (CONTRACT "Art APIs"); default = by slot, like game.js
+    // the art's ids in the art's order (racers.js RACERS, CONTRACT "Art APIs"); default = by slot, like game.js. PICK-WIRE
+    // (Nov 12): JESUS (the 9th, Nov 3) was missing here, so his fkpick was refused and the phone raced the racer by slot
+    // (FROG in slot 3). test/pick-wire.test.js checks this list against racers.js, game.js and the phone.
+    racers: ["fox", "puff", "cat", "frog", "knight", "penguin", "bunny", "raccoon", "jesus"],
     // PHONEPICK (Lakota: "we need a track picking step, just have postcards greyed out, coming soon"): the soon cards are
     // locked (open: false: kartTrackOk refuses them), greyed on the TV pick row and the phones; no real names or art
     tracks: [{ id: "rampart", name: "RAMPART RUN", laps: 3, open: true },
@@ -1311,7 +1314,7 @@ function knightBackToSetup(afterRound) {
 // ── KART (FOX KART) ──
 // ── FOX KART setup: a racer, READY; the track (one open: RAMPART RUN, 3 laps) ──────────────────
 // Once FOX KART is picked (lobby phase "setup") every phone's kart module (dev/party/kart/kart-pad.js) shows its racer
-// picker (8 critters, the kart in the player's slot colour), then READY (that tap also asks iPhone motion permission);
+// picker (9 racers: 8 critters + JESUS, the kart in the player's slot colour), then READY (that tap also asks iPhone motion permission);
 // the game picker also gets PICK ANOTHER GAME. lob.kart = { id, track, picks: { [clientId]: { racer, ready } }, bots },
 // saved with the lobby (a TV reload keeps it); bots = this setup's racer order for the bots (re-rolled per setup).
 // Phone → TV ({t:"game", m}): {type:"fkpick", setupId, racer, ready, body?, paint?} on every change · the picker only: {type:"fktrack",
@@ -2383,7 +2386,12 @@ function renderBotsToggle() {
   const on = phase === "lobby";
   const fill = (mirror ? mirror.bots === "fill" : botsMode === "fill") && GAME.bots !== false;
   const txt = `BOTS: ${fill ? "FILL" : "OFF"}`;
-  if (el.textContent !== txt) el.textContent = txt;
+  // the switch (lobby-pad, Nov 12): BOTS [FILL | OFF] with the one that's on lit up, + the B key. Its text still reads
+  // "BOTS: FILL" / "BOTS: OFF" (QA scripts read it): the other option and the key are CSS (index.html)
+  if (el.textContent !== txt) {
+    el.innerHTML = `BOTS<span class="bt-c">: </span><span class="bt-v">${fill ? "FILL" : "OFF"}</span><span class="bt-o" data-o="${fill ? "OFF" : "FILL"}"></span>`;
+    el.setAttribute("aria-label", txt);
+  }
   el.dataset.mode = fill ? "fill" : "off";
   if (el.hidden === on) el.hidden = !on;
   if (!on) return;

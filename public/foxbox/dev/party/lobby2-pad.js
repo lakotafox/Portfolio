@@ -13,8 +13,10 @@
  *   USE CURSOR           the phone as a Wii-style pointer for its TV's lobby (pointer-pad.js: a full-screen tap pad over
  *                        this layer, RECENTER, SPEED; the TV draws the cursor: pointer-tv.js). Phones with a motion API
  *                        and a touch screen; an extra TV's phones while they're linked straight to that TV
- *   PARTY                the host's phone only (lobby state hostId): a sheet with BOTS FILL / OFF, and in web TV mode
- *                        (the lobby state has `party`) GROUP NAME + PRIVATE / PUBLIC too
+ *   BOTS FILL | OFF      the host's phone only (lobby state hostId): the switch itself, right on the screen (Lakota couldn't
+ *                        find it in the PARTY sheet): its own full-width row under the name, the setting that's on lit up
+ *   PARTY                the host's phone only, web TV mode (the lobby state has `party`): a sheet with GROUP NAME +
+ *                        PRIVATE / PUBLIC (and BOTS again)
  * lobby2 gives the toolbar a place in its content (mountLobby({toolbar})): the first row upright, the top of the
  * right-hand column sideways (the Cards | Grid tabs step down by its height, --fbx2-tb-h). It scrolls with the content,
  * so it never sits on the cards, the Pick button or the panels. An older lobby2 bundle without the slot: top right.
@@ -35,6 +37,7 @@ const ICONS = {
   cursor: ["#......", "##.....", "###....", "####...", "#####..", "######.", "###....", "#.##..."],
   target: ["...#...", ".#####.", ".#...#.", "##.#.##", ".#...#.", ".#####.", "...#..."],
   pad: [".########.", "##.####.##", "#...##.#.#", "##.####.##", "###....###", ".##....##."],
+  bot: ["...##...", ".######.", "##.##.##", "########", ".#.##.#.", ".######.", "..#..#..", ".##..##."],
 };
 function icon(name, px = 2) {
   const rows = ICONS[name], w = rows[0].length, h = rows.length;
@@ -80,8 +83,22 @@ function injectCss() {
   .fbx2-padbar > [data-test="lobby-party"] { order: 1; }
   .fbx2-padbar > [data-test="lobby-character"] { order: 2; }
   .fbx2-padbar > [data-test="lobby-pad"] { order: 0; }
+  .fbx2-padbar > [data-test="lobby-bots"] { order: 3; flex: 0 1 auto; min-height: 36px; }
+  .fbx2-bots-hint { display: none; }
   .fbx2-tb { padding: 0 7px; gap: 5px; font-size: 8px; }
 }
+/* the host's BOTS switch: a row of its own (upright), FILL | OFF with the one that's on lit up, a line saying what it means */
+.fbx2-bots { order: 5; flex: 1 1 100%; justify-content: flex-start; gap: 10px; min-height: 44px; padding: 4px 10px; }
+.fbx2-bots[aria-checked="true"] { background: ${NAVY}; color: ${CREAM}; }
+.fbx2-bots .fbx2-ico { color: ${GOLD}; }
+.fbx2-bots-l { font-size: 10px; }
+.fbx2-bots-sw { display: inline-flex; box-shadow: 0 0 0 2px ${CREAM}; background: #05060f; }
+.fbx2-bots-sw i { font-style: normal; padding: 6px 9px 5px; font-size: 10px; color: #4b5088; }
+.fbx2-bots[data-mode="fill"] .fbx2-bots-fill { background: ${GOLD}; color: ${INK}; }
+.fbx2-bots[data-mode="off"] .fbx2-bots-off { background: #ff5a3c; color: ${CREAM}; }
+.fbx2-bots-hint { margin-left: auto; font: 400 13px/1.2 ${SOFT}; letter-spacing: 0.02em; text-transform: none; color: #c9c8df; white-space: normal; text-align: right; }
+.fbx2-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 359px) { .fbx2-bots-hint { display: none; } }
 /* an older lobby2 bundle without the toolbar slot: the top right of the layer */
 .fbx2-padbar.fbx2-float { position: absolute; z-index: 5; top: max(10px, env(safe-area-inset-top)); right: max(10px, env(safe-area-inset-right));
   max-width: calc(100vw - 20px); justify-content: flex-end; }
@@ -177,6 +194,27 @@ export async function initLobby2Pad({ url, myId, editName, editPad, changeCharac
   cursorBtn.setAttribute("aria-pressed", "false");
   const charBtn = mk("lobby-character", `${icon("puff")}<span>Character</span>`, () => changeCharacter());
   charBtn.hidden = true;
+  // BOTS FILL | OFF: the host's switch, on the screen itself. Its text reads "BOTS: FILL" / "BOTS: OFF" (QA scripts look
+  // for those); a tap shows at once, the TV's next lobby state confirms
+  const botsBtn = mk("lobby-bots", `${icon("bot")}<span class="fbx2-bots-l" aria-hidden="true">Bots</span><span class="fbx2-sr">BOTS: OFF</span><span class="fbx2-bots-sw" aria-hidden="true"><i class="fbx2-bots-fill">Fill</i><i class="fbx2-bots-off">Off</i></span><span class="fbx2-bots-hint" aria-hidden="true"></span>`, () => {
+    if (botsBtn.hidden) return;
+    botsShown = botsShown === "fill" ? "off" : "fill";
+    botsWait = Date.now() + 1500;
+    paintBots();
+    lobby.bots && lobby.bots();
+  });
+  botsBtn.classList.add("fbx2-bots");
+  botsBtn.setAttribute("role", "switch");
+  botsBtn.hidden = true;
+  let botsShown = "off", botsWait = 0;
+  const paintBots = () => {
+    const fill = botsShown === "fill";
+    botsBtn.dataset.mode = fill ? "fill" : "off";
+    botsBtn.setAttribute("aria-checked", String(fill));
+    botsBtn.querySelector(".fbx2-sr").textContent = fill ? "BOTS: FILL" : "BOTS: OFF";
+    botsBtn.querySelector(".fbx2-bots-hint").textContent = fill ? "Bots fill the free spots" : "People only";
+  };
+  paintBots();
   const partyBtn = mk("lobby-party", `${icon("sliders")}<span>Party</span>`, () => (sheet.open ? sheet.close() : sheet.show()));
   partyBtn.hidden = true;
   partyBtn.setAttribute("aria-haspopup", "dialog");
@@ -246,7 +284,10 @@ export async function initLobby2Pad({ url, myId, editName, editPad, changeCharac
       const nm = (mine && mine.name) || "Name";
       if (nameLabel.textContent !== nm) nameLabel.textContent = nm;
       const isHost = !!(show && st.hostId && st.hostId === myId());
-      partyBtn.hidden = !isHost;
+      botsBtn.hidden = !isHost;
+      if (Date.now() >= botsWait) botsShown = st.bots === "fill" ? "fill" : "off";
+      paintBots();
+      partyBtn.hidden = !(isHost && st.party && typeof st.party === "object"); // web TV mode: GROUP NAME + PUBLIC (BOTS is on the bar)
       sheet.sync(isHost ? { bots: st.bots === "fill" ? "fill" : "off", party: st.party && typeof st.party === "object" ? st.party : null } : null);
       // USE CURSOR: this phone's own TV draws the cursor. An extra TV's phone needs its direct link to that TV (the web
       // build's FOXBOX_PATH "p2p"): over the relay its pointer would reach the main TV, which only draws its own phones
@@ -295,7 +336,7 @@ function partySheet(layer, lobby, onOpen) {
     </div>
     <div class="fbx2-party-sec" data-sec="bots">
       <span class="fbx2-party-l">Bots</span>
-      <button type="button" class="fbx2-party-bots" data-act="bots" data-test="lobby-bots" hidden>BOTS: OFF</button>
+      <button type="button" class="fbx2-party-bots" data-act="bots" data-test="party-bots" hidden>BOTS: OFF</button>
       <p class="fbx2-party-hint" data-test="bots-hint"></p>
     </div>`;
   layer.append(back, el);
@@ -351,7 +392,7 @@ function partySheet(layer, lobby, onOpen) {
     },
     sync(c) {
       cur = c;
-      bots.hidden = !c; // only the host's phone has it (QA scripts read that from [data-test=lobby-bots])
+      bots.hidden = !c; // only the host's phone has it (the bar's switch is [data-test=lobby-bots])
       if (!c) return api.open && api.close();
       if (!api.open) return;
       if (Date.now() >= pubWait) shownPub = !!(c.party && c.party.pub);

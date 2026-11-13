@@ -2419,6 +2419,314 @@
           display: none;
         }
       }
+
+      /* ── LOBBY LOOK (lobby-pad, Nov 12): the shell's own screens wear the player's pixel pad ─────────────────────────
+         The game picked and waiting for START, between games, the results, joining mid-round, connecting, the TV gone:
+         pad.js (syncLobbySkin) puts the player's pad body (pad-skin.js "lobby" layout: FOXBOX print, power LED, the
+         style's panel behind the screen, the big round START drawn under #bonk) in #lobby-skin-body and sets the
+         style's --sk-* colours + --u (one art pixel) here. The words sit on the pad's LCD (#status); the name, BOTS and
+         SWITCH GAME are the pad's raised pixel keys; #bonk stays the real button (invisible over its drawing). */
+      #lobby-bar {
+        display: none;
+      }
+      #pad-screen.lobby-skin {
+        gap: calc(var(--u, 4px) * 3);
+        padding: calc(env(safe-area-inset-top, 0px) + var(--u, 4px) * 15) max(env(safe-area-inset-right, 0px), calc(var(--u, 4px) * 5))
+          max(env(safe-area-inset-bottom, 0px), calc(var(--u, 4px) * 4)) max(env(safe-area-inset-left, 0px), calc(var(--u, 4px) * 5));
+        background: var(--sk-body, #ff9864);
+        color: var(--sk-lcd-ink, #fff9f1);
+      }
+      #lobby-skin-body {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      #pad-screen.lobby-skin > :not(#lobby-skin-body):not(#round-cue):not(#clook-bg) {
+        position: relative;
+        z-index: 1;
+      }
+      #pad-screen.lobby-skin #lobby-bar {
+        display: flex;
+        flex: none;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: calc(var(--u, 4px) * 3);
+        min-height: 0;
+      }
+      #pad-screen.lobby-skin #lobby-bar:not(:has(> :not([hidden]))) {
+        display: none;
+      }
+      /* the raised pixel keys (whosfox's pixel buttons: outline + top-left light + bottom-right shade + plinth) */
+      #pad-screen.lobby-skin #me-chip,
+      #pad-screen.lobby-skin #bots-host,
+      #pad-screen.lobby-skin #status button {
+        --pb: var(--sk-x-base);
+        --pm: var(--sk-x-mid);
+        --pl: var(--sk-x-lt);
+        --pd: var(--sk-x-dk);
+        appearance: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: calc(var(--u, 4px) * 2);
+        min-height: calc(var(--u, 4px) * 11);
+        margin: 0;
+        padding: 0 calc(var(--u, 4px) * 3);
+        border: 0;
+        border-radius: 0;
+        background: var(--pb);
+        color: var(--sk-x-txt, #fff9f1);
+        font: 400 11px/1.3 var(--px-font);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        text-shadow: none;
+        box-shadow:
+          inset var(--u, 4px) var(--u, 4px) 0 0 var(--pl),
+          inset calc(var(--u, 4px) * -1) calc(var(--u, 4px) * -1) 0 0 var(--pd),
+          0 calc(var(--u, 4px) * -1) 0 0 var(--sk-ink),
+          0 var(--u, 4px) 0 0 var(--sk-ink),
+          calc(var(--u, 4px) * -1) 0 0 0 var(--sk-ink),
+          var(--u, 4px) 0 0 0 var(--sk-ink),
+          0 calc(var(--u, 4px) * 2.5) 0 0 var(--sk-shadow, #00000066);
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        cursor: pointer;
+      }
+      #pad-screen.lobby-skin #me-chip[hidden],
+      #pad-screen.lobby-skin #bots-host[hidden],
+      #pad-screen.lobby-skin #status button[hidden] {
+        display: none;
+      }
+      #pad-screen.lobby-skin #me-chip:active,
+      #pad-screen.lobby-skin #bots-host:active,
+      #pad-screen.lobby-skin #status button:active {
+        transform: translateY(calc(var(--u, 4px) * 1.5));
+        background: var(--pm);
+        box-shadow:
+          inset var(--u, 4px) var(--u, 4px) 0 0 var(--pd),
+          0 calc(var(--u, 4px) * -1) 0 0 var(--sk-ink),
+          0 var(--u, 4px) 0 0 var(--sk-ink),
+          calc(var(--u, 4px) * -1) 0 0 0 var(--sk-ink),
+          var(--u, 4px) 0 0 0 var(--sk-ink),
+          0 var(--u, 4px) 0 0 var(--sk-shadow, #00000066);
+      }
+      /* your name: the pad's LED in your colour, the name, a pencil (tap: change it) */
+      #pad-screen.lobby-skin #me-chip {
+        max-width: 100%;
+        min-width: 0;
+        font: 400 18px/1.2 var(--px-soft);
+        letter-spacing: 0.02em;
+        text-transform: none;
+        color: var(--sk-x-txt, #fff9f1);
+      }
+      #pad-screen.lobby-skin #me-chip-ball {
+        flex: none;
+        width: calc(var(--u, 4px) * 3);
+        height: calc(var(--u, 4px) * 3);
+        border: 0;
+        border-radius: 0;
+        background: var(--c, #8a94a6);
+        box-shadow: 0 0 0 calc(var(--u, 4px) * 0.75) var(--sk-ink);
+      }
+      #pad-screen.lobby-skin #me-chip .ico {
+        flex: none;
+        padding: 3px 2px;
+        background: var(--sk-a-base);
+        box-shadow: 0 0 0 2px var(--sk-ink);
+      }
+      /* the host's BOTS switch: FILL | OFF, the one that's on lit up; a line under it says what it means */
+      #pad-screen.lobby-skin #bots-host {
+        flex-wrap: wrap;
+        row-gap: 2px;
+        padding: calc(var(--u, 4px) * 1.5) calc(var(--u, 4px) * 2.5);
+        margin-left: auto;
+      }
+      #bots-host .bh-l {
+        font-size: 12px;
+      }
+      #bots-host .bh-sw {
+        display: inline-flex;
+        box-shadow: 0 0 0 2px var(--sk-ink, #0a1428);
+        background: var(--sk-x-dk, #05060f);
+      }
+      #bots-host .bh-sw b {
+        padding: 5px 8px 4px;
+        font-weight: 400;
+        font-size: 11px;
+        color: var(--sk-x-lt, #4b5088);
+      }
+      #bots-host[data-mode="fill"] .bh-fill {
+        background: var(--sk-a-base, #ffd23f);
+        color: var(--sk-a-txt, #101125);
+      }
+      #bots-host[data-mode="off"] .bh-off {
+        background: var(--sk-c-base, #ff5a3c);
+        color: var(--sk-c-txt, #fff9f1);
+      }
+      #bots-host .bh-hint {
+        flex-basis: 100%;
+        font-size: 7px;
+        line-height: 1.5;
+        text-align: center;
+        color: var(--sk-x-txt, #c9c8df);
+        opacity: 0.85;
+      }
+      #pad-screen:not(.lobby-skin) #bots-host .bh-hint {
+        display: none;
+      }
+      /* the pad's LCD: everything the screen says */
+      #pad-screen.lobby-skin #status {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: calc(var(--u, 4px) * 2.5);
+        min-height: 0;
+        margin: calc(var(--u, 4px) * 5) calc(var(--u, 4px) * 1.5) calc(var(--u, 4px) * 4);
+        padding: calc(var(--u, 4px) * 4) calc(var(--u, 4px) * 3);
+        overflow-y: auto;
+        border: 0;
+        border-radius: 0;
+        background-color: var(--sk-lcd, #101125);
+        background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 4px);
+        box-shadow:
+          0 0 0 var(--u, 4px) var(--sk-ink),
+          inset 0 var(--u, 4px) 0 0 rgba(0, 0, 0, 0.35);
+        color: var(--sk-lcd-ink, #fff9f1);
+        text-align: center;
+      }
+      #pad-screen.lobby-skin #game-name {
+        order: -1;
+        margin: 0;
+        opacity: 1;
+        color: var(--sk-lcd-gold, #ffd23f);
+        font: 400 clamp(17px, 5.8vw, 24px) / 1.3 var(--px-font);
+        letter-spacing: 0.03em;
+      }
+      #pad-screen.lobby-skin #game-name:empty {
+        display: none;
+      }
+      #pad-screen.lobby-skin #status-big {
+        color: var(--sk-lcd-ink, #fff9f1);
+        font: 400 clamp(15px, 4.6vw, 19px) / 1.4 var(--px-font);
+        text-transform: uppercase;
+      }
+      #pad-screen.lobby-skin #status-small {
+        min-height: 0;
+        margin: 0;
+        opacity: 1;
+        color: var(--sk-lcd-soft, #c9c8df);
+        font: 400 10px/1.9 var(--px-font);
+        text-transform: uppercase;
+      }
+      #pad-screen.lobby-skin #status-small:empty {
+        display: none;
+      }
+      #pad-screen.lobby-skin #status-small .ln {
+        display: block;
+      }
+      #pad-screen.lobby-skin #status-small .ln.hi {
+        color: var(--sk-lcd-good, #2ed3c6);
+      }
+      #pad-screen.lobby-skin #status-small .sep {
+        display: none;
+      }
+      #pad-screen.lobby-skin #status-btns {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: calc(var(--u, 4px) * 3);
+      }
+      #pad-screen.lobby-skin #status-btns:not(:has(> :not([hidden]))) {
+        display: none;
+      }
+      #pad-screen.lobby-skin #status #change-char,
+      #pad-screen.lobby-skin #status #switch-game {
+        margin-top: calc(var(--u, 4px) * 1.5);
+        font-size: 11px;
+        padding: 0 calc(var(--u, 4px) * 3);
+        border-radius: 0;
+        border: 0;
+      }
+      /* "Use this one" (paused) and RELOAD (FOX KART's pad didn't load): the pad's A key */
+      #pad-screen.lobby-skin #status > button {
+        --pb: var(--sk-a-base);
+        --pm: var(--sk-a-mid);
+        --pl: var(--sk-a-lt);
+        --pd: var(--sk-a-dk);
+        color: var(--sk-a-txt);
+        margin-top: calc(var(--u, 4px) * 2);
+      }
+      #pad-screen.lobby-skin #status-small button {
+        --pb: var(--sk-a-base);
+        --pm: var(--sk-a-mid);
+        --pl: var(--sk-a-lt);
+        --pd: var(--sk-a-dk);
+        color: var(--sk-a-txt);
+        margin-top: calc(var(--u, 4px) * 3);
+        font-size: 12px;
+      }
+      /* the controls: only START (pad.js shows #controls in the lobby only); the stick waits for the round */
+      #pad-screen.lobby-skin #controls {
+        flex: none;
+        height: 38%;
+        min-height: 150px;
+      }
+      #pad-screen.lobby-skin.lk-nostart #controls {
+        display: none;
+      }
+      #pad-screen.lobby-skin:not(.row-setup) #steer {
+        display: none !important;
+      }
+      #pad-screen.lobby-skin #bonk {
+        width: min(100%, 100cqh, 236px);
+        background: transparent;
+        border-color: transparent;
+        box-shadow: none;
+        color: transparent;
+        text-shadow: none;
+        filter: none;
+        transform: none;
+      }
+      /* the results: the arcade high-score table is the pad's LCD (pad.js fills it; its own colours stay) */
+      #pad-screen.lobby-skin.results #status {
+        background-color: #05070f;
+        box-shadow: 0 0 0 var(--u, 4px) var(--sk-ink), inset 0 var(--u, 4px) 0 0 rgba(0, 0, 0, 0.35);
+      }
+      /* Row's seats in the lobby: the boats panel on the pad too */
+      #pad-screen.lobby-skin.row-setup #status {
+        flex: none;
+      }
+      #pad-screen.lobby-skin #boats {
+        border: 0;
+        border-radius: 0;
+        background: var(--sk-lcd, #101125);
+        box-shadow: 0 0 0 var(--u, 4px) var(--sk-ink);
+        margin: 0 calc(var(--u, 4px) * 1.5);
+      }
+      /* the connection strip: the pad's LCD says it already (Connecting… / Finding the room… / The host left) */
+      body:has(#pad-screen.lobby-skin.show) #reconn {
+        display: none;
+      }
+      @media (orientation: landscape) {
+        #pad-screen.lobby-skin {
+          padding-top: calc(env(safe-area-inset-top, 0px) + var(--u, 4px) * 13);
+        }
+        #pad-screen.lobby-skin #status {
+          flex-direction: column;
+          align-items: center;
+          gap: calc(var(--u, 4px) * 1.5);
+          padding: calc(var(--u, 4px) * 2.5) calc(var(--u, 4px) * 3);
+        }
+        #pad-screen.lobby-skin #controls {
+          height: 42%;
+          min-height: 0;
+        }
+      }
     </style>
       <link id="fbx-ui-css" rel="stylesheet" href="../ui/foxbox-ui.css">
   </head>
@@ -2538,16 +2846,19 @@
         <button id="edit-name" type="button">Name</button>
         <div id="conn">…</div>
       </div>
+      <!-- the lobby's bar: your name (tap to change it) and, on the host's phone only, the BOTS FILL / OFF switch -->
+      <div id="lobby-bar">
+        <button id="me-chip" data-test="me-chip" type="button" aria-label="Change your name" hidden><span id="me-chip-ball"></span><span id="me-chip-name"></span><i class="ico" data-sprite="pencil" data-scale="2" data-color="#0a1428" aria-hidden="true"></i></button>
+        <button id="bots-host" data-test="bots-host" type="button" role="switch" aria-checked="false" aria-label="BOTS: OFF" hidden><span class="bh-l">BOTS</span><span class="bh-sw" aria-hidden="true"><b class="bh-fill">FILL</b><b class="bh-off">OFF</b></span><span class="bh-hint" aria-hidden="true">People only</span></button>
+      </div>
       <div id="status">
-        <button id="me-chip" data-test="me-chip" type="button" hidden><span id="me-chip-ball"></span><span id="me-chip-name"></span><span aria-hidden="true">✏️</span></button><!-- the lobby: tap your name to change it -->
         <div id="res-art" aria-hidden="true" hidden></div>
         <div id="status-big">Connecting…</div>
         <div id="status-small"></div>
         <div id="res-mini" data-test="results-list" hidden></div>
         <div id="res-back" data-test="results-back" hidden></div>
         <div id="game-name"></div>
-        <div><button id="change-char" type="button" hidden>Change character</button> <button id="switch-game" data-test="switch-game" type="button" hidden>🎮 Switch game</button></div>
-        <div><button id="bots-host" data-test="bots-host" type="button" hidden>BOTS: OFF</button></div><!-- the host's phone only: BOTS FILL / OFF -->
+        <div id="status-btns"><button id="change-char" type="button" hidden>Change character</button> <button id="switch-game" data-test="switch-game" type="button" hidden>Switch game</button></div>
       </div>
       <div id="boats" hidden>
         <button id="boats-head" type="button">Pick your boat</button>

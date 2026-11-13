@@ -46,7 +46,7 @@ import { createLandscape, createTurnHint, turnedDelta } from "./landscape.js";
 import { crownedPuff, cryingPuff, sprite } from "./pixel-art.js";
 import { createPhoneSounds } from "./phone-sounds.js";
 import { createRowTrainPad, S as ROW_TRAIN } from "./row-train-pad.js"; // ROWTRAIN: Row Row Rumble's TRAINING overlay
-import { createPadSkin, skinId, setSkinId, mountSkinPicker } from "./pad-skin.js"; // SKINS: the player's pixel gamepad (CLASSIC = none)
+import { createPadSkin, skinId, setSkinId, mountSkinPicker, applySkinVars, artPx, DEFAULT_SKIN } from "./pad-skin.js"; // SKINS: the player's pixel gamepad (CLASSIC = none) · LOBBY LOOK
 
 const phoneSounds = createPhoneSounds({
   onReady: (audioReady) => queueMicrotask(() => sendRaw({ t: "state", drawing: drawOpen, audioReady: audioReady === true })),
@@ -1706,6 +1706,27 @@ function controlsLine() {
     ? "Paddle! A steady beat is fastest"
     : mode.stick === "xy" ? "Drag to roll · SHOVE to bump" : "Steer ◀ ▶ · BONK = dive on heads";
 }
+/** #status-small: the line, one span per " · " part (the LOBBY LOOK's LCD puts each on its own line; the text reads the same). */
+function setSmall(s) {
+  const small = $("status-small");
+  if (small.dataset.line === s && small.textContent === s) return;
+  small.dataset.line = s;
+  const parts = s.split(" · ");
+  if (parts.length < 2) return void (small.textContent = s);
+  small.textContent = "";
+  parts.forEach((part, i) => {
+    if (i) {
+      const sep = document.createElement("span");
+      sep.className = "sep";
+      sep.textContent = " · ";
+      small.append(sep);
+    }
+    const ln = document.createElement("span");
+    ln.className = /^You pick|^Ready|^Press/.test(part) ? "ln hi" : "ln";
+    ln.textContent = part;
+    small.append(ln);
+  });
+}
 function renderStatus() {
   if (lastStatus && lastStatus.game) applyMode(lastStatus.game);
   applyRole();
@@ -1725,11 +1746,17 @@ function renderStatus() {
   const chip = $("me-chip");
   chip.hidden = !(between && st0 === "lobby");
   if ($("me-chip-name").textContent !== me.name) $("me-chip-name").textContent = me.name || "Name";
+  // the host's phone: the BOTS switch, right on the lobby screen (FILL | OFF, the one that's on lit up)
   const botsHost = $("bots-host");
   botsHost.hidden = !(between && st0 === "lobby" && !!lobbyState && lobbyState.hostId === me.id);
-  const botsTxt = `🤖 BOTS: ${lobbyState && lobbyState.bots === "fill" ? "FILL" : "OFF"}`;
-  if (botsHost.textContent !== botsTxt) botsHost.textContent = botsTxt;
-  botsHost.dataset.mode = lobbyState && lobbyState.bots === "fill" ? "fill" : "off";
+  const botsFill = !!lobbyState && lobbyState.bots === "fill";
+  const botsTxt = `BOTS: ${botsFill ? "FILL" : "OFF"}`;
+  if (botsHost.dataset.mode !== (botsFill ? "fill" : "off")) {
+    botsHost.setAttribute("aria-label", botsTxt);
+    botsHost.setAttribute("aria-checked", String(botsFill));
+    botsHost.dataset.mode = botsFill ? "fill" : "off";
+    botsHost.querySelector(".bh-hint").textContent = botsFill ? "Bots fill the free spots" : "People only";
+  }
   const seatNow = mySeat();
   $("game-name").textContent = seatNow ? `${mode.name} · ${SEAT_LABEL[seatNow.seat] || "CREW"} · ${seatNow.boatName} boat` : mode.name;
   const big = $("status-big");
@@ -1741,12 +1768,15 @@ function renderStatus() {
     b = "Paused";
     s = "This controller is open somewhere else.";
     big.textContent = b;
+    big.hidden = false;
     small.innerHTML = "";
+    small.dataset.line = "";
     small.append(s, document.createElement("br"));
     const btn = document.createElement("button");
     btn.textContent = "Use this one";
     btn.onclick = () => connect();
     small.append(btn);
+    syncExtras(); // (the LOBBY LOOK: this screen is on the pad too)
     return;
   }
   if (!ws || ws.readyState !== 1) {
@@ -1767,7 +1797,7 @@ function renderStatus() {
           ? !mySeat() ? "Pick a seat in a boat below" : st.rowSetup?.ready
             ? `Ready — ${st.rowSetup.readyCount}/${st.rowSetup.totalCount} players ready`
             : "Enable motion, test your controls, then tap Ready"
-          : `Press ${mode.button} to start` + (st.hold === "drawing" ? " · someone's still drawing" : left != null ? ` · auto-start in ${left}s` : "");
+          : "Press START to play" + (st.hold === "drawing" ? " · someone's still drawing" : left != null ? ` · auto-start in ${left}s` : "");
         const ll = lobbyLine();
         if (ll) s += ` · ${ll}`;
         break;
@@ -1807,7 +1837,7 @@ function renderStatus() {
   }
   if (big.textContent !== b) big.textContent = b;
   if (big.hidden !== !b) big.hidden = !b; // (no headline = no empty box in the row / column)
-  if (small.textContent !== s) small.textContent = s;
+  setSmall(s);
   const rows = ws && ws.readyState === 1 && lastStatus?.state === "results" && Array.isArray(lastStatus.results) ? lastStatus.results : null;
   $("pad-screen").classList.toggle("results", !!rows);
   $("res-mini").hidden = !rows;
@@ -1892,6 +1922,7 @@ function syncExtras() {
     if (!skyScreen) turnSeen = false;
   }
   syncSkin(); // SKINS
+  syncLobbySkin(); // LOBBY LOOK
   if (lobby2Pad) {
     try {
       lobby2Pad.sync({ screen: curScreen, state: st, connected, gameId: mode.id, seats: !!mode.seats, role: role || null, lobby: lobbyState });
@@ -2018,6 +2049,7 @@ function setB(v) {
   if (v === b) return;
   b = v;
   bonk.classList.toggle("down", !!v);
+  if (lobbySkin) lobbySkin.hold("a", !!v); // LOBBY LOOK: the drawn START sinks too
   flush();
   if (v && navigator.vibrate) {
     try {
@@ -2130,6 +2162,87 @@ function syncSkin() {
   padSkin.set({ name: me.name, color: seatColor || myColor(), button: mode.button, label: skinLabel(st), dim: st === "out" || st === "waiting", round: game === "snow" ? skinRound : 0, won: skinRound, train: mode.id === "row" && rowTrain.visible(), turn: game === "mate" && !!cap.info().turn });
 }
 var skinRound = 0; // Snowball's round (its {type:"round"} cue)
+// ── LOBBY LOOK (lobby-pad, Nov 12): the shell's own screens wear the player's pixel pad ─────────────────────────────
+// Lakota: "I see this phone screen a lot, it's the old slop UI" — the game picked and waiting for START, between games,
+// the results, joining mid-round, connecting, the TV gone: every screen of #pad-screen that isn't a round's controller.
+// They now sit on the player's pad (pad-skin.js "lobby" layout in #lobby-skin-body: the body, the FOXBOX print, a power
+// LED in their colour, the style's panel behind the LCD, the big round START drawn under #bonk) with the style's colours
+// on the page (--sk-…, pad.html LOOK block). CLASSIC players get the FOXBOX pad here (CLASSIC is about the round's
+// controller; there's no "plain" lobby any more). #bonk stays the real START button, invisible over its drawing.
+var lobbySkin = null, lobbySkinHost = null, lobbySkinStyle = ""; // var: syncExtras may run before this line during start-up
+var lobbySkinWatch = null;
+function lobbySkinWanted() {
+  if (curScreen !== "pad-screen" || padSkin) return false; // another screen, or the round's pixel pad covers it
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  if (!connected || !lastStatus) return true; // connecting, the TV gone, paused, joining
+  const st = lastStatus.state;
+  if (st === "countdown" || st === "playing") return false; // the round's own controller (or the game's module)
+  const b = document.body.classList;
+  return !(b.contains("knight-on") || b.contains("kart-on") || b.contains("whosfox-on")); // a game's setup covers it
+}
+function syncLobbySkin() {
+  const screen = $("pad-screen");
+  const want = lobbySkinWanted();
+  const st = lastStatus && lastStatus.state;
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  // START is the lobby's (a game's own setup buttons stay as they are); in the round the button is the game's again
+  const label = st === "lobby" && connected ? "START" : mode.button;
+  const bonkEl = $("bonk");
+  if (bonkEl.textContent !== label) bonkEl.textContent = label;
+  if (!want) {
+    if (lobbySkin) {
+      lobbySkin.destroy();
+      lobbySkin = null;
+      lobbySkinHost.remove();
+      lobbySkinHost = null;
+      lobbySkinStyle = "";
+      screen.classList.remove("lobby-skin", "lk-nostart");
+    }
+    return;
+  }
+  const style = skinId() === "classic" ? DEFAULT_SKIN : skinId();
+  if (!lobbySkin) {
+    lobbySkinHost = document.createElement("div");
+    lobbySkinHost.id = "lobby-skin-body";
+    lobbySkinHost.setAttribute("aria-hidden", "true");
+    screen.prepend(lobbySkinHost);
+    screen.classList.add("lobby-skin");
+    lobbySkin = createPadSkin(lobbySkinHost, { style, game: "lobby", interactive: false, vibrate: false });
+    lobbySkin.el.style.pointerEvents = "none";
+    if (!lobbySkinWatch && typeof ResizeObserver === "function") {
+      lobbySkinWatch = new ResizeObserver(() => placeLobbySkin());
+      for (const id of ["status", "bonk", "lobby-bar"]) lobbySkinWatch.observe($(id));
+    }
+  }
+  if (style !== lobbySkinStyle) {
+    lobbySkinStyle = style;
+    applySkinVars(screen, style);
+    screen.style.setProperty("--u", `${artPx()}px`);
+    screen.dataset.skin = style;
+    lobbySkin.setStyle(style);
+  }
+  // START only where it starts something: the lobby (not Row's: its seats + READY), never while waiting / out / away
+  screen.classList.toggle("lk-nostart", !(connected && st === "lobby" && mode.id !== "row"));
+  placeLobbySkin();
+  requestAnimationFrame(placeLobbySkin); // (the page settles its layout first)
+}
+/** Where the page's LCD and START are now, in the pad's art pixels (the drawing follows the DOM). */
+function placeLobbySkin() {
+  if (!lobbySkin) return;
+  const g = lobbySkin.grid;
+  if (!g) return void lobbySkin.layout();
+  const s = g.dpr / g.k, host = lobbySkinHost.getBoundingClientRect();
+  const box = (el) => {
+    if (!el || !el.getClientRects().length) return null;
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0 ? r : null;
+  };
+  const bonkEl = $("bonk"), sr = box($("status")), br = box(bonkEl);
+  const panel = sr ? { x: Math.round((sr.left - host.left) * s) - 4, y: Math.round((sr.top - host.top) * s) - 4, w: Math.round(sr.width * s) + 8, h: Math.round(sr.height * s) + 8 } : null;
+  const btn = br ? { x: Math.round((br.left - host.left) * s), y: Math.round((br.top - host.top) * s), d: Math.round(br.width * s) } : null;
+  lobbySkin.set({ panel, btn, button: bonkEl.textContent, color: myColor() });
+}
+
 Object.defineProperty(window, "__padSkinQA", { get: () => padSkin, configurable: true }); // QA: the live pad (regions, grid, style)
 window.addEventListener("foxbox:pad-skin", () => { if (padSkin) padSkin.release(); syncSkin(); if (typeof land !== "undefined") syncExtras(); });
 
@@ -2226,7 +2339,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   padScreen.addEventListener(
     type,
     (e) => {
-      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button, #kart [data-native], #tennis [data-native], #bowling [data-native], #minigolf [data-native], #firefight [data-native]")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones; KART: the kart pad's; TENNIS: the tennis pad's; MINIGOLF: the putter's)
+      if (e.target.closest("button#edit-name, #status button, #lobby-bar button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button, #kart [data-native], #tennis [data-native], #bowling [data-native], #minigolf [data-native], #firefight [data-native]")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones; KART: the kart pad's; TENNIS: the tennis pad's; MINIGOLF: the putter's)
       if (padScreen.classList.contains("row-setup") && !e.target.closest("#cap-aim, #cap-fire")) return; // Row setup scrolls
       e.preventDefault();
     },

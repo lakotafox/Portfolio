@@ -137,6 +137,7 @@ function controllerShowing() {
   if (!pad || !pad.classList.contains("show")) return false;
   if (document.body.classList.contains("fbx2-lobby-on")) return false; // the lobby layer covers it
   if (pad.classList.contains("skin-on")) return false; // SKINS: the player's pixel pad is the look (no rolled background under it)
+  if (pad.classList.contains("lobby-skin")) return false; // LOBBY LOOK: the shell's own screens are on the player's pad too
   return true;
 }
 

@@ -1256,3 +1256,24 @@ PX.tallBody = tallBody;
 PX.pixelText = pixelText;
 /** "body": just the portrait shell (WHO'S THE FOX?'s DOM screens sit on it). */
 registerLayout("body", (st, S, F) => tallBody(S, F), { brand: false });
+/**
+ * "lobby": the shell's own phone screens (pad.js LOBBY LOOK: the game picked and waiting for START, between games, the
+ * results, joining mid-round, connecting, the TV gone). The portrait body with the FOXBOX print and a power LED in the
+ * player's colour, the style's panel behind the page's screen and the big round START under the page's own button; the
+ * page's DOM (the screen's words, the name, BOTS, SWITCH GAME) sits on top, and its #bonk takes the touches.
+ * data: { panel: {x, y, w, h} | null (grid: the page's screen, grown by the bezel), btn: {x, y, d} | null (grid: the
+ * page's START), button: its label, color: the player's colour }
+ */
+registerLayout("lobby", (st, S, F) => {
+  const D = st.data;
+  tallBody(S, F, D.panel ? { panel: D.panel } : {});
+  if (F.brand) {
+    if (S.id === "foxbox") { sprite(ICON.fox, F.L, 4, { X: S.ink, K: S.ink, O: "#e8682f", W: "#fff9f1" }); text("FOXBOX", F.L + 12, 6, FS, S.ink, { align: "l" }); }
+    else text("FOXBOX", F.L, 6, FS, S.print, { align: "l" });
+  }
+  // the power LED, top right, in the player's colour
+  R(F.R - 4, 5, 4, 4, S.ink);
+  R(F.R - 3, 6, 2, 2, D.color || S.led);
+  const b = D.btn;
+  if (b && b.d >= 16) button(st, S, "a", b.x, b.y, b.d, S.a, D.button || "", FB, { hit: 4 });
+});
