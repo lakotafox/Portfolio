@@ -1111,6 +1111,7 @@ function onMessage(msg) {
       if (tennisGameMsg(msg)) break; // TENNIS: the FOX TENNIS module's
       if (bowlingGameMsg(msg)) break; // BOWLING: the FOX BOWLING module's
       if (minigolfGameMsg(msg)) break; // MINIGOLF: the FOX MINI GOLF module's
+      if (firefightGameMsg(msg)) break; // FIREFIGHT: the FIRE CREW module's
       if (knightGameMsg(msg)) break; // KNIGHT: the knight module's (Knight Platformer is the hub's game)
       if (kartGameMsg(msg)) break; // KART: the kart module's (FOX KART is the hub's game)
       if (mode.id === "row" && msg.m && msg.m.type === "rowTrain") { rowTrain.onMessage(msg.m); renderStatus(); break; } // ROWTRAIN: the controls check
@@ -1478,6 +1479,46 @@ function syncBowling() {
 }
 // ── end BOWLING ──
 
+// ── FIREFIGHT (FIRE CREW, preview) ──
+// The game's phone module (dev/party/firefight/firefight-pad.js, built from games/firefight/phone/), loaded the first time
+// FIRE CREW is the hub's game. Like BOWLING's: it owns #firefight during the round (the how-to cards, the hose: aim with the
+// gyro, hold to spray, the water, the team card) and talks to the TV with {t:"game", m} both ways (games/firefight).
+var firefightPad = null; // var: onMessage / renderStatus may run before this line during start-up
+var firefightLoad = null;
+var firefightInbox = [];
+function firefightGameMsg(msg) {
+  if (mode.id !== "firefight" || !msg.m || typeof msg.m !== "object") return false;
+  if (firefightPad) firefightPad.onMessage(msg.m);
+  else {
+    firefightInbox.push(msg.m);
+    if (firefightInbox.length > 16) firefightInbox.shift();
+  }
+  return true;
+}
+function syncFirefight() {
+  const ff = mode.id === "firefight";
+  if (ff && !firefightLoad) {
+    firefightLoad = import("./firefight/firefight-pad.js")
+      .then((m) => {
+        firefightPad = m.createFirefightPad($("firefight"), {
+          send: (m2) => sendRaw({ t: "game", m: m2 }),
+          me: () => ({ id: me.id, name: me.name }),
+        });
+        for (const msg of firefightInbox.splice(0)) firefightPad.onMessage(msg);
+        renderStatus();
+      })
+      .catch((e) => console.warn("[foxbox] FIRE CREW controller didn't load", e));
+  }
+  const st = lastStatus && lastStatus.state;
+  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
+  const on = ff && connected && curScreen === "pad-screen" && (st === "countdown" || st === "playing");
+  $("pad-screen").classList.toggle("firefight", on);
+  $("firefight").hidden = !on;
+  if (ff) $("bonk-wrap").hidden = on;
+  if (firefightPad) firefightPad.show(on);
+}
+// ── end FIREFIGHT ──
+
 // ── Lobby v2 ────────────────────────────────────────────────────────────────────
 // The TV sends {t:"lobby", s} with everyone's roles; a phone UI (lobby2) talks back through
 // window.foxboxLobby. The host checks the roles: only the GAME PICKER may browse / pick / start,
@@ -1568,7 +1609,7 @@ function applyMode(g) {
   mode = { ...mode, ...g, seats: !!g.seats };
   $("bonk").textContent = mode.button;
   const rowing = mode.stick === "motion";
-  steer.hidden = rowing || mode.id === "golf" || mode.id === "tennis" || mode.id === "bowling" || mode.id === "minigolf"; // TEE TIME: START in the lobby, its own module in play (syncGolf) · TENNIS: the same (syncTennis) · MINIGOLF: the same (syncMinigolf)
+  steer.hidden = rowing || mode.id === "golf" || mode.id === "tennis" || mode.id === "bowling" || mode.id === "minigolf" || mode.id === "firefight"; // TEE TIME: START in the lobby, its own module in play (syncGolf) · TENNIS: the same (syncTennis) · MINIGOLF: the same (syncMinigolf)
   $("bonk-wrap").hidden = rowing;
   steer.classList.toggle("xy", mode.stick === "xy");
   $("steer-label").textContent = mode.stick === "xy" ? "drag to roll" : "slide to steer";
@@ -1753,8 +1794,8 @@ function renderStatus() {
         break;
       case "results":
         // the TV's results: who won (a boat in team games), your place and points, then the list
-        b = st.won ?? st.place === 1 ? "YOU WON!" : `YOU CAME ${ordinal(st.place).toUpperCase()}`;
-        s = `${String(st.winner || "").toUpperCase()} WINS!` + (st.points ? ` · +${st.points} PTS` : "");
+        b = st.coop ? st.coop : st.won ?? st.place === 1 ? "YOU WON!" : `YOU CAME ${ordinal(st.place).toUpperCase()}`; // CO-OP: the crew's result
+        s = (st.coop ? st.coopSub || "GREAT WORK, CREW!" : `${String(st.winner || "").toUpperCase()} WINS!`) + (st.points ? ` · +${st.points} PTS` : "");
         break;
       case "full":
         b = "Game is full";
@@ -1778,8 +1819,9 @@ function renderStatus() {
     const solo = team ? "" : vals ? " solo vals" : " solo";
     // a bot's name carries a BOT tag (the host's BOTS setting: FILL)
     const nm = (r, k) => escHtml((r.names || [])[k] || "") + (Array.isArray(r.bots) && r.bots[k] ? ' <span class="bot-tag">BOT</span>' : "");
-    const html = `<div class="r hd${solo}"><span>RANK</span><span>${team ? "BOAT" : "NAME"}</span>${team ? "<span>CREW</span>" : vals ? '<span class="val">SCORE</span>' : ""}</div>` +
-      rows.map((r, i) => `<div class="r${i === 0 ? " first" : ""}${r.mine ? " mine" : ""}${solo}"><span class="rk">${ordinal(i + 1).toUpperCase()}</span>` +
+    const coop = !!lastStatus.coop; // CO-OP: no ranks
+    const html = `<div class="r hd${solo}"><span>${coop ? "CREW" : "RANK"}</span><span>${team ? "BOAT" : "NAME"}</span>${team ? "<span>CREW</span>" : vals ? '<span class="val">SCORE</span>' : ""}</div>` +
+      rows.map((r, i) => `<div class="r${i === 0 && !coop ? " first" : ""}${r.mine ? " mine" : ""}${solo}"><span class="rk">${coop ? "★" : ordinal(i + 1).toUpperCase()}</span>` +
         (team
           ? `<span>${escHtml(String(r.team || "").replace(/ boat$/i, "").toUpperCase())}</span><span class="crew">${(r.names || []).map((_, k) => nm(r, k)).join(" · ")}</span>`
           : `<span class="crew">${nm(r, 0)}</span>${vals ? `<span class="val">${escHtml(r.value ?? "")}</span>` : ""}`) + `</div>`).join("");
@@ -1811,6 +1853,7 @@ function renderStatus() {
   syncTennis(); // TENNIS
   syncBowling(); // BOWLING
   syncMinigolf(); // MINIGOLF
+  syncFirefight(); // FIREFIGHT
   syncExtras();
 }
 
@@ -1835,7 +1878,7 @@ function syncExtras() {
   const skyPad = sky && connected && curScreen === "pad-screen" && SKY_PAD_STATES.includes(st);
   // TEE TIME is left alone: it has its own portrait + sideways layouts (golf-pad.js) and is swung like a club,
   // and turned with CSS a portrait phone would use the portrait layout in a sideways box (SWING cut off)
-  if (typeof land !== "undefined") land.set((playing && web && mode.id !== "golf" && mode.id !== "knight" && mode.id !== "kart" && mode.id !== "whosfox" && mode.id !== "tennis" && mode.id !== "bowling" && mode.id !== "minigolf") || skyPad || skinWanted()); // on with the next release · KNIGHT: the knight pad turns itself · KART: so does the kart pad · WHOSFOX: portrait · TENNIS: portrait (swung upright) · MINIGOLF: portrait (the putter)
+  if (typeof land !== "undefined") land.set((playing && web && mode.id !== "golf" && mode.id !== "knight" && mode.id !== "kart" && mode.id !== "whosfox" && mode.id !== "tennis" && mode.id !== "bowling" && mode.id !== "minigolf" && mode.id !== "firefight") || skyPad || skinWanted()); // on with the next release · KNIGHT: the knight pad turns itself · KART: so does the kart pad · WHOSFOX: portrait · TENNIS: portrait (swung upright) · MINIGOLF: portrait (the putter)
   if (skyLand) {
     for (const [id, l] of Object.entries(skyLand)) l.set(sky && curScreen === id);
     const skyScreen = sky && (curScreen in skyLand || skyPad);
@@ -2183,7 +2226,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   padScreen.addEventListener(
     type,
     (e) => {
-      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button, #kart [data-native], #tennis [data-native], #bowling [data-native], #minigolf [data-native]")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones; KART: the kart pad's; TENNIS: the tennis pad's; MINIGOLF: the putter's)
+      if (e.target.closest("button#edit-name, #status button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button, #kart [data-native], #tennis [data-native], #bowling [data-native], #minigolf [data-native], #firefight [data-native]")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones; KART: the kart pad's; TENNIS: the tennis pad's; MINIGOLF: the putter's)
       if (padScreen.classList.contains("row-setup") && !e.target.closest("#cap-aim, #cap-fire")) return; // Row setup scrolls
       e.preventDefault();
     },

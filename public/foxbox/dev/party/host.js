@@ -211,14 +211,19 @@ const GAMES = [
   },
   // ── end TENNIS ──
   {"id":"bowling","name":"FOX BOWLING","gameId":"bowling","button":"START","stick":"bowling","controls":"Pick your ball · line up with the arrows · swing your phone to bowl · tilt to curve","tagline":"Swing your phone like a bowling ball!","minPlayers":1,"maxPlayers":8,"botFillTo":4,"intro":"own","card":{"chip":"Swing","motion":true,"rules":["Pick your ball on your phone: pattern and two colours","Take turns: line up with the arrows, tap BOWL, then swing your arm","Tilt your phone while the ball rolls to curve it","No motion on your phone? Flick up to bowl instead"],"win":"Most pins after 3 frames wins (real bowling scores)"},"module":"../../games/bowling/gc.game.js","props":"../../games/bowling/gc.properties.json"}, // foxbox.json "lobby" (site/build.mjs)
+  {"id":"firefight","name":"FIRE CREW","gameId":"firefight","button":"START","stick":"firefight","controls":"Point your phone at a fire · hold the screen to spray","tagline":"Point your phone, hold to spray, save the building!","minPlayers":1,"maxPlayers":8,"botFillTo":4,"intro":"own","coop":true,"card":{"chip":"Point + Spray","motion":true,"rules":["Your phone is the fire hose: point it at a fire on the TV","Hold the screen to spray; the water arcs, so aim a little ahead","Everyone shares one water supply from the pumps","Two hoses on one fire put it out faster"],"win":"Put the fires out before the building burns"},"module":"../../games/firefight/gc.game.js","props":"../../games/firefight/gc.properties.json"}, // foxbox.json "lobby" (site/build.mjs)
   {"id":"minigolf","name":"FOX MINI GOLF","gameId":"minigolf","button":"START","stick":"minigolf","controls":"Make your ball · aim with the arrows · swing your phone like a putter","tagline":"Putt with your phone!","minPlayers":1,"maxPlayers":8,"intro":"own","card":{"chip":"Aim + Putt","motion":true,"rules":["Make your ball first: an outfit, a pattern, two colors, or draw your own outfit","Aim with the arrows, then swing your phone like a putter","Everyone tees off, then the ball farthest from the hole goes next","Windmill, Bank Shot, Loop the Loop and the Dragon's Mouth"],"win":"Fewest strokes after four holes wins"},"module":"../../games/minigolf/gc.game.js","props":"../../games/minigolf/gc.properties.json"}, // foxbox.json "lobby" (site/build.mjs)
 ];
 const GAME_KEY = "foxbox-game";
 const GAME = (() => {
-  let want = new URLSearchParams(location.search).get("game");
+  const url = new URLSearchParams(location.search).get("game");
+  let want = url;
   if (!want) try { want = localStorage.getItem(GAME_KEY); } catch {}
-  return GAMES.find((g) => g.id === want) || GAMES[0];
+  // HIDDEN PREVIEW: a hidden game (foxbox.json "hiddenOnLive") only by ?game=<id>, never from the TV's saved last game
+  return GAMES.find((g) => g.id === want && (!g.hidden || want === url)) || GAMES.find((g) => !g.hidden) || GAMES[0];
 })();
+// HIDDEN PREVIEW (site/plug.mjs "hiddenOnLive"): the games the lobby shows: a hidden one only on the TV that opened it by URL
+const LISTED = GAMES.filter((g) => !g.hidden || g === GAME);
 /** The loaded game module (see boot()). */
 let game = null;
 
@@ -2014,7 +2019,7 @@ function awardPoints(r) {
       if (!boatRank.has(b)) boatRank.set(b, boatRank.size + 1);
       placeByPid.set(pid, boatRank.get(b));
     }
-  } else r.placement.filter(human).forEach((pid, i) => placeByPid.set(pid, i + 1));
+  } else r.placement.filter(human).forEach((pid, i) => placeByPid.set(pid, r.coop ? 1 : i + 1)); // CO-OP: the crew shares the win
   const results = [];
   for (const [pid, place] of placeByPid) {
     const id = r.humanIdByPid.get(pid);
@@ -2063,7 +2068,7 @@ function lobbyState() {
     pickerId: lob.pickerId,
     rollerId: lob.rollerId,
     leaderId: leaderId(),
-    games: GAMES.map((g) => ({
+    games: LISTED.map((g) => ({
       id: g.id, name: g.name, tagline: g.tagline, button: g.button, minPlayers: g.minPlayers, maxPlayers: g.maxPlayers,
       controls: g.controls, teams: !!g.seats, loop: `lobby2/media/${g.id}.mp4`, poster: `lobby2/media/${g.id}.jpg`,
       ...(g.card || {}), // chip / motion / rules / win for games the lobby bundle doesn't know yet
@@ -2268,7 +2273,8 @@ function statusFor(p) {
     // backIn: seconds until the TV goes back to the lobby (the phone counts down from here, like autoIn)
     const backIn = Math.max(0, Math.round((resultsEndsAt - Date.now()) / 100) / 10);
     return {
-      ...base, state: "results", place, won: place === 1, total: rows.length, winner: title, points, backIn,
+      ...base, state: "results", place: round.coop ? 1 : place, won: round.coop ? true : place === 1, total: rows.length, winner: title, points, backIn,
+      ...(round.coop ? { coop: round.coop.title, coopSub: round.coop.sub } : {}), // CO-OP: no ranks on the phone either
       results: rows.map((row, i) => ({ team: row.team || null, color: row.color.base, names: row.members.map((m) => m.name), bots: row.members.map((m) => !!m.bot), mine: i === mine, ...(row.value != null ? { value: row.value } : {}) })),
     };
   }
@@ -2982,7 +2988,7 @@ function renderLobby() {
       ready: skyOn ? skyState(p) === "ready" : p.connected,
       tag: !p.connected ? "away" : p.drawing ? "drawing…" : skyOn ? SKY_LABEL[skyState(p)].toLowerCase() : undefined,
     })),
-    games: GAMES.map((g) => ({ id: g.id, name: g.name, button: g.button, blurb: g.tagline })),
+    games: LISTED.map((g) => ({ id: g.id, name: g.name, button: g.button, blurb: g.tagline })),
     current: GAME.id,
     status: n > 0 ? [skyLine || `Press ${GAME.button} on a phone to start!`, roleLine(), autoTxt, botTxt].filter(Boolean).join("  ·  ") : null,
   });
@@ -3038,7 +3044,7 @@ function renderSeatLobby(list) {
   $("sound-hint").textContent = active ? "" : "Click once on this page to turn the sound on";
   lobbyUI()?.render({
     players: web,
-    games: GAMES.map((g) => ({ id: g.id, name: g.name, button: g.button, blurb: g.tagline })),
+    games: LISTED.map((g) => ({ id: g.id, name: g.name, button: g.button, blurb: g.tagline })),
     current: GAME.id,
     status: n > 0 ? [readyText, roleLine(), seatTxt].filter(Boolean).join("  ·  ") : null,
   });
@@ -3521,6 +3527,8 @@ function onGameOver(r, ids, extra) {
   r.ended = true;
   r.placement = [...ids];
   r.values = extra && extra.values && typeof extra.values === "object" ? extra.values : null;
+  // CO-OP (FIRE CREW): a team game's results have no ranks and no losers: gameOver's extra.coop = { title, sub }
+  r.coop = extra && extra.coop && typeof extra.coop === "object" ? { title: String(extra.coop.title || "GREAT WORK, CREW!").slice(0, 40), sub: String(extra.coop.sub || "").slice(0, 60) } : null;
   if (!mirror) {
     flushTvB(); // the linked extra TVs: the last ticks, then the finish order (+ a game's score column)
     toTvB({ t: "m:results", ids: r.placement, ...(r.values ? { values: r.values } : {}) });
@@ -3534,7 +3542,9 @@ function onGameOver(r, ids, extra) {
   r.results = resultRows(r);
   const top = r.results[0];
   const team = !!top.team;
-  $("res-title").innerHTML = `${crownedPuff(top.color.base, 9)}<span>${esc((team ? top.team : top.members[0].name).toUpperCase())} WINS!<span class="res-cursor">_</span></span>`;
+  $("res-title").innerHTML = r.coop
+    ? `${crownedPuff("#ffd23f", 9)}<span>${esc(r.coop.title)}<span class="res-cursor">_</span></span>` // CO-OP: the whole crew's result
+    : `${crownedPuff(top.color.base, 9)}<span>${esc((team ? top.team : top.members[0].name).toUpperCase())} WINS!<span class="res-cursor">_</span></span>`;
   // an arcade high-score table: RANK · BOAT · CREW in team games, RANK · NAME otherwise
   const vals = !team && r.results.some((row) => row.value != null); // a score column (TEE TIME: "247 PTS")
   const head = team ? `<div class="res-row res-hd"><span>RANK</span><span>BOAT</span><span>CREW</span></div>` : `<div class="res-row res-hd"><span>RANK</span><span>NAME</span>${vals ? "<span class=\"val\">SCORE</span>" : ""}</div>`;
@@ -3542,13 +3552,14 @@ function onGameOver(r, ids, extra) {
   $("res-list").innerHTML = head + r.results
     .map((row, i) => team
       ? `<div class="res-row${i === 0 ? " first" : ""}"><span>${ordinal(i + 1).toUpperCase()}</span><span>${esc(BOAT_NAMES[row.boat] ?? "").toUpperCase()}</span><span class="crew">${row.members.map((m) => esc(m.name) + botTag(m)).join(" · ")}</span></div>`
-      : `<div class="res-row${i === 0 ? " first" : ""}"><span>${ordinal(i + 1).toUpperCase()}</span><span class="crew">${esc(row.members[0].name)}${botTag(row.members[0])}</span>${vals ? `<span class="val">${esc(row.value ?? "")}</span>` : ""}</div>`)
+      : `<div class="res-row${i === 0 && !r.coop ? " first" : ""}"><span>${r.coop ? "★" : ordinal(i + 1).toUpperCase()}</span><span class="crew">${esc(row.members[0].name)}${botTag(row.members[0])}</span>${vals ? `<span class="val">${esc(row.value ?? "")}</span>` : ""}</div>`)
     .join("");
+  if (r.coop) $("res-list").innerHTML = $("res-list").innerHTML.replace("<span>RANK</span>", "<span>CREW</span>").replace('<span class="val">SCORE</span>', '<span class="val">HERO</span>'); // CO-OP: no ranks
   const ends = Date.now() + RESULTS_MS;
   resultsEndsAt = ends;
   const upd = () => {
     const left = Math.max(0, Math.ceil((ends - Date.now()) / 1000));
-    $("res-sub").textContent = `BACK TO THE LOBBY IN ${left}... THEN ${GAME.button} FOR A REMATCH!`;
+    $("res-sub").textContent = `${r.coop && r.coop.sub ? r.coop.sub + " · " : ""}BACK TO THE LOBBY IN ${left}... THEN ${GAME.button} FOR A REMATCH!`;
     if (GAME.id === "knight") $("res-sub").textContent = `BACK TO THE LOBBY IN ${left}...`; // KNIGHT: setup2 goes back to the game cards (Lakota), no rematch hint
   };
   upd();
@@ -4188,7 +4199,7 @@ window.__party = {
  *  ?game=<id>; the roster is saved and the phones stay connected through the server. */
 function switchGame(dir, toId) {
   if (phase !== "lobby" && phase !== "boot") return;
-  const next = (toId && GAMES.find((g) => g.id === toId)) || GAMES[(GAMES.indexOf(GAME) + dir + GAMES.length) % GAMES.length];
+  const next = (toId && GAMES.find((g) => g.id === toId)) || LISTED[(LISTED.indexOf(GAME) + dir + LISTED.length) % LISTED.length];
   if (next === GAME) return;
   try { localStorage.setItem(GAME_KEY, next.id); } catch {}
   saveRoster();
@@ -4206,7 +4217,7 @@ function renderHub() {
   $("game-blurb").textContent = GAME.tagline;
   $("game-pick").innerHTML =
     `<span class="gp-label">Game</span>` +
-    GAMES.map((g) => `<span class="gp-game${g === GAME ? " on" : ""}">${esc(g.name)}</span>`).join("") +
+    LISTED.map((g) => `<span class="gp-game${g === GAME ? " on" : ""}">${esc(g.name)}</span>`).join("") +
     `<span class="gp-hint">“Switch game” on any phone</span>`;
 }
 
