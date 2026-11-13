@@ -1,0 +1,1 @@
+var e=1e4,t=5*6e4,n=n=>n>=t?e:0;export{n as t};
