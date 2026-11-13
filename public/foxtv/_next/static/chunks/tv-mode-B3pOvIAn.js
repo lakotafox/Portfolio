@@ -1,0 +1,1 @@
+function e(){return typeof navigator<`u`&&navigator.userAgent.includes(`FoxTVApp`)}var t=[`/clips/fox-tv-polished-og-soft-hum.mp4`,`/clips/fox-tv-sticker-stack-v2.mp4`,`/clips/fox-tv-crayon-club.mp4`,`/clips/fox-tv-night-cartridge.mp4`];function n(e){return t[Math.abs(Math.floor(e))%t.length]}export{n,e as t};
