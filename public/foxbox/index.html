@@ -749,69 +749,6 @@
       #golf-map[hidden] {
         display: none;
       }
-      /* ── WHOSFOX (WHO'S THE FOX?) setup: 3+ players (same pixel panel as TEE TIME's map; host.js places and fills it) ── */
-      #whosfox-setup {
-        position: fixed;
-        z-index: 65;
-        left: 48px;
-        top: 700px;
-        width: 330px;
-        box-sizing: border-box;
-        padding: 16px 16px 18px;
-        background: #0d1322;
-        color: #fff;
-        box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428, 0 10px 0 0 #040a188c, inset 0 4px 0 0 #ffffff14, inset 0 -4px 0 0 #00000038;
-        font-family: "FoxBox Pixel", ui-monospace, monospace;
-        pointer-events: none;
-      }
-      #whosfox-setup[hidden] {
-        display: none;
-      }
-      #whosfox-setup .wf-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        gap: 12px;
-        margin-bottom: 14px;
-        font-size: 13px;
-        line-height: 1.4;
-        color: #ffd23f;
-        text-shadow: 3px 3px 0 #0a1428;
-      }
-      #whosfox-setup .wf-who {
-        color: #ffffff;
-        font-size: 10px;
-      }
-      #whosfox-setup .wf-need {
-        font-size: 18px;
-        line-height: 1.5;
-        text-align: center;
-        text-shadow: 3px 3px 0 #0a1428;
-      }
-      #whosfox-setup .wf-need.ok {
-        color: #35d07f;
-      }
-      #whosfox-setup .wf-need.no {
-        color: #ff9864;
-      }
-      #whosfox-setup .wf-need small {
-        font-size: 11px;
-        color: #c9c8df;
-      }
-      #whosfox-setup .wf-hint {
-        margin-top: 14px;
-        font-size: 9px;
-        line-height: 1.7;
-        color: #8d9bbb;
-        text-align: center;
-      }
-      #whosfox-setup.nudge {
-        animation: wf-nudge 0.4s steps(4) 2;
-      }
-      @keyframes wf-nudge {
-        25% { transform: translateX(-8px); }
-        75% { transform: translateX(8px); }
-      }
       /* BOTS: FILL / OFF (the host's setting for every game): a small label by the party info (web: under the
          multi-TV party chip), clickable on a TV with a mouse */
       #bots-toggle {
@@ -1372,8 +1309,6 @@
     <button id="bots-toggle" type="button" data-test="bots-toggle" hidden></button>
     <!-- KNIGHT (Knight Platformer) SETUP: the level the picker chose + who's ready (host.js renderKnightSetup) -->
     <div id="knight-setup" data-test="knight-setup" hidden></div>
-    <!-- WHOSFOX (WHO'S THE FOX?): its setup panel ("NEEDS 3+ PLAYERS" / ready); host.js renderWhosfoxSetup() fills it -->
-    <div id="whosfox-setup" data-test="whosfox-setup" hidden></div>
     <!-- end KNIGHT -->
     <!-- KART (FOX KART) SETUP: the track + who's ready, every racer in their slot colour (host.js renderKartSetup) -->
     <div id="kart-setup" data-test="kart-setup" hidden></div>

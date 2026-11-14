@@ -1180,7 +1180,6 @@ function onMessage(msg) {
       replaced = true;
       break;
     case "game": // FoxBox party extension: the running game's message for this phone (TEE TIME)
-      if (foxGameMsg(msg)) break; // WHOSFOX: the WHO'S THE FOX? module's
       if (tennisGameMsg(msg)) break; // TENNIS: the FOX TENNIS module's
       if (bowlingGameMsg(msg)) break; // BOWLING: the FOX BOWLING module's
       if (minigolfGameMsg(msg)) break; // MINIGOLF: the FOX MINI GOLF module's
@@ -1388,50 +1387,6 @@ function syncKart() {
   if (on) $("bonk-wrap").hidden = cover;
 }
 // ── end KART ──
-// ── WHOSFOX (WHO'S THE FOX?) ──
-// The game's phone module (dev/party/whosfox/whosfox-pad.js, from the whos-the-fox repo), loaded the first time it's the hub's
-// game. It covers the phone (#whosfox, pad.html; portrait) from the game's setup (the picker's START, "needs 3+ players")
-// through the whole game, and talks to the TV with {t:"game", m} both ways. pad.js keeps the plain lobby and the results.
-var foxPad = null; // var: onMessage / renderStatus may run before this line during start-up
-var foxLoad = null;
-var foxInbox = [];
-function foxGameMsg(msg) {
-  if (mode.id !== "whosfox" || !msg.m || typeof msg.m !== "object") return false;
-  if (foxPad) foxPad.onMessage(msg.m);
-  else {
-    foxInbox.push(msg.m);
-    if (foxInbox.length > 32) foxInbox.shift();
-  }
-  return true;
-}
-function syncFox() {
-  const on = mode.id === "whosfox";
-  if (on && !foxLoad) {
-    foxLoad = import("./whosfox/whosfox-pad.js")
-      .then((m) => {
-        foxPad = m.createFoxPad($("whosfox"), {
-          send: (m2) => sendRaw({ t: "game", m: m2 }),
-          me: () => ({ id: me.id, name: me.name }),
-          start: () => sendRaw({ t: "start" }),
-        });
-        for (const msg of foxInbox.splice(0)) foxPad.onMessage(msg);
-        renderStatus();
-      })
-      .catch((e) => console.warn("[foxbox] whosfox controller didn't load", e));
-  }
-  if (on) $("steer").hidden = true; // no stick: the module has the buttons
-  if (!foxPad) return;
-  const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
-  try {
-    foxPad.sync({ status: on ? lastStatus : null, lobby: lobbyState, connected, screen: curScreen });
-  } catch (e) {
-    console.warn("[foxbox] whosfox sync failed", e);
-  }
-  const cover = on && !!foxPad.active;
-  document.body.classList.toggle("whosfox-on", cover);
-  if (on) $("bonk-wrap").hidden = cover;
-}
-// ── end WHOSFOX ──
 // ── TENNIS (FOX TENNIS) ──
 // The game's phone module (dev/party/tennis/tennis-pad.js + swing.js, synced from the fox-tennis repo's phone/), loaded the
 // first time tennis is the hub's game. Like TEE TIME's: it owns #tennis (inside #controls, portrait) during the round, and
@@ -1947,7 +1902,6 @@ function renderStatus() {
   syncGolf();
   syncKnight(); // KNIGHT
   syncKart(); // KART
-  syncFox(); // WHOSFOX
   syncTennis(); // TENNIS
   syncBowling(); // BOWLING
   syncMinigolf(); // MINIGOLF
@@ -1976,7 +1930,7 @@ function syncExtras() {
   const skyPad = sky && connected && curScreen === "pad-screen" && SKY_PAD_STATES.includes(st);
   // TEE TIME is left alone: it has its own portrait + sideways layouts (golf-pad.js) and is swung like a club,
   // and turned with CSS a portrait phone would use the portrait layout in a sideways box (SWING cut off)
-  if (typeof land !== "undefined") land.set((playing && web && mode.id !== "golf" && mode.id !== "knight" && mode.id !== "kart" && mode.id !== "whosfox" && mode.id !== "tennis" && mode.id !== "bowling" && mode.id !== "minigolf" && mode.id !== "firefight") || skyPad || skinWanted()); // on with the next release · KNIGHT: the knight pad turns itself · KART: so does the kart pad · WHOSFOX: portrait · TENNIS: portrait (swung upright) · MINIGOLF: portrait (the putter)
+  if (typeof land !== "undefined") land.set((playing && web && mode.id !== "golf" && mode.id !== "knight" && mode.id !== "kart" && mode.id !== "tennis" && mode.id !== "bowling" && mode.id !== "minigolf" && mode.id !== "firefight") || skyPad || skinWanted()); // on with the next release · KNIGHT: the knight pad turns itself · KART: so does the kart pad · TENNIS: portrait (swung upright) · MINIGOLF: portrait (the putter)
   if (skyLand) {
     for (const [id, l] of Object.entries(skyLand)) l.set(sky && curScreen === id);
     const skyScreen = sky && (curScreen in skyLand || skyPad);
@@ -2148,7 +2102,7 @@ bonk.addEventListener("lostpointercapture", bonkEnd);
 // "GO GO GO! / Sky Scramble" panel is gone; its touches drive the same setXY / setB as #steer and #bonk. Row's two
 // seats wear it too, in the countdown and the race (skinGame below). The rest is not this pad's: the shell's own
 // screens (the lobby, the results, the waits) wear the LOBBY LOOK further down, the module games (kart-pad.js,
-// knight-pad.js, golf-pad.js, whosfox-pad.js) put up their own, and a Row player with no seat keeps the plain controller.
+// knight-pad.js, golf-pad.js) put up their own, and a Row player with no seat keeps the plain controller.
 var padSkin = null; // var: syncExtras may run before this line during start-up
 var SKIN_GAMES = { sky: "sky", snowball: "snow" }; // var: hoisted for syncExtras during start-up
 var SKIN_STATES = ["countdown", "playing", "out", "waiting"];
@@ -2248,7 +2202,7 @@ function lobbySkinWanted() {
   const st = lastStatus.state;
   if (st === "countdown" || st === "playing") return false; // the round's own controller (or the game's module)
   const b = document.body.classList;
-  return !(b.contains("knight-on") || b.contains("kart-on") || b.contains("whosfox-on")); // a game's setup covers it
+  return !(b.contains("knight-on") || b.contains("kart-on")); // a game's setup covers it
 }
 function syncLobbySkin() {
   const screen = $("pad-screen");

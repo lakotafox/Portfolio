@@ -158,33 +158,6 @@ const GAMES = [
     },
   },
   // ── end KART ──
-  // ── WHOSFOX (WHO'S THE FOX?) ──
-  {
-    // WHO'S THE FOX? (whos-the-fox repo, Lakota's design): a social game. Every phone gets a secret task (a photo, a
-    // 5 s clip, a 10 s voice take, a doodle, a few typed words, or something done live); one player is secretly THE FOX
-    // and fakes it. The TV shows a cosy meeting room (who's done), then the SHOWCASE of everyone's takes (never the
-    // tasks), the vote (WHO'S THE FOX? + EMPLOYEE OF THE MONTH) and the reveal; every vote sends one player out until two
-    // are left. The phone UI is its own module (dev/party/whosfox/whosfox-pad.js); everything rides {t:"game", m}.
-    // People only (bots: false: BOTS FILL leaves it alone); 3+ players (see "WHOSFOX setup" below).
-    id: "whosfox", name: "WHO'S THE FOX?", gameId: "whosthefox", button: "START", stick: "whosfox",
-    module: "../../games/whosfox/gc.game.js", props: "../../games/whosfox/gc.properties.json",
-    tagline: "Secret tasks on your phone · one of you is faking it · find the fox!",
-    minPlayers: 3, maxPlayers: 8, bots: false, controls: "Your phone: a secret task, the camera, the mic, DONE, then vote",
-    // not a reflex game, and its round opens with its own title sweep (WHO'S THE FOX? + the rules): that IS its start
-    // (a held first frame froze the sweep half-drawn under READY…), so no shell countdown, like FOX KART's lights
-    intro: "own",
-    card: {
-      chip: "Secret Tasks + Vote",
-      rules: [
-        "Everyone gets a secret task: a photo, a clip, a voice take, a doodle...",
-        "One of you is the fox and has to fake it",
-        "Watch the takes on the TV, then vote: who's the fox?",
-        "Every vote sends someone out, until two are left",
-      ],
-      win: "Most points wins: survive, spot the fox, or fool everyone",
-    },
-  },
-  // ── end WHOSFOX ──
   // ── TENNIS (FOX TENNIS, working name) ──
   {
     // FOX TENNIS (fox-tennis repo): couch tennis, the phone swung like a racket (players run on their own, you only swing).
@@ -725,7 +698,7 @@ function onGameMsg(msg) {
   if (msg.m && typeof msg.m === "object" && msg.m.type === "map") return onGolfMap(msg); // TEE TIME's setup
   if (msg.m && typeof msg.m === "object" && msg.m.type === "bots") return onBotsMsg(msg); // the host phone's BOTS toggle
   if (msg.m && typeof msg.m === "object" && msg.m.type === "party") return onPartyMsg(msg); // web TV mode: the host phone's group name / public
-  // Sky's doodle vote — only while Sky is the game: WHO'S THE FOX? sends its own {type:"vote"} to its game (fromPhone)
+  // Sky's doodle vote — only while Sky is the game: another game may send its own {type:"vote"} to its game (fromPhone)
   if (GAME.id === "sky" && msg.m && typeof msg.m === "object" && (msg.m.type === "vote" || msg.m.type === "vitem")) return onSkyVoteMsg(msg);
   if (onKnightMsg(msg)) return; // KNIGHT: the knight setup's kpick / klevel / kother (the module isn't running yet)
   if (onKartMsg(msg)) return; // KART: the kart setup's fkpick / fktrack / fkother (the module isn't running yet)
@@ -2071,7 +2044,6 @@ function lobbyState() {
     ...(partyEditable() ? { party: { group: partyInfo.group || "", pub: !!partyInfo.pub } } : {}), // web TV mode: its GROUP NAME + PUBLIC / PRIVATE too
     ...(knightSetupActive() ? { knight: knightLobby() } : {}), // KNIGHT: the knight setup (level, picks, who's ready)
     ...(kartSetupActive() ? { kart: kartLobby() } : {}), // KART: the kart setup (track, racers, who's ready, bots)
-    ...(whosfoxSetupActive() ? { whosfox: { min: WHOSFOX_MIN, have: whosfoxPeople() } } : {}), // WHOSFOX: "needs 3+ players"
     pickerId: lob.pickerId,
     rollerId: lob.rollerId,
     leaderId: leaderId(),
@@ -2326,7 +2298,6 @@ function show(id) {
   renderBotsToggle();
   renderKnightSetup(); // KNIGHT
   renderKartSetup(); // KART
-  renderWhosfoxSetup(); // WHOSFOX
 }
 // an extra TV draws the doodle vote's clock from lob (the main TV's lobby loop does it there)
 setInterval(() => {
@@ -2893,49 +2864,6 @@ function drawKartSetup() {
   }
 }
 // ── end KART ──
-// ── WHOSFOX (WHO'S THE FOX?) setup: 3+ PEOPLE (bots never play it) ──
-// Picked with fewer than 3 players: START does nothing and the TV + the phones say "NEEDS 3+ PLAYERS" (the phone module
-// reads lobby.whosfox / lobby.players). The panel sits under the join card like TEE TIME's map.
-const WHOSFOX_MIN = 3;
-function whosfoxSetupActive() {
-  return GAME.id === "whosfox" && lob.selectedGameId === "whosfox" && (phase === "lobby" || phase === "boot");
-}
-/** The people who'd play now (connected, not drawing). */
-const whosfoxPeople = () => [...roster.values()].filter((p) => p.connected && !p.drawing).length;
-let whosfoxNudge = 0;
-function whosfoxNeedMore() {
-  whosfoxNudge = Date.now();
-  renderWhosfoxSetup();
-  broadcastLobby();
-}
-function renderWhosfoxSetup() {
-  const box = $("whosfox-setup");
-  if (!box) return;
-  const layer = document.getElementById("fbx2-tv");
-  const on = whosfoxSetupActive() && phase === "lobby" && (!layer || !layer.hidden);
-  if (box.hidden === on) box.hidden = !on;
-  if (!on) return;
-  const n = whosfoxPeople(), ok = n >= WHOSFOX_MIN;
-  const picker = roster.get(lob.pickerId);
-  const html = `<div class="wf-head"><span>WHO'S THE FOX?</span><span class="wf-who">3-8 PLAYERS</span></div>`
-    + `<div class="wf-need ${ok ? "ok" : "no"}" data-test="whosfox-need" data-have="${n}">${ok ? `${n} PLAYERS · READY!` : `NEEDS 3+ PLAYERS<br><small>${n} HERE</small>`}</div>`
-    + `<div class="wf-hint">${ok ? esc(picker ? `${String(picker.name).toUpperCase()} PRESSES START ON THEIR PHONE` : "THE PICKER PRESSES START") : "GET MORE PHONES TO SCAN THE QR CODE"}</div>`;
-  if (box.dataset.html !== html) {
-    box.innerHTML = html;
-    box.dataset.html = html;
-  }
-  box.classList.toggle("nudge", !ok && Date.now() - whosfoxNudge < 1200);
-  if (layer) {
-    const join = layer.querySelector(".fbx2-join"), r = join && join.getBoundingClientRect();
-    if (r && r.width > 0) {
-      box.style.left = `${Math.round(r.left)}px`;
-      box.style.top = `${Math.round(r.bottom + 32)}px`;
-      box.style.width = `${Math.round(Math.max(r.width, 330))}px`;
-    }
-  }
-}
-setInterval(() => { if (GAME.id === "whosfox" && phase === "lobby") renderWhosfoxSetup(); }, 500);
-// ── end WHOSFOX ──
 
 function renderLobby() {
   const list = [...roster.values()].sort((a, b) => a.slot - b.slot);
@@ -3010,7 +2938,6 @@ function renderLobby() {
   renderBotsToggle();
   renderKnightSetup(); // KNIGHT
   renderKartSetup(); // KART
-  renderWhosfoxSetup(); // WHOSFOX
 }
 
 /** The lobby for a seats game: 4 boats × (paddler, captain), names, or "Bot" (BOTS FILL) / "Open" (BOTS OFF). */
@@ -3154,7 +3081,7 @@ function toLobby(afterRound = false) {
     // Aborted mid-round: freeze the game; the next play() tears it down.
     round.ended = true;
     game.pause(true);
-    // WHOSFOX: a game can let go of what it holds right away (WHO'S THE FOX?'s takes: photos, clips, voice takes)
+    // a game can let go of what it holds right away (game.abort, e.g. FIRE CREW)
     if (typeof game.abort === "function") try { game.abort(); } catch (e) { console.warn("[party] game.abort threw", e); }
   }
   phase = "lobby";
@@ -3177,7 +3104,6 @@ function startCountdown(byPlayer, why = "start") {
   if (GAME.id === "row" && !allRowReady()) return;
   if (kartTitleUp()) return; // TITLE: START comes first (kartTitleGo)
   if (connectedCount() === 0) return;
-  if (GAME.id === "whosfox" && whosfoxPeople() < WHOSFOX_MIN) return whosfoxNeedMore(); // WHOSFOX: people only, 3+
   // Somebody has to be able to play: not everyone may be busy drawing.
   if (![...roster.values()].some((p) => p.connected && !p.drawing)) return;
   countdownWhy = why;
@@ -3284,7 +3210,7 @@ function startRound() {
     .filter(knightTakes) // KNIGHT: a round started by READY takes the ready players
     .filter(kartTakes) // KART: the same for the kart setup
     .sort((a, b) => a.slot - b.slot);
-  if (humans.length === 0 || (GAME.id === "whosfox" && humans.length < WHOSFOX_MIN)) { // WHOSFOX: 3+ people
+  if (humans.length === 0) {
     toLobby();
     return;
   }
@@ -3843,13 +3769,6 @@ function tvBHooks(r) {
       tvBRound = { t: "m:round", header, players: r.players.map(({ character, ...pl }) => pl), names: [...r.nameById], humans: [...r.humanIdByPid], seats: [...r.seatByPid], hold, intro: hold ? r.intro || null : null };
       toTvB(tvBRound);
     },
-    // WHOSFOX (multi-TV): a game's side messages for the extra TVs (WHO'S THE FOX? takes: photos, clips, voice takes),
-    // passed straight through the relay and never kept here (not in the ring a TV linking later gets)
-    onMirrorSide(m) {
-      if (round !== r || !linkedTvs.size || !m || typeof m !== "object") return;
-      toTvB({ t: "m:side", m });
-    },
-    mirrorLinked: () => linkedTvs.size,
     onMirrorTick(tick) {
       if (round !== r) return;
       tvBRecent.push(tick);
@@ -3896,11 +3815,6 @@ function mirrorMsg(msg) {
     case "m:results": return mirrorResults(round, msg.ids, false, msg.values);
     case "m:switch": return mirrorFollow(msg.game);
     case "m:pic": return mirrorPic(msg); // a small copy of a player's picture (drawing / selfie)
-    case "m:side": // WHOSFOX: the running game's side message (a piece of a take) for this TV's view
-      if (mirror.view && typeof mirror.view.side === "function") {
-        try { mirror.view.side(msg.m); } catch (e) { console.warn("[party] view.side failed", e); }
-      }
-      return;
     case "pin": return mirrorInput(msg); // one of THIS TV's phones moved its stick / button (live games)
     case "m:pause": // the main TV paused / resumed its round
       if (phase === "playing" && game) {

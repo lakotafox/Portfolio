@@ -1122,8 +1122,8 @@ function mateTurnCard(st, S, F, o = {}) {
   T.small.forEach((ln, i) => text(ln, cx, y + i * 7, FS, hud.ink));
 }
 
-// ── helper GW: TEE TIME + WHO'S THE FOX? (portrait bodies + DOM theming) ──────────────────────────────────────────
-// Both games have DOM screens (text, media, motion prompts) that can't all be canvas, so besides their canvas layouts
+// ── helper GW: TEE TIME (portrait bodies + DOM theming) ──────────────────────────────────────────────────────────
+// Games with DOM screens (text, media, motion prompts) that can't all be canvas, so besides their canvas layouts
 // they theme their DOM from the style: skinVars() (CSS custom properties from the palettes), pixelLabel() (a label in
 // the pads' own bitmap font, crisp at whole device pixels) and artPx() (the size of one art pixel in CSS px, so DOM
 // bevels match the canvas). tallBody() paints a portrait body (the five paints are drawn for a sideways pad).
@@ -1215,7 +1215,7 @@ function tallBody(S, F, o = {}) {
 }
 PX.tallBody = tallBody;
 PX.pixelText = pixelText;
-/** "body": just the portrait shell (WHO'S THE FOX?'s DOM screens sit on it). */
+/** "body": just the portrait shell (for a game whose DOM screens sit on it). */
 registerLayout("body", (st, S, F) => tallBody(S, F), { brand: false });
 /**
  * "lobby": the shell's own phone screens (pad.js LOBBY LOOK: the game picked and waiting for START, between games, the
