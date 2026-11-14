@@ -137,6 +137,8 @@ export function makeHandler(store) {
       media,
       choices: Array.isArray(body.choices) ? body.choices.slice(0, 8).map((c) => str(c, 40)).filter(Boolean) : [],
       pixel: !!body.pixel,
+      // Language of the words in the clip ("English", "French", "No words"); the feed can filter by it.
+      lang: str(body.lang, 24) || (old && old.lang) || "",
       status: "open",
     };
     await store.setJSON(`post/${id}`, post);
@@ -148,6 +150,15 @@ export function makeHandler(store) {
     const post = await store.getJSON(`post/${body.postId}`);
     if (!post) return fail(404, "no such post");
     post.status = body.status === "open" ? "open" : "done";
+    await store.setJSON(`post/${post.id}`, post);
+    return json({ post });
+  }
+
+  async function setLang(body) {
+    if (!ID.test(body.postId || "")) return fail(400, "bad post id");
+    const post = await store.getJSON(`post/${body.postId}`);
+    if (!post) return fail(404, "no such post");
+    post.lang = str(body.lang, 24);
     await store.setJSON(`post/${post.id}`, post);
     return json({ post });
   }
@@ -264,6 +275,7 @@ export function makeHandler(store) {
         if (!poster) return fail(403, "poster only");
         if (route === "post") return await addPost(body);
         if (route === "done") return await setStatus(body);
+        if (route === "lang") return await setLang(body);
         if (route === "delete") return await removePost(body);
       }
       return fail(404, "no such route");

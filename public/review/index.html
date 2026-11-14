@@ -55,6 +55,12 @@ header.top{position:sticky;top:0;z-index:30;background:var(--bar);backdrop-filte
 .story .n:empty{display:none}
 .story .nm{max-width:72px;font-size:12px;line-height:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .story.on .nm{font-weight:600}
+/* language filter (only shown when some posts carry a language) */
+.langs{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;scrollbar-width:none;border-bottom:1px solid var(--sep)}
+.langs::-webkit-scrollbar{display:none}
+.lang{flex:0 0 auto;height:32px;padding:0 14px;border-radius:16px;background:var(--pill);color:var(--text);font-size:13px;font-weight:600;white-space:nowrap}
+.lang.on{background:var(--text);color:var(--bg)}
+.lang i{font-style:normal;font-weight:400;opacity:.6;margin-left:6px}
 
 /* to review / reviewed */
 .tabs{display:flex;border-bottom:1px solid var(--sep)}
@@ -221,6 +227,7 @@ article.post{padding-bottom:14px;border-bottom:1px solid var(--sep)}
 </header>
 <div class="wrap">
   <div class="stories" id="chips" hidden></div>
+  <div class="langs" id="langs" hidden></div>
   <div class="tabs" id="tabs" hidden>
     <button class="tab on" data-tab="new">To review<b id="nNew" class="hot">0</b></button>
     <button class="tab" data-tab="done">Reviewed<b id="nDone">0</b></button>
@@ -254,6 +261,7 @@ article.post{padding-bottom:14px;border-bottom:1px solid var(--sep)}
   let posts = [];
   let tab = ls.get("review.tab") === "done" ? "done" : "new";
   let project = ls.get("review.project") || "";
+  let lang = ls.get("review.lang") || "";
   // Posts answered during this visit stay where they are until the next refresh or tab change.
   const sticky = new Set();
   // Comment lists the viewer opened with "View all"; survives repaints.
@@ -669,7 +677,7 @@ article.post{padding-bottom:14px;border-bottom:1px solid var(--sep)}
     const card = el("article", { class: "post" },
       el("div", { class: "phead" },
         ava,
-        el("div", { class: "who" }, el("div", { class: "p", text: post.project }), post.group ? el("div", { class: "s", text: post.group }) : null),
+        el("div", { class: "who" }, el("div", { class: "p", text: post.project }), post.group || post.lang ? el("div", { class: "s", text: [post.group, post.lang].filter(Boolean).join(" · ") }) : null),
         el("button", { class: "more", "aria-label": "More about this post", onclick: () => openSheet(post, media.slide()) }, svg(DOTS))),
       media.node,
       media.dots,
@@ -733,6 +741,7 @@ article.post{padding-bottom:14px;border-bottom:1px solid var(--sep)}
       el("h3", { text: post.title || post.project }),
       row("Project", post.project),
       row("Round", post.group),
+      row("Language", post.lang),
       row("Session", post.session),
       row("Posted", new Date(post.ts).toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })),
       row("Choices", (post.choices || []).join(" · ")),
@@ -749,7 +758,7 @@ article.post{padding-bottom:14px;border-bottom:1px solid var(--sep)}
 
   const inTab = (p) => (tab === "new" ? !answered(p) || sticky.has(p.id) : answered(p) && !sticky.has(p.id));
   function counts() {
-    const scope = posts.filter((p) => !project || p.project === project);
+    const scope = posts.filter((p) => (!project || p.project === project) && (!lang || p.lang === lang));
     const left = scope.filter((p) => !answered(p)).length;
     $("nNew").textContent = left;
     $("nDone").textContent = scope.length - left;
@@ -786,7 +795,18 @@ article.post{padding-bottom:14px;border-bottom:1px solid var(--sep)}
     document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t.dataset.tab === tab));
     $("tabs").hidden = false;
 
-    const shown = posts.filter((p) => (!project || p.project === project) && inTab(p));
+    // Language pills: the languages among this project's posts in this tab, with how many each has.
+    const inScope = posts.filter((p) => (!project || p.project === project) && inTab(p));
+    const langN = new Map();
+    for (const p of inScope) if (p.lang) langN.set(p.lang, (langN.get(p.lang) || 0) + 1);
+    if (lang && !langN.has(lang)) lang = "";
+    $("langs").hidden = !langN.size;
+    $("langs").replaceChildren(...[["", inScope.length]].concat([...langN].sort()).map(([name, n]) =>
+      el("button", { class: "lang" + (name === lang ? " on" : ""), "aria-pressed": name === lang,
+        onclick: () => { lang = name; ls.set("review.lang", lang || null); sticky.clear(); render(); } },
+        name || "All languages", el("i", { text: String(n) }))));
+
+    const shown = inScope.filter((p) => !lang || p.lang === lang);
     // Newest batch first; inside a batch, the order it was posted in.
     const groups = new Map();
     for (const p of shown) {
