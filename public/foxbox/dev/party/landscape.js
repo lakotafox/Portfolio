@@ -45,7 +45,7 @@ const CSS = `
 #pad-screen.land-rot #steer .half { font-size: 44px; }
 #pad-screen.land-rot.land-anim { transition: none; }
 /* the results (Sky's round end, turned): keep pad.html's arcade column, not the controller's status row above */
-#pad-screen.land-rot.results #status { flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 18px 14px; border-radius: 0; }
+#pad-screen.land-rot.results #status { flex: 1; flex-direction: column; align-items: center; justify-content: flex-start; padding: 18px 14px; border-radius: 0; }
 #pad-screen.land-rot.results #status-big { font-size: clamp(18px, calc(var(--lw, 100vw) * 0.06), 26px); }
 #pad-screen.land-rot.results #status-small { margin-top: 10px; font-size: 10px; }
 
@@ -55,6 +55,20 @@ const CSS = `
 }
 :is(#char-screen, #crop-screen, #draw-screen, #ready-screen, #pad-screen).land-rot.land-270 {
   padding: max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom));
+}
+/* the lobby look, turned (pad.html's own landscape rules for it): the LCD stays a column under the pad's top band,
+   not the controller's status row above, and the band keeps clear of the turned frame's safe areas */
+#pad-screen.land-rot.lobby-skin { gap: calc(var(--u, 4px) * 2); }
+#pad-screen.land-rot.lobby-skin #status {
+  flex: 1 1 auto; flex-direction: column; align-items: center;
+  gap: calc(var(--u, 4px) * 1.5); padding: calc(var(--u, 4px) * 2.5) calc(var(--u, 4px) * 3); border-radius: 0;
+}
+#pad-screen.land-rot.lobby-skin #status-small { margin: 0; }
+#pad-screen.land-rot.land-90.lobby-skin {
+  padding: calc(env(safe-area-inset-right, 0px) + var(--u, 4px) * 13) max(env(safe-area-inset-bottom, 0px), calc(var(--u, 4px) * 5)) max(env(safe-area-inset-left, 0px), calc(var(--u, 4px) * 4)) max(env(safe-area-inset-top, 0px), calc(var(--u, 4px) * 5));
+}
+#pad-screen.land-rot.land-270.lobby-skin {
+  padding: calc(env(safe-area-inset-left, 0px) + var(--u, 4px) * 13) max(env(safe-area-inset-top, 0px), calc(var(--u, 4px) * 5)) max(env(safe-area-inset-right, 0px), calc(var(--u, 4px) * 4)) max(env(safe-area-inset-bottom, 0px), calc(var(--u, 4px) * 5));
 }
 .land-rot .px-title { font-size: clamp(14px, calc(var(--lw, 100vw) * 0.043), 18px); }
 

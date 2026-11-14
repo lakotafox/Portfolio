@@ -13,9 +13,9 @@
  * (the swing always cuts back behind the golfer). Both go through the {t:"game"} path, so the web build works too.
  *
  * The turn clock (Lakota, Nov 7): 90 s per turn on the TV, then the turn is skipped; no banner, no idle logic. In the
- * last 30 s the golfer up gets a tiny matching timer (view.timer {left, total}): "0:25" in the header (classic) or
- * the pad LCD (skins). The page still tells the TV when it is hidden (locked / another app): {type:"hidden", on}
- * (and hello carries `hidden`), as info only.
+ * last 30 s the golfer up gets a tiny matching timer (view.timer {left, total}): "0:25" in the header (the plain
+ * screens) or the pad LCD (skins). The page still tells the TV when it is hidden (locked / another app):
+ * {type:"hidden", on} (and hello carries `hidden`), as info only.
  *
  * The turn, Lakota's design:
  *   1. AIM: the gyro is OFF; the arrow buttons turn the aim line on the TV (tap = 1 degree, hold = sweep).
@@ -590,7 +590,7 @@ const CSS = `
   #pad-screen.golf-setup #bonk { font-size: 26px !important; }
 }
 @keyframes gp-flash { 50% { color: #ffffff; } }
-/* SKINS: the pixel pad (only with a pad: #golf.gp-skin-on; CLASSIC never gets these classes) */
+/* SKINS: the pixel pad (only with a pad: #golf.gp-skin-on; the plain screens never get these classes) */
 #golf .gp-skin { position: fixed; inset: 0; z-index: 3; background: var(--sk-body, #000); touch-action: none; }
 #golf .gp-skin-host { position: absolute; left: 0; right: 0; bottom: 0; top: var(--gp-safe-t, 0px); overflow: hidden; }
 #golf .gp.gp-skinned { position: fixed; z-index: 4; left: var(--gp-sx, 8px); top: var(--gp-sy, 80px); width: var(--gp-sw, calc(100% - 16px)); height: var(--gp-sh, 70%);
@@ -644,7 +644,7 @@ const CSS = `
   #golf .gp-big { font-size: clamp(16px, 3.6vw, 24px); }
 }
 /* THE INTRO CARDS and the waiting / swing screens ("LCD SIGNS", Lakota Nov 9): the sections with .pc, laid in the pad's
-   LCD like every other text screen. The --sk-* colours come from the pixel pad; the fallbacks are the CLASSIC pad's. */
+   LCD like every other text screen. The --sk-* colours come from the pixel pad; the fallbacks are the plain screens'. */
 #golf .gp > .gp-s.pc { gap: 12px; }
 #golf .pc .pc-pic { display: flex; justify-content: center; flex: none; }
 #golf .pc .pc-pic[hidden] { display: none; }
@@ -716,7 +716,7 @@ const CSS = `
 `;
 
 // ── SKINS: the player's pixel gamepad (FoxBox couch-games dev/party/pad-skin.js, Lakota Nov 1) ───────────────────
-// pad.js's sibling ../pad-skin.js has the five pads; CLASSIC (or no pad-skin.js, e.g. this repo's own dev page) = no skin
+// pad.js's sibling ../pad-skin.js has the five pads; without it (e.g. this repo's own dev page) there is no skin
 // at all: the screens above exactly as before. With a pad, the aim screen is drawn as the pad (HUD strip, an LCD with the
 // wind / goal / aim, the cross pad = the aim arrows, a BIRD'S EYE toggle, a big SWING button: layout "golf", upright
 // only); the other screens (whose turn, the address pose, TURN YOUR PHONE UPRIGHT, the result, the standings) keep their
@@ -1567,9 +1567,9 @@ export function createGolfPad(root, { send, me }) {
   }
   try { document.fonts?.load?.('8px "FoxBox Pixel"').then(() => drawPics(true)).catch(() => {}); } catch {} // (READY! in the pictures)
 
-  // ── SKINS: the pixel pad over this screen (see loadSkin above; nothing here runs on CLASSIC) ──
+  // ── SKINS: the pixel pad over this screen (see loadSkin above; nothing here runs without pad-skin.js) ──
   function skinWanted() {
-    return !!(shown && skinMod && skinMod.skinId() !== "classic");
+    return !!(shown && skinMod);
   }
   function safeTop() {
     const t = globalThis.FOXBOX_SAFE_TEST; // QA: a phone's insets (headless browsers report none)
@@ -1711,7 +1711,7 @@ export function createGolfPad(root, { send, me }) {
     get swings() { return swings; },
     get view() { return view && JSON.parse(JSON.stringify(view)); },
     get birdseye() { return !!view?.birdseye; },
-    get skin() { return skin; }, // SKINS: the pixel pad (null on CLASSIC): regions, grid, style
+    get skin() { return skin; }, // SKINS: the pixel pad (null = no pad up): regions, grid, style
     get skinLcd() { return skin ? skinLcdNow && { ...skinLcdNow } : null; }, // SKINS: the aim LCD's lines (goal, aim, wind)
     get setup() { return setupInfo ? { picker: setupInfo.picker, map: setupInfo.lobby?.golf?.map ?? null } : null; },
     get cards() { return { on: screen === "cards", index: cardIdx, done: cardsDone, tv: !!view?.cards }; }, // the intro cards

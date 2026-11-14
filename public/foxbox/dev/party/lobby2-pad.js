@@ -96,7 +96,10 @@ function injectCss() {
 .fbx2-bots-sw i { font-style: normal; padding: 6px 9px 5px; font-size: 10px; color: #4b5088; }
 .fbx2-bots[data-mode="fill"] .fbx2-bots-fill { background: ${GOLD}; color: ${INK}; }
 .fbx2-bots[data-mode="off"] .fbx2-bots-off { background: #ff5a3c; color: ${CREAM}; }
-.fbx2-bots-hint { margin-left: auto; font: 400 13px/1.2 ${SOFT}; letter-spacing: 0.02em; text-transform: none; color: #c9c8df; white-space: normal; text-align: right; }
+.fbx2-bots-hint { display: grid; margin-left: auto; font: 400 13px/1.2 ${SOFT}; letter-spacing: 0.02em; text-transform: none; color: #c9c8df; white-space: normal; text-align: right; }
+/* both lines are always there, in one cell, so the row is the same height whichever one shows (the bar never jumps) */
+.fbx2-bots-hint > span { grid-area: 1 / 1; }
+.fbx2-bots:not([data-mode="fill"]) .fbx2-bots-h-fill, .fbx2-bots[data-mode="fill"] .fbx2-bots-h-off { visibility: hidden; }
 .fbx2-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (max-width: 359px) { .fbx2-bots-hint { display: none; } }
 /* an older lobby2 bundle without the toolbar slot: the top right of the layer */
@@ -196,12 +199,13 @@ export async function initLobby2Pad({ url, myId, editName, editPad, changeCharac
   charBtn.hidden = true;
   // BOTS FILL | OFF: the host's switch, on the screen itself. Its text reads "BOTS: FILL" / "BOTS: OFF" (QA scripts look
   // for those); a tap shows at once, the TV's next lobby state confirms
-  const botsBtn = mk("lobby-bots", `${icon("bot")}<span class="fbx2-bots-l" aria-hidden="true">Bots</span><span class="fbx2-sr">BOTS: OFF</span><span class="fbx2-bots-sw" aria-hidden="true"><i class="fbx2-bots-fill">Fill</i><i class="fbx2-bots-off">Off</i></span><span class="fbx2-bots-hint" aria-hidden="true"></span>`, () => {
+  const botsBtn = mk("lobby-bots", `${icon("bot")}<span class="fbx2-bots-l" aria-hidden="true">Bots</span><span class="fbx2-sr">BOTS: OFF</span><span class="fbx2-bots-sw" aria-hidden="true"><i class="fbx2-bots-fill">Fill</i><i class="fbx2-bots-off">Off</i></span><span class="fbx2-bots-hint" aria-hidden="true"><span class="fbx2-bots-h-fill">Bots fill the free spots</span><span class="fbx2-bots-h-off">People only</span></span>`, () => {
     if (botsBtn.hidden) return;
     botsShown = botsShown === "fill" ? "off" : "fill";
     botsWait = Date.now() + 1500;
     paintBots();
     lobby.bots && lobby.bots();
+    setTimeout(() => lastSync && api.sync(lastSync), 1550); // the wait is over: show what the TV has
   });
   botsBtn.classList.add("fbx2-bots");
   botsBtn.setAttribute("role", "switch");
@@ -212,7 +216,6 @@ export async function initLobby2Pad({ url, myId, editName, editPad, changeCharac
     botsBtn.dataset.mode = fill ? "fill" : "off";
     botsBtn.setAttribute("aria-checked", String(fill));
     botsBtn.querySelector(".fbx2-sr").textContent = fill ? "BOTS: FILL" : "BOTS: OFF";
-    botsBtn.querySelector(".fbx2-bots-hint").textContent = fill ? "Bots fill the free spots" : "People only";
   };
   paintBots();
   const partyBtn = mk("lobby-party", `${icon("sliders")}<span>Party</span>`, () => (sheet.open ? sheet.close() : sheet.show()));
@@ -438,6 +441,7 @@ function partySheet(layer, lobby, onOpen) {
     botsWait = Date.now() + 1500;
     paint();
     lobby.bots && lobby.bots();
+    setTimeout(() => api.sync(cur), 1550); // the wait is over: show what the TV has
   });
   input.addEventListener("input", () => { input.classList.remove("bad"); say(""); });
   input.addEventListener("keydown", (e) => {

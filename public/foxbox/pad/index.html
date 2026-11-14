@@ -60,92 +60,204 @@
         display: flex;
       }
 
-      /* ── Name screen ──────────────────────────────────────────────────── */
+      /* ── Name screen (NAME LOOK, Nov 13): the lobby pad's look ─────────────────────────
+         The same pad body as the lobby (pad.js syncNameSkin: pad-skin.js "lobby" layout in #name-skin-body: the FOXBOX
+         print + fox, the power LED, the style's bezel behind #name-lcd, the big round yellow key under #name-go) in the
+         CONTROLLER the picker shows right now (--sk-* colours + --u, one art pixel, set here by pad.js). The words and
+         the fields are the page's own: the question + the name on the pad's LCD, the CONTROLLER choice on a second
+         LCD, #name-go the real button (see-through over its drawing; without the drawing it is a plain yellow key). */
       #name-screen {
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        gap: 18px;
-        background: linear-gradient(180deg, #3d8bfd 0%, #8cc4ff 100%);
+        justify-content: safe center;
+        gap: calc(var(--u, 4px) * 4);
+        padding: calc(env(safe-area-inset-top, 0px) + var(--u, 4px) * 15) max(env(safe-area-inset-right, 0px), calc(var(--u, 4px) * 5))
+          max(env(safe-area-inset-bottom, 0px), calc(var(--u, 4px) * 4)) max(env(safe-area-inset-left, 0px), calc(var(--u, 4px) * 5));
+        background: var(--sk-body, #ff9864);
+        color: var(--sk-lcd-ink, #fff9f1);
         text-align: center;
+        overflow: hidden auto;
+      }
+      #name-skin-body {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      #name-screen > :not(#name-skin-body) {
+        position: relative;
+        z-index: 1;
+      }
+      /* the title is the pad's own FOXBOX print (drawn); the heading stays for screen readers */
+      #name-screen.skinned h1 {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
       }
       #name-screen h1 {
         margin: 0;
-        font-size: clamp(36px, 11vw, 64px);
-        line-height: 1;
-        text-shadow: 0 4px 0 #1d5fd1;
-        transform: rotate(-2deg);
-      }
-      #name-screen p {
-        margin: 0;
-        font-size: 22px;
-        color: #0e3a86;
+        color: var(--sk-ink, #101125);
+        font: 400 22px/1 var(--px-font);
+        text-transform: uppercase;
       }
       #name-form {
         display: flex;
         flex-direction: column;
-        gap: 14px;
-        width: min(340px, 90%);
+        align-items: center;
+        gap: calc(var(--u, 4px) * 8); /* (the drawn bezel around #name-lcd is 4 art pixels + its shadow) */
+        width: min(420px, 100%);
+      }
+      #name-lcd,
+      #name-skin {
+        align-self: stretch;
+        margin: 0 calc(var(--u, 4px) * 1.5);
+        background-color: var(--sk-lcd, #101125);
+        background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 4px);
+        box-shadow:
+          0 0 0 var(--u, 4px) var(--sk-ink, #0a1428),
+          inset 0 var(--u, 4px) 0 0 rgba(0, 0, 0, 0.35);
+        color: var(--sk-lcd-ink, #fff9f1);
+      }
+      #name-lcd {
+        display: grid;
+        gap: calc(var(--u, 4px) * 3);
+        padding: calc(var(--u, 4px) * 4) calc(var(--u, 4px) * 3);
+      }
+      #name-lcd p {
+        margin: 0;
+        color: var(--sk-lcd-gold, #ffd23f);
+        font: 400 clamp(13px, 4.2vw, 17px) / 1.4 var(--px-font);
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
       }
       #name-input {
         width: 100%;
-        font: inherit;
-        font-size: 28px; /* ≥16px so iOS doesn't zoom on focus */
+        min-width: 0;
+        font: 400 26px/1.2 var(--px-soft); /* ≥16px so iOS doesn't zoom on focus */
         text-align: center;
-        padding: 14px 12px;
-        border-radius: 18px;
-        border: 4px solid #fff;
-        background: rgba(255, 255, 255, 0.92);
-        color: #12325f;
+        padding: calc(var(--u, 4px) * 2.5) calc(var(--u, 4px) * 2);
+        border: 0;
+        border-radius: 0;
+        background: rgba(0, 0, 0, 0.38);
+        box-shadow:
+          inset 0 0 0 var(--u, 4px) var(--sk-lcd-dim, #4b5088),
+          inset 0 calc(var(--u, 4px) * 2) 0 0 rgba(0, 0, 0, 0.3);
+        color: var(--sk-lcd-ink, #fff9f1);
+        caret-color: var(--sk-lcd-gold, #ffd23f);
         outline: none;
         -webkit-user-select: text;
         user-select: text;
       }
-      /* SKINS: the CONTROLLER choice under the name: a panel in the name screen's own blue, pixel type */
+      #name-input::placeholder {
+        color: var(--sk-lcd-soft, #c9c8df);
+        opacity: 0.55;
+      }
+      #name-input:focus {
+        box-shadow:
+          inset 0 0 0 var(--u, 4px) var(--sk-lcd-gold, #ffd23f),
+          inset 0 calc(var(--u, 4px) * 2) 0 0 rgba(0, 0, 0, 0.3);
+      }
+      /* SKINS: the CONTROLLER choice under the name, on its own LCD; its arrows are the pad's raised keys */
       #name-skin {
-        padding: 10px 10px 4px;
-        border-radius: 18px;
-        background: #0e3a86;
-        color: #fff;
-        box-shadow: inset 0 -4px 0 #0a2a63;
+        padding: calc(var(--u, 4px) * 3) calc(var(--u, 4px) * 3) calc(var(--u, 4px) * 1);
       }
-      @media (orientation: landscape) and (max-height: 520px) {
-        #name-screen { gap: 8px; justify-content: center; }
-        #name-screen h1 { font-size: 30px; }
-        #name-screen p { font-size: 17px; }
-        #name-form { display: grid; width: min(720px, 100%); grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-rows: auto 1fr; gap: 10px 16px; align-items: start; }
-        #name-form #name-input { grid-column: 1; grid-row: 1; font-size: 24px; padding: 10px; }
-        #name-form #name-go { grid-column: 1; grid-row: 2; align-self: start; font-size: 26px; padding: 12px; }
-        #name-form #name-skin { grid-column: 2; grid-row: 1 / 3; }
+      #name-skin .fbx-skinpick-arrow {
+        border-radius: 0;
+        background: var(--sk-x-base, #2a2d55);
+        color: var(--sk-x-txt, #fff9f1);
+        box-shadow:
+          inset 3px 3px 0 0 var(--sk-x-lt, #4b5088),
+          inset -3px -3px 0 0 var(--sk-x-dk, #05060f),
+          0 0 0 3px var(--sk-ink, #0a1428),
+          0 7px 0 0 rgba(0, 0, 0, 0.4);
       }
+      #name-skin .fbx-skinpick-arrow:active {
+        transform: translateY(3px);
+        box-shadow:
+          inset 3px 3px 0 0 var(--sk-x-dk, #05060f),
+          0 0 0 3px var(--sk-ink, #0a1428),
+          0 3px 0 0 rgba(0, 0, 0, 0.4);
+      }
+      /* Let's play!: the pad's big round yellow key (the lobby's START) */
       #name-go {
-        font-size: 30px;
-        padding: 16px;
-        border-radius: 22px;
-        background: #ff5a3c;
-        box-shadow: inset 0 -6px 0 #c7361d;
+        appearance: none;
+        flex: none;
+        width: min(44vw, 21vh, 176px);
+        aspect-ratio: 1;
+        margin: 0;
+        padding: 0 9%;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        box-shadow: none;
+        color: var(--sk-a-txt, #101125);
+        font: 400 clamp(11px, 3.6vw, 15px) / 1.5 var(--px-font);
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        text-shadow: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        cursor: pointer;
       }
       #name-go:active {
-        transform: translateY(3px);
-        box-shadow: inset 0 -3px 0 #c7361d;
+        padding-top: calc(var(--u, 4px) * 1.5);
       }
-      @media (orientation: landscape) and (max-height: 500px) {
+      #name-go:focus-visible {
+        outline: 3px solid var(--sk-lcd-ink, #fff9f1);
+        outline-offset: 2px;
+      }
+      #name-screen:not(.skinned) #name-go {
+        background: var(--sk-a-base, #ffd23f);
+        box-shadow:
+          inset 0 -8px 0 0 var(--sk-a-dk, #e3a51a),
+          0 0 0 4px var(--sk-ink, #0a1428),
+          0 8px 0 0 rgba(0, 0, 0, 0.4);
+      }
+      /* sideways: the question + the name and the round key on the left, the CONTROLLER choice on the right */
+      @media (orientation: landscape) and (max-height: 520px) {
         #name-screen {
-          gap: 10px;
+          gap: calc(var(--u, 4px) * 2);
+          padding-top: calc(env(safe-area-inset-top, 0px) + var(--u, 4px) * 13);
         }
-        #name-screen h1 {
-          font-size: 40px;
+        #name-form {
+          display: grid;
+          width: min(760px, 100%);
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+          grid-template-rows: auto auto;
+          gap: calc(var(--u, 4px) * 7) calc(var(--u, 4px) * 8);
+          align-items: center;
+          justify-items: center;
         }
-        #name-screen p {
-          font-size: 18px;
+        #name-lcd {
+          grid-column: 1;
+          grid-row: 1;
+          justify-self: stretch;
+          gap: calc(var(--u, 4px) * 2);
+          padding: calc(var(--u, 4px) * 2.5) calc(var(--u, 4px) * 3);
+        }
+        #name-lcd p {
+          font-size: 13px;
         }
         #name-input {
           font-size: 22px;
-          padding: 8px;
+          padding: calc(var(--u, 4px) * 1.5) calc(var(--u, 4px) * 2);
         }
         #name-go {
-          font-size: 22px;
-          padding: 10px;
+          grid-column: 1;
+          grid-row: 2;
+          width: min(32vh, 150px);
+          font-size: 11px;
+        }
+        #name-skin {
+          grid-column: 2;
+          grid-row: 1 / 3;
+          justify-self: stretch;
+          align-self: center;
         }
       }
 
@@ -818,7 +930,6 @@
         text-transform: uppercase;
         margin-top: 4px;
       }
-      #status #bots-host,
       #status #switch-game,
       #status #change-char {
         margin-top: 10px;
@@ -2165,7 +2276,7 @@
         display: flex !important;
         flex: 1;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         overflow-y: auto;
         padding: 18px 14px;
@@ -2174,6 +2285,20 @@
         background-color: #05070f;
         background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 4px);
         box-shadow: 0 -4px 0 0 #0a1428, 0 4px 0 0 #0a1428, -4px 0 0 0 #0a1428, 4px 0 0 0 #0a1428;
+        /* a finger scrolls it (pad.js lets its touches through; pan-x too: a turned screen's "down" is the window's "across") */
+        touch-action: pan-x pan-y;
+        overscroll-behavior: contain;
+      }
+      /* Nothing in the results is squeezed or cut off, on any screen: the lines keep their own height, and the column is
+         centred by two spacers instead of justify-content: center, so a list taller than the screen starts at the top
+         and scrolls (centred overflow hides its top where no scroll reaches). */
+      #pad-screen.results #status > * {
+        flex-shrink: 0;
+      }
+      #pad-screen.results #status::before,
+      #pad-screen.results #status::after {
+        content: "";
+        flex: 1 0 0px;
       }
       #pad-screen.results #status-big {
         font-family: "FoxBox Pixel", ui-monospace, monospace;
@@ -2272,12 +2397,13 @@
       #res-mini .r.solo {
         grid-template-columns: 52px minmax(0, 1fr);
       }
-      /* a game's score column (TEE TIME: "247 PTS") */
+      /* a game's score column (TEE TIME: "247 PTS"); a longer score (FOX MINI GOLF: "12 STROKES") widens it, never wraps */
       #res-mini .r.solo.vals {
-        grid-template-columns: 52px minmax(0, 1fr) 84px;
+        grid-template-columns: 52px minmax(0, 1fr) minmax(84px, max-content);
       }
       #res-mini .val {
         text-align: right;
+        white-space: nowrap;
       }
       /* TEE TIME: during a round the golf module (dev/party/golf/golf-pad.js) owns the controls area */
       #golf {
@@ -2568,11 +2694,21 @@
       }
       #bots-host .bh-hint {
         flex-basis: 100%;
+        display: grid;
+        justify-items: center;
         font-size: 7px;
         line-height: 1.5;
         text-align: center;
         color: var(--sk-x-txt, #c9c8df);
         opacity: 0.85;
+      }
+      /* both lines are always there, in one cell, so the card is the same size whichever one shows (it never jumps) */
+      #bots-host .bh-hint > span {
+        grid-area: 1 / 1;
+      }
+      #bots-host:not([data-mode="fill"]) .bh-h-fill,
+      #bots-host[data-mode="fill"] .bh-h-off {
+        visibility: hidden;
       }
       #pad-screen:not(.lobby-skin) #bots-host .bh-hint {
         display: none;
@@ -2676,8 +2812,13 @@
         height: 38%;
         min-height: 150px;
       }
-      #pad-screen.lobby-skin.lk-nostart #controls {
+      #pad-screen.lobby-skin.lk-nostart:not(.row-setup) #controls {
         display: none;
+      }
+      /* Row's setup (Enable motion, the practice boat, Ready) lives in #controls: it stays, at its own height */
+      #pad-screen.lobby-skin.row-setup #controls {
+        height: auto;
+        min-height: 0;
       }
       #pad-screen.lobby-skin:not(.row-setup) #steer {
         display: none !important;
@@ -2694,6 +2835,7 @@
       }
       /* the results: the arcade high-score table is the pad's LCD (pad.js fills it; its own colours stay) */
       #pad-screen.lobby-skin.results #status {
+        justify-content: flex-start; /* (centred by the results' spacers: a tall list starts at the top) */
         background-color: #05070f;
         box-shadow: 0 0 0 var(--u, 4px) var(--sk-ink), inset 0 var(--u, 4px) 0 0 rgba(0, 0, 0, 0.35);
       }
@@ -2712,9 +2854,47 @@
       body:has(#pad-screen.lobby-skin.show) #reconn {
         display: none;
       }
+      /* Row's setup with the phone sideways (pad.js syncRowTurn): only the pad's TURN YOUR PHONE UPRIGHT card (drawn in
+         #lobby-skin-body); the setup's own parts wait, untouched, until the phone is upright again */
+      #pad-screen.lobby-skin.row-sideways > :not(#lobby-skin-body):not(#round-cue) {
+        display: none !important;
+      }
       @media (orientation: landscape) {
         #pad-screen.lobby-skin {
           padding-top: calc(env(safe-area-inset-top, 0px) + var(--u, 4px) * 13);
+        }
+        /* SIDEWAYS LOBBY (Nov 13): with START showing, two columns: the LCD takes the left at full height (its words and
+           keys no longer share ~120 px with START), the name + BOTS keys sit over START on the right. Only the shell's
+           own lobby: a game's setup module (golf / tennis / …) and Row's seats keep the column they were built for. */
+        #pad-screen.lobby-skin.show:not(.lk-nostart):not(.row-setup):not(.golf):not(.tennis):not(.minigolf):not(.bowling):not(.firefight) {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) clamp(190px, 32%, 290px);
+          grid-template-rows: auto minmax(0, 1fr) auto;
+          column-gap: calc(var(--u, 4px) * 7); /* (the LCD's drawn bezel reaches 4 art pixels past it) */
+        }
+        #pad-screen.lobby-skin:not(.lk-nostart):not(.row-setup):not(.golf):not(.tennis):not(.minigolf):not(.bowling):not(.firefight) > #status {
+          grid-column: 1;
+          grid-row: 1 / span 2;
+          margin-bottom: calc(var(--u, 4px) * 3);
+        }
+        #pad-screen.lobby-skin:not(.lk-nostart):not(.row-setup):not(.golf):not(.tennis):not(.minigolf):not(.bowling):not(.firefight) > #boats,
+        #pad-screen.lobby-skin:not(.lk-nostart):not(.row-setup):not(.golf):not(.tennis):not(.minigolf):not(.bowling):not(.firefight) > #golf-setup {
+          grid-column: 1;
+          grid-row: 3;
+        }
+        #pad-screen.lobby-skin:not(.lk-nostart):not(.row-setup):not(.golf):not(.tennis):not(.minigolf):not(.bowling):not(.firefight) > #lobby-bar {
+          grid-column: 2;
+          grid-row: 1;
+          justify-content: flex-end;
+          row-gap: calc(var(--u, 4px) * 5); /* (each key's outline + plinth) */
+          padding-top: calc(var(--u, 4px) * 2);
+        }
+        #pad-screen.lobby-skin:not(.lk-nostart):not(.row-setup):not(.golf):not(.tennis):not(.minigolf):not(.bowling):not(.firefight) > #controls {
+          grid-column: 2;
+          grid-row: 2 / span 2;
+          height: auto;
+          min-height: 0;
+          padding-top: calc(var(--u, 4px) * 2);
         }
         #pad-screen.lobby-skin #status {
           flex-direction: column;
@@ -2734,9 +2914,12 @@
     <div id="reconn" data-test="reconnecting" role="status" aria-live="polite" hidden>Connecting…</div>
     <section id="name-screen" class="screen">
       <h1>FoxBox</h1>
-      <p>What's your name?</p>
       <form id="name-form" autocomplete="off">
-        <input id="name-input" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="go" placeholder="Your name" />
+        <!-- NAME LOOK: the question and the name sit on the pad's LCD -->
+        <div id="name-lcd">
+          <p><label for="name-input">What's your name?</label></p>
+          <input id="name-input" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="go" placeholder="Your name" />
+        </div>
         <div id="name-skin" data-test="name-skin"></div><!-- SKINS: the CONTROLLER choice (pad-skin.js mountSkinPicker) -->
         <button id="name-go" type="submit">Let's play!</button>
       </form>
@@ -2849,7 +3032,7 @@
       <!-- the lobby's bar: your name (tap to change it) and, on the host's phone only, the BOTS FILL / OFF switch -->
       <div id="lobby-bar">
         <button id="me-chip" data-test="me-chip" type="button" aria-label="Change your name" hidden><span id="me-chip-ball"></span><span id="me-chip-name"></span><i class="ico" data-sprite="pencil" data-scale="2" data-color="#0a1428" aria-hidden="true"></i></button>
-        <button id="bots-host" data-test="bots-host" type="button" role="switch" aria-checked="false" aria-label="BOTS: OFF" hidden><span class="bh-l">BOTS</span><span class="bh-sw" aria-hidden="true"><b class="bh-fill">FILL</b><b class="bh-off">OFF</b></span><span class="bh-hint" aria-hidden="true">People only</span></button>
+        <button id="bots-host" data-test="bots-host" type="button" role="switch" aria-checked="false" aria-label="BOTS: OFF" hidden><span class="bh-l">BOTS</span><span class="bh-sw" aria-hidden="true"><b class="bh-fill">FILL</b><b class="bh-off">OFF</b></span><span class="bh-hint" aria-hidden="true"><span class="bh-h-fill">Bots fill the free spots</span><span class="bh-h-off">People only</span></span></button>
       </div>
       <div id="status">
         <div id="res-art" aria-hidden="true" hidden></div>

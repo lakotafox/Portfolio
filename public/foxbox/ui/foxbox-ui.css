@@ -151,11 +151,9 @@ html[data-foxbox-web="host"] #start-text { background: #ffffff16; border: 1px so
 html[data-foxbox-web="host"] #countdown:not(.ingame) :is(#cd-num, #cd-sub) { color: var(--fbx-entry-ink); text-shadow: 0 .06em 0 #08091955; }
 /* results: the arcade high-score screen (see index.html) */
 html[data-foxbox-web="host"] #results { background: #05070f repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 0.3rem, transparent 0.3rem 0.6rem); color: #fff; }
-html[data-foxbox-web="pad"] :is(#name-screen, #char-screen, #crop-screen),
+/* (the controller's own name step, #name-screen, wears the lobby pad's look: pad.html NAME LOOK; nothing to override here) */
+html[data-foxbox-web="pad"] :is(#char-screen, #crop-screen),
 html[data-foxbox-web="pad"] body:not(.clook-on) #pad-screen { background: var(--fbx-entry-scene); }
-html[data-foxbox-web="pad"] #name-screen :is(h1, p) { color: var(--fbx-entry-ink); text-shadow: none; }
-html[data-foxbox-web="pad"] #name-input { background: #15182b; color: var(--fbx-entry-ink); border: 2px solid #ffffff40; }
-html[data-foxbox-web="pad"] #name-go { background: var(--fbx-entry-accent); color: #20152c; box-shadow: 0 5px 0 #552849; }
 
 @media (max-width: 760px) {
   .fbx-host { font-size: 7px; }
@@ -219,4 +217,3 @@ html[data-foxbox-tv] .fbx-tv2-chip .fbx-tv2-dim { font-size: 0.9rem; }
 .fbx-skin-slot:empty { display: none; }
 .fbx-skin-slot { padding: 12px 10px 4px; border: 1px solid #ffffff22; border-radius: 18px; background: #0b0c1e; color: var(--ink, #fff9f1); }
 .fbx-skin-slot .fbx-skinpick-arrow { background: #262a52; box-shadow: 0 3px 0 #04050e; }
-html[data-foxbox-web="pad"] #name-skin { background: #15182b; box-shadow: none; border: 2px solid #ffffff30; }

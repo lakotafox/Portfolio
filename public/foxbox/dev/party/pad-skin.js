@@ -2,8 +2,10 @@
  * pad-skin.js — FoxBox's pixel gamepads: one shared skin for every game's phone controller.
  *
  * Lakota (Nov 1) picked five pixel-art pads (scratchpad controllers/controller-looks-r2.html) and asked for the pad to be
- * part of the player's profile, chosen next to the name. CLASSIC = today's controllers, untouched: a game that sees
- * skinId() === "classic" must not create a skin at all (a true pass-through).
+ * part of the player's profile, chosen next to the name. Those five are the whole choice: the sixth one, CLASSIC (no pad,
+ * the game's plain controller), is gone (Lakota, Nov 13), and a phone that saved "classic" gets FOXBOX (validSkin).
+ * A game's plain controller is still what shows when this module is not loaded (a game's own dev page), so it must
+ * keep working untouched there (a true pass-through).
  *
  * The look is drawn into a small pixel buffer (≈ 200×96 "art pixels") that is scaled up by a whole number of DEVICE
  * pixels with nearest-neighbour, so the pixels stay square and crisp on any phone. The grid grows/shrinks with the
@@ -36,7 +38,6 @@ export const SKINS = [
   { id: "sixteen", name: "SIXTEEN" },
   { id: "homecomp", name: "HOME COMPUTER" },
   { id: "smoke", name: "SMOKE" },
-  { id: "classic", name: "CLASSIC" },
 ];
 const SKIN_IDS = SKINS.map((s) => s.id);
 export const validSkin = (id) => (SKIN_IDS.includes(id) ? id : DEFAULT_SKIN);
@@ -61,8 +62,6 @@ export function setSkinId(id) {
   } catch {}
   return id;
 }
-/** true when the player wants a pixel pad (anything but CLASSIC). */
-export const skinOn = (id = skinId()) => id !== "classic";
 
 // ── the pixel buffer (module-level while one surface draws; drawing is synchronous) ─────────────────────────
 let W = 208, H = 96, BUF = null;
@@ -801,35 +800,6 @@ export function createPadSkin(host, opts = {}) {
   return api;
 }
 
-// ── CLASSIC's preview: today's controller, drawn smooth (not pixel art) ─────────────────────────────────────
-function drawClassicPreview(cv, game = "sky", color = "#f0436a") {
-  const ctx = cv.getContext("2d"), w = cv.width, h = cv.height, u = h / 96;
-  const g = ctx.createLinearGradient(0, 0, 0, h);
-  g.addColorStop(0, "#7a1a34"); g.addColorStop(0.55, "#1d1426"); g.addColorStop(1, "#0b1020");
-  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-  const rr = (x, y, ww, hh, r) => { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, ww, hh, r); else ctx.rect(x, y, ww, hh); };
-  // the status strip
-  rr(4 * u, 3 * u, w - 8 * u, 11 * u, 5 * u); ctx.fillStyle = "rgba(255,255,255,.12)"; ctx.fill(); ctx.lineWidth = 1 * u; ctx.strokeStyle = "#ff7a92"; ctx.stroke();
-  ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  ctx.font = `800 ${7 * u}px system-ui, -apple-system, sans-serif`; ctx.fillText("GO GO GO!", w * 0.3, 9 * u);
-  ctx.font = `600 ${5 * u}px system-ui, -apple-system, sans-serif`; ctx.fillStyle = "rgba(255,255,255,.75)"; ctx.fillText(game === "snow" ? "Drag to roll · SHOVE to bump" : "Steer ◀ ▶ · BONK = dive on heads", w * 0.62, 9.3 * u);
-  // the steer panel
-  const px = 4 * u, py = 18 * u, pw = w * 0.52, ph = h - 22 * u;
-  rr(px, py, pw, ph, 9 * u); ctx.fillStyle = "rgba(255,255,255,.06)"; ctx.fill(); ctx.strokeStyle = "rgba(255,255,255,.25)"; ctx.lineWidth = 0.8 * u; ctx.stroke();
-  const cy = py + ph / 2;
-  rr(px + 16 * u, cy - 3 * u, pw - 32 * u, 6 * u, 3 * u); ctx.fillStyle = "rgba(0,0,0,.45)"; ctx.fill();
-  ctx.fillStyle = "rgba(255,255,255,.35)";
-  ctx.beginPath(); ctx.moveTo(px + 6 * u, cy); ctx.lineTo(px + 13 * u, cy - 4 * u); ctx.lineTo(px + 13 * u, cy + 4 * u); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(px + pw - 6 * u, cy); ctx.lineTo(px + pw - 13 * u, cy - 4 * u); ctx.lineTo(px + pw - 13 * u, cy + 4 * u); ctx.fill();
-  const ball = (x, y, r) => { const rg = ctx.createRadialGradient(x - r * .3, y - r * .4, r * .1, x, y, r); rg.addColorStop(0, "#ffd0da"); rg.addColorStop(.45, color); rg.addColorStop(1, "#b8203f"); ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = rg; ctx.fill(); ctx.lineWidth = r * .1; ctx.strokeStyle = "#fff"; ctx.stroke(); };
-  ball(px + pw / 2, cy, 9 * u);
-  ctx.fillStyle = "rgba(255,255,255,.55)"; ctx.font = `600 ${5 * u}px system-ui, -apple-system, sans-serif`; ctx.fillText(game === "snow" ? "drag to roll" : "slide to steer", px + pw / 2, py + ph - 6 * u);
-  // the big button
-  const bx = w * 0.77, br = Math.min(ph / 2, w * 0.2);
-  ball(bx, cy, br);
-  ctx.fillStyle = "#fff"; ctx.font = `900 ${12 * u}px system-ui, -apple-system, sans-serif`; ctx.fillText(game === "snow" ? "SHOVE" : "BONK", bx, cy + u);
-}
-
 /**
  * The CONTROLLER choice (the name screens): ◀ [live pad] ▶, the pad's name, dots; swipe the pad or tap the arrows/dots.
  * mountSkinPicker(el, { value, onChange(id), game = "sky", name }) → { value, set(id), destroy() }
@@ -850,7 +820,6 @@ const PICKER_CSS = `
 .fbx-skinpick-phone { position: relative; width: 100%; aspect-ratio: 208 / 96; padding: 4px; box-sizing: content-box; border-radius: 14px;
   background: linear-gradient(160deg, #4a4d55, #1b1c21 38%, #2b2d33 75%, #141518); box-shadow: inset 0 0 0 1.5px #6a6d74, 0 6px 14px rgba(0,0,0,.28); margin-left: -4px; }
 .fbx-skinpick-scr { position: absolute; inset: 4px; border-radius: 10px; overflow: hidden; background: #000; isolation: isolate; }
-.fbx-skinpick-scr > canvas.fbx-classic { position: absolute; inset: 0; width: 100%; height: 100%; }
 .fbx-skinpick-name { font-size: 12px; letter-spacing: .08em; min-height: 1.4em; text-align: center; }
 .fbx-skinpick-dots { display: flex; gap: 0; }
 .fbx-skinpick-dot { appearance: none; width: 28px; height: 28px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; display: grid; place-items: center; -webkit-tap-highlight-color: transparent; }
@@ -880,24 +849,15 @@ export function mountSkinPicker(root, { value = skinId(), onChange = () => {}, g
     <div class="fbx-skinpick-dots" role="tablist" aria-label="Controllers">${SKINS.map((s, k) => `<button type="button" class="fbx-skinpick-dot" role="tab" data-k="${k}" aria-label="${s.name}" data-test="skin-dot-${s.id}"><i></i></button>`).join("")}</div>`;
   root.append(el);
   const scr = el.querySelector(".fbx-skinpick-scr");
-  let pad = null, classic = null;
+  let pad = null;
   const show = () => {
     const id = SKINS[i].id;
     el.dataset.skin = id;
     el.querySelector(".fbx-skinpick-name").textContent = SKINS[i].name;
     el.querySelector(".fbx-skinpick-count").textContent = `${i + 1}/${SKINS.length}`;
     el.querySelectorAll(".fbx-skinpick-dot").forEach((d, k) => d.setAttribute("aria-current", String(k === i)));
-    if (id === "classic") {
-      if (pad) { pad.destroy(); pad = null; }
-      if (!classic) { classic = document.createElement("canvas"); classic.className = "fbx-classic"; scr.append(classic); }
-      const r = scr.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-      classic.width = Math.max(208, Math.round(r.width * dpr)); classic.height = Math.max(96, Math.round(r.height * dpr));
-      drawClassicPreview(classic, game);
-    } else {
-      if (classic) { classic.remove(); classic = null; }
-      if (!pad) pad = createPadSkin(scr, { style: id, game, fixed: { W: 208, H: 96 }, data: { name, label: "SLIDE TO STEER" }, vibrate: false, onInput() {} });
-      else pad.setStyle(id);
-    }
+    if (!pad) pad = createPadSkin(scr, { style: id, game, fixed: { W: 208, H: 96 }, data: { name, label: "SLIDE TO STEER" }, vibrate: false, onInput() {} });
+    else pad.setStyle(id);
   };
   const go = (k, user = true) => {
     i = ((k % SKINS.length) + SKINS.length) % SKINS.length;
@@ -921,8 +881,6 @@ export function mountSkinPicker(root, { value = skinId(), onChange = () => {}, g
     if (Math.abs(dx) >= 28 && Math.abs(dx) > Math.abs(dy) * 1.3) go(i + (dx < 0 ? 1 : -1));
   }, true);
   phone.addEventListener("pointercancel", () => { sx = null; }, true);
-  const ro = typeof ResizeObserver === "function" ? new ResizeObserver(() => { if (classic) show(); }) : null;
-  ro?.observe(scr);
   show();
   return {
     el,
@@ -930,8 +888,8 @@ export function mountSkinPicker(root, { value = skinId(), onChange = () => {}, g
     set(id) { go(Math.max(0, SKIN_IDS.indexOf(validSkin(id))), false); },
     setName(n) { name = n; pad?.set({ name: n }); },
     /** Size + draw again (call after the picker's screen shows: it may have been made hidden or detached). */
-    refresh() { if (pad) pad.layout(); else if (classic) show(); },
-    destroy() { ro?.disconnect(); pad?.destroy(); el.remove(); },
+    refresh() { if (pad) pad.layout(); },
+    destroy() { pad?.destroy(); el.remove(); },
   };
 }
 
@@ -1016,13 +974,13 @@ function wrapText(str, maxW, f, o = {}) {
 }
 // ── the TURN YOUR PHONE SIDEWAYS picture (ROW's first mate, phone upright) ───────────────────────────────────
 /**
- * ONE spec for both drawings of the picture: mateTurnCard() below (the five pixel pads) and CLASSIC's card in
+ * ONE spec for both drawings of the picture: mateTurnCard() below (the five pixel pads) and the DOM card in
  * cap-pad.js. It is the same picture as FOX KART's turn card (kart-pad.js, .fk-ph), so the two games read as one
  * family: a dashed outline of the phone standing upright (where it started), a chunky arrow sweeping over the top to
  * where it ends up, and the phone itself, which fades in upright, waits a beat, turns a quarter turn clockwise about
  * its bottom-right corner, rests sideways (the pose it spends its time in, and the one it holds with reduced motion),
  * then starts over.
- * Sizes are in CELLS: one art pixel on a pixel pad, `cell` CSS px on CLASSIC. Change a value here and both follow.
+ * Sizes are in CELLS: one art pixel on a pixel pad, `cell` CSS px on the DOM card. Change a value here and both follow.
  */
 export const TURN_ART = {
   // the loop (ms): fade in → upright beat → the turn → rest sideways → fade out
@@ -1030,17 +988,19 @@ export const TURN_ART = {
   ease: [0.45, 0, 0.2, 1], // the turn's cubic-bezier
   deg: 90, // clockwise: the phone ends up lying to the right of where it stood
   // the picture
-  cell: 4, // CLASSIC: CSS px per cell
+  cell: 4, // the DOM card: CSS px per cell
   w: 49, h: 33, // the picture's box (the turning phone's top corner swings up to 4 cells above it)
   body: { x: 1, y: 2, w: 17, h: 30 }, // the phone, upright; it turns about its bottom-right corner
   edge: 1, // the dark line round the phone
   slit: { x: 6, y: 1, w: 5, h: 1 }, // the speaker (inside the body)
   screen: { x: 2, y: 3, w: 13, h: 22 }, // pixel pads: the screen (inside the body), a 1-cell dark frame round it
   dot: { x: 7, y: 27, w: 3, h: 2 }, // pixel pads: the home dot (inside the body)
-  fine: { screen: { l: 6, t: 12, r: 6, b: 20, ring: 2, shine: 4 }, dot: { w: 8, h: 8, b: 6 }, shadow: 3 }, // CLASSIC, in CSS px: the same parts where FOX KART draws finer than a cell
+  fine: { screen: { l: 6, t: 12, r: 6, b: 20, ring: 2, shine: 4 }, dot: { w: 8, h: 8, b: 6 }, shadow: 3 }, // the DOM card, in CSS px: the same parts where FOX KART draws finer than a cell
   ghost: { on: 3, off: 2, line: 0.45, fill: 0.05 }, // the dashed outline: dash + gap (cells), how much gold is in the line / the fill
   arrow: [[1, 23, 26], [2, 20, 28], [3, 20, 30], [4, 27, 31], [5, 29, 32], [6, 31, 33], [7, 32, 33], [8, 32, 34], [9, 33, 34], [10, 33, 34], [11, 30, 37], [12, 31, 36], [13, 32, 35], [14, 33, 34]], // rows of cells: [y, first x, last x]
-  gold: "#ffd23f", dark: "#0a1428", // CLASSIC's colours (a pixel pad uses its own LCD's gold; the screen is the player's colour on both)
+  // the mirror-image card (TURN YOUR PHONE UPRIGHT, Row's setup): the same sweep, its head at the upright end
+  arrowUp: [[-1, 22, 22], [0, 21, 22], [1, 20, 22], [2, 19, 28], [3, 19, 30], [4, 20, 22], [4, 27, 31], [5, 21, 22], [5, 29, 32], [6, 22, 22], [6, 31, 33], [7, 32, 33], [8, 32, 34], [9, 33, 34], [10, 33, 34], [11, 33, 34], [12, 33, 34], [13, 33, 34]],
+  gold: "#ffd23f", dark: "#0a1428", // the DOM card's colours (a pixel pad uses its own LCD's gold; the screen is the player's colour on both)
 };
 const CALM = typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : { matches: false };
 const turnEase = (x) => { // TURN_ART.ease at x (0..1)
@@ -1077,7 +1037,7 @@ function turnSprite(gold, dark, screen, shine) {
   return spr;
 }
 /** The whole picture, its box's top-left at (x0, y0): the outline, the arrow, then the phone at pose p. c: the pad's LCD colours. */
-function turnPicture(x0, y0, p, c) {
+function turnPicture(x0, y0, p, c, arrow = TURN_ART.arrow) {
   const A = TURN_ART, B = A.body, g = A.ghost;
   // where it started: a dashed outline (dashes run clockwise from the top-left corner), a hint of a fill, the home dot
   const line = mixHex(c.bg, c.gold, g.line);
@@ -1090,8 +1050,8 @@ function turnPicture(x0, y0, p, c) {
   ring.forEach(([x, y], n) => { if (n % (g.on + g.off) < g.on) P(x0 + B.x + x, y0 + B.y + y, line); });
   R(x0 + B.x + A.dot.x, y0 + B.y + A.dot.y - 1, A.dot.w, A.dot.h, line); // (a row up: clear of the dashed line)
   // the arrow, over a dark drop shadow
-  for (const [y, xa, xb] of A.arrow) R(x0 + xa + 1, y0 + y + 1, xb - xa + 1, 1, c.dark);
-  for (const [y, xa, xb] of A.arrow) R(x0 + xa, y0 + y, xb - xa + 1, 1, c.gold);
+  for (const [y, xa, xb] of arrow) R(x0 + xa + 1, y0 + y + 1, xb - xa + 1, 1, c.dark);
+  for (const [y, xa, xb] of arrow) R(x0 + xa, y0 + y, xb - xa + 1, 1, c.gold);
   // the phone, turned p.deg clockwise about its bottom-right corner: every pixel looks up the cell of the upright
   // phone it came from (nearest neighbour, so upright and sideways are pixel-exact)
   const spr = turnSprite(c.gold, c.dark, c.screen, c.shine), pvx = B.x + B.w, pvy = B.y + B.h;
@@ -1113,13 +1073,13 @@ function turnPicture(x0, y0, p, c) {
 /** The FIRST MATE with the phone upright: the stick and FIRE can't sit side by side in a tall pad, so there are NO controls
  *  (no touch regions: every touch is dead) — just TURN YOUR PHONE SIDEWAYS on the pad's own LCD, under a phone that turns
  *  from upright to sideways (TURN_ART above; it runs on its own clock from the moment the card comes up). */
-function mateTurnCard(st, S, F) {
+function mateTurnCard(st, S, F, o = {}) {
   if (H > W) tallBody(S, F, { panel: { x: 5, y: 16, w: W - 10, h: F.bot - 17 } });
-  badge(st, S, F);
+  if (o.badge !== false) badge(st, S, F);
   const A = TURN_ART, hud = S.hud, top = 17, room = F.bot - 2 - top;
   const words = (iw) => {
-    const big = wrapText("TURN YOUR PHONE SIDEWAYS", iw, FB, { bold: true });
-    const small = [...wrapText("TILT TO STEER", iw, FS), ...wrapText("THUMBS TO AIM & FIRE", iw, FS)];
+    const big = wrapText(o.big || "TURN YOUR PHONE SIDEWAYS", iw, FB, { bold: true });
+    const small = (o.small || ["TILT TO STEER", "THUMBS TO AIM & FIRE"]).flatMap((ln) => wrapText(ln, iw, FS));
     return { big, small, bigH: big.length * 10 - 3, smallH: small.length * 7 - 2 };
   };
   let cx = Math.round((F.L + F.R) / 2), pw = Math.min(F.R - F.L - 4, 124), px0 = Math.round(cx - pw / 2);
@@ -1145,7 +1105,8 @@ function mateTurnCard(st, S, F) {
   const now = performance.now();
   if (typeof st.turnT0 !== "number") st.turnT0 = now; // the card just came up: the loop starts from the top
   const pose = CALM.matches ? { deg: A.deg, a: 1, wait: -1 } : turnPose(now - st.turnT0); // reduced motion: resting sideways, nothing moves
-  turnPicture(ix, iy, pose, colours);
+  if (o.upright) pose.deg = A.deg - pose.deg; // the mirror image: it starts lying sideways and stands up (and rests upright)
+  turnPicture(ix, iy, pose, colours, o.upright ? A.arrowUp : A.arrow);
   if (pose.wait >= 0) st.frame(pose.wait);
   // the fonts' bold is a double strike, which fills a W in: the headline draws its own 7-wide W (one pixel wider than the rest)
   const headline = (ln, y) => {
@@ -1262,10 +1223,16 @@ registerLayout("body", (st, S, F) => tallBody(S, F), { brand: false });
  * player's colour, the style's panel behind the page's screen and the big round START under the page's own button; the
  * page's DOM (the screen's words, the name, BOTS, SWITCH GAME) sits on top, and its #bonk takes the touches.
  * data: { panel: {x, y, w, h} | null (grid: the page's screen, grown by the bezel), btn: {x, y, d} | null (grid: the
- * page's START), button: its label, color: the player's colour }
+ * page's START), button: its label ("" = the page writes its own), color: the player's colour, turn: "upright" = only
+ * the TURN YOUR PHONE UPRIGHT card (Row's setup held sideways), name: the player's name for that card's chip }
+ * The name step (pad.js syncNameSkin) wears it too: panel = #name-lcd, btn = #name-go.
  */
 registerLayout("lobby", (st, S, F) => {
   const D = st.data;
+  // Row's setup with the phone sideways (pad.js syncRowTurn): no setup, just TURN YOUR PHONE UPRIGHT on the pad's own
+  // LCD (the first mate's TURN YOUR PHONE SIDEWAYS card, the other way round); the page hides its own parts meanwhile
+  if (D.turn === "upright") return void mateTurnCard(st, S, F, { upright: true, big: "TURN YOUR PHONE UPRIGHT", small: ["TO SET UP YOUR SEAT"] });
+  st.turnT0 = null;
   tallBody(S, F, D.panel ? { panel: D.panel } : {});
   if (F.brand) {
     if (S.id === "foxbox") { sprite(ICON.fox, F.L, 4, { X: S.ink, K: S.ink, O: "#e8682f", W: "#fff9f1" }); text("FOXBOX", F.L + 12, 6, FS, S.ink, { align: "l" }); }

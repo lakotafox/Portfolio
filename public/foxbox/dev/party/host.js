@@ -58,7 +58,7 @@ const GAMES = [
   },
   {
     id: "row", name: "Row Row Rumble", gameId: "rowrowrumble", button: "PADDLE", stick: "motion",
-    seats: true, // two per boat: everyone picks a boat + seat in the lobby; bots fill the rest
+    seats: true, // two per boat: everyone picks a boat + seat in the lobby; bots fill the rest when the party's BOTS is FILL (OFF: an empty boat sits out)
     module: "../../games/row/gc.game.js", props: "../../games/row/gc.properties.json",
     tagline: "Captain rows · first mate steers and throws · first to the lighthouse wins!",
     minPlayers: 1, maxPlayers: 8, controls: "paddle",
@@ -254,8 +254,12 @@ function loadBotsMode() {
   }
 }
 const botsOn = () => botsMode === "fill" && GAME.bots !== false;
+/** The party's BOTS setting, for everything a lobby SHOWS (the label, "Bot" seats, the lines about bots): this TV's
+ * own on the main TV, the main TV's on an extra TV (whatever that TV's own browser remembers). The rounds themselves
+ * ask botsOn(): only the main TV starts them. */
+const partyBotsOn = () => (mirror ? mirror.bots === "fill" : botsMode === "fill") && GAME.bots !== false;
 /** Players a round gets: everyone here, plus (FILL) bots up to the game's maxPlayers. */
-const roundTarget = (humanCount) => (botsOn() ? Math.max(humanCount, Math.min(MAX_PLAYERS, GAME.botFillTo || GAME.maxPlayers || MAX_PLAYERS)) : humanCount); // TENNIS: botFillTo (bots fill to this many, not maxPlayers)
+const roundTarget = (humanCount, fill = botsOn()) => (fill ? Math.max(humanCount, Math.min(MAX_PLAYERS, GAME.botFillTo || GAME.maxPlayers || MAX_PLAYERS)) : humanCount); // TENNIS: botFillTo (bots fill to this many, not maxPlayers)
 const AUTO_START_MS = 20_000;
 const AUTO_START = false; // lobby v2: the game picker starts the round (no timers)
 const DRAW_HOLD_MS = 60_000; // auto-start waits at most this much longer while someone is drawing
@@ -2384,7 +2388,7 @@ function renderBotsToggle() {
   // the lobby and every game's setup (also Row's own seat lobby); not "boot": on the web that's the HOST /
   // JOIN GAME screens, which ask for it themselves
   const on = phase === "lobby";
-  const fill = (mirror ? mirror.bots === "fill" : botsMode === "fill") && GAME.bots !== false;
+  const fill = partyBotsOn();
   const txt = `BOTS: ${fill ? "FILL" : "OFF"}`;
   // the switch (lobby-pad, Nov 12): BOTS [FILL | OFF] with the one that's on lit up, + the B key. Its text still reads
   // "BOTS: FILL" / "BOTS: OFF" (QA scripts read it): the other option and the key are CSS (index.html)
@@ -2976,7 +2980,7 @@ function renderLobby() {
     st.classList.add("idle");
   }
   const connected = list.filter((p) => p.connected).length;
-  const bots = Math.max(0, roundTarget(connected) - connected);
+  const bots = Math.max(0, roundTarget(connected, partyBotsOn()) - connected);
   const held = drawHoldUntil != null ? drawers() : [];
   const autoTxt = held.length
     ? `Waiting for ${held.length === 1 ? held[0].name : `${held.length} players`} to finish drawing… ${GAME.button} starts anyway`
@@ -3009,10 +3013,11 @@ function renderLobby() {
   renderWhosfoxSetup(); // WHOSFOX
 }
 
-/** The lobby for a seats game: 4 boats × (paddler, captain), names or "bot". */
+/** The lobby for a seats game: 4 boats × (paddler, captain), names, or "Bot" (BOTS FILL) / "Open" (BOTS OFF). */
 function renderSeatLobby(list) {
   const view = boatsView();
   const seated = seatHolders().length;
+  const botsFill = partyBotsOn();
   const cells = [];
   const web = [];
   for (let boat = 0; boat < BOATS; boat++) {
@@ -3021,10 +3026,10 @@ function renderSeatLobby(list) {
       const who = view[boat][seat];
       cells.push(
         `<div class="chip seat${who ? "" : " botseat"}${who && who.away ? " off" : ""}" style="${colorVars(c)}"><span class="ball"></span>` +
-          `<span class="seat-person"><span class="nm">${esc(who ? who.name : botsOn() ? "Bot" : "Open")}</span><span class="tag">${esc(SEAT_NAMES[seat])}${who && !who.away ? who.ready ? " · Ready" : " · Setting up" : ""}${who && who.house ? ` · ${esc(tvLabel(who.house))}` : ""}</span></span></div>`,
+          `<span class="seat-person"><span class="nm">${esc(who ? who.name : botsFill ? "Bot" : "Open")}</span><span class="tag">${esc(SEAT_NAMES[seat])}${who && !who.away ? who.ready ? " · Ready" : " · Setting up" : ""}${who && who.house ? ` · ${esc(tvLabel(who.house))}` : ""}</span></span></div>`,
       );
       // the card's colour says which boat; the tag just says which seat
-      web.push({ slot: boat * 2 + (seat === "paddle" ? 1 : 2), name: who ? who.name : botsOn() ? "Bot" : "Open", color: c.base, ready: !!who?.ready, tag: who && who.away ? "away" : `${SEAT_NAMES[seat]}${who ? who.ready ? " · Ready" : " · Setting up" : ""}` });
+      web.push({ slot: boat * 2 + (seat === "paddle" ? 1 : 2), name: who ? who.name : botsFill ? "Bot" : "Open", color: c.base, ready: !!who?.ready, tag: who && who.away ? "away" : `${SEAT_NAMES[seat]}${who ? who.ready ? " · Ready" : " · Setting up" : ""}` });
     }
   }
   const chipsHtml = cells.join("");
@@ -3046,7 +3051,9 @@ function renderSeatLobby(list) {
     st.classList.add("idle");
   }
   const autoTxt = autoStartAt ? `Starting by itself in ${Math.max(0, Math.ceil((autoStartAt - Date.now()) / 1000))} s` : "";
-  const seatTxt = unseated ? `${unseated} still picking a seat` : n > 0 ? "Bots take the empty seats" : "";
+  // only when it is true: bots sit down with BOTS FILL, in a seat nobody took (OFF: startRound leaves it empty, and a
+  // boat with nobody aboard sits the race out)
+  const seatTxt = unseated ? `${unseated} still picking a seat` : n > 0 && botsFill && seated < BOATS * 2 ? "Bots take the empty seats" : "";
   $("auto-text").textContent = [roleLine(), autoTxt, seatTxt].filter(Boolean).join("  ·  ");
   const active = AUTOPLAY_OK || (navigator.userActivation ? navigator.userActivation.hasBeenActive : true);
   $("sound-hint").textContent = active ? "" : "Click once on this page to turn the sound on";

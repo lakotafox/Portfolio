@@ -46,7 +46,7 @@ import { createLandscape, createTurnHint, turnedDelta } from "./landscape.js";
 import { crownedPuff, cryingPuff, sprite } from "./pixel-art.js";
 import { createPhoneSounds } from "./phone-sounds.js";
 import { createRowTrainPad, S as ROW_TRAIN } from "./row-train-pad.js"; // ROWTRAIN: Row Row Rumble's TRAINING overlay
-import { createPadSkin, skinId, setSkinId, mountSkinPicker, applySkinVars, artPx, DEFAULT_SKIN } from "./pad-skin.js"; // SKINS: the player's pixel gamepad (CLASSIC = none) · LOBBY LOOK
+import { createPadSkin, skinId, setSkinId, mountSkinPicker, applySkinVars, artPx } from "./pad-skin.js"; // SKINS: the player's pixel gamepad · LOBBY LOOK
 
 const phoneSounds = createPhoneSounds({
   onReady: (audioReady) => queueMicrotask(() => sendRaw({ t: "state", drawing: drawOpen, audioReady: audioReady === true })),
@@ -104,6 +104,7 @@ function showScreen(id) {
   curScreen = id;
   for (const s of ["name-screen", "char-screen", "crop-screen", "draw-screen", "ready-screen", "vote-screen", "pad-screen"]) $(s)?.classList.toggle("show", s === id);
   if (typeof syncExtras === "function") syncExtras();
+  syncNameSkin(); // NAME LOOK
 }
 
 // The pixel icons in the markup: <i class="ico" data-sprite="pencil" data-scale="2" data-color="#…">
@@ -931,7 +932,63 @@ $("rdy-change").addEventListener("click", () => {
 });
 
 // SKINS: the CONTROLLER choice sits under the name (the player's pad is part of their profile; saved with the name)
-const skinPicker = mountSkinPicker($("name-skin"), { value: skinId(), name: me.name });
+const skinPicker = mountSkinPicker($("name-skin"), { value: skinId(), name: me.name, onChange: () => syncNameSkin() });
+// NAME LOOK: the name step wears the lobby pad (pad-skin.js "lobby" layout behind the page's own fields), in the
+// CONTROLLER the picker shows right now: the body + FOXBOX print, the bezel behind #name-lcd, the round key under #name-go
+var nameSkin = null, nameSkinHost = null, nameSkinStyle = "", nameSkinWatch = null; // var: showScreen may run before this line
+function syncNameSkin() {
+  const screen = $("name-screen");
+  if (curScreen !== "name-screen") {
+    if (nameSkin) {
+      nameSkin.destroy();
+      nameSkin = null;
+      nameSkinHost.remove();
+      nameSkinHost = null;
+    }
+    return;
+  }
+  let style;
+  try { style = skinPicker.value; } catch { style = skinId(); }
+  if (!nameSkin) {
+    try {
+      nameSkinHost = document.createElement("div");
+      nameSkinHost.id = "name-skin-body";
+      nameSkinHost.setAttribute("aria-hidden", "true");
+      screen.prepend(nameSkinHost);
+      nameSkin = createPadSkin(nameSkinHost, { style, game: "lobby", interactive: false, vibrate: false });
+      nameSkin.el.style.pointerEvents = "none";
+      screen.classList.add("skinned");
+      if (!nameSkinWatch && typeof ResizeObserver === "function") {
+        nameSkinWatch = new ResizeObserver(() => placeNameSkin());
+        for (const id of ["name-lcd", "name-go", "name-form"]) nameSkinWatch.observe($(id));
+      }
+    } catch {
+      nameSkin = null; // no drawing: the page's own plain keys (pad.html #name-screen:not(.skinned))
+      nameSkinHost?.remove();
+      nameSkinHost = null;
+      screen.classList.remove("skinned");
+    }
+  }
+  if (style !== nameSkinStyle) {
+    nameSkinStyle = style;
+    applySkinVars(screen, style);
+    screen.dataset.skin = style;
+  }
+  screen.style.setProperty("--u", `${artPx()}px`);
+  if (nameSkin) nameSkin.setStyle(style);
+  placeNameSkin();
+  requestAnimationFrame(placeNameSkin); // (the page settles its layout first)
+}
+function placeNameSkin() {
+  if (!nameSkin) return;
+  if (!nameSkin.grid) return void nameSkin.layout();
+  nameSkin.set({ ...skinRects(nameSkin, nameSkinHost, $("name-lcd"), $("name-go")), button: "", turn: "" });
+}
+{
+  const go = $("name-go"), hold = (v) => nameSkin && nameSkin.hold("a", v); // the drawn key sinks under the finger
+  go.addEventListener("pointerdown", () => hold(true));
+  for (const ev of ["pointerup", "pointercancel", "pointerleave"]) go.addEventListener(ev, () => hold(false));
+}
 $("name-input").addEventListener("input", () => skinPicker.setName($("name-input").value));
 $("name-form").addEventListener("submit", (e) => {
   e.preventDefault();
@@ -955,7 +1012,23 @@ $("name-form").addEventListener("submit", (e) => {
 $("change-char").addEventListener("click", () => showPicker());
 $("switch-game").addEventListener("click", () => sendRaw({ t: "pick" }));
 // the host's phone only (the TV says which: lobby state hostId): BOTS FILL / OFF for every game
-$("bots-host").addEventListener("click", () => window.foxboxLobby.bots());
+// a tap shows at once (as the lobby bar's switch does); the TV's next lobby state confirms
+let botsShown = "off", botsWait = 0;
+function paintBotsHost() {
+  const botsHost = $("bots-host"), fill = botsShown === "fill";
+  if (botsHost.dataset.mode === (fill ? "fill" : "off")) return;
+  botsHost.setAttribute("aria-label", `BOTS: ${fill ? "FILL" : "OFF"}`);
+  botsHost.setAttribute("aria-checked", String(fill));
+  botsHost.dataset.mode = fill ? "fill" : "off"; // (the card's hint line follows this in pad.html: both lines are always there)
+}
+$("bots-host").addEventListener("click", () => {
+  if (!lobbyState || lobbyState.hostId !== me.id) return;
+  botsShown = botsShown === "fill" ? "off" : "fill";
+  botsWait = Date.now() + 1500;
+  paintBotsHost();
+  window.foxboxLobby.bots(botsShown);
+  setTimeout(renderStatus, 1550); // the wait is over: show what the TV has (it may have been switched there meanwhile)
+});
 function openNameScreen({ pad = false } = {}) {
   release();
   $("name-input").value = me.name;
@@ -1550,9 +1623,10 @@ window.foxboxLobby = {
   skipTurn: (role) => sendRaw({ t: "skipTurn", role: role === "roller" ? "roller" : "picker" }),
   start: () => sendRaw({ t: "start" }),
   /** The host's phone only: switch BOTS FILL / OFF for every game (the TV checks it's the host's phone). */
-  bots() {
+  bots(mode) {
     if (!lobbyState || lobbyState.hostId !== me.id) return;
-    sendRaw({ t: "game", m: { type: "bots", mode: lobbyState.bots === "fill" ? "off" : "fill" } });
+    // (no mode: the other one from the lobby's; the lobby card's switch passes the one it now shows)
+    sendRaw({ t: "game", m: { type: "bots", mode: mode === "fill" || mode === "off" ? mode : lobbyState.bots === "fill" ? "off" : "fill" } });
   },
   /** The host's phone only, web TV mode (the lobby state has `party`): rename the party ({group}) or list it publicly or
    * not ({pub}). The TV checks it's the host's phone and the name. */
@@ -1749,14 +1823,8 @@ function renderStatus() {
   // the host's phone: the BOTS switch, right on the lobby screen (FILL | OFF, the one that's on lit up)
   const botsHost = $("bots-host");
   botsHost.hidden = !(between && st0 === "lobby" && !!lobbyState && lobbyState.hostId === me.id);
-  const botsFill = !!lobbyState && lobbyState.bots === "fill";
-  const botsTxt = `BOTS: ${botsFill ? "FILL" : "OFF"}`;
-  if (botsHost.dataset.mode !== (botsFill ? "fill" : "off")) {
-    botsHost.setAttribute("aria-label", botsTxt);
-    botsHost.setAttribute("aria-checked", String(botsFill));
-    botsHost.dataset.mode = botsFill ? "fill" : "off";
-    botsHost.querySelector(".bh-hint").textContent = botsFill ? "Bots fill the free spots" : "People only";
-  }
+  if (Date.now() >= botsWait) botsShown = !!lobbyState && lobbyState.bots === "fill" ? "fill" : "off";
+  paintBotsHost();
   const seatNow = mySeat();
   $("game-name").textContent = seatNow ? `${mode.name} · ${SEAT_LABEL[seatNow.seat] || "CREW"} · ${seatNow.boatName} boat` : mode.name;
   const big = $("status-big");
@@ -2077,8 +2145,10 @@ bonk.addEventListener("lostpointercapture", bonkEnd);
 // ── SKINS: the player's pixel gamepad (pad-skin.js) ──────────────────────────────────────────────────────────────
 // Sky Scramble (slider + BONK) and Snowball Sumo (stick + SHOVE) wear the pad the player picked next to their name, from
 // the countdown through the round (and while out / waiting for the next one). It covers #pad-screen, so Sky's old
-// "GO GO GO! / Sky Scramble" panel is gone; its touches drive the same setXY / setB as #steer and #bonk. CLASSIC (or
-// anything else on screen: the lobby, the results, Row, the module games) = no skin, the controller exactly as before.
+// "GO GO GO! / Sky Scramble" panel is gone; its touches drive the same setXY / setB as #steer and #bonk. Row's two
+// seats wear it too, in the countdown and the race (skinGame below). The rest is not this pad's: the shell's own
+// screens (the lobby, the results, the waits) wear the LOBBY LOOK further down, the module games (kart-pad.js,
+// knight-pad.js, golf-pad.js, whosfox-pad.js) put up their own, and a Row player with no seat keeps the plain controller.
 var padSkin = null; // var: syncExtras may run before this line during start-up
 var SKIN_GAMES = { sky: "sky", snowball: "snow" }; // var: hoisted for syncExtras during start-up
 var SKIN_STATES = ["countdown", "playing", "out", "waiting"];
@@ -2096,7 +2166,7 @@ function skinWanted() {
   const st = lastStatus && lastStatus.state;
   const connected = !!(ws && ws.readyState === 1 && hostUp && !replaced);
   const states = mode.id === "row" ? ["countdown", "playing"] : SKIN_STATES;
-  return skinId() !== "classic" && connected && curScreen === "pad-screen" && !!skinGame() && states.includes(st);
+  return connected && curScreen === "pad-screen" && !!skinGame() && states.includes(st);
 }
 function skinLabel(st) {
   // (the countdown shows the round's own label; a waiting phone gets no filler line: Lakota, Nov 9)
@@ -2167,9 +2237,9 @@ var skinRound = 0; // Snowball's round (its {type:"round"} cue)
 // the results, joining mid-round, connecting, the TV gone: every screen of #pad-screen that isn't a round's controller.
 // They now sit on the player's pad (pad-skin.js "lobby" layout in #lobby-skin-body: the body, the FOXBOX print, a power
 // LED in their colour, the style's panel behind the LCD, the big round START drawn under #bonk) with the style's colours
-// on the page (--sk-…, pad.html LOOK block). CLASSIC players get the FOXBOX pad here (CLASSIC is about the round's
-// controller; there's no "plain" lobby any more). #bonk stays the real START button, invisible over its drawing.
-var lobbySkin = null, lobbySkinHost = null, lobbySkinStyle = ""; // var: syncExtras may run before this line during start-up
+// on the page (--sk-…, pad.html LOOK block). There's no "plain" lobby any more. #bonk stays the real START button,
+// invisible over its drawing.
+var lobbySkin = null, lobbySkinHost = null, lobbySkinStyle = "", lobbySkinAt = null; // var: syncExtras may run before this line during start-up
 var lobbySkinWatch = null;
 function lobbySkinWanted() {
   if (curScreen !== "pad-screen" || padSkin) return false; // another screen, or the round's pixel pad covers it
@@ -2196,11 +2266,11 @@ function syncLobbySkin() {
       lobbySkinHost.remove();
       lobbySkinHost = null;
       lobbySkinStyle = "";
-      screen.classList.remove("lobby-skin", "lk-nostart");
+      screen.classList.remove("lobby-skin", "lk-nostart", "row-sideways");
     }
     return;
   }
-  const style = skinId() === "classic" ? DEFAULT_SKIN : skinId();
+  const style = skinId();
   if (!lobbySkin) {
     lobbySkinHost = document.createElement("div");
     lobbySkinHost.id = "lobby-skin-body";
@@ -2223,27 +2293,55 @@ function syncLobbySkin() {
   }
   // START only where it starts something: the lobby (not Row's: its seats + READY), never while waiting / out / away
   screen.classList.toggle("lk-nostart", !(connected && st === "lobby" && mode.id !== "row"));
+  syncRowTurn();
   placeLobbySkin();
   requestAnimationFrame(placeLobbySkin); // (the page settles its layout first)
 }
+/**
+ * Row's setup is an upright screen (seats, Enable, the practice boat, Ready: sideways it only fits by scrolling).
+ * Sideways there, the lobby pad shows TURN YOUR PHONE UPRIGHT instead (pad-skin.js "lobby" layout, data.turn; pad.html
+ * `.row-sideways` hides the page's own parts), and the setup is back the moment the phone is upright. "Sideways" is
+ * the window's shape; the first mate's pad knows it from gravity too (cap-pad.js info().side: Rotation Lock on).
+ */
+function syncRowTurn() {
+  const screen = $("pad-screen");
+  const on = !!lobbySkin && curScreen === "pad-screen" && screen.classList.contains("row-setup")
+    && (role === "captain" ? !!cap.info().side : window.innerWidth > window.innerHeight);
+  if (screen.classList.contains("row-sideways") !== on) {
+    screen.classList.toggle("row-sideways", on);
+    if (!on) requestAnimationFrame(placeLobbySkin); // the setup is back: the drawing finds the page's parts again
+  }
+  if (lobbySkin) lobbySkin.set({ turn: on ? "upright" : "", name: me.name });
+}
 /** Where the page's LCD and START are now, in the pad's art pixels (the drawing follows the DOM). */
-function placeLobbySkin() {
-  if (!lobbySkin) return;
-  const g = lobbySkin.grid;
-  if (!g) return void lobbySkin.layout();
-  const s = g.dpr / g.k, host = lobbySkinHost.getBoundingClientRect();
+/** Where a page's screen (panel) and round key (btn) sit on a "lobby" pad drawing, in its art grid. */
+function skinRects(skin, hostEl, panelEl, btnEl) {
+  const g = skin.grid, s = g.dpr / g.k, host = hostEl.getBoundingClientRect();
   const box = (el) => {
     if (!el || !el.getClientRects().length) return null;
     const r = el.getBoundingClientRect();
     return r.width > 0 && r.height > 0 ? r : null;
   };
-  const bonkEl = $("bonk"), sr = box($("status")), br = box(bonkEl);
-  const panel = sr ? { x: Math.round((sr.left - host.left) * s) - 4, y: Math.round((sr.top - host.top) * s) - 4, w: Math.round(sr.width * s) + 8, h: Math.round(sr.height * s) + 8 } : null;
-  const btn = br ? { x: Math.round((br.left - host.left) * s), y: Math.round((br.top - host.top) * s), d: Math.round(br.width * s) } : null;
-  lobbySkin.set({ panel, btn, button: bonkEl.textContent, color: myColor() });
+  // a turned screen (landscape.js): the window's rects, turned back into the pad's own frame
+  const at = (r) => g.rot === 90 ? { x: r.top - host.top, y: host.right - r.right, w: r.height, h: r.width }
+    : g.rot === 270 ? { x: host.bottom - r.bottom, y: r.left - host.left, w: r.height, h: r.width }
+    : { x: r.left - host.left, y: r.top - host.top, w: r.width, h: r.height };
+  const sr = box(panelEl), br = box(btnEl);
+  const sp = sr && at(sr), bp = br && at(br);
+  const panel = sp ? { x: Math.round(sp.x * s) - 4, y: Math.round(sp.y * s) - 4, w: Math.round(sp.w * s) + 8, h: Math.round(sp.h * s) + 8 } : null;
+  const btn = bp ? { x: Math.round(bp.x * s), y: Math.round(bp.y * s), d: Math.round(bp.w * s) } : null;
+  return { panel, btn };
+}
+function placeLobbySkin() {
+  if (!lobbySkin) return;
+  if (!lobbySkin.grid) return void lobbySkin.layout();
+  const { panel, btn } = skinRects(lobbySkin, lobbySkinHost, $("status"), $("bonk"));
+  lobbySkin.set({ panel, btn, button: $("bonk").textContent, color: myColor() });
+  lobbySkinAt = { panel, btn };
 }
 
 Object.defineProperty(window, "__padSkinQA", { get: () => padSkin, configurable: true }); // QA: the live pad (regions, grid, style)
+Object.defineProperty(window, "__lobbySkinQA", { get: () => lobbySkin && { grid: lobbySkin.grid, ...lobbySkinAt }, configurable: true }); // QA: where the lobby look's LCD and START are drawn (art pixels)
 window.addEventListener("foxbox:pad-skin", () => { if (padSkin) padSkin.release(); syncSkin(); if (typeof land !== "undefined") syncExtras(); });
 
 // Setup is tied to the host epoch and exact seat. Permission/practice is local;
@@ -2311,6 +2409,7 @@ const cap = createCapPad(
     },
     state: () => lastStatus && lastStatus.state,
     onReady: (readiness) => sendRowReady("captain", readiness),
+    onHold: () => syncRowTurn(),
   },
 );
 
@@ -2341,13 +2440,14 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
     (e) => {
       if (e.target.closest("button#edit-name, #status button, #lobby-bar button, #row-enable, #row-ready, .row-link, #boats .seat, #boats-head, #cap-enable, #cap-ready, #golf [data-native], #golf-setup button, #kart [data-native], #tennis [data-native], #bowling [data-native], #minigolf [data-native], #firefight [data-native]")) return; // let real buttons click (incl. Switch game; TEE TIME's data-native ones; KART: the kart pad's; TENNIS: the tennis pad's; MINIGOLF: the putter's)
       if (padScreen.classList.contains("row-setup") && !e.target.closest("#cap-aim, #cap-fire")) return; // Row setup scrolls
+      if (padScreen.classList.contains("results") && e.target.closest("#status")) return; // a long results list scrolls
       e.preventDefault();
     },
     { passive: false },
   );
 }
 document.addEventListener("touchmove", (e) => {
-  if (!e.target.closest("input, #char-grid, #crop-stage, #fbx2-pad, #pad-screen.row-setup, #vote-screen .vs-gal")) e.preventDefault();
+  if (!e.target.closest("input, #char-grid, #crop-stage, #fbx2-pad, #pad-screen.row-setup, #pad-screen.results #status, #vote-screen .vs-gal")) e.preventDefault();
 }, { passive: false });
 for (const type of ["gesturestart", "gesturechange", "gestureend", "dblclick", "contextmenu", "selectstart"]) {
   document.addEventListener(type, (e) => {
@@ -2358,6 +2458,8 @@ window.addEventListener("resize", () => {
   setXY(x, y);
   draw.layout();
   syncExtras(); // a phone turned sideways: the TURN YOUR PHONE SIDEWAYS hint goes (the turned screens re-layout themselves)
+  syncRowTurn(); // Row's setup: sideways = TURN YOUR PHONE UPRIGHT, upright = the setup again
+  syncNameSkin(); // NAME LOOK: one art pixel follows the window
 });
 // Full screen where the browser allows a page to ask (Android, iPad): once, on the first tap that
 // isn't typing. iPhone Safari never does; there the Home Screen icon opens it full screen (pad.html).

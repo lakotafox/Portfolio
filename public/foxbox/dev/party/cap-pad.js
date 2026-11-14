@@ -13,16 +13,18 @@
  * Motion is required; setup offers a tilt test and host-confirmed Ready before the race.
  * Upright (judged by gravity like the steering; by the window's shape only before any motion reading) during
  * training, the countdown and the race, the controls are BLOCKED: a TURN YOUR PHONE SIDEWAYS card takes their place
- * (#cap-turn here for CLASSIC; the pixel pads draw their own from info().turn) and the aim stick + FIRE are dead.
- * The card's picture is a phone turning from upright to sideways: pad-skin.js's TURN_ART, one spec for CLASSIC and the
- * pixel pads, and the same picture as FOX KART's turn card.
+ * (#cap-turn here, the DOM card; the pixel pads draw their own from info().turn) and the aim stick + FIRE are dead.
+ * The other way round, SETUP is an upright screen: held sideways there (info().side, onHold), pad.js shows TURN YOUR
+ * PHONE UPRIGHT on the lobby pad instead of the setup, and from that card back to upright takes TURN_SWITCH_MS too.
+ * The card's picture is a phone turning from upright to sideways: pad-skin.js's TURN_ART, one spec for this card and
+ * the pixel pads, and the same picture as FOX KART's turn card.
  * The moment the phone is sideways the controller is back, no tap needed. Setup (motion permission, Ready) stays
  * reachable upright, and the results screen is never blocked.
  *
- *   createCapPad(el, { onInput({x, y, s, b}) }) -> { show(on), release(), setRole(text) }
+ *   createCapPad(el, { onInput({x, y, s, b}), onHold(side) }) -> { show(on), release(), setRole(text), info() }
  */
 
-import { TURN_ART } from "./pad-skin.js"; // the turn card's picture: one spec for CLASSIC (here) and the pixel pads
+import { TURN_ART } from "./pad-skin.js"; // the turn card's picture: one spec for the DOM card (here) and the pixel pads
 
 const RELOAD_MS = 4000;
 const FULL_TILT = Math.sin((22 * Math.PI) / 180); // gravity share at full lock
@@ -32,7 +34,7 @@ const TURN_SWITCH_MS = 250; // …but from the TURN YOUR PHONE SIDEWAYS card to 
 const AIM_DEAD = 0.12;
 const AIM_FULL = 0.7; // fraction of the stick radius for full aim
 
-export function createCapPad(el, { onInput, state = () => "playing", onReady = () => {} }) {
+export function createCapPad(el, { onInput, state = () => "playing", onReady = () => {}, onHold = () => {} }) {
   let shown = false;
   let x = 0, y = 0, s = 0, b = 0;
   let tiltS = 0; // from motion
@@ -64,6 +66,8 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
   let flipSince = 0;
   let rotDeg = 0; // CSS rotation applied to the controller (clockwise), so it matches the hold
   let blocked = false; // held upright outside setup: the TURN YOUR PHONE SIDEWAYS card is up, aim + FIRE are dead
+  let sideHold = false; // held sideways (by gravity; the window's shape before any reading): in setup pad.js shows TURN YOUR PHONE UPRIGHT (info().side, onHold)
+  const setSide = (on) => { if (on !== sideHold) { sideHold = on; try { onHold(on); } catch {} } };
   const padScreen = el.root.closest("#pad-screen") || document.getElementById("pad-screen");
   injectCss();
   const turnCard = el.root.querySelector("#cap-turn");
@@ -94,7 +98,7 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
     const clear = h === 90 || h === 270 ? Math.abs(ux) > 7 : Math.abs(uy) > 7;
     if (!clear) { flipSince = 0; return; }
     if (!flipSince) flipSince = now;
-    else if (now - flipSince > (blocked && (h === 90 || h === 270) ? TURN_SWITCH_MS : HOLD_SWITCH_MS)) {
+    else if (now - flipSince > ((blocked && (h === 90 || h === 270)) || (sideHold && preparing() && (h === 0 || h === 180)) ? TURN_SWITCH_MS : HOLD_SWITCH_MS)) {
       holdAngle = h;
       flipSince = 0;
       layout();
@@ -104,11 +108,12 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
 
   // turn the whole controller screen so "up" is the physical up, whatever the window is doing
   function layout() {
-    if (!shown) { setBlocked(false); return clearRot(); }
+    if (!shown) { setBlocked(false); setSide(false); return clearRot(); }
     const want = holdAngle == null ? screenAngle() : holdAngle === 180 ? 0 : holdAngle;
     rotDeg = (((want - screenAngle()) % 360) + 360) % 360;
     const portraitHold = holdAngle === 0 || holdAngle === 180 || (holdAngle == null && window.innerHeight > window.innerWidth);
     el.root.classList.toggle("portrait", portraitHold);
+    setSide(!portraitHold);
     setBlocked(portraitHold && !preparing() && state() !== "results"); // (the results screen has no controls to block)
     if (!padScreen) return;
     if (!rotDeg) return clearRot();
@@ -431,6 +436,7 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
         release();
         clearTimeout(fallbackTimer);
         setBlocked(false);
+        setSide(false);
         clearRot();
         holdAngle = null;
         try {
@@ -464,14 +470,15 @@ export function createCapPad(el, { onInput, state = () => "playing", onReady = (
     // SKINS: the pixel pad drives the same aim / FIRE as the DOM stick and button, and draws the tilt + reload
     aim(vx, vy) { const m = Math.hypot(vx, vy); setAim(m < AIM_DEAD ? 0 : vx, m < AIM_DEAD ? 0 : vy); },
     fire(down) { if (down) fireDown(); else fireUp(); },
-    info() { return { s, reload: Math.min(1, (performance.now() - lastFire) / RELOAD_MS), motion: gotMotion, turn: blocked }; },
+    info() { return { s, reload: Math.min(1, (performance.now() - lastFire) / RELOAD_MS), motion: gotMotion, turn: blocked, side: sideHold }; },
     setRole(text) {
       el.role.textContent = text;
     },
   };
 }
 
-// CLASSIC's TURN YOUR PHONE SIDEWAYS card (#cap-turn): the picture, the line, what sideways gives you.
+// The DOM TURN YOUR PHONE SIDEWAYS card (#cap-turn, for when the round's pixel pad is not up): the picture, the line,
+// what sideways gives you.
 // The picture is TURN_ART (pad-skin.js) at TA.cell CSS px per cell: behind (svg) a dashed outline of the phone standing
 // upright, where it started, and a chunky arrow sweeping over the top; in front (i) the phone, which fades in upright,
 // waits a beat, turns a quarter turn about its bottom-right corner, rests sideways, then starts over. Sideways is the
