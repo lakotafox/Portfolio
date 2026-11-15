@@ -155,7 +155,7 @@ ${pY.map(([$,J])=>`      if (dot(normalize(vB), vec3(${$.map((V)=>V.toFixed(5)).
   }
   col = mix(col, alb, vM.y);
   // in the mirror pass alpha says how near the floor this is: pins and balls mirror clearly, high walls only faintly
-  oCol = vec4(col, uClip > 0.5 ? max(0.16 + 0.84 * exp(-vW.y * 1.9), vM.y > 0.9 ? (vW.y > 3.3 ? 0.9 : 0.6) : 0.0) : 1.0);   // ...and the ceiling lamps, as streaks
+  oCol = vec4(col, uClip > 0.5 ? max(0.16 + 0.84 * exp(-vW.y * 1.9), vM.y > 0.9 && vW.y <= 3.3 ? 0.6 : 0.0) : 1.0);   // ...and lit things low down. (Not the ceiling lamps any more, review B Nov 15: mirrored as hard pale blocks they made the lanes a patchwork at 8-12 m.)
   oAux = aux(uGhost > 0.5 ? 255.0 : vId);   // id 255 = see-through: gets no ink line and gives none
 }`,KI=_4+`
 uniform vec4 uGlass;
@@ -179,10 +179,9 @@ vec2 paintAt(vec2 w) {
   bool appr = w.y < 0.0;
   float mk = 0.0, k5 = floor(xl / (5.0 * bw) + 0.5), dx5 = xl - k5 * 5.0 * bw;
   if (abs(k5) <= 3.0 && abs(xl) < half_) {
-    if (appr) { for (int r = 0; r < 3; r++) { float zr = r == 0 ? -0.075 : (r == 1 ? -3.658 : -4.572); if (length(vec2(dx5, w.y - zr)) < 0.0135) mk = 1.0; } }
-    else { float tip = 4.78 - abs(k5) * 0.305, lz = (w.y - (tip - 0.17)) / 0.17; if (lz > 0.0 && lz < 1.0 && abs(dx5) < 0.021 * (1.0 - lz)) mk = 1.0; }
+    // (review B, Nov 15: the approach's three rows of dots and the lane dots read as dark "dust"; only the arrows stay, as the phone's)
+    if (!appr) { float tip = 4.78 - abs(k5) * 0.305, lz = (w.y - (tip - 0.17)) / 0.17; if (lz > 0.0 && lz < 1.0 && abs(dx5) < 0.021 * (1.0 - lz)) mk = 1.0; }
   }
-  if (!appr) { for (int d = 0; d < 5; d++) { float b = d == 0 ? 3.0 : (d == 1 ? 5.0 : (d == 2 ? 8.0 : (d == 3 ? 11.0 : 14.0))); if (length(vec2(abs(xl) - (half_ - (b - 0.5) * bw), w.y - 2.134)) < 0.0115) mk = 1.0; } }
   return vec2(mk, w.y > -0.032 && w.y <= 0.0 && abs(xl) < half_ + 0.24 ? 1.0 : 0.0);
 }
 // the aiming line over colour c at one point: gs = across the line, gu = along it (metres); fs, fu = one pixel's floor there
@@ -227,7 +226,7 @@ void main() {
   pt += paintAt(vW.xz + dpx * 0.125 + dpy * 0.375); pt += paintAt(vW.xz + dpx * 0.375 - dpy * 0.125);
   pt += paintAt(vW.xz - dpx * 0.125 - dpy * 0.375); pt += paintAt(vW.xz - dpx * 0.375 + dpy * 0.125);
   pt *= 0.25;
-  base = mix(base, uColM, pt.x * 0.85);
+  base = mix(base, uColM, pt.x * 0.5);   // a soft darker wood (walk-floor.js MARK_A)
   base = mix(base, vec3(0.16, 0.12, 0.18), pt.y);
   // the mirror picture of the room, stronger at a glancing angle (far down the lane)
   vec2 suv = gl_FragCoord.xy / uRes;
