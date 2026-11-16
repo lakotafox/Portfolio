@@ -9,6 +9,12 @@
  *     mounts the rolled background behind it in "controller" mode (phone pool, half resolution,
  *     strong scrim, strict fps watchdog that goes calm on its own) and a rolled heading over the
  *     game name; unmounts both the moment the controller isn't showing;
+ *   - while a game's own full-screen picture covers the controller (body.pad-covered: FOX BOWLING's walk view) the
+ *     backdrop shows only in the pad's 12 px frame, so it is FROZEN there: a still copy of its last frame stays (same
+ *     colours, same picture; clipped to the frame round [data-pad-cover]) and the live one is unmounted (its WebGL
+ *     released). Rolled backdrops draw 1-12 Mpx a frame
+ *     on a DPR 3 phone; behind the walk view that was the phone's biggest GPU cost for nothing (Nov 16 phone-perf).
+ *     Uncovered: the live backdrop comes back;
  *   - recolours the controller's panels and buttons from the --fb-* palette variables: solid
  *     fills, strong outlines, contrast-checked label colour. The player's own colour stays on
  *     their stick knob and name ball so you can still find yourself.
@@ -212,10 +218,97 @@ function syncHeading() {
   heading = { el, handle, text, stop: () => (ro && ro.disconnect(), clearInterval(t)) };
 }
 
+// ── the frozen backdrop (body.pad-covered) ──
+function covered() {
+  return document.body.classList.contains("pad-covered");
+}
+/** a still of the backdrop in `host`: its elements cloned (classes and inline styles come along; what an animation moves
+ *  right now is copied over and the animation stopped there), its canvases copied. Cheap on purpose (a phone, mid-game):
+ *  one small read-back a canvas to see it is not blank. -> { box, canvases, painted } */
+const MOVED = ["transform", "opacity", "filter", "background-position", "background-color", "clip-path", "translate", "scale", "rotate"];
+function stillOf(host) {
+  const box = document.createElement("div");
+  box.className = "clook-still";
+  box.style.cssText = "position:absolute;inset:0;";
+  let canvases = 0, painted = 0;
+  const probe = document.createElement("canvas");
+  probe.width = probe.height = 6;
+  const pg = probe.getContext("2d", { willReadFrequently: true });
+  for (const child of host.children) {
+    const clone = child.cloneNode(true);
+    const src = [child, ...child.querySelectorAll("*")], dst = [clone, ...clone.querySelectorAll("*")];
+    src.forEach((s, i) => {
+      const d = dst[i];
+      if (s.getAnimations && s.getAnimations().length) { const cs = getComputedStyle(s); for (const p of MOVED) d.style.setProperty(p, cs.getPropertyValue(p)); }
+      d.style.setProperty("animation", "none", "important");
+      d.style.setProperty("transition", "none", "important");
+      if (s.tagName === "CANVAS" && s.width > 2 && s.height > 2 && s.getClientRects().length) {   // (a backdrop's hidden 1x1 helper canvas is no picture)
+        canvases++;
+        try {
+          d.getContext("2d").drawImage(s, 0, 0);   // (a WebGL canvas: what it shows, when it drew this frame)
+          pg.clearRect(0, 0, 6, 6);
+          pg.drawImage(s, 0, 0, 6, 6);
+          const px = pg.getImageData(0, 0, 6, 6).data;
+          for (let k = 3; k < px.length; k += 4) if (px[k] > 0) { painted++; break; }
+        } catch {}
+      }
+    });
+    box.append(clone);
+  }
+  return { box, canvases, painted };
+}
+function freeze() {
+  if (!bg || bg.still || bg.freezing) return;
+  bg.freezing = true;
+  let tries = 0;
+  const again = (ms) => (ms ? setTimeout(() => requestAnimationFrame(capture), ms) : requestAnimationFrame(capture));
+  function capture() {
+    if (!bg) return;
+    if (!covered() || bg.still) { bg.freezing = false; return; }
+    // only a backdrop that is up: the rolled piece drawn (its chunk loads lazily; the calm look meanwhile), or the calm
+    // look for good (data-bg "calm": nothing rolled, or the fps watchdog turned it off)
+    const lb = bg.el.querySelector(".fbx2-lookbg"), calm = !!lb && lb.dataset.bg === "calm";
+    if (!lb || (!calm && !bg.el.querySelector(".fbx2-rolled"))) { again(300); return; }
+    const st = safe(() => stillOf(bg.el));
+    if (st && (calm || (st.canvases && st.painted === st.canvases) || (!st.canvases && !bg.el.querySelector(".fbx2-rolled canvas")))) {
+      safe(() => bg.handle.unmount());
+      bg.el.replaceChildren(st.box);
+      clipStill();
+      bg.still = true; bg.freezing = false; bg.seed = look() && look().current ? look().current.seed : null;
+      return;
+    }
+    // (a WebGL backdrop's picture is only there in a frame it drew: the next frames, then a pause, never a blank still)
+    again(++tries % 8 ? 0 : 300);
+  }
+  again(0);
+}
+/** the still is only seen round the cover ([data-pad-cover]: the game's opaque picture): it is clipped to that frame
+ *  (the cover's box less its rounded corners), so the phone does not composite a full-screen picture under the game */
+function clipStill() {
+  const box = bg && bg.still && bg.el.querySelector(".clook-still"), cover = document.querySelector("[data-pad-cover]");
+  if (!box) return;
+  box.style.clipPath = "";
+  if (!cover) return;
+  const a = bg.el.getBoundingClientRect(), c = cover.getBoundingClientRect(), cs = getComputedStyle(cover);
+  const r = Math.max(...["borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius"].map((k) => parseFloat(cs[k]) || 0)) + 2;
+  const x0 = c.left - a.left + r, y0 = c.top - a.top + r, x1 = c.right - a.left - r, y1 = c.bottom - a.top - r;
+  if (!(x1 - x0 > 40 && y1 - y0 > 40)) return;
+  box.style.clipPath = `polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, ${x0}px ${y0}px, ${x1}px ${y0}px, ${x1}px ${y1}px, ${x0}px ${y1}px, ${x0}px ${y0}px)`;
+}
+function thaw() {
+  if (!bg || !bg.still) return;
+  const L = look();
+  bg.still = false;
+  bg.el.replaceChildren();
+  const handle = L && safe(() => L.mountBackground(bg.el, { mode: "controller" }));
+  if (handle) bg.handle = handle;
+  else { bg.el.remove(); bg = null; }
+}
+
 function unmountAll() {
   document.body.classList.remove("clook-on");
   if (bg) {
-    safe(() => bg.handle.unmount());
+    if (!bg.still) safe(() => bg.handle.unmount());
     bg.el.remove();
     bg = null;
   }
@@ -237,7 +330,12 @@ function sync() {
       followSeed();
       if (look() && controllerShowing()) {
         if (!mountAll()) unmountAll();
-        else syncHeading();
+        else {
+          syncHeading();
+          // a new roll while frozen: the live one again (frozen again below while still covered)
+          if (bg && bg.still && (!covered() || (look().current && look().current.seed !== bg.seed))) thaw();
+          if (bg && covered()) freeze();
+        }
       } else unmountAll();
     });
   });
@@ -252,6 +350,7 @@ function start() {
   document.head.append(style);
   window.addEventListener("foxbox:lobby", sync);
   window.addEventListener("foxbox:look", sync);
+  window.addEventListener("resize", () => safe(clipStill));
   // the pad switches screens by class; the lobby layer toggles a body class
   const mo = new MutationObserver(sync);
   mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
