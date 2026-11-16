@@ -806,7 +806,7 @@ void main() { o = vec4(filmLook(uTex, vUv), 1.0); }`;be=typeof location<"u"&&/[?
 .mr-tile small { display: block; font-family: "FoxBox Soft", ${qx}; font-size: 11px; line-height: 1; margin-top: 3px; color: #ffd84a; white-space: nowrap; letter-spacing: .02em; }
 .mr-tiles.shirts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .mr-row[hidden] { display: none; }
-.mr-chips { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 6px; touch-action: pan-x; scrollbar-width: none; }
+.mr-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 2px 6px; }   /* (wrapped, never a side-scroll: Lakota could not reach the last colours on an iPhone, Nov 15) */
 .mr-chips::-webkit-scrollbar { display: none; }
 .mr-chip { flex: none; width: 42px; height: 42px; border-radius: 50%; border: 3px solid ${T7} !important; box-shadow: 0 3px 0 ${T7}, inset 0 0 0 2px rgba(255,255,255,.3); font-size: 8px; color: #fff; text-shadow: 1px 0 ${T7}, -1px 0 ${T7}, 0 1px ${T7}, 0 -1px ${T7}; display: flex; align-items: center; justify-content: center; }   /* (the MATCH / MINE word: white with an ink edge, it read on no chip colour) */
 .mr-chip.on { outline: 4px solid #ffd84a; outline-offset: 1px; }
