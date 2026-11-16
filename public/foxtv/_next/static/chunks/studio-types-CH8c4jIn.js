@@ -1,0 +1,1 @@
+import{t as e}from"./createLucideIcon-BKi1Xf2l.js";var t=e(`arrow-right`,[[`path`,{d:`M5 12h14`,key:`1ays0h`}],[`path`,{d:`m12 5 7 7-7 7`,key:`xquz4c`}]]),n=864e5,r=6e4,i=e=>Number(e.replace(/\D/g,``).slice(0,3));export{t as i,r as n,i as r,n as t};
