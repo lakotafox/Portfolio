@@ -1325,6 +1325,13 @@
           linear-gradient(180deg, color-mix(in srgb, var(--d) 70%, #0b1020) 0%, #0b1020 100%);
         touch-action: none;
       }
+      /* a game's own full-screen picture ([data-pad-cover] + body.pad-covered: FOX BOWLING's walk view) fills the phone
+         edge to edge (Lakota, Nov 16: "no thin strip around the edges"): no pad margin while it is up; the game keeps its
+         own buttons clear of the notch / home bar with env(safe-area-inset-*) */
+      body.pad-covered #pad-screen {
+        padding: 0;
+        gap: 0;
+      }
       @supports not (background: color-mix(in srgb, red 50%, blue)) {
         #pad-screen {
           background: linear-gradient(180deg, var(--d) 0%, #0b1020 75%);
