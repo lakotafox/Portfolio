@@ -2401,7 +2401,7 @@ for (const type of ["touchstart", "touchmove", "touchend"]) {
   );
 }
 document.addEventListener("touchmove", (e) => {
-  if (!e.target.closest("input, #char-grid, #crop-stage, #fbx2-pad, #pad-screen.row-setup, #pad-screen.results #status, #vote-screen .vs-gal")) e.preventDefault();
+  if (!e.target.closest("input, #char-grid, #crop-stage, #fbx2-pad, #pad-screen.row-setup, #pad-screen.results #status, #vote-screen .vs-gal, [data-scroll]")) e.preventDefault();   // [data-scroll]: a game's own scrolling list (bowling's mirror maker, Nov 15)
 }, { passive: false });
 for (const type of ["gesturestart", "gesturechange", "gestureend", "dblclick", "contextmenu", "selectstart"]) {
   document.addEventListener(type, (e) => {
