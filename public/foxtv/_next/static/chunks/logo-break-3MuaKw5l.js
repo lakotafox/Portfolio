@@ -1,0 +1,1 @@
+var e=864e5,t=5e3,n=t,r=1e3,i=e=>Number(e.replace(/\D/g,``).slice(0,3)),a=1e4,o=5*6e4,s=e=>e>=o?a:0;export{t as a,n as i,e as n,i as o,r,s as t};
