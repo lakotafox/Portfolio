@@ -1,13 +1,13 @@
-import{B as X,D as M,v as E,w as F,z as G}from"./main-z8ycv9rf.js";import{E as D,J as T,L as v}from"./main-shjzg9mc.js";var L=D(T(),1);if(typeof document<"u"){let H=document.createElement("style");H.dataset.src="polar-glow/PolarGlow.css",H.textContent=`.polar-glow-container {
+import{B as $,D as T,v as G,w as H,z as P}from"./main-z8ycv9rf.js";import{E as z,J as I,L as E}from"./main-shjzg9mc.js";var N=z(I(),1);if(typeof document<"u"){let K=document.createElement("style");K.dataset.src="polar-glow/PolarGlow.css",K.textContent=`.polar-glow-container {
   width: 100%;
   height: 100%;
 }
-`,document.head.appendChild(H)}var b=`#version 300 es
+`,document.head.appendChild(K)}var h=`#version 300 es
 in vec2 position;
 void main() {
   gl_Position = vec4(position, 0.0, 1.0);
 }
-`,z=`#version 300 es
+`,u=`#version 300 es
 precision highp float;
 
 uniform float uTime;
@@ -92,4 +92,4 @@ void main() {
   
   fragColor = vec4(auroraColor * auroraAlpha, auroraAlpha);
 }
-`;function I(H){let{colorStops:Y=["#5227FF","#7cff67","#5227FF"],amplitude:Z=1,blend:_=0.5}=H,K=L.useRef(H);K.current=H;let $=L.useRef(null);return L.useEffect(()=>{let q=$.current;if(!q)return;let N=new F({alpha:!0,premultipliedAlpha:!0,antialias:!0}),w=N.gl;w.clearColor(0,0,0,0),w.enable(w.BLEND),w.blendFunc(w.ONE,w.ONE_MINUS_SRC_ALPHA),w.canvas.style.backgroundColor="transparent";let B;function O(){if(!q)return;let{offsetWidth:J,offsetHeight:C}=q;if(N.setSize(J,C),B)B.uniforms.uResolution.value=[J,C]}window.addEventListener("resize",O);let Q=new M(w);if(Q.attributes.uv)delete Q.attributes.uv;let P=Y.map((J)=>{let C=new X(J);return[C.r,C.g,C.b]});B=new E(w,{vertex:b,fragment:z,uniforms:{uTime:{value:0},uAmplitude:{value:Z},uColorStops:{value:P},uResolution:{value:[q.offsetWidth,q.offsetHeight]},uBlend:{value:_}}});let V=new G(w,{geometry:Q,program:B});q.appendChild(w.canvas);let U=0,k=(J)=>{U=requestAnimationFrame(k);let{time:C=J*0.01,speed:j=1}=K.current;B.uniforms.uTime.value=C*j*0.1,B.uniforms.uAmplitude.value=K.current.amplitude??1,B.uniforms.uBlend.value=K.current.blend??_;let y=K.current.colorStops??Y;B.uniforms.uColorStops.value=y.map((A)=>{let W=new X(A);return[W.r,W.g,W.b]}),N.render({scene:V})};return U=requestAnimationFrame(k),O(),()=>{if(cancelAnimationFrame(U),window.removeEventListener("resize",O),q&&w.canvas.parentNode===q)q.removeChild(w.canvas);w.getExtension("WEBGL_lose_context")?.loseContext()}},[Z]),v("div",{ref:$,className:"polar-glow-container"})}export{I as default};
+`;function W(K){let{colorStops:k=["#5227FF","#7cff67","#5227FF"],amplitude:w=1,blend:F=0.5,paused:M=!1}=K,O=N.useRef(K);O.current=K;let U=N.useRef(null),V=N.useRef(null);return N.useEffect(()=>{let q=V.current;if(!q)return;let X=new H({alpha:!0,premultipliedAlpha:!0,antialias:!0}),v=X.gl;v.clearColor(0,0,0,0),v.enable(v.BLEND),v.blendFunc(v.ONE,v.ONE_MINUS_SRC_ALPHA),v.canvas.style.backgroundColor="transparent";let C,A=-1,D=-1;function Q(){if(!q)return;let{offsetWidth:L,offsetHeight:B}=q;if(A=L,D=B,X.setSize(L,B),C)C.uniforms.uResolution.value=[L,B]}window.addEventListener("resize",Q);let Y=new T(v);if(Y.attributes.uv)delete Y.attributes.uv;let j=k.map((L)=>{let B=new $(L);return[B.r,B.g,B.b]});C=new G(v,{vertex:h,fragment:u,uniforms:{uTime:{value:0},uAmplitude:{value:w},uColorStops:{value:j},uResolution:{value:[q.offsetWidth,q.offsetHeight]},uBlend:{value:F}}});let y=new P(v,{geometry:Y,program:C});q.appendChild(v.canvas);let J=0,Z=(L)=>{J=requestAnimationFrame(Z);let{time:B=L*0.01,speed:S=1}=O.current;C.uniforms.uTime.value=B*S*0.1,C.uniforms.uAmplitude.value=O.current.amplitude??1,C.uniforms.uBlend.value=O.current.blend??F;let b=O.current.colorStops??k;C.uniforms.uColorStops.value=b.map((x)=>{let _=new $(x);return[_.r,_.g,_.b]}),X.render({scene:y})};if(U.current={pause(){cancelAnimationFrame(J),J=0},resume(){if(J)return;if(q.offsetWidth!==A||q.offsetHeight!==D)Q();J=requestAnimationFrame(Z)}},!O.current.paused)J=requestAnimationFrame(Z);return Q(),()=>{if(cancelAnimationFrame(J),J=0,U.current=null,window.removeEventListener("resize",Q),q&&v.canvas.parentNode===q)q.removeChild(v.canvas);v.getExtension("WEBGL_lose_context")?.loseContext()}},[w]),N.useEffect(()=>{let q=U.current;if(q)(M?q.pause:q.resume)()},[M]),E("div",{ref:V,className:"polar-glow-container"})}W.pausable=!0;export{W as default};
